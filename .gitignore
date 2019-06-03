@@ -1,0 +1,11 @@
+## Directories
+node_modules
+build
+examples
+
+
+## Files
+._*
+*.log
+.DS_Store
+env.js
