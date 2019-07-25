@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx'
+import { observable, computed, action } from 'mobx'
 import paper from 'paper'
 
 class Canvas {
@@ -8,6 +8,8 @@ class Canvas {
 
   @observable width
   @observable height
+  @observable _color = '#000000'
+  @observable background
   @observable animatables = {}
   @observable tool
   @observable selected
@@ -28,13 +30,19 @@ class Canvas {
 
   init() {
     paper.view.autoUpdate = false
-    // black background
-    new paper.Path.Rectangle({
+    this.background = new paper.Path.Rectangle({
       topLeft: [0, 0],
       bottomRight: [paper.view.element.width, paper.view.element.height],
-      fillColor: 'black',
+      fillColor: this.color,
     })
     this.draw(this.rootStore.animation.firstFrame)
+  }
+
+  get color() { return this._color }
+  set color(value) {
+    this._color = value
+    this.background.fillColor = value
+    this.draw(this.rootStore.animation.now)
   }
 
   @action add = (animatable) => {
@@ -61,13 +69,20 @@ class Canvas {
     this.draw(this.rootStore.animation.now)
   }
 
-  @action setTool = (tool) => {
-    this.tool = tool
-    if (tool === 'SELECT') {
-      this.selectOn()
-    } else {
-      this.selectOff()
-    }
+  @action setTool = (nextTool) => {
+    const prevTool = this.tool
+
+    const entering = toolId => (prevTool !== toolId && nextTool === toolId)
+    const exiting = toolId => (prevTool === toolId && nextTool !== toolId)
+
+    if (entering('SELECT')) { this.selectOn() }
+    if (exiting('SELECT')) { this.selectOff() }
+
+    if (entering('SETTINGS')) { this.rootStore.mode.settings = true }
+    if (exiting('SETTINGS')) { this.rootStore.mode.settings = false }
+
+    // Finally, set the tool in-memory
+    this.tool = nextTool
   }
 
   @action select = (item) => {

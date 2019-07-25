@@ -22,7 +22,9 @@ class Animation {
 
   @action setLength(length) {
     this.frames = length
-    this.lastFrame = length
+    if (length < this.lastFrame) {
+      this.lastFrame = length
+    }
   }
 
   @action setIn = (f) => {

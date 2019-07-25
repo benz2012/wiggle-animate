@@ -1,14 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 const style = {
-  clickaway: {
-    position: 'fixed',
-    zIndex: 90,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
   container: {
     position: 'fixed',
     zIndex: 100,
@@ -30,16 +22,23 @@ const style = {
   },
 }
 
-const Modal = ({ children, open, handleClose }) => (
-  open === false ? null : (
-    <div style={style.clickaway} onClick={handleClose}>
-      <div style={style.container}>
-        <div style={style.body}>
+const Modal = ({ children, open, handleClose }) => {
+  const clickawayEl = useRef(null)
+
+  const onClickaway = (event) => {
+    if (clickawayEl.current.contains(event.target)) return
+    handleClose()
+  }
+
+  return (
+    open === false ? null : (
+      <div style={style.container} onClick={onClickaway}>
+        <div ref={clickawayEl} style={style.body}>
           <div style={style.content}>{children}</div>
         </div>
       </div>
-    </div>
+    )
   )
-)
+}
 
 export default Modal
