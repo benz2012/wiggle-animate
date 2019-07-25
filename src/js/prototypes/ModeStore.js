@@ -6,14 +6,10 @@ class Mode {
   }
 
   @observable current = null
-  @observable settings = true
+  @observable settings = false
 
   @action set = (m) => {
     this.current = m
-  }
-
-  @action toggleSettings = () => {
-    this.settings = !this.settings
   }
 }
 

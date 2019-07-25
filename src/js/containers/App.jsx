@@ -13,6 +13,7 @@ class App extends Component {
   componentDidMount() {
     const { store } = this.props
     store.mode.set('BUILD')
+    store.canvas.setTool('SETTINGS')
   }
 
   render() {

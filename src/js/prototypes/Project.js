@@ -6,6 +6,7 @@ import Animation from './Animation'
 class Project {
   constructor(rootStore) {
     this.rootStore = rootStore
+    this.setName('My Animation')
   }
 
   @observable name = ''

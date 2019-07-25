@@ -8,8 +8,6 @@ import ProjectSettings from './ProjectSettings'
 import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 
-import placeholder from '../prototypes/placeholder'
-
 @observer
 class BuildMode extends Component {
   state = {
@@ -34,10 +32,8 @@ class BuildMode extends Component {
 
   setup = () => {
     this.setState({ ready: true })
-    const { canvas, animation } = this.props.store
-    placeholder.setLength(animation) // TODO: move this to project setup
+    const { canvas } = this.props.store
     canvas.build()
-    canvas.setTool('SELECT')
   }
 
   add = (item) => {

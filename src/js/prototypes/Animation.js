@@ -6,6 +6,7 @@ class Animation {
 
   constructor(rootStore) {
     this.rootStore = rootStore
+    this.setLength(100)
   }
 
   @observable frames = 1

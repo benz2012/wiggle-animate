@@ -7,8 +7,6 @@ import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 import { getWidth } from '../components/withWindowSize'
 
-import placeholder from '../prototypes/placeholder'
-
 @observer
 class ViewMode extends Component {
   componentDidMount() {
@@ -24,8 +22,7 @@ class ViewMode extends Component {
   }
 
   setup = () => {
-    const { canvas, animation } = this.props.store
-    placeholder.setRange(animation)
+    const { canvas } = this.props.store
     canvas.build()
   }
 
