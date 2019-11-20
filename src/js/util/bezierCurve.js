@@ -115,7 +115,7 @@ const bezierCurve = ({ x2, x3, y2, y3 }) => {
   }
 
   // These constants were reduced from the Cubic Bézier curve definition, with
-  // values of (0, 0) and (1, 1) used for p1 & p2 respectivley
+  // values of (0, 0) and (1, 1) used for p1 & p4 respectively
   const xA = 3 * x2 - 3 * x3 + 1
   const xB = -1 * 6 * x2 + 3 * x3
   const xC = 3 * x2

@@ -18,23 +18,24 @@ class Rectangle extends AnimatableItem {
   get radius() { return this._radius }
 
   set width(value) {
+    // TODO: update this value using item.bounds and scale
     this._width = value
     this.recreate()
   }
 
   set height(value) {
+    // TODO: update this value using item.bounds and scale
     this._height = value
     this.recreate()
   }
 
   set radius(value) {
+    // TODO: update this value using item.bounds and scale
     this._radius = value
     this.recreate()
   }
 
-  create(canvas) {
-    const itemProps = super.create(canvas)
-
+  onCreate(itemProps) {
     const { x, y } = this.position
     const absX = this.absolute(x)
     const absY = this.absolute(y, 'height')
@@ -47,8 +48,6 @@ class Rectangle extends AnimatableItem {
       size: [absWidth, absHeight],
       radius: (this.radius / 100) * (Math.max(absWidth, absHeight) / 2),
     })
-
-    this.setUntrackedValues()
   }
 }
 

@@ -13,6 +13,7 @@ class App extends Component {
   componentDidMount() {
     const { store } = this.props
     store.mode.set('BUILD')
+    // setTimeout(() => { store.mode.set('ANIMATE') }, 100)
     store.canvas.setTool('SETTINGS')
   }
 

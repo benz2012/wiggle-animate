@@ -5,6 +5,7 @@ import Animation from './Animation'
 
 class Project {
   constructor(rootStore) {
+    // FIXME: remove reference to rootStore
     this.rootStore = rootStore
     this.setName('My Animation')
   }

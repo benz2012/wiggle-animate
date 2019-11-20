@@ -11,21 +11,18 @@ class Circle extends AnimatableItem {
 
   get radius() { return this._radius }
   set radius(value) {
+    // TODO: update this value using item.bounds and scale
     this._radius = value
     this.recreate()
   }
 
-  create(canvas) {
-    const itemProps = super.create(canvas)
-
+  onCreate(itemProps) {
     const { x, y } = this.position
     new paper.Path.Circle({
       ...itemProps,
       center: [this.absolute(x), this.absolute(y, 'height')],
       radius: this.absolute(this.radius) / 2,
     })
-
-    this.setUntrackedValues()
   }
 }
 
