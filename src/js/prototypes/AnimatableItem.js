@@ -1,5 +1,3 @@
-/* eslint react/no-this-in-sfc: 0 */
-
 import { observable, action } from 'mobx'
 import paper from 'paper'
 
@@ -47,13 +45,13 @@ class AnimatableItem {
   get fillColor() { return this._fillColor }
 
   set x(value) {
-    this._x = value
     this.item.position.x = this.absolute(value)
+    this._x = value
   }
 
   set y(value) {
-    this._y = value
     this.item.position.y = this.absolute(value, 'height')
+    this._y = value
   }
 
   set position({ x, y }) {
@@ -80,8 +78,8 @@ class AnimatableItem {
   }
 
   set fillColor(value) {
-    this._fillColor = value
     this.item.fillColor = value
+    this._fillColor = value
   }
 
   @action setCanvas(canvas) {
@@ -122,11 +120,18 @@ class AnimatableItem {
   )
 
   create(canvas) {
-    if (this.canvas === undefined) { this.setCanvas(canvas) }
-    return {
+    if (this.canvas === undefined) this.setCanvas(canvas)
+
+    const sharedProps = {
       name: this.key,
       fillColor: this.fillColor,
     }
+
+    if (typeof this.onCreate === 'function') {
+      this.onCreate(sharedProps)
+    }
+
+    if (this.item !== undefined) this.setUntrackedValues()
   }
 
   recreate() {

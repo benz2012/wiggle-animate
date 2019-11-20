@@ -1,21 +1,37 @@
+/* eslint react/sort-comp: 0 */
+
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 
 @observer
 class IntegerInput extends Component {
-  inputRef = React.createRef()
-
-  componentDidMount() {
-    this.inputRef.current.addEventListener('keydown', this.handleKeyDown, false)
+  state = {
+    localValue: 0,
   }
 
-  componentWillUnmount() {
-    this.inputRef.current.removeEventListener('keydown', this.handleKeyDown, false)
+  componentDidMount() {
+    const { item, property } = this.props
+    if (item[property] !== this.state.localValue) {
+      this.setState({ localValue: item[property] })
+    }
   }
 
   onChange = (event) => {
+    this.setState({ localValue: event.target.value })
+  }
+
+  onBlur = () => {
     const { item, property } = this.props
-    item[property] = parseInt(event.target.value)
+    const { localValue } = this.state
+
+    const possibleInt = parseInt(localValue)
+    let result = item[property]
+    if (Number.isInteger(possibleInt)) {
+      result = possibleInt
+    }
+
+    item[property] = result
+    this.setState({ localValue: result })
   }
 
   handleKeyDown = (event) => {
@@ -31,28 +47,27 @@ class IntegerInput extends Component {
     }
   }
 
-  incrementBy = (amount) => {
-    const { item, property, response } = this.props
-    item[property] += amount
-    response()
+  changeBy = operation => (amount) => {
+    const { item, property } = this.props
+    const current = item[property]
+    const next = operation(current, amount)
+    item[property] = next
+    this.setState({ localValue: next })
   }
 
-  decrementBy = (amount) => {
-    const { item, property, response } = this.props
-    item[property] -= amount
-    response()
-  }
+  incrementBy = this.changeBy((a, b) => a + b)
+  decrementBy = this.changeBy((a, b) => a - b)
 
   render() {
-    const { item, property, response } = this.props
+    const { localValue } = this.state
     return (
       <input
-        ref={this.inputRef}
         type="text"
         style={{ width: '60px', marginRight: '20px', textAlign: 'center' }}
-        value={item[property]}
+        value={localValue}
         onChange={this.onChange}
-        onBlur={response}
+        onKeyDown={this.handleKeyDown}
+        onBlur={this.onBlur}
       />
     )
   }

@@ -4,8 +4,7 @@ class Animation {
   static get FIRST() { return 1 }
   static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }
 
-  constructor(rootStore) {
-    this.rootStore = rootStore
+  constructor() {
     this.setLength(100)
   }
 
@@ -13,7 +12,6 @@ class Animation {
   @observable firstFrame = Animation.FIRST
   @observable lastFrame = 1
   @observable fps = 30
-  @observable draw = this.rootStore.canvas.draw
   @observable now = this.firstFrame
   @observable playing = false
   @observable sync = 0
@@ -67,7 +65,6 @@ class Animation {
     this.animateAtRate(() => {
       const nextFrame = this.nextFrame()
       if (nextFrame === null) return this.pause()
-      this.draw(nextFrame)
       this.now = nextFrame
     })
   }
@@ -78,7 +75,6 @@ class Animation {
   }
 
   @action goToFrame = (frame) => {
-    this.draw(frame)
     this.now = frame
   }
 

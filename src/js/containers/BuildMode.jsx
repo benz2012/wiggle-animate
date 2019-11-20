@@ -8,6 +8,8 @@ import ProjectSettings from './ProjectSettings'
 import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 
+import placeholder from '../prototypes/placeholder'
+
 @observer
 class BuildMode extends Component {
   state = {
@@ -34,16 +36,15 @@ class BuildMode extends Component {
     this.setState({ ready: true })
     const { canvas } = this.props.store
     canvas.build()
+
+    // placeholder.setLength(this.props.store.animation)
+    // placeholder.setRange(this.props.store.animation)
+    // placeholder.addItems(canvas)
   }
 
   add = (item) => {
     const { canvas } = this.props.store
     canvas.add(item)
-  }
-
-  drawNow = () => {
-    const { canvas, animation } = this.props.store
-    canvas.draw(animation.now)
   }
 
   render() {
@@ -61,10 +62,7 @@ class BuildMode extends Component {
           </GridItem>
           <GridItem gridArea="1 / 2 / 1 / 3" backgroundColor="rgb(210, 210, 210)">
             { canvas && (
-              <PropertyEditor
-                item={canvas.selected}
-                draw={this.drawNow}
-              />
+              <PropertyEditor item={canvas.selected} />
             )}
           </GridItem>
           <GridItem gridArea="2 / 1 / 2 / 3" backgroundColor="rgb(180, 180, 180)">

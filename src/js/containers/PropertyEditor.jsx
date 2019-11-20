@@ -8,7 +8,7 @@ import IntegerInput from '../components/IntegerInput'
 @observer
 class PropertyEditor extends Component {
   classControls() {
-    const { item, draw } = this.props
+    const { item } = this.props
     const itemClass = item.constructor.name
 
     if (itemClass === 'Circle') {
@@ -16,11 +16,7 @@ class PropertyEditor extends Component {
         <React.Fragment>
           <label>Radius</label>
           <div style={{ display: 'flex' }}>
-            <IntegerInput
-              item={item}
-              property="radius"
-              response={draw}
-            />
+            <IntegerInput item={item} property="radius" />
           </div>
         </React.Fragment>
       )
@@ -31,16 +27,8 @@ class PropertyEditor extends Component {
         <React.Fragment>
           <label>Size</label>
           <div style={{ display: 'flex' }}>
-            <IntegerInput
-              item={item}
-              property="width"
-              response={draw}
-            />
-            <IntegerInput
-              item={item}
-              property="height"
-              response={draw}
-            />
+            <IntegerInput item={item} property="width" />
+            <IntegerInput item={item} property="height" />
           </div>
         </React.Fragment>
       )
@@ -48,7 +36,7 @@ class PropertyEditor extends Component {
   }
 
   render() {
-    const { item, draw } = this.props
+    const { item } = this.props
 
     if (item === undefined) {
       return (
@@ -63,34 +51,18 @@ class PropertyEditor extends Component {
         <h4>{item.key}</h4>
         <label>Position</label>
         <div style={{ display: 'flex' }}>
-          <IntegerInput
-            item={item}
-            property="x"
-            response={draw}
-          />
-          <IntegerInput
-            item={item}
-            property="y"
-            response={draw}
-          />
+          <IntegerInput item={item} property="x" />
+          <IntegerInput item={item} property="y" />
         </div>
 
         <label>Scale</label>
         <div style={{ display: 'flex' }}>
-          <IntegerInput
-            item={item}
-            property="scale"
-            response={draw}
-          />
+          <IntegerInput item={item} property="scale" />
         </div>
 
         <label>Rotation</label>
         <div style={{ display: 'flex' }}>
-          <IntegerInput
-            item={item}
-            property="rotation"
-            response={draw}
-          />
+          <IntegerInput item={item} property="rotation" />
         </div>
 
         {this.classControls()}

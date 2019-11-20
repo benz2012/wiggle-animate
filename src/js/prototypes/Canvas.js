@@ -1,4 +1,4 @@
-import { observable, computed, action } from 'mobx'
+import { observable, action } from 'mobx'
 import paper from 'paper'
 
 class Canvas {
@@ -42,7 +42,6 @@ class Canvas {
   set color(value) {
     this._color = value
     this.background.fillColor = value
-    this.draw(this.rootStore.animation.now)
   }
 
   @action add = (animatable) => {
@@ -56,7 +55,7 @@ class Canvas {
       this.addListenersAndSelect(animatable)
     }
 
-    this.draw(this.rootStore.animation.now)
+    this.draw()
   }
 
   @action remove = (animatable) => {
@@ -66,7 +65,7 @@ class Canvas {
     const clone = { ...this.animatables }
     delete clone[animatable.key]
     this.animatables = clone
-    this.draw(this.rootStore.animation.now)
+    this.draw()
   }
 
   @action setTool = (nextTool) => {
@@ -115,29 +114,30 @@ class Canvas {
     this.deselect()
   }
 
+  forEachAnimatable = callback => (
+    Object.values(this.animatables).forEach(callback)
+  )
+
   build = () => {
-    Object.values(this.animatables).forEach((animatable) => {
-      animatable.create(this)
-    })
-    this.draw(this.rootStore.animation.now)
+    this.forEachAnimatable((animatable) => { animatable.create(this) })
+    this.draw()
   }
 
   draw = (frame) => {
-    Object.values(this.animatables).forEach((animatable) => {
-      animatable.draw(frame)
-    })
-    paper.view.update()
+    const frameToDraw = frame || this.rootStore.animation.now
+    this.forEachAnimatable((animatable) => { animatable.draw(frameToDraw) })
+    if (paper.view) paper.view.update()
   }
 
   selectOn = () => {
-    Object.values(this.animatables).forEach((animatable) => {
+    this.forEachAnimatable((animatable) => {
       animatable.item.on('mousedown', this.handleItemMouseDown)
     })
     paper.view.on('mousedown', this.handleViewMouseDown)
   }
 
   selectOff = () => {
-    Object.values(this.animatables).forEach((animatable) => {
+    this.forEachAnimatable((animatable) => {
       animatable.item.off('mousedown', this.handleItemMouseDown)
     })
     paper.view.off('mousedown', this.handleViewMouseDown)
