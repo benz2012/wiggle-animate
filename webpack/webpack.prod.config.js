@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 const baseConfig = require('./webpack.base.config')
