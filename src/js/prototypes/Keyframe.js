@@ -1,9 +1,18 @@
-// import { observable } from 'mobx'
+import { observable } from 'mobx'
 
 import Handle from './Handle'
 import bezierCurve from '../util/bezierCurve'
 
 class Keyframe {
+  static get OBSERVABLES() {
+    return ['frame', 'value', 'handleIn', 'handleOut']
+  }
+
+  @observable frame
+  @observable value
+  @observable handleIn
+  @observable handleOut
+
   constructor(frame, value) {
     this.frame = frame
     this.value = value
@@ -25,6 +34,7 @@ class Keyframe {
   static interpolate = (k1, k2, frame) => {
     const curve = Keyframe.createCurve(k1, k2)
     const timeRatio = (frame - k1.frame) / (k2.frame - k1.frame)
+    // BUG: Bezier Interpolation is broken for certain ranges
     const valueRatio = curve.y(timeRatio)
     const interpolated = ((k2.value - k1.value) * valueRatio) + k1.value
     return interpolated

@@ -5,6 +5,8 @@ import Canvas from './prototypes/Canvas'
 import Animation from './prototypes/Animation'
 import ModeStore from './prototypes/ModeStore'
 
+import observeAnimatableTree from './util/observeAnimatableTree'
+
 class RootStore {
   @observable project
   @observable canvas
@@ -22,9 +24,7 @@ class RootStore {
       () => ([
         this.animation.now,
         this.canvas.color,
-        Object.values(this.canvas.animatables).map(animatable => (
-          Object.keys(animatable).map(key => animatable[key])
-        )),
+        Object.values(this.canvas.animatables).map(observeAnimatableTree),
       ]),
       () => this.canvas.draw()
     )

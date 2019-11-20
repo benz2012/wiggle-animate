@@ -19,6 +19,10 @@ class AnimatableItem {
     }
   }
 
+  static get OBSERVABLES() {
+    return ['x', 'y', 'scale', 'rotation', 'fillColor', 'keyframes']
+  }
+
   constructor({ key }) {
     this.key = key
   }
@@ -30,10 +34,10 @@ class AnimatableItem {
   @observable _rotation = AnimatableItem.ROTATION
   @observable _fillColor = AnimatableItem.FILL_COLOR
   @observable keyframes = {
-    x: [],
-    y: [],
-    scale: [],
-    rotation: [],
+    x: observable([]),
+    y: observable([]),
+    scale: observable([]),
+    rotation: observable([]),
   }
 
   get item() { return paper.project.activeLayer.children[this.key] }
