@@ -1,22 +1,7 @@
+// import { observable } from 'mobx'
+
+import Handle from './Handle'
 import bezierCurve from '../util/bezierCurve'
-
-class Handle {
-  constructor(type) {
-    this.type = type
-    this.influence = type === 'OUT' ? 0.3 : 1
-    this.distance = 0
-  }
-
-  get position() {
-    let x = this.influence
-    let y = this.distance
-    if (this.type === 'IN') {
-      x = 1 - this.influence
-      y = 1 - this.distance
-    }
-    return { x, y }
-  }
-}
 
 class Keyframe {
   constructor(frame, value) {
