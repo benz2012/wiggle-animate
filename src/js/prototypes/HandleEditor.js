@@ -1,5 +1,7 @@
 import paper from 'paper'
 
+import Handle from './Handle'
+
 class HandleEditor {
   constructor(trueWidth, keyframeBefore, keyframeAfter) {
     this.trueWidth = trueWidth
@@ -25,8 +27,8 @@ class HandleEditor {
     const topLeft = [padding, padding]
     const topRight = [width + padding, padding]
     const bottomLeft = [padding, width + padding]
-    const bottomRight = [width, width + padding]
-    const spacing = width / 10
+    // const bottomRight = [width, width + padding]
+    const spacing = width / Handle.STEP
     const center = this.trueWidth / 2
 
     // Background
@@ -34,13 +36,6 @@ class HandleEditor {
       topLeft: [0, 0],
       bottomRight: [this.trueWidth, this.trueWidth],
       fillColor: 'rgb(210, 210, 210)',
-      // fillColor: {
-      //   gradient: {
-      //     stops: ['#223140', '#071829'],
-      //   },
-      //   origin: topLeft,
-      //   destination: bottomRight,
-      // },
     })
 
     // Gridlines
@@ -53,7 +48,7 @@ class HandleEditor {
         strokeWidth: 2,
       })
     )
-    for (let i = 0; i <= 10; i += 1) {
+    for (let i = 0; i <= Handle.STEP; i += 1) {
       const offset = padding + 0 + (spacing * i)
       gridline.place(new this.paper.Point(offset, center))
       const offAxis = gridline.place(new this.paper.Point(center, offset))
@@ -61,17 +56,14 @@ class HandleEditor {
     }
 
     // Value Interpolation Curve
-    const curve = new this.paper.Path({
+    this.curve = new this.paper.Path.Line({
       // strokeColor: '#2176ff',
       strokeColor: 'rgb(30, 155, 255)',
       strokeWidth: 2,
+      from: new this.paper.Point(bottomLeft),
+      to: new this.paper.Point(topRight),
     })
-    curve.add(new this.paper.Point(bottomLeft))
-    curve.cubicCurveTo(
-      new this.paper.Point(this.handleBefore()),
-      new this.paper.Point(this.handleAfter()),
-      new this.paper.Point(topRight)
-    )
+    this.setVisualCurveHandles()
 
     // Handle Strings
     const stringStyle = {
@@ -79,12 +71,12 @@ class HandleEditor {
       strokeColor: 'rgb(30, 155, 255)',
       strokeWidth: 2,
     }
-    new this.paper.Path.Line({
+    const handleBeforeString = new this.paper.Path.Line({
       ...stringStyle,
       from: bottomLeft,
       to: this.handleBefore(),
     })
-    new this.paper.Path.Line({
+    const handleAfterString = new this.paper.Path.Line({
       ...stringStyle,
       from: this.handleAfter(),
       to: topRight,
@@ -116,31 +108,79 @@ class HandleEditor {
 
     // Handle Events
     handleBefore.onMouseEnter = () => {
-      this.element.style.cursor = 'grab'
+      this.element.style.cursor = 'pointer'
     }
     handleBefore.onMouseLeave = () => {
       this.element.style.cursor = 'default'
     }
     handleBefore.onMouseDrag = (event) => {
-      this.element.style.cursor = 'grabbing'
+      this.element.style.cursor = 'pointer'
       const travelled = event.point.subtract(handleBefore.position)
 
       if (Math.abs(travelled.x) >= (spacing / 2)) {
-        handleBefore.position = handleBefore.position.add({
+        const newPosition = handleBefore.position.add({
           y: 0,
           x: (travelled.x / Math.abs(travelled.x)) * spacing,
         })
+
+        handleBefore.position = newPosition
+        handleBeforeString.lastSegment.point = newPosition
+        this.keyframeBefore.handleOut.influence += Math.sign(travelled.x) * Handle.STEP
+        this.setVisualCurveHandles()
       }
 
       if (Math.abs(travelled.y) >= (spacing / 2)) {
-        handleBefore.position = handleBefore.position.add({
+        const newPosition = handleBefore.position.add({
           x: 0,
           y: (travelled.y / Math.abs(travelled.y)) * spacing,
         })
+
+        handleBefore.position = newPosition
+        handleBeforeString.lastSegment.point = newPosition
+        this.keyframeBefore.handleOut.distance += -1 * Math.sign(travelled.y) * Handle.STEP
+        this.setVisualCurveHandles()
       }
     }
     handleBefore.onMouseUp = () => {
-      this.element.style.cursor = 'grab'
+      this.element.style.cursor = 'default'
+    }
+
+    handleAfter.onMouseEnter = () => {
+      this.element.style.cursor = 'pointer'
+    }
+    handleAfter.onMouseLeave = () => {
+      this.element.style.cursor = 'default'
+    }
+    handleAfter.onMouseDrag = (event) => {
+      this.element.style.cursor = 'pointer'
+      const travelled = event.point.subtract(handleAfter.position)
+
+      if (Math.abs(travelled.x) >= (spacing / 2)) {
+        const newPosition = handleAfter.position.add({
+          y: 0,
+          x: (travelled.x / Math.abs(travelled.x)) * spacing,
+        })
+
+        handleAfter.position = newPosition
+        handleAfterString.firstSegment.point = newPosition
+        this.keyframeAfter.handleIn.influence += -1 * Math.sign(travelled.x) * Handle.STEP
+        this.setVisualCurveHandles()
+      }
+
+      if (Math.abs(travelled.y) >= (spacing / 2)) {
+        const newPosition = handleAfter.position.add({
+          x: 0,
+          y: (travelled.y / Math.abs(travelled.y)) * spacing,
+        })
+
+        handleAfter.position = newPosition
+        handleAfterString.firstSegment.point = newPosition
+        this.keyframeAfter.handleIn.distance += Math.sign(travelled.y) * Handle.STEP
+        this.setVisualCurveHandles()
+      }
+    }
+    handleAfter.onMouseUp = () => {
+      this.element.style.cursor = 'default'
     }
   }
 
@@ -156,9 +196,22 @@ class HandleEditor {
   absoluteHandlePosition(handlePosition) {
     return ([
       handlePosition.x * this.width + this.padding,
-      // Compensates for non-cartesian system
+      // Compensates for 4th quadrant cartesian system
       this.width - (handlePosition.y * this.width) + this.padding,
     ])
+  }
+
+  setVisualCurveHandles() {
+    if (this.curve) {
+      this.curve.firstSegment.handleOut = new this.paper.Point(
+        this.keyframeBefore.handleOut.influence * this.width / Handle.MAX,
+        -1 * this.keyframeBefore.handleOut.distance * this.width / Handle.MAX
+      )
+      this.curve.lastSegment.handleIn = new this.paper.Point(
+        -1 * this.keyframeAfter.handleIn.influence * this.width / Handle.MAX,
+        this.keyframeAfter.handleIn.distance * this.width / Handle.MAX
+      )
+    }
   }
 }
 

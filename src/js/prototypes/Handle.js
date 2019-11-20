@@ -1,16 +1,20 @@
 import { observable } from 'mobx'
 
 class Handle {
-  // Relative Values (0-1)
-  static get INFLUENCE() { return 0.5 }
-  static get DISTANCE() { return 0 }
+  static get MAX() { return 100 }
+  static get STEP() { return 10 }
+  static get OBSERVABLES() {
+    return ['influence', 'distance']
+  }
+
+  @observable _influence
+  @observable _distance
 
   constructor(type) {
     this.type = type
+    this.influence = 50
+    this.distance = 0
   }
-
-  @observable _influence = Handle.INFLUENCE
-  @observable _distance = Handle.DISTANCE
 
   get influence() { return this._influence }
   get distance() { return this._distance }
@@ -18,9 +22,11 @@ class Handle {
     let x = this.influence
     let y = this.distance
     if (this.type === 'IN') {
-      x = 1 - this.influence
-      y = 1 - this.distance
+      x = Handle.MAX - this.influence
+      y = Handle.MAX - this.distance
     }
+    x /= Handle.MAX
+    y /= Handle.MAX
     return { x, y }
   }
 
@@ -33,12 +39,14 @@ class Handle {
   }
 
   set position({ x, y }) {
+    const newX = x * Handle.MAX
+    const newY = x * Handle.MAX
     if (this.type === 'IN') {
-      this.influence = 1 - x
-      this.distance = 1 - y
+      this.influence = Handle.MAX - newX
+      this.distance = Handle.MAX - newY
     } else {
-      this.influence = x
-      this.distance = y
+      this.influence = newX
+      this.distance = newY
     }
   }
 }
