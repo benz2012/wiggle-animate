@@ -3,9 +3,19 @@ import { observer } from 'mobx-react'
 
 @observer
 class Canvas extends Component {
+  componentDidMount() {
+    this.testForAvailability()
+  }
+
   componentDidUpdate(prevProps) {
+    if (prevProps.width === undefined) {
+      this.testForAvailability()
+    }
+  }
+
+  testForAvailability() {
     const { width, hasSize } = this.props
-    if (prevProps.width === undefined && width !== undefined) {
+    if (width !== undefined) {
       hasSize()
     }
   }

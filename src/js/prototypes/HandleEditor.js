@@ -18,6 +18,11 @@ class HandleEditor {
     this.paper.setup(element)
   }
 
+  destroy() {
+    this.paper.project.clear()
+    this.paper.project.remove()
+  }
+
   init() {
     // Assumes Width & Height are identical
     this.padding = 10

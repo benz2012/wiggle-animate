@@ -6,6 +6,7 @@ import ModeController from './ModeController'
 import BuildMode from './BuildMode'
 import AnimateMode from './AnimateMode'
 import ViewMode from './ViewMode'
+import ExportMode from './ExportMode'
 import Grid from '../components/Grid'
 
 @observer
@@ -36,6 +37,10 @@ class App extends Component {
         {
           store.mode.current === 'VIEW'
           && <ViewMode store={store} />
+        }
+        {
+          store.mode.current === 'EXPORT'
+          && <ExportMode store={store} />
         }
       </Grid>
     )

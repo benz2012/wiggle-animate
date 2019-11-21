@@ -48,14 +48,14 @@ class ToolController extends Component {
         >
           <div style={{ transform: 'rotate(-135deg)' }}>&#10148;</div>
         </button>
-        <button
+        {/* <button
           type="button"
           id="DRAW"
           onClick={this.choose}
           {...(tool === 'DRAW' ? { primary: 'true' } : {})}
         >
           ✎
-        </button>
+        </button> */}
 
         <button type="button" onClick={this.addCircle}>+ Circle</button>
         <button type="button" onClick={this.addRectangle}>+ Rectangle</button>
