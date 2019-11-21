@@ -7,6 +7,21 @@ import IntegerInput from '../components/IntegerInput'
 
 @observer
 class PropertyEditor extends Component {
+  propertySetter = property => (value) => {
+    const { item, now } = this.props
+
+    if (item.keyframes[property].length) {
+      const existingKeyframe = item.keyframes[property].find(keyframe => keyframe.frame === now)
+      if (existingKeyframe) {
+        existingKeyframe.value = value
+      } else {
+        item.addKey(`${property}`, now, value)
+      }
+    } else {
+      item[property] = value
+    }
+  }
+
   classControls() {
     const { item } = this.props
     const itemClass = item.constructor.name
@@ -16,7 +31,7 @@ class PropertyEditor extends Component {
         <React.Fragment>
           <label>Radius</label>
           <div style={{ display: 'flex' }}>
-            <IntegerInput item={item} property="radius" />
+            <IntegerInput value={item.radius} setValue={this.propertySetter('radius')} />
           </div>
         </React.Fragment>
       )
@@ -27,8 +42,8 @@ class PropertyEditor extends Component {
         <React.Fragment>
           <label>Size</label>
           <div style={{ display: 'flex' }}>
-            <IntegerInput item={item} property="width" />
-            <IntegerInput item={item} property="height" />
+            <IntegerInput value={item.width} setValue={this.propertySetter('width')} />
+            <IntegerInput value={item.height} setValue={this.propertySetter('height')} />
           </div>
         </React.Fragment>
       )
@@ -51,18 +66,18 @@ class PropertyEditor extends Component {
         <h4>{item.key}</h4>
         <label>Position</label>
         <div style={{ display: 'flex' }}>
-          <IntegerInput item={item} property="x" />
-          <IntegerInput item={item} property="y" />
+          <IntegerInput value={item.x} setValue={this.propertySetter('x')} />
+          <IntegerInput value={item.y} setValue={this.propertySetter('y')} />
         </div>
 
         <label>Scale</label>
         <div style={{ display: 'flex' }}>
-          <IntegerInput item={item} property="scale" />
+          <IntegerInput value={item.scale} setValue={this.propertySetter('scale')} />
         </div>
 
         <label>Rotation</label>
         <div style={{ display: 'flex' }}>
-          <IntegerInput item={item} property="rotation" />
+          <IntegerInput value={item.rotation} setValue={this.propertySetter('rotation')} />
         </div>
 
         {this.classControls()}

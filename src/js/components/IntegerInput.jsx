@@ -1,5 +1,3 @@
-/* eslint react/sort-comp: 0 */
-
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 
@@ -10,9 +8,9 @@ class IntegerInput extends Component {
   }
 
   componentDidMount() {
-    const { item, property } = this.props
-    if (item[property] !== this.state.localValue) {
-      this.setState({ localValue: item[property] })
+    const { value } = this.props
+    if (value !== this.state.localValue) {
+      this.setState({ localValue: value })
     }
   }
 
@@ -21,16 +19,16 @@ class IntegerInput extends Component {
   }
 
   onBlur = () => {
-    const { item, property } = this.props
+    const { value, setValue } = this.props
     const { localValue } = this.state
 
     const possibleInt = parseInt(localValue)
-    let result = item[property]
+    let result = value
     if (Number.isInteger(possibleInt)) {
       result = possibleInt
     }
 
-    item[property] = result
+    setValue(result)
     this.setState({ localValue: result })
   }
 
@@ -48,13 +46,13 @@ class IntegerInput extends Component {
   }
 
   changeBy = operation => (amount) => {
-    const { item, property } = this.props
-    const current = item[property]
-    const next = operation(current, amount)
-    item[property] = next
+    const { value, setValue } = this.props
+    const next = operation(value, amount)
+    setValue(next)
     this.setState({ localValue: next })
   }
 
+  // eslint-disable-next-line
   incrementBy = this.changeBy((a, b) => a + b)
   decrementBy = this.changeBy((a, b) => a - b)
 

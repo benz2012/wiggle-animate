@@ -69,7 +69,7 @@ class BuildMode extends Component {
           </GridItem>
           <GridItem gridArea="1 / 2 / 1 / 3" backgroundColor="rgb(210, 210, 210)">
             { canvas && (
-              <PropertyEditor item={canvas.selected} />
+              <PropertyEditor item={canvas.selected} now={animation.now} />
             )}
           </GridItem>
           <GridItem gridArea="2 / 1 / 2 / 3" backgroundColor="rgb(180, 180, 180)">
