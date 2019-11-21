@@ -7,6 +7,8 @@ import HandleEditorInstance from '../prototypes/HandleEditor'
 
 @observer
 class HandleEditor extends React.Component {
+  state = {}
+
   handleEditor
 
   componentDidUpdate(prevProps) {
@@ -22,18 +24,29 @@ class HandleEditor extends React.Component {
 
   buildHandleEditorCanvas = () => {
     const { width, keyframeBefore, keyframeAfter } = this.props
-    this.handleEditor = new HandleEditorInstance(width, keyframeBefore, keyframeAfter)
-    this.handleEditor.attatchTo('handle-editor')
-    this.handleEditor.init()
+
+    if (keyframeBefore && keyframeAfter) {
+      this.handleEditor = new HandleEditorInstance(width, keyframeBefore, keyframeAfter)
+      this.handleEditor.attatchTo('handle-editor')
+      this.handleEditor.init()
+    }
   }
 
   render() {
-    const { width, keyframeKey } = this.props
+    const { width, keyframeKey, keyframeBefore, keyframeAfter } = this.props
 
     if (keyframeKey === undefined) {
       return (
         <h3 style={{ padding: '10px', color: 'darkgray' }}>
           Select a Keyframe on the Timeline.
+        </h3>
+      )
+    }
+
+    if (keyframeBefore && !keyframeAfter) {
+      return (
+        <h3 style={{ padding: '10px', color: 'darkgray' }}>
+          <i>Selected tail Keyframe has no handle relationships.</i>
         </h3>
       )
     }

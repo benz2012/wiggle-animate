@@ -31,7 +31,7 @@ class ToolController extends Component {
     const { tool } = this.props
 
     return (
-      <div style={{ display: 'flex', padding: '10px' }}>
+      <div style={{ display: 'flex', padding: '10px 10px 0px 10px' }}>
         <button
           type="button"
           id="SETTINGS"

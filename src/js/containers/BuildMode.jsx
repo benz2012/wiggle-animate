@@ -24,6 +24,13 @@ class BuildMode extends Component {
       const height = Math.round((9 / 16) * width)
       canvas.setSize(width, height)
     }, 1)
+
+    if (canvas.tool === 'SELECT') {
+      setTimeout(() => {
+        canvas.setTool(undefined)
+        canvas.setTool('SELECT')
+      }, 20)
+    }
   }
 
   componentWillUnmount() {

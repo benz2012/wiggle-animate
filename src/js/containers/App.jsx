@@ -26,21 +26,17 @@ class App extends Component {
         gridTemplateRows="60px 1fr"
       >
         <ModeController mode={store.mode} />
-        {
-          store.mode.current === 'BUILD'
-          && <BuildMode store={store} />
+        {store.mode.current === 'BUILD' &&
+          <BuildMode store={store} />
         }
-        {
-          store.mode.current === 'ANIMATE'
-          && <AnimateMode store={store} />
+        {store.mode.current === 'ANIMATE' &&
+          <AnimateMode store={store} />
         }
-        {
-          store.mode.current === 'VIEW'
-          && <ViewMode store={store} />
+        {store.mode.current === 'VIEW' &&
+          <ViewMode store={store} />
         }
-        {
-          store.mode.current === 'EXPORT'
-          && <ExportMode store={store} />
+        {store.mode.current === 'EXPORT' &&
+          <ExportMode store={store} />
         }
       </Grid>
     )

@@ -19,8 +19,10 @@ class HandleEditor {
   }
 
   destroy() {
-    this.paper.project.clear()
-    this.paper.project.remove()
+    if (this.paper.project) {
+      this.paper.project.clear()
+      this.paper.project.remove()
+    }
   }
 
   init() {

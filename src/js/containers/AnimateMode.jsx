@@ -12,10 +12,6 @@ class AnimateMode extends Component {
   state = {
     heWidth: undefined,
     keSize: undefined,
-    // TODO: move these somewhere else
-    keyframeKey: undefined,
-    keyframeBefore: undefined,
-    keyframeAfter: undefined,
   }
 
   componentDidMount() {
@@ -52,28 +48,28 @@ class AnimateMode extends Component {
   setup = () => {
     const { canvas } = this.props.store
     canvas.build()
-    canvas.setTool('SELECT')
-  }
-
-  setTheKeyFrame = () => {
-    if (this.state.keyframeKey === undefined) {
-      this.setState({
-        keyframeKey: 'circle1.keyframes.scale[0]',
-        keyframeBefore: this.props.store.canvas.animatables.circle1.keyframes.scale[0],
-        keyframeAfter: this.props.store.canvas.animatables.circle1.keyframes.scale[1],
-      })
-    } else {
-      this.setState({
-        keyframeKey: 'circle1.keyframes.x[0]',
-        keyframeBefore: this.props.store.canvas.animatables.circle1.keyframes.x[0],
-        keyframeAfter: this.props.store.canvas.animatables.circle1.keyframes.x[1],
-      })
-    }
+    setTimeout(() => {
+      canvas.setTool(undefined)
+      canvas.setTool('SELECT')
+    }, 20)
   }
 
   render() {
-    const { canvas, animation } = this.props.store
-    const { heWidth, keSize, keyframeKey, keyframeBefore, keyframeAfter } = this.state
+    const { canvas, animation, tools } = this.props.store
+    const { heWidth, keSize } = this.state
+
+    let keyframeBefore
+    let keyframeAfter
+    if (tools.selectedKeyframe) {
+      const [kItem, kProp, kIndexStr] = tools.selectedKeyframe.split('.')
+      const kIndex = parseInt(kIndexStr)
+      const keyframesOfType = canvas.animatables[kItem].keyframes[kProp]
+      keyframeBefore = keyframesOfType[kIndex]
+      if (kIndex + 1 < keyframesOfType.length) {
+        keyframeAfter = keyframesOfType[kIndex + 1]
+      }
+    }
+
     return (
       <Grid
         gridTemplateRows="auto 340px"
@@ -85,17 +81,18 @@ class AnimateMode extends Component {
         <GridItem id="handle-container" gridArea="1 / 2 / 1 / 3" backgroundColor="rgb(210, 210, 210)">
           <HandleEditor
             width={heWidth}
-            keyframeKey={keyframeKey}
+            keyframeKey={tools.selectedKeyframe}
             keyframeBefore={keyframeBefore}
             keyframeAfter={keyframeAfter}
           />
         </GridItem>
         <GridItem id="keyframe-container" gridArea="2 / 1 / 2 / 3" backgroundColor="rgb(180, 180, 180)">
-          {/* <button type="button" onClick={this.setTheKeyFrame}>I&#39;m a keyframe</button> */}
           <KeyframeEditor
             size={keSize}
-            // selected={selected}
             item={canvas.selected}
+            frames={animation.frames}
+            now={animation.now}
+            onSelect={tools.selectKeyframe}
           />
         </GridItem>
       </Grid>
