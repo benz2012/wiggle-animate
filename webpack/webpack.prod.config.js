@@ -14,9 +14,7 @@ module.exports = merge(baseConfig, {
   },
   devtool: 'source-map',
   plugins: [
-    new CleanWebpackPlugin(['build'], {
-      root: process.cwd(),
-    }),
+    new CleanWebpackPlugin(),
     new UglifyJsPlugin({
       sourceMap: true,
       warningsFilter: src => true, // eslint-disable-line no-unused-vars
