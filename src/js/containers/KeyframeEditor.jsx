@@ -13,21 +13,26 @@ class KeyframeEditor extends React.Component {
   paper = new paper.PaperScope()
   element
 
+  componentDidMount() {
+    document.addEventListener('keyup', this.handleKeyUp)
+  }
+
   componentDidUpdate(prevProps) {
     if (
       prevProps.item !== undefined &&
       this.props.item !== undefined &&
       prevProps.item.key !== this.props.item.key
     ) {
-      this.paper.project.clear()
-      this.paper.project.remove()
-      this.buildKeyframeEditorCanvas()
+      this.rebuild()
     }
 
     if (prevProps.now !== this.props.now) {
-      console.log('now changed')
       this.buildPlayhead()
     }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleKeyUp)
   }
 
   keyframeEditorHasSize = () => {
@@ -51,22 +56,42 @@ class KeyframeEditor extends React.Component {
     this.setState({ previouslyClickedKeyframe: currentTarget })
   }
 
+  handleKeyUp = (event) => {
+    const { key } = event
+    const { item, keyframeKey, keyframe, onSelect } = this.props
+    if (key === 'Backspace' || key === 'Delete') {
+      event.preventDefault()
+
+      const keyframeProp = keyframeKey.split('.')[1]
+      onSelect(undefined)
+      item.removeKey(keyframeProp, keyframe.frame)
+      this.rebuild()
+    }
+  }
+
   buildKeyframeEditorCanvas = () => {
     const { item } = this.props
     this.element = document.getElementById('keyframe-editor')
     this.paper.setup(this.element)
 
     const { verticalSpacing, timelineStart, timelineEnd, timelineStep } = this.timelineMath()
+    let placementIndex = 0
 
     this.buildPlayhead()
 
-    Object.entries(item.keyframes).forEach(([prop, list], index) => {
-      const placing = index * verticalSpacing + verticalSpacing
+    Object.entries(item.keyframes).forEach(([prop, list]) => {
+      let propName = prop
+      const placing = placementIndex * verticalSpacing + verticalSpacing
+
+      if (prop === 'y') return // Interpret `x` & `y` at the same time
+      if (prop === 'x') {
+        propName = 'position'
+      }
 
       // Draw Timelines
       new this.paper.PointText({
         point: [0, placing],
-        content: prop,
+        content: propName,
         fillColor: 'black',
         fontSize: 14,
       })
@@ -86,14 +111,29 @@ class KeyframeEditor extends React.Component {
           radius: 3,
           fillColor: 'rgb(30, 155, 255)',
           rotation: 45,
-          strokeColor: 'rgba(0, 0, 0, 0.25)',
+          strokeColor: 'white',
           strokeWidth: 0,
           shadowColor: 'rgba(0, 0, 0, 0)',
           shadowBlur: 5,
         })
+
         keyframeRect.on('mousedown', this.handleKeyframeClick)
+        keyframeRect.onMouseEnter = () => {
+          this.element.style.cursor = 'pointer'
+        }
+        keyframeRect.onMouseLeave = () => {
+          this.element.style.cursor = 'default'
+        }
       })
+
+      placementIndex += 1
     })
+  }
+
+  rebuild() {
+    this.paper.project.clear()
+    this.paper.project.remove()
+    this.buildKeyframeEditorCanvas()
   }
 
   buildPlayhead() {

@@ -3,10 +3,11 @@ import paper from 'paper'
 import Handle from './Handle'
 
 class HandleEditor {
-  constructor(trueWidth, keyframeBefore, keyframeAfter) {
+  constructor(trueWidth, keyframeBefore, keyframeAfter, onMove) {
     this.trueWidth = trueWidth
     this.keyframeBefore = keyframeBefore
     this.keyframeAfter = keyframeAfter
+    this.onMove = onMove
     this.paper = new paper.PaperScope()
 
     this.element = undefined
@@ -124,27 +125,22 @@ class HandleEditor {
       this.element.style.cursor = 'pointer'
       const travelled = event.point.subtract(handleBefore.position)
 
-      if (Math.abs(travelled.x) >= (spacing / 2)) {
+      const xChange = Math.abs(travelled.x) >= (spacing / 2)
+      const yChange = Math.abs(travelled.y) >= (spacing / 2)
+      if (xChange || yChange) {
+        const xSign = Math.sign(travelled.x)
+        const ySign = Math.sign(travelled.y)
         const newPosition = handleBefore.position.add({
-          y: 0,
-          x: (travelled.x / Math.abs(travelled.x)) * spacing,
+          x: xSign * spacing * xChange,
+          y: ySign * spacing * yChange,
         })
 
         handleBefore.position = newPosition
         handleBeforeString.lastSegment.point = newPosition
-        this.keyframeBefore.handleOut.influence += Math.sign(travelled.x) * Handle.STEP
-        this.setVisualCurveHandles()
-      }
-
-      if (Math.abs(travelled.y) >= (spacing / 2)) {
-        const newPosition = handleBefore.position.add({
-          x: 0,
-          y: (travelled.y / Math.abs(travelled.y)) * spacing,
+        this.onMove('OUT', {
+          influence: xSign * Handle.STEP * xChange,
+          distance: -1 * ySign * Handle.STEP * yChange,
         })
-
-        handleBefore.position = newPosition
-        handleBeforeString.lastSegment.point = newPosition
-        this.keyframeBefore.handleOut.distance += -1 * Math.sign(travelled.y) * Handle.STEP
         this.setVisualCurveHandles()
       }
     }
@@ -162,27 +158,22 @@ class HandleEditor {
       this.element.style.cursor = 'pointer'
       const travelled = event.point.subtract(handleAfter.position)
 
-      if (Math.abs(travelled.x) >= (spacing / 2)) {
+      const xChange = Math.abs(travelled.x) >= (spacing / 2)
+      const yChange = Math.abs(travelled.y) >= (spacing / 2)
+      if (xChange || yChange) {
+        const xSign = Math.sign(travelled.x)
+        const ySign = Math.sign(travelled.y)
         const newPosition = handleAfter.position.add({
-          y: 0,
-          x: (travelled.x / Math.abs(travelled.x)) * spacing,
+          x: xSign * spacing * xChange,
+          y: ySign * spacing * yChange,
         })
 
         handleAfter.position = newPosition
         handleAfterString.firstSegment.point = newPosition
-        this.keyframeAfter.handleIn.influence += -1 * Math.sign(travelled.x) * Handle.STEP
-        this.setVisualCurveHandles()
-      }
-
-      if (Math.abs(travelled.y) >= (spacing / 2)) {
-        const newPosition = handleAfter.position.add({
-          x: 0,
-          y: (travelled.y / Math.abs(travelled.y)) * spacing,
+        this.onMove('IN', {
+          influence: -1 * xSign * Handle.STEP * xChange,
+          distance: ySign * Handle.STEP * yChange,
         })
-
-        handleAfter.position = newPosition
-        handleAfterString.firstSegment.point = newPosition
-        this.keyframeAfter.handleIn.distance += Math.sign(travelled.y) * Handle.STEP
         this.setVisualCurveHandles()
       }
     }

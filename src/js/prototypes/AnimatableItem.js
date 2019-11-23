@@ -112,7 +112,18 @@ class AnimatableItem {
   removeKey(property, frame) {
     let keyframes = [...this.keyframes[property]]
     keyframes = keyframes.filter(k => k.frame !== frame)
-    this.updateKeyframes(property, keyframes)
+
+    if (property === 'x') {
+      let keyframesY = [...this.keyframes.y]
+      keyframesY = keyframesY.filter(k => k.frame !== frame)
+      this.keyframes = {
+        ...this.keyframes,
+        x: keyframes,
+        y: keyframesY,
+      }
+    } else {
+      this.updateKeyframes(property, keyframes)
+    }
   }
 
   absolute = (value, dimension = 'width') => (

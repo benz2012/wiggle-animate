@@ -23,10 +23,10 @@ class HandleEditor extends React.Component {
   }
 
   buildHandleEditorCanvas = () => {
-    const { width, keyframeBefore, keyframeAfter } = this.props
+    const { width, keyframeBefore, keyframeAfter, onMove } = this.props
 
     if (keyframeBefore && keyframeAfter) {
-      this.handleEditor = new HandleEditorInstance(width, keyframeBefore, keyframeAfter)
+      this.handleEditor = new HandleEditorInstance(width, keyframeBefore, keyframeAfter, onMove)
       this.handleEditor.attatchTo('handle-editor')
       this.handleEditor.init()
     }

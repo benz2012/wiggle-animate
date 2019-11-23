@@ -7,6 +7,8 @@ import KeyframeEditor from './KeyframeEditor'
 import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 
+import { titleCase } from '../util/string'
+
 @observer
 class AnimateMode extends Component {
   state = {
@@ -40,9 +42,10 @@ class AnimateMode extends Component {
   }
 
   componentWillUnmount() {
-    const { canvas, project } = this.props.store
+    const { canvas, project, tools } = this.props.store
     canvas.selectOff()
     project.clear()
+    tools.selectKeyframe(undefined)
   }
 
   setup = () => {
@@ -52,6 +55,32 @@ class AnimateMode extends Component {
       canvas.setTool(undefined)
       canvas.setTool('SELECT')
     }, 20)
+  }
+
+  changeHandlePosition = (handleType, { influence, distance }) => {
+    const { tools, canvas } = this.props.store
+    if (!tools.selectedKeyframe) return
+
+    const handleSuffix = titleCase(handleType)
+    const [kItem, kProp, kIndexStr] = tools.selectedKeyframe.split('.')
+    let kIndex = parseInt(kIndexStr)
+    if (handleType === 'IN') {
+      kIndex += 1
+    }
+
+    const targetHandle = canvas.animatables[kItem].keyframes[kProp][kIndex][`handle${handleSuffix}`]
+    let auxilaryHandle
+    if (kProp === 'x') {
+      auxilaryHandle = canvas.animatables[kItem].keyframes.y[kIndex][`handle${handleSuffix}`]
+    }
+
+    targetHandle.influence += influence
+    targetHandle.distance += distance
+
+    if (auxilaryHandle) {
+      auxilaryHandle.influence += influence
+      auxilaryHandle.distance += distance
+    }
   }
 
   render() {
@@ -84,15 +113,18 @@ class AnimateMode extends Component {
             keyframeKey={tools.selectedKeyframe}
             keyframeBefore={keyframeBefore}
             keyframeAfter={keyframeAfter}
+            onMove={this.changeHandlePosition}
           />
         </GridItem>
         <GridItem id="keyframe-container" gridArea="2 / 1 / 2 / 3" backgroundColor="rgb(180, 180, 180)">
           <KeyframeEditor
             size={keSize}
             item={canvas.selected}
+            keyframeKey={tools.selectedKeyframe}
+            keyframe={keyframeBefore}
+            onSelect={tools.selectKeyframe}
             frames={animation.frames}
             now={animation.now}
-            onSelect={tools.selectKeyframe}
           />
         </GridItem>
       </Grid>
