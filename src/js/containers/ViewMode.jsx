@@ -17,7 +17,6 @@ class ViewMode extends Component {
     const height = Math.round((9 / 16) * width)
     canvas.setSize(width, height)
 
-    // placeholder.setLength(this.props.store.animation)
     // placeholder.setRange(this.props.store.animation)
   }
 

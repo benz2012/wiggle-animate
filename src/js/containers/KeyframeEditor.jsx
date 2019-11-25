@@ -77,7 +77,8 @@ class KeyframeEditor extends React.Component {
     const { verticalSpacing, timelineStart, timelineEnd, timelineStep } = this.timelineMath()
     let placementIndex = 0
 
-    this.buildPlayhead()
+    const { playheadLine } = this.buildPlayhead()
+    const newKeyframeItems = []
 
     Object.entries(item.keyframes).forEach(([prop, list]) => {
       let propName = prop
@@ -95,12 +96,73 @@ class KeyframeEditor extends React.Component {
         fillColor: 'black',
         fontSize: 14,
       })
-      new this.paper.Path.Line({
-        from: [timelineStart, placing - 5],
+      const timelineHover = new this.paper.Path.Line({
+        name: 'timelineHover',
+        from: [timelineStart + 5, placing - 5],
+        to: [timelineEnd, placing - 5],
+        strokeColor: 'rgba(180, 180, 180, 1)',
+        strokeWidth: 40,
+      })
+      const timeline = new this.paper.Path.Line({
+        from: [timelineStart + 5, placing - 5],
         to: [timelineEnd, placing - 5],
         strokeColor: 'lightgrey',
         strokeWidth: 4,
       })
+
+      const newKeyframeRect = new this.paper.Path.Rectangle({
+        name: 'newKeyframeRect',
+        point: [0, placing - 10],
+        size: [10, 10],
+        radius: 3,
+        fillColor: 'rgba(31, 155, 255, 0.5)',
+        rotation: 45,
+        visible: false,
+      })
+      const newKeyframePlus = new this.paper.PointText({
+        point: [0, placing - 8],
+        content: '+',
+        fillColor: 'rgba(31, 155, 255, 0.5)',
+        fontSize: 14,
+        visible: false,
+      })
+
+      newKeyframeItems.push([timelineHover, newKeyframeRect, newKeyframePlus])
+
+      // TODO: Put these all in a group, including the playheadsegment, and apply one event
+      const newKeyframeHoverEffect = (event) => {
+        newKeyframeRect.visible = true
+        newKeyframePlus.visible = true
+        newKeyframeRect.position.x = event.point.x
+        newKeyframePlus.position.x = event.point.x + 10
+      }
+      const newKeyframeHide = () => {
+        newKeyframeRect.visible = false
+        newKeyframePlus.visible = false
+      }
+      const newKeyClick = (event) => {
+        const frame = Math.round((event.point.x - timelineStart) / timelineStep)
+        item.addKey(prop, frame)
+        // console.log(frame)
+        this.rebuild()
+      }
+
+      timelineHover.onMouseMove = newKeyframeHoverEffect
+      timelineHover.onMouseLeave = newKeyframeHide
+      timeline.onMouseMove = newKeyframeHoverEffect
+      timeline.onMouseLeave = newKeyframeHide
+
+      newKeyframeRect.onMouseMove = (event) => {
+        if (timelineHover.hitTest(event.point, { stroke: true, segments: false })) {
+          newKeyframeHoverEffect(event)
+        } else {
+          newKeyframeHide()
+        }
+      }
+
+      timelineHover.onClick = newKeyClick
+      timeline.onClick = newKeyClick
+      newKeyframeRect.onClick = newKeyClick
 
       // Draw Keyframes
       list.forEach((keyframe, keyframeIndex) => {
@@ -120,6 +182,7 @@ class KeyframeEditor extends React.Component {
         keyframeRect.on('mousedown', this.handleKeyframeClick)
         keyframeRect.onMouseEnter = () => {
           this.element.style.cursor = 'pointer'
+          newKeyframeHide()
         }
         keyframeRect.onMouseLeave = () => {
           this.element.style.cursor = 'default'
@@ -128,6 +191,26 @@ class KeyframeEditor extends React.Component {
 
       placementIndex += 1
     })
+
+    playheadLine.onMouseMove = (event) => {
+      newKeyframeItems.forEach(([
+        timelineHover,
+        newKeyframeRect,
+        newKeyframePlus,
+      ]) => {
+        if (timelineHover.hitTest(event.point)) {
+          /* eslint-disable no-param-reassign */
+          newKeyframeRect.visible = true
+          newKeyframePlus.visible = true
+          newKeyframeRect.position.x = event.point.x
+          newKeyframePlus.position.x = event.point.x + 10
+        } else {
+          newKeyframeRect.visible = false
+          newKeyframePlus.visible = false
+        }
+      })
+    }
+    playheadLine.bringToFront()
   }
 
   rebuild() {
@@ -139,19 +222,20 @@ class KeyframeEditor extends React.Component {
   buildPlayhead() {
     const { size, now } = this.props
     const { timelineStart, timelineStep } = this.timelineMath()
-    new this.paper.Path.Line({
+    const playheadLine = new this.paper.Path.Line({
       from: [timelineStart + now * timelineStep, 10],
       to: [timelineStart + now * timelineStep, size.height - 10],
       strokeColor: 'white',
       strokeWidth: 1,
     })
-    new this.paper.Path.RegularPolygon({
+    const playheadTriangle = new this.paper.Path.RegularPolygon({
       center: [timelineStart + now * timelineStep, 10],
       sides: 3,
       radius: 6,
       rotation: 180,
       fillColor: 'white',
     })
+    return { playheadLine, playheadTriangle }
   }
 
   timelineMath() {

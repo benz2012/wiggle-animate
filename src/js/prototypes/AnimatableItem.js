@@ -102,11 +102,25 @@ class AnimatableItem {
     }
   }
 
-  addKey(property, frame, value) {
-    const k = new Keyframe(frame, value)
+  addKey(property, frame, value = undefined) {
+    const valueToKey = value || this[property]
+    const k = new Keyframe(frame, valueToKey)
     const keyframes = [...this.keyframes[property], k]
     keyframes.sort(Keyframe.sort)
-    this.updateKeyframes(property, keyframes)
+
+    if (value === undefined && property === 'x') {
+      const valueToKeyY = this.y
+      const kY = new Keyframe(frame, valueToKeyY)
+      const keyframesY = [...this.keyframes.y, kY]
+      keyframesY.sort(Keyframe.sort)
+      this.keyframes = {
+        ...this.keyframes,
+        x: keyframes,
+        y: keyframesY,
+      }
+    } else {
+      this.updateKeyframes(property, keyframes)
+    }
   }
 
   removeKey(property, frame) {

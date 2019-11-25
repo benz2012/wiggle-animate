@@ -46,7 +46,9 @@ class BuildMode extends Component {
 
     // placeholder.setLength(this.props.store.animation)
     // placeholder.setRange(this.props.store.animation)
-    // placeholder.addItems(canvas)
+    // if (Object.keys(canvas.animatables).length === 0) {
+    //   placeholder.addItems(canvas)
+    // }
   }
 
   add = (item) => {

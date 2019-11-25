@@ -129,11 +129,12 @@ const bezierCurve = ({ x2, x3, y2, y3 }) => {
     const xD = -x
     const roots = getCubicRoots(xA, xB, xC, xD)
     roots.filter(r => (
-      r.imag === 0
-      && r.real.toFixed(10) >= 0
-      && r.real.toFixed(10) <= 1
-      && !Object.is(r.real, -0)
+      r.imag === 0 &&
+      r.real.toFixed(10) >= 0 &&
+      r.real.toFixed(10) <= 1 &&
+      !Object.is(r.real, -0)
     ))
+    // console.log(JSON.stringify(roots))
     return roots[0].real
   }
 
