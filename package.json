@@ -7,7 +7,8 @@
     "dev": "node server",
     "start": "NODE_ENV=production node server",
     "build": "webpack --config ./webpack/webpack.prod.config.js",
-    "lint": "eslint --ext .jsx,.js src; exit 0"
+    "lint": "eslint --ext .jsx,.js src; exit 0",
+    "deploy": "npm run build && git add build && git commit -m \"clean build\" && git push origin master && firebase deploy"
   },
   "author": "Ben Zenker",
   "dependencies": {

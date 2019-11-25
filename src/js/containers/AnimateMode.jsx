@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { autorun } from 'mobx'
 import { observer } from 'mobx-react'
 
 import Viewer from './Viewer'
@@ -14,7 +15,10 @@ class AnimateMode extends Component {
   state = {
     heWidth: undefined,
     keSize: undefined,
+    selectedItemKey: undefined,
   }
+
+  autorunDisposer
 
   componentDidMount() {
     const { canvas } = this.props.store
@@ -39,6 +43,23 @@ class AnimateMode extends Component {
       const height = Math.round(container3.clientHeight) - 20
       this.setState({ keSize: { width, height } })
     }, 1)
+
+    this.autorunDisposer = autorun(() => {
+      if (canvas.selected) {
+        this.setState({ selectedItemKey: canvas.selected.key })
+      } else {
+        this.setState({ selectedItemKey: undefined })
+      }
+    })
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { tools } = this.props.store
+
+    console.log(prevState.selectedItemKey, this.state.selectedItemKey)
+    if (prevState.selectedItemKey !== this.state.selectedItemKey) {
+      tools.selectKeyframe(undefined)
+    }
   }
 
   componentWillUnmount() {
@@ -46,6 +67,7 @@ class AnimateMode extends Component {
     canvas.selectOff()
     project.clear()
     tools.selectKeyframe(undefined)
+    this.autorunDisposer()
   }
 
   setup = () => {
