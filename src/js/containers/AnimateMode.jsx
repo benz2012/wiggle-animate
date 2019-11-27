@@ -55,8 +55,6 @@ class AnimateMode extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { tools } = this.props.store
-
-    console.log(prevState.selectedItemKey, this.state.selectedItemKey)
     if (prevState.selectedItemKey !== this.state.selectedItemKey) {
       tools.selectKeyframe(undefined)
     }

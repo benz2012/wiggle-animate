@@ -108,7 +108,7 @@ class AnimatableItem {
     const keyframes = [...this.keyframes[property], k]
     keyframes.sort(Keyframe.sort)
 
-    if (value === undefined && property === 'x') {
+    if (property === 'x') {
       const valueToKeyY = this.y
       const kY = new Keyframe(frame, valueToKeyY)
       const keyframesY = [...this.keyframes.y, kY]
