@@ -65,9 +65,9 @@ class PlayController extends Component {
           <button type="button" style={{ margin: 0 }} onClick={goToPrev}>&#9667;</button>
         </GridItem>
         <GridItem gridColumnStart="4">
-          { playing === false
-            ? <button type="button" style={{ margin: 0 }} onClick={play}>&#9658;</button>
-            : <button type="button" style={{ margin: 0 }} onClick={pause}>&#10073; &#10073;</button>
+          { playing === false ?
+            <button type="button" style={{ margin: 0 }} onClick={play}>&#9658;</button> :
+            <button type="button" style={{ margin: 0 }} onClick={pause}>&#10073; &#10073;</button>
           }
         </GridItem>
         <GridItem gridColumnStart="5">

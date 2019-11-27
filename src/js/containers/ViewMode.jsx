@@ -7,8 +7,6 @@ import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 import { getWidth } from '../components/withWindowSize'
 
-import placeholder from '../prototypes/placeholder'
-
 @observer
 class ViewMode extends Component {
   componentDidMount() {
@@ -16,8 +14,6 @@ class ViewMode extends Component {
     const width = getWidth() - 20
     const height = Math.round((9 / 16) * width)
     canvas.setSize(width, height)
-
-    // placeholder.setRange(this.props.store.animation)
   }
 
   componentWillUnmount() {
