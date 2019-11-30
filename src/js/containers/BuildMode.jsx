@@ -8,6 +8,9 @@ import ProjectSettings from './ProjectSettings'
 import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 
+import items from '../prototypes/items'
+import Keyframe from '../prototypes/Keyframe'
+
 @observer
 class BuildMode extends Component {
   state = {
@@ -39,8 +42,34 @@ class BuildMode extends Component {
 
   setup = () => {
     this.setState({ ready: true })
-    const { canvas } = this.props.store
+    const { canvas, project } = this.props.store
     canvas.build()
+
+    if (project.inputItems && !project.inputBuilt) {
+      Object.entries(project.inputItems).forEach(([itemKey, itemObj]) => {
+        const { class: itemClass, keyframes, ...properties } = itemObj
+
+        const animatable = new items[itemClass]({ key: itemKey })
+        canvas.add(animatable)
+
+        const inputKeyframes = Object.entries(keyframes)
+          .reduce((accum, [keyframeProp, keyframeList]) => {
+            /* eslint no-param-reassign: 0 */
+            accum[keyframeProp] = keyframeList.map(Keyframe.fromJSON)
+            return accum
+          }, {})
+        animatable.keyframes = {
+          ...this.keyframes,
+          ...inputKeyframes,
+        }
+
+        Object.entries(properties).forEach(([key, value]) => {
+          animatable[key] = value
+        })
+      })
+
+      project.inputBuilt = true
+    }
   }
 
   add = (item) => {

@@ -20,6 +20,25 @@ class Keyframe {
     this.handleOut = new Handle('OUT')
   }
 
+  toJSON() {
+    return ({
+      frame: this.frame,
+      value: this.value,
+      handleIn: this.handleIn.toJSON(),
+      handleOut: this.handleOut.toJSON(),
+    })
+  }
+
+  static fromJSON(input) {
+    const { frame, value, handleIn, handleOut } = input
+    const keyframe = new Keyframe(frame, value)
+    keyframe.handleIn.influence = handleIn.influence
+    keyframe.handleIn.distance = handleIn.distance
+    keyframe.handleOut.influence = handleOut.influence
+    keyframe.handleOut.distance = handleOut.distance
+    return keyframe
+  }
+
   static sort = (a, b) => (a.frame - b.frame)
 
   static createCurve = (k1, k2) => (

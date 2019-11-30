@@ -9,6 +9,13 @@ class Circle extends AnimatableItem {
 
   @observable _radius = Circle.RADIUS
 
+  toJSON() {
+    return ({
+      ...super.toJSON(),
+      radius: this.radius,
+    })
+  }
+
   get radius() { return this._radius }
   set radius(value) {
     // TODO: update this value using item.bounds and scale

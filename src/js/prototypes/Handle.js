@@ -16,6 +16,14 @@ class Handle {
     this.distance = 0
   }
 
+  toJSON() {
+    return ({
+      type: this.type,
+      influence: this.influence,
+      distance: this.distance,
+    })
+  }
+
   get influence() { return this._influence }
   get distance() { return this._distance }
   get position() {

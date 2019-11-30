@@ -3,14 +3,16 @@ import paper from 'paper'
 
 import Animation from './Animation'
 
+import { downloadJSON } from '../util/download'
+
 class Project {
   constructor(rootStore) {
-    // FIXME: remove reference to rootStore
     this.rootStore = rootStore
-    this.setName('My Animation')
   }
 
-  @observable name = ''
+  @observable name = 'My Animation'
+  @observable inputItems
+  @observable inputBuilt = false
 
   @action setName(name) {
     this.name = name
@@ -26,13 +28,50 @@ class Project {
     animation.setOut(animation.frames)
   }
 
-  // load() {
-  //   // load project file
-  // }
+  load = (event) => {
+    const { files } = event.target
+    const { canvas, animation } = this.rootStore
+    const targetFile = files[0]
 
-  // save() {
-  //   // save project file
-  // }
+    const reader = new FileReader()
+
+    reader.onload = () => {
+      const input = JSON.parse(reader.result)
+
+      this.setName(targetFile.name.replace(/\.[^/.]+$/, ''))
+
+      Object.keys(input.animation).forEach((key) => {
+        animation[key] = input.animation[key]
+      })
+
+      Object.keys(input.canvas).forEach((key) => {
+        if (key === 'animatables') {
+          this.inputItems = input.canvas.animatables
+        } else {
+          canvas[key] = input.canvas[key]
+        }
+      })
+
+      this.rootStore.mode.set('BUILD')
+    }
+
+    reader.readAsText(targetFile)
+  }
+
+  save = () => {
+    /* eslint no-param-reassign: 0 */
+    const { canvas, animation } = this.rootStore
+
+    const jsonOutput = JSON.stringify({
+      animation: animation.toJSON(),
+      canvas: canvas.toJSON(),
+    })
+    downloadJSON(jsonOutput, this.name)
+  }
+
+  publish = () => {
+    console.log('publishing project')
+  }
 
   // render() {
   //   // render canvas animation to frames

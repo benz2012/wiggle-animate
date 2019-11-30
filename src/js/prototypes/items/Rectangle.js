@@ -13,6 +13,15 @@ class Rectangle extends AnimatableItem {
   @observable _height = Rectangle.HEIGHT
   @observable _radius = Rectangle.RADIUS
 
+  toJSON() {
+    return ({
+      ...super.toJSON(),
+      width: this.width,
+      height: this.height,
+      radius: this.radius,
+    })
+  }
+
   get width() { return this._width }
   get height() { return this._height }
   get radius() { return this._radius }

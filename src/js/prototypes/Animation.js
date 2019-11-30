@@ -18,6 +18,16 @@ class Animation {
   @observable requestId = null
   @observable mode = 'LOOP'
 
+  toJSON() {
+    return ({
+      frames: this.frames,
+      firstFrame: this.firstFrame,
+      lastFrame: this.lastFrame,
+      fps: this.fps,
+      mode: this.mode,
+    })
+  }
+
   @action setLength(length) {
     this.frames = length
     if (length < this.lastFrame) {

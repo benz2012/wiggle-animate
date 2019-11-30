@@ -14,6 +14,16 @@ class Canvas {
   @observable tool
   @observable selected
 
+  toJSON() {
+    return ({
+      color: this._color,
+      animatables: Object.entries(this.animatables).reduce((output, [key, animatable]) => {
+        output[key] = animatable.toJSON() // eslint-disable-line
+        return output
+      }, {}),
+    })
+  }
+
   setSize(width, height) {
     // allows the canvas element one tick to recognize size changes
     const setSizeAction = action(() => {

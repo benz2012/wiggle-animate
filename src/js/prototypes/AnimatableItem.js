@@ -40,6 +40,24 @@ class AnimatableItem {
     rotation: observable([]),
   }
 
+  toJSON() {
+    return ({
+      class: this.constructor.name,
+      x: this.x,
+      y: this.y,
+      scale: this.scale,
+      rotation: this.rotation,
+      fillColor: this.fillColor,
+      keyframes: Object.entries(this.keyframes).reduce(
+        (output, [prop, keyframeList]) => {
+          /* eslint no-param-reassign: 0 */
+          output[prop] = keyframeList.map(keyframe => keyframe.toJSON())
+          return output
+        }, {}
+      ),
+    })
+  }
+
   get item() { return paper.project.activeLayer.children[this.key] }
   get x() { return this._x }
   get y() { return this._y }
@@ -102,25 +120,32 @@ class AnimatableItem {
     }
   }
 
-  addKey(property, frame, value = undefined) {
+  addKey(property, frame, value = undefined, ignorePairings = false) {
     const valueToKey = value || this[property]
     const k = new Keyframe(frame, valueToKey)
     const keyframes = [...this.keyframes[property], k]
     keyframes.sort(Keyframe.sort)
 
-    if (property === 'x') {
-      const valueToKeyY = this.y
-      const kY = new Keyframe(frame, valueToKeyY)
-      const keyframesY = [...this.keyframes.y, kY]
-      keyframesY.sort(Keyframe.sort)
+    if (!ignorePairings) {
+      let paired
+      if (property === 'x') { paired = 'y' }
+      if (property === 'y') { paired = 'x' }
+
+      const valueToPair = this[paired]
+      const kP = new Keyframe(frame, valueToPair)
+      const keyframesPaired = [...this.keyframes[paired], kP]
+      keyframesPaired.sort(Keyframe.sort)
+
       this.keyframes = {
         ...this.keyframes,
-        x: keyframes,
-        y: keyframesY,
+        [property]: keyframes,
+        [paired]: keyframesPaired,
       }
     } else {
       this.updateKeyframes(property, keyframes)
     }
+
+    return k
   }
 
   removeKey(property, frame) {
