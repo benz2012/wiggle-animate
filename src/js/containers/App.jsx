@@ -20,6 +20,15 @@ class App extends Component {
 
   render() {
     const { store } = this.props
+    const { pathname } = window.location
+
+    const pathArray = pathname.split('/')
+    if (pathArray.length > 1 && pathArray[1] === 'gallery') {
+      return (
+        <div><h1>Welcome to the Gallery</h1></div>
+      )
+    }
+
     return (
       <Grid
         minHeight="100vh"
