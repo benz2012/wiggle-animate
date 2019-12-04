@@ -15,16 +15,18 @@ module.exports = merge(baseConfig, {
   devtool: 'source-map',
   plugins: [
     new CleanWebpackPlugin(),
-    new UglifyJsPlugin({
-      sourceMap: true,
-      warningsFilter: src => true, // eslint-disable-line no-unused-vars
-      uglifyOptions: {
-        keep_fnames: true,
-      },
-    }),
     new webpack.HashedModuleIdsPlugin(),
   ],
   optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        sourceMap: true,
+        warningsFilter: src => true, // eslint-disable-line no-unused-vars
+        uglifyOptions: {
+          keep_fnames: true,
+        },
+      }),
+    ],
     splitChunks: {
       cacheGroups: {
         commons: {
