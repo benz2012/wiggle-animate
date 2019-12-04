@@ -21,7 +21,7 @@ class ViewMode extends Component {
     project.clear()
   }
 
-  setup = () => {
+  onSetup = () => {
     const { canvas } = this.props.store
     canvas.build()
   }
@@ -34,7 +34,7 @@ class ViewMode extends Component {
         alignItems="center"
       >
         <GridItem padding="10px">
-          <Viewer canvas={canvas} animation={animation} setup={this.setup} />
+          <Viewer canvas={canvas} animation={animation} onSetup={this.onSetup} />
         </GridItem>
         <PlayController animation={animation} />
       </Grid>

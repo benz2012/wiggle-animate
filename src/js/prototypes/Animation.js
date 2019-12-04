@@ -4,19 +4,31 @@ class Animation {
   static get FIRST() { return 1 }
   static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }
 
+  @observable frames
+  @observable firstFrame
+  @observable lastFrame
+  @observable fps
+  @observable now
+  @observable playing
+  @observable sync
+  @observable requestId
+  @observable mode
+
   constructor() {
-    this.setLength(100)
+    this.initialize()
   }
 
-  @observable frames = 1
-  @observable firstFrame = Animation.FIRST
-  @observable lastFrame = 1
-  @observable fps = 30
-  @observable now = this.firstFrame
-  @observable playing = false
-  @observable sync = 0
-  @observable requestId = null
-  @observable mode = 'LOOP'
+  initialize() {
+    this.frames = 100
+    this.firstFrame = Animation.FIRST
+    this.lastFrame = 100
+    this.fps = 30
+    this.now = this.firstFrame
+    this.playing = false
+    this.sync = 0
+    this.requestId = null
+    this.mode = 'LOOP'
+  }
 
   toJSON() {
     return ({

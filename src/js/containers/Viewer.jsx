@@ -8,10 +8,9 @@ import Playbar from '../components/Playbar'
 @observer
 class Viewer extends Component {
   canvasHasSize = () => {
-    const { canvas, setup } = this.props
-    canvas.attatchTo('paper-canvas')
-    canvas.init()
-    setup()
+    const { canvas, onSetup } = this.props
+    canvas.attatchAndSetup('paper-canvas')
+    onSetup()
   }
 
   render() {
