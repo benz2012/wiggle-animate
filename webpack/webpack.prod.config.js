@@ -18,6 +18,9 @@ module.exports = merge(baseConfig, {
     new UglifyJsPlugin({
       sourceMap: true,
       warningsFilter: src => true, // eslint-disable-line no-unused-vars
+      uglifyOptions: {
+        keep_fnames: true,
+      },
     }),
     new webpack.HashedModuleIdsPlugin(),
   ],
