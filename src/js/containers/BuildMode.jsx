@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
+import { autorun } from 'mobx'
 
 import Viewer from './Viewer'
 import ToolController from './ToolController'
 import PropertyEditor from './PropertyEditor'
 import ProjectSettings from './ProjectSettings'
+import ClearProject from './ClearProject'
 import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 
@@ -15,10 +17,13 @@ import Keyframe from '../prototypes/Keyframe'
 class BuildMode extends Component {
   state = {
     ready: false,
+    inputItemsExist: false,
   }
 
+  autorunDisposer
+
   componentDidMount() {
-    const { canvas } = this.props.store
+    const { canvas, project } = this.props.store
     const container = document.getElementById('build-container')
     setTimeout(() => {
       const width = Math.round(container.clientWidth) - 20
@@ -32,20 +37,23 @@ class BuildMode extends Component {
         canvas.setTool('SELECT')
       }, 20)
     }
+
+    this.autorunDisposer = autorun(() => {
+      this.setState({ inputItemsExist: Boolean(project.inputItems) })
+    })
   }
 
-  componentWillUnmount() {
-    const { project, canvas } = this.props.store
-    canvas.selectOff()
-    project.clear()
-  }
-
-  setup = () => {
-    this.setState({ ready: true })
+  componentDidUpdate(prevProps, prevState) {
+    const prevInputItemsExist = prevState.inputItemsExist
     const { canvas, project } = this.props.store
-    canvas.build()
-
-    if (project.inputItems && !project.inputBuilt) {
+    const { ready, inputItemsExist } = this.state
+    if (
+      !project.inputBuilt &&
+      (
+        (ready && !prevInputItemsExist && inputItemsExist) ||
+        (inputItemsExist && !prevState.ready && ready)
+      )
+    ) {
       Object.entries(project.inputItems).forEach(([itemKey, itemObj]) => {
         const { class: itemClass, keyframes, ...properties } = itemObj
 
@@ -72,6 +80,19 @@ class BuildMode extends Component {
     }
   }
 
+  componentWillUnmount() {
+    const { project, canvas } = this.props.store
+    canvas.selectOff()
+    project.clear()
+    this.autorunDisposer()
+  }
+
+  setup = () => {
+    const { canvas } = this.props.store
+    canvas.build()
+    this.setState({ ready: true })
+  }
+
   add = (item) => {
     const { canvas } = this.props.store
     canvas.add(item)
@@ -83,6 +104,7 @@ class BuildMode extends Component {
     return (
       <React.Fragment>
         <ProjectSettings store={this.props.store} />
+        <ClearProject store={this.props.store} />
         <Grid
           gridTemplateRows="auto 60px"
           gridTemplateColumns="auto 340px"

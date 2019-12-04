@@ -2,21 +2,42 @@ import { observable, action } from 'mobx'
 import paper from 'paper'
 
 class Canvas {
-  constructor(rootStore) {
-    this.rootStore = rootStore
-  }
-
   @observable width
   @observable height
-  @observable _color = '#000000'
+  @observable _color
   @observable background
-  @observable animatables = {}
+  @observable animatables
   @observable tool
   @observable selected
 
+  constructor(rootStore) {
+    this.rootStore = rootStore
+    this.initialize()
+  }
+
+  initialize() {
+    let prevWidth
+    let prevHeight
+    if (this.width !== undefined) {
+      prevWidth = this.width
+      prevHeight = this.height
+    }
+
+    this.width = undefined
+    this.height = undefined
+    this._color = '#000000'
+    this.animatables = {}
+    this.tool = undefined
+    this.selected = undefined
+
+    if (prevWidth !== undefined) {
+      this.setSize(prevWidth, prevHeight)
+    }
+  }
+
   toJSON() {
     return ({
-      color: this._color,
+      color: this.color,
       animatables: Object.entries(this.animatables).reduce((output, [key, animatable]) => {
         output[key] = animatable.toJSON() // eslint-disable-line
         return output
@@ -89,6 +110,9 @@ class Canvas {
 
     if (entering('SETTINGS')) { this.rootStore.mode.settings = true }
     if (exiting('SETTINGS')) { this.rootStore.mode.settings = false }
+
+    if (entering('CLEAR')) { this.rootStore.mode.clear = true }
+    if (exiting('CLEAR')) { this.rootStore.mode.clear = false }
 
     // Finally, set the tool in-memory
     this.tool = nextTool

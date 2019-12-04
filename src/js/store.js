@@ -1,4 +1,4 @@
-import { observable, reaction } from 'mobx'
+import { observable, reaction, autorun } from 'mobx'
 
 import Project from './prototypes/Project'
 import Canvas from './prototypes/Canvas'
@@ -7,6 +7,7 @@ import ModeStore from './prototypes/ModeStore'
 import ToolsStore from './prototypes/ToolsStore'
 
 import observeAnimatableTree from './util/observeAnimatableTree'
+import { storageEnabled } from './util/storage'
 
 class RootStore {
   @observable project
@@ -22,6 +23,21 @@ class RootStore {
     this.mode = new ModeStore()
     this.tools = new ToolsStore()
 
+    // Auto Save & Auto Load
+    if (storageEnabled()) {
+      const projectObj = localStorage.getItem('micrograph.project')
+      if (projectObj) {
+        setTimeout(() => {
+          this.project.load(projectObj)
+        }, 100)
+      }
+
+      autorun(() => {
+        const projectAsJSON = this.project.save()
+        localStorage.setItem('micrograph.project', projectAsJSON)
+      }, { delay: 300 })
+    }
+
     // Reacts to all changes made to animatable item properties and redraws the canvas
     reaction(
       () => ([
@@ -31,6 +47,14 @@ class RootStore {
       ]),
       () => this.canvas.draw()
     )
+  }
+
+  reset = () => {
+    this.project.reset()
+    this.canvas.reset()
+    this.animation.reset()
+    this.mode.reset()
+    this.tools.reset()
   }
 }
 
