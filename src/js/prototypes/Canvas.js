@@ -54,12 +54,9 @@ class Canvas {
     setTimeout(setSizeAction, 1)
   }
 
-  attatchTo = (id) => {
+  attatchAndSetup = (id) => {
     const element = document.getElementById(id)
     paper.setup(element)
-  }
-
-  init() {
     paper.view.autoUpdate = false
     this.background = new paper.Path.Rectangle({
       topLeft: [0, 0],

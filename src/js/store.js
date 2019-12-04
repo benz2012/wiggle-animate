@@ -50,11 +50,11 @@ class RootStore {
   }
 
   reset = () => {
-    this.project.reset()
-    this.canvas.reset()
-    this.animation.reset()
-    this.mode.reset()
-    this.tools.reset()
+    this.project.initialize()
+    this.canvas.initialize()
+    this.animation.initialize()
+    this.mode.initialize()
+    this.tools.initialize()
   }
 }
 

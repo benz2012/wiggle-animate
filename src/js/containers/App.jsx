@@ -12,8 +12,7 @@ import Grid from '../components/Grid'
 @observer
 class App extends Component {
   componentDidMount() {
-    const { store } = this.props
-    store.mode.set('BUILD')
+    // const { store } = this.props
     // store.canvas.setTool('SETTINGS')
   }
 

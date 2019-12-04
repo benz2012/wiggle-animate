@@ -38,7 +38,14 @@ class ToolController extends Component {
           onClick={this.choose}
           {...(tool === 'SETTINGS' ? { primary: 'true' } : {})}
         >
-          <div>*</div>
+          <div>&#9776;</div>
+        </button>
+        <button
+          type="button"
+          id="CLEAR"
+          onClick={this.choose}
+        >
+          <div>&#10007;</div>
         </button>
         <button
           type="button"

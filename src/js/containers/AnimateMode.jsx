@@ -68,7 +68,7 @@ class AnimateMode extends Component {
     this.autorunDisposer()
   }
 
-  setup = () => {
+  onSetup = () => {
     const { canvas } = this.props.store
     canvas.build()
     setTimeout(() => {
@@ -125,7 +125,7 @@ class AnimateMode extends Component {
         gridTemplateColumns="auto 400px"
       >
         <GridItem id="view-container" padding="10px" gridArea="1 / 1 / 1 / 2">
-          <Viewer canvas={canvas} animation={animation} setup={this.setup} />
+          <Viewer canvas={canvas} animation={animation} onSetup={this.onSetup} />
         </GridItem>
         <GridItem id="handle-container" gridArea="1 / 2 / 1 / 3" backgroundColor="rgb(210, 210, 210)">
           <HandleEditor
