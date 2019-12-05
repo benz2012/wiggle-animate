@@ -14,8 +14,6 @@ import items from '../prototypes/items'
 import { simpleHash } from '../util/string'
 
 import input1 from '../../json/gallery_input_1.json'
-import input2 from '../../json/gallery_input_2.json'
-import input3 from '../../json/gallery_input_3.json'
 
 const playable = () => {
   const obj = {}
@@ -34,7 +32,7 @@ class Gallery extends Component {
 
   componentDidMount() {
     // TODO: fetch state from database
-    const response = [input1, input2, input3].map(obj => JSON.stringify(obj))
+    const response = [input1].map(obj => JSON.stringify(obj))
     const initialClips = response.map(json => ({
       key: `${simpleHash(json)}`,
       json,
@@ -108,6 +106,10 @@ class Gallery extends Component {
         <div style={{ width: '100%', padding: '10px' }}>
           <h1 style={{ marginBottom: '0px' }}>Welcome to the Gallery</h1>
           <small>Last {clips.length} Published Animations</small>
+        </div>
+
+        <div style={{ width: '100%', padding: '10px' }}>
+          <h3><em>This page doesn't work yet, I still need to build it. Please don't try to <strong>publish</strong> anything yet</em></h3>
         </div>
 
         <div id="playback-container" style={{ width: '100%', padding: '0px 10px' }}>

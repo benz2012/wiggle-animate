@@ -10,7 +10,7 @@ class PropertyEditor extends Component {
   propertySetter = property => (value) => {
     const { item, now } = this.props
 
-    if (item.keyframes[property].length) {
+    if (item.keyframes[property] && item.keyframes[property].length) {
       const existingKeyframe = item.keyframes[property].find(keyframe => keyframe.frame === now)
       if (existingKeyframe) {
         existingKeyframe.value = value

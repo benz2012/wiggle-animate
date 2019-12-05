@@ -127,7 +127,7 @@ class AnimatableItem {
     const keyframes = [...this.keyframes[property], k]
     keyframes.sort(Keyframe.sort)
 
-    if (!ignorePairings) {
+    if (!ignorePairings && ['x', 'y'].includes(property)) {
       let paired
       if (property === 'x') { paired = 'y' }
       if (property === 'y') { paired = 'x' }
