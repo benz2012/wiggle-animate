@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { reaction } from 'mobx'
 import { observer } from 'mobx-react'
+import paper from 'paper'
 
 import CanvasEl from '../components/Canvas'
 
@@ -18,6 +19,7 @@ import input3 from '../../json/gallery_input_3.json'
 
 const playable = () => {
   const obj = {}
+  obj.paper = new paper.PaperScope()
   obj.project = new Project(obj)
   obj.canvas = new Canvas(obj)
   obj.animation = new Animation()
@@ -32,7 +34,7 @@ class Gallery extends Component {
 
   componentDidMount() {
     // TODO: fetch state from database
-    const response = [input1, input2].map(obj => JSON.stringify(obj))
+    const response = [input1, input2, input3].map(obj => JSON.stringify(obj))
     const initialClips = response.map(json => ({
       key: `${simpleHash(json)}`,
       json,
@@ -52,22 +54,14 @@ class Gallery extends Component {
         })
       })
 
-      // this.state.clips.forEach(({ clip }) => {
-      //   reaction(
-      //     () => ([
-      //       clip.animation.now,
-      //     ]),
-      //     () => clip.canvas.draw()
-      //   )
-      // })
-
-      console.log(this.state.clips[0].clip)
-      reaction(
-        () => ([
-          this.state.clips[0].clip.animation.now,
-        ]),
-        () => this.state.clips[0].clip.canvas.draw()
-      )
+      this.state.clips.forEach(({ clip }) => {
+        reaction(
+          () => ([
+            clip.animation.now,
+          ]),
+          () => clip.canvas.draw()
+        )
+      })
     }
   }
 
