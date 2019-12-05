@@ -1,5 +1,4 @@
 import { observable, action } from 'mobx'
-import paper from 'paper'
 
 import Keyframe from './Keyframe'
 
@@ -23,8 +22,9 @@ class AnimatableItem {
     return ['x', 'y', 'scale', 'rotation', 'fillColor', 'keyframes']
   }
 
-  constructor({ key }) {
+  constructor(key) {
     this.key = key
+    this.paper = undefined
   }
 
   @observable canvas
@@ -58,7 +58,7 @@ class AnimatableItem {
     })
   }
 
-  get item() { return paper.project.activeLayer.children[this.key] }
+  get item() { return this.paper.project.activeLayer.children[this.key] }
   get x() { return this._x }
   get y() { return this._y }
   get position() { return { x: this.x, y: this.y } }
@@ -106,6 +106,7 @@ class AnimatableItem {
 
   @action setCanvas(canvas) {
     this.canvas = canvas
+    this.paper = canvas.paper
   }
 
   @action setUntrackedValues() {

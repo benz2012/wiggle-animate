@@ -1,8 +1,6 @@
 import { observable, action } from 'mobx'
-import paper from 'paper'
 
 import Animation from './Animation'
-
 import { downloadJSON } from '../util/download'
 
 class Project {
@@ -12,13 +10,14 @@ class Project {
 
   constructor(rootStore) {
     this.rootStore = rootStore
+    this.paper = rootStore.paper
     this.initialize()
   }
 
   initialize() {
-    if (paper.project) {
-      paper.project.clear()
-      paper.project.remove()
+    if (this.paper.project) {
+      this.paper.project.clear()
+      this.paper.project.remove()
     }
     this.name = 'My Animation'
     this.inputItems = undefined
@@ -36,8 +35,8 @@ class Project {
   }
 
   clear = () => {
-    paper.project.clear()
-    paper.project.remove()
+    this.paper.project.clear()
+    this.paper.project.remove()
 
     const { canvas, animation } = this.rootStore
     canvas.setSize(undefined, undefined)

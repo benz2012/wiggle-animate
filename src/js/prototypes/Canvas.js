@@ -1,5 +1,4 @@
 import { observable, action } from 'mobx'
-import paper from 'paper'
 
 class Canvas {
   @observable width
@@ -12,6 +11,7 @@ class Canvas {
 
   constructor(rootStore) {
     this.rootStore = rootStore
+    this.paper = rootStore.paper
     this.initialize()
   }
 
@@ -56,11 +56,11 @@ class Canvas {
 
   attatchAndSetup = (id) => {
     const element = document.getElementById(id)
-    paper.setup(element)
-    paper.view.autoUpdate = false
-    this.background = new paper.Path.Rectangle({
+    this.paper.setup(element)
+    this.paper.view.autoUpdate = false
+    this.background = new this.paper.Path.Rectangle({
       topLeft: [0, 0],
-      bottomRight: [paper.view.element.width, paper.view.element.height],
+      bottomRight: [this.paper.view.element.width, this.paper.view.element.height],
       fillColor: this.color,
     })
     this.draw(this.rootStore.animation.firstFrame)
@@ -119,7 +119,7 @@ class Canvas {
     this.deselect()
     item.selected = true // eslint-disable-line no-param-reassign
     this.selected = this.animatables[item.name]
-    paper.view.update()
+    this.paper.view.update()
   }
 
   @action deselect = () => {
@@ -127,7 +127,7 @@ class Canvas {
       this.selected.item.selected = false
       this.selected = undefined
     }
-    paper.view.update()
+    this.paper.view.update()
   }
 
   addListenersAndSelect = (animatable) => {
@@ -157,21 +157,21 @@ class Canvas {
   draw = (frame) => {
     const frameToDraw = frame || this.rootStore.animation.now
     this.forEachAnimatable((animatable) => { animatable.draw(frameToDraw) })
-    if (paper.view) paper.view.update()
+    if (this.paper.view) this.paper.view.update()
   }
 
   selectOn = () => {
     this.forEachAnimatable((animatable) => {
       animatable.item.on('mousedown', this.handleItemMouseDown)
     })
-    paper.view.on('mousedown', this.handleViewMouseDown)
+    this.paper.view.on('mousedown', this.handleViewMouseDown)
   }
 
   selectOff = () => {
     this.forEachAnimatable((animatable) => {
       animatable.item.off('mousedown', this.handleItemMouseDown)
     })
-    paper.view.off('mousedown', this.handleViewMouseDown)
+    this.paper.view.off('mousedown', this.handleViewMouseDown)
     this.deselect()
   }
 }

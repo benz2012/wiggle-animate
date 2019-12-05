@@ -1,4 +1,5 @@
 import { observable, reaction, autorun } from 'mobx'
+import paper from 'paper'
 
 import Project from './prototypes/Project'
 import Canvas from './prototypes/Canvas'
@@ -17,6 +18,8 @@ class RootStore {
   @observable tools
 
   constructor() {
+    this.paper = new paper.PaperScope()
+
     this.project = new Project(this)
     this.canvas = new Canvas(this)
     this.animation = new Animation()

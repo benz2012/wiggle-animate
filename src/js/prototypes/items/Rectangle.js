@@ -1,5 +1,4 @@
 import { observable } from 'mobx'
-import paper from 'paper'
 
 import AnimatableItem from '../AnimatableItem'
 
@@ -51,7 +50,7 @@ class Rectangle extends AnimatableItem {
     const absWidth = this.absolute(this.width)
     const absHeight = this.absolute(this.height)
 
-    new paper.Path.Rectangle({
+    new this.paper.Path.Rectangle({
       ...itemProps,
       point: [absX - (absWidth / 2), absY - (absHeight / 2)],
       size: [absWidth, absHeight],

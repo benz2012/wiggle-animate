@@ -1,5 +1,4 @@
 import { observable } from 'mobx'
-import paper from 'paper'
 
 import AnimatableItem from '../AnimatableItem'
 
@@ -25,7 +24,7 @@ class Circle extends AnimatableItem {
 
   onCreate(itemProps) {
     const { x, y } = this.position
-    new paper.Path.Circle({
+    new this.paper.Path.Circle({
       ...itemProps,
       center: [this.absolute(x), this.absolute(y, 'height')],
       radius: this.absolute(this.radius) / 2,

@@ -57,7 +57,7 @@ class BuildMode extends Component {
       Object.entries(project.inputItems).forEach(([itemKey, itemObj]) => {
         const { class: itemClass, keyframes, ...properties } = itemObj
 
-        const animatable = new items[itemClass]({ key: itemKey })
+        const animatable = new items[itemClass](itemKey)
         canvas.add(animatable)
 
         const inputKeyframes = Object.entries(keyframes)

@@ -13,17 +13,13 @@ class ToolController extends Component {
 
   addCircle = () => {
     const { existing } = this.props
-    const circle = new Circle({
-      key: `circle-${Object.keys(existing).length}`,
-    })
+    const circle = new Circle(`circle-${Object.keys(existing).length}`)
     this.props.add(circle)
   }
 
   addRectangle = () => {
     const { existing } = this.props
-    const rect = new Rectangle({
-      key: `rect-${Object.keys(existing).length}`,
-    })
+    const rect = new Rectangle(`rect-${Object.keys(existing).length}`)
     this.props.add(rect)
   }
 
