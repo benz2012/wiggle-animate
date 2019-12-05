@@ -27,7 +27,13 @@ class RootStore {
     this.tools = new ToolsStore()
 
     // Auto Save & Auto Load
-    if (storageEnabled()) {
+    const { pathname } = window.location
+    const pathArray = pathname.split('/')
+
+    if (
+      storageEnabled() &&
+      (pathArray.length > 1 && pathArray[1] !== 'gallery')
+    ) {
       const projectObj = localStorage.getItem('micrograph.project')
       if (projectObj) {
         setTimeout(() => {

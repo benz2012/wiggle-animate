@@ -44,11 +44,7 @@ class Project {
     animation.setOut(animation.frames)
   }
 
-  load = (inputJSON, fileName) => {
-    // this.inputItems = undefined
-    // this.inputBuilt = false
-    // BUG: this needs to clear the whole project, similar to what the clear button does
-
+  load = (inputJSON, fileName, callback) => {
     const { canvas, animation } = this.rootStore
     const input = JSON.parse(inputJSON)
 
@@ -67,14 +63,14 @@ class Project {
       }
     })
 
-    this.rootStore.mode.set('BUILD')
+    if (callback) callback()
   }
 
-  loadFromFile = (event) => {
+  loadFromFile = (event, callback) => {
     const { files } = event.target
     const targetFile = files[0]
     const reader = new FileReader()
-    reader.onload = () => this.load(reader.result, targetFile.name)
+    reader.onload = () => this.load(reader.result, targetFile.name, callback)
 
     this.rootStore.reset()
     reader.readAsText(targetFile)

@@ -14,6 +14,11 @@ import Grid from '../components/Grid'
 import GridItem from '../components/GridItem'
 
 class ExportMode extends Component {
+  loadThenBuild = (event) => {
+    const { project, mode } = this.props.store
+    return project.loadFromFile(event, () => mode.set('BUILD'))
+  }
+
   saveThenDownload = () => {
     const { project } = this.props.store
     project.download(project.save())
@@ -39,7 +44,7 @@ class ExportMode extends Component {
         </GridItem>
         <GridItem alignSelf="center">
           <label htmlFor="file-button" style={{ display: 'block', width: '300px' }}>&#x21aa; Load Project from File</label>
-          <input type="file" id="file-button" onChange={project.loadFromFile} style={{ width: '300px' }} />
+          <input type="file" id="file-button" onChange={this.loadThenBuild} style={{ width: '300px' }} />
         </GridItem>
         <GridItem>
           <button type="button" onClick={project.publish}>&#x2912; Publish Project to Gallery</button>

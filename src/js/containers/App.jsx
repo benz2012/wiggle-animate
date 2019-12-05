@@ -7,6 +7,7 @@ import BuildMode from './BuildMode'
 import AnimateMode from './AnimateMode'
 import ViewMode from './ViewMode'
 import ExportMode from './ExportMode'
+import Gallery from './Gallery'
 import Grid from '../components/Grid'
 
 @observer
@@ -21,11 +22,7 @@ class App extends Component {
     const { pathname } = window.location
 
     const pathArray = pathname.split('/')
-    if (pathArray.length > 1 && pathArray[1] === 'gallery') {
-      return (
-        <div><h1>Welcome to the Gallery</h1></div>
-      )
-    }
+    if (pathArray.length > 1 && pathArray[1] === 'gallery') return <Gallery />
 
     return (
       <Grid
