@@ -92,7 +92,8 @@ class Project {
   }
 
   publish = () => {
-    console.log('publishing project')
+    const projectAsJSON = this.save()
+    this.rootStore.gallery.clipsRef.push().set(projectAsJSON)
   }
 
   // render() {

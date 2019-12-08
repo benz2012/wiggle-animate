@@ -6,6 +6,7 @@ import Canvas from './prototypes/Canvas'
 import Animation from './prototypes/Animation'
 import ModeStore from './prototypes/ModeStore'
 import ToolsStore from './prototypes/ToolsStore'
+import GalleryStore from './prototypes/GalleryStore'
 
 import observeAnimatableTree from './util/observeAnimatableTree'
 import { storageEnabled } from './util/storage'
@@ -16,6 +17,7 @@ class RootStore {
   @observable animation
   @observable mode
   @observable tools
+  @observable gallery
 
   constructor() {
     this.paper = new paper.PaperScope()
@@ -25,6 +27,7 @@ class RootStore {
     this.animation = new Animation()
     this.mode = new ModeStore()
     this.tools = new ToolsStore()
+    this.gallery = new GalleryStore()
 
     // Auto Save & Auto Load
     const { pathname } = window.location

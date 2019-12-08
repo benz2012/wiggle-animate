@@ -22,7 +22,9 @@ class App extends Component {
     const { pathname } = window.location
 
     const pathArray = pathname.split('/')
-    if (pathArray.length > 1 && pathArray[1] === 'gallery') return <Gallery />
+    if (pathArray.length > 1 && pathArray[1] === 'gallery') {
+      return <Gallery clipsRef={store.gallery.clipsRef} />
+    }
 
     return (
       <Grid
