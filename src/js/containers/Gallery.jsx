@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { reaction } from 'mobx'
 import { observer } from 'mobx-react'
 import paper from 'paper'
+import * as firebase from 'firebase/app'
+import 'firebase/database'
 
 import CanvasEl from '../components/Canvas'
 
@@ -12,8 +14,6 @@ import Keyframe from '../prototypes/Keyframe'
 import items from '../prototypes/items'
 
 import { simpleHash } from '../util/string'
-
-import input1 from '../../json/gallery_input_1.json'
 
 const playable = () => {
   const obj = {}
@@ -32,13 +32,34 @@ class Gallery extends Component {
 
   componentDidMount() {
     // TODO: fetch state from database
-    const response = [input1].map(obj => JSON.stringify(obj))
-    const initialClips = response.map(json => ({
-      key: `${simpleHash(json)}`,
-      json,
+    firebase.initializeApp({
+      apiKey: 'AIzaSyCdglP4EAub1kYXJrXag3vaNIxxQgEZTQk',
+      authDomain: 'micro-graph.firebaseapp.com',
+      databaseURL: 'https://micro-graph.firebaseio.com',
+      projectId: 'micro-graph',
+      storageBucket: 'micro-graph.appspot.com',
+      messagingSenderId: '662102370030',
+      appId: '1:662102370030:web:46cfe6a252ed6cc47b75ff',
+    })
+
+    const clipsRef = firebase.database().ref('clips')
+
+    const mapIncomingToState = incoming => ({
+      key: `${simpleHash(incoming)}`,
+      json: incoming,
       clip: playable(),
-    }))
-    this.setState({ clips: initialClips })
+    })
+
+    clipsRef.on('child_added', (data) => {
+      const newClip = mapIncomingToState(data.val())
+      this.setState(prevState => ({
+        ...prevState,
+        clips: [
+          ...prevState.clips,
+          newClip,
+        ],
+      }))
+    })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -101,15 +122,19 @@ class Gallery extends Component {
   render() {
     const { clips } = this.state
 
+    if (clips.length === 0) {
+      return (
+        <div style={{ width: '100%', padding: '10px' }}>
+          <h1 style={{ marginBottom: '0px' }}>Welcome to the Gallery</h1>
+        </div>
+      )
+    }
+
     return (
       <div>
         <div style={{ width: '100%', padding: '10px' }}>
           <h1 style={{ marginBottom: '0px' }}>Welcome to the Gallery</h1>
           <small>Last {clips.length} Published Animations</small>
-        </div>
-
-        <div style={{ width: '100%', padding: '10px' }}>
-          <h3><em>This page doesn't work yet, I still need to build it. Please don't try to <strong>publish</strong> anything yet</em></h3>
         </div>
 
         <div id="playback-container" style={{ width: '100%', padding: '0px 10px' }}>
