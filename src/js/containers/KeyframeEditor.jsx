@@ -143,7 +143,6 @@ class KeyframeEditor extends React.Component {
       const newKeyClick = (event) => {
         const frame = Math.round((event.point.x - timelineStart) / timelineStep)
         item.addKey(prop, frame)
-        // console.log(frame)
         this.rebuild()
       }
 

@@ -134,7 +134,6 @@ const bezierCurve = ({ x2, x3, y2, y3 }) => {
       r.real.toFixed(10) <= 1 &&
       !Object.is(r.real, -0)
     ))
-    // console.log(JSON.stringify(roots))
     return roots[0].real
   }
 
