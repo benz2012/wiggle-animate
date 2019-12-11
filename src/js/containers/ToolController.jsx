@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 
-import Circle from '../prototypes/items/Circle'
-import Rectangle from '../prototypes/items/Rectangle'
+import items from '../prototypes/items'
 
 @observer
 class ToolController extends Component {
@@ -13,14 +12,20 @@ class ToolController extends Component {
 
   addCircle = () => {
     const { existing } = this.props
-    const circle = new Circle(`circle-${Object.keys(existing).length}`)
+    const circle = new items.Circle(`circle-${Object.keys(existing).length}`)
     this.props.add(circle)
   }
 
   addRectangle = () => {
     const { existing } = this.props
-    const rect = new Rectangle(`rect-${Object.keys(existing).length}`)
+    const rect = new items.Rectangle(`rect-${Object.keys(existing).length}`)
     this.props.add(rect)
+  }
+
+  addText = () => {
+    const { existing } = this.props
+    const text = new items.Text(`text-${Object.keys(existing).length}`)
+    this.props.add(text)
   }
 
   render() {
@@ -62,6 +67,7 @@ class ToolController extends Component {
 
         <button type="button" onClick={this.addCircle}>+ Circle</button>
         <button type="button" onClick={this.addRectangle}>+ Rectangle</button>
+        <button type="button" onClick={this.addText}>+ Text</button>
       </div>
     )
   }

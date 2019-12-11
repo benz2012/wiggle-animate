@@ -167,7 +167,11 @@ class AnimatableItem {
   }
 
   absolute = (value, dimension = 'width') => (
-    value / 100 * this.canvas[dimension]
+    (value / 100) * this.canvas[dimension]
+  )
+
+  relative = (value, dimension = 'width') => (
+    (value * 100) / this.canvas[dimension]
   )
 
   fraction = value => (

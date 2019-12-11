@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 
 import IntegerInput from '../components/IntegerInput'
+import TextInput from '../components/TextInput'
 
 @observer
 class PropertyEditor extends Component {
@@ -44,6 +45,21 @@ class PropertyEditor extends Component {
           <div style={{ display: 'flex' }}>
             <IntegerInput value={item.width} setValue={this.propertySetter('width')} />
             <IntegerInput value={item.height} setValue={this.propertySetter('height')} />
+          </div>
+        </React.Fragment>
+      )
+    }
+
+    if (itemClass === 'Text') {
+      return (
+        <React.Fragment>
+          <label>Content</label>
+          <div style={{ display: 'flex' }}>
+            <TextInput value={item.content} setValue={this.propertySetter('content')} />
+          </div>
+          <label>Font Size</label>
+          <div style={{ display: 'flex' }}>
+            <IntegerInput value={item.fontSize} setValue={this.propertySetter('fontSize')} />
           </div>
         </React.Fragment>
       )
