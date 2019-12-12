@@ -134,7 +134,7 @@ class Canvas {
 
   addListenersAndSelect = (animatable) => {
     animatable.item.on('mousedown', this.handleItemMouseDown)
-    if (this.rootStore.mode.current === 'BUILD') {
+    if (this.rootStore.mode && this.rootStore.mode.current === 'BUILD') {
       animatable.item.on('mousedrag', this.handleItemMouseDrag)
       animatable.item.on('mouseup', this.handleItemMouseUp)
     }
@@ -196,7 +196,7 @@ class Canvas {
   }
 
   selectOn = () => {
-    const isBuildMode = this.rootStore.mode.current === 'BUILD'
+    const isBuildMode = this.rootStore.mode && this.rootStore.mode.current === 'BUILD'
     this.forEachAnimatable((animatable) => {
       animatable.item.on('mousedown', this.handleItemMouseDown)
       if (isBuildMode) {
@@ -208,7 +208,7 @@ class Canvas {
   }
 
   selectOff = () => {
-    const isBuildMode = this.rootStore.mode.current === 'BUILD'
+    const isBuildMode = this.rootStore.mode && this.rootStore.mode.current === 'BUILD'
     this.forEachAnimatable((animatable) => {
       animatable.item.off('mousedown', this.handleItemMouseDown)
       if (isBuildMode) {
