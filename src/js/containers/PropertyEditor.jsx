@@ -8,19 +8,9 @@ import TextInput from '../components/TextInput'
 
 @observer
 class PropertyEditor extends Component {
-  propertySetter = property => (value) => {
+  propertySetter = (property) => {
     const { item, now } = this.props
-
-    if (item.keyframes[property] && item.keyframes[property].length) {
-      const existingKeyframe = item.keyframes[property].find(keyframe => keyframe.frame === now)
-      if (existingKeyframe) {
-        existingKeyframe.value = value
-      } else {
-        item.addKey(`${property}`, now, value)
-      }
-    } else {
-      item[property] = value
-    }
+    return value => item.setPropertyAtTime(property, value, now)
   }
 
   classControls() {

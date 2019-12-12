@@ -114,6 +114,19 @@ class AnimatableItem {
     this.item.rotate(this.rotation)
   }
 
+  @action setPropertyAtTime = (property, value, when) => {
+    if (this.keyframes[property] && this.keyframes[property].length) {
+      const existingKeyframe = this.keyframes[property].find(keyframe => keyframe.frame === when)
+      if (existingKeyframe) {
+        existingKeyframe.value = value
+      } else {
+        this.addKey(`${property}`, when, value)
+      }
+    } else {
+      this[property] = value
+    }
+  }
+
   @action updateKeyframes(property, keyframes) {
     this.keyframes = {
       ...this.keyframes,

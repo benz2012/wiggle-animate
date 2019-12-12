@@ -88,6 +88,8 @@ class Canvas {
 
   @action remove = (animatable) => {
     animatable.item.off('mousedown', this.handleItemMouseDown)
+    animatable.item.off('mousedrag', this.handleItemMouseDrag)
+    animatable.item.off('mouseup', this.handleItemMouseUp)
     animatable.item.remove()
 
     const clone = { ...this.animatables }
@@ -132,12 +134,40 @@ class Canvas {
 
   addListenersAndSelect = (animatable) => {
     animatable.item.on('mousedown', this.handleItemMouseDown)
+    animatable.item.on('mousedrag', this.handleItemMouseDrag)
+    animatable.item.on('mouseup', this.handleItemMouseUp)
     this.select(animatable.item)
   }
 
   handleItemMouseDown = (event) => {
     event.stopPropagation()
     this.select(event.currentTarget)
+  }
+
+  handleItemMouseDrag = (event) => {
+    event.stopPropagation()
+    const item = event.currentTarget
+    const animatable = this.animatables[item.name]
+    const { now } = this.rootStore.animation
+    const nextPosition = {
+      x: animatable.relative(item.position.x + event.delta.x),
+      y: animatable.relative(item.position.y + event.delta.y, 'height'),
+    }
+    animatable.setPropertyAtTime('x', nextPosition.x, now)
+    animatable.setPropertyAtTime('y', nextPosition.y, now)
+  }
+
+  handleItemMouseUp = (event) => {
+    event.stopPropagation()
+    const item = event.currentTarget
+    const animatable = this.animatables[item.name]
+    const { now } = this.rootStore.animation
+    const nextPosition = {
+      x: Math.round(animatable.x),
+      y: Math.round(animatable.y),
+    }
+    animatable.setPropertyAtTime('x', nextPosition.x, now)
+    animatable.setPropertyAtTime('y', nextPosition.y, now)
   }
 
   handleViewMouseDown = (event) => {
@@ -163,6 +193,8 @@ class Canvas {
   selectOn = () => {
     this.forEachAnimatable((animatable) => {
       animatable.item.on('mousedown', this.handleItemMouseDown)
+      animatable.item.on('mousedrag', this.handleItemMouseDrag)
+      animatable.item.on('mouseup', this.handleItemMouseUp)
     })
     this.paper.view.on('mousedown', this.handleViewMouseDown)
   }
@@ -170,6 +202,8 @@ class Canvas {
   selectOff = () => {
     this.forEachAnimatable((animatable) => {
       animatable.item.off('mousedown', this.handleItemMouseDown)
+      animatable.item.off('mousedrag', this.handleItemMouseDrag)
+      animatable.item.off('mouseup', this.handleItemMouseUp)
     })
     this.paper.view.off('mousedown', this.handleViewMouseDown)
     this.deselect()
