@@ -134,8 +134,10 @@ class Canvas {
 
   addListenersAndSelect = (animatable) => {
     animatable.item.on('mousedown', this.handleItemMouseDown)
-    animatable.item.on('mousedrag', this.handleItemMouseDrag)
-    animatable.item.on('mouseup', this.handleItemMouseUp)
+    if (this.rootStore.mode.current === 'BUILD') {
+      animatable.item.on('mousedrag', this.handleItemMouseDrag)
+      animatable.item.on('mouseup', this.handleItemMouseUp)
+    }
     this.select(animatable.item)
   }
 
@@ -166,8 +168,11 @@ class Canvas {
       x: Math.round(animatable.x),
       y: Math.round(animatable.y),
     }
-    animatable.setPropertyAtTime('x', nextPosition.x, now)
-    animatable.setPropertyAtTime('y', nextPosition.y, now)
+    if (nextPosition.x !== animatable.x || nextPosition.y !== animatable.y) {
+      // prevents adding new keyframes when simply clicking an item
+      animatable.setPropertyAtTime('x', nextPosition.x, now)
+      animatable.setPropertyAtTime('y', nextPosition.y, now)
+    }
   }
 
   handleViewMouseDown = (event) => {
@@ -191,19 +196,25 @@ class Canvas {
   }
 
   selectOn = () => {
+    const isBuildMode = this.rootStore.mode.current === 'BUILD'
     this.forEachAnimatable((animatable) => {
       animatable.item.on('mousedown', this.handleItemMouseDown)
-      animatable.item.on('mousedrag', this.handleItemMouseDrag)
-      animatable.item.on('mouseup', this.handleItemMouseUp)
+      if (isBuildMode) {
+        animatable.item.on('mousedrag', this.handleItemMouseDrag)
+        animatable.item.on('mouseup', this.handleItemMouseUp)
+      }
     })
     this.paper.view.on('mousedown', this.handleViewMouseDown)
   }
 
   selectOff = () => {
+    const isBuildMode = this.rootStore.mode.current === 'BUILD'
     this.forEachAnimatable((animatable) => {
       animatable.item.off('mousedown', this.handleItemMouseDown)
-      animatable.item.off('mousedrag', this.handleItemMouseDrag)
-      animatable.item.off('mouseup', this.handleItemMouseUp)
+      if (isBuildMode) {
+        animatable.item.off('mousedrag', this.handleItemMouseDrag)
+        animatable.item.off('mouseup', this.handleItemMouseUp)
+      }
     })
     this.paper.view.off('mousedown', this.handleViewMouseDown)
     this.deselect()
