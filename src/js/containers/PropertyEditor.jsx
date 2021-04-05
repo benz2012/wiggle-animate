@@ -5,6 +5,7 @@ import { observer } from 'mobx-react'
 
 import IntegerInput from '../components/IntegerInput'
 import TextInput from '../components/TextInput'
+import ColorPicker from '../components/ColorPicker'
 
 @observer
 class PropertyEditor extends Component {
@@ -35,6 +36,10 @@ class PropertyEditor extends Component {
           <div style={{ display: 'flex' }}>
             <IntegerInput value={item.width} setValue={this.propertySetter('width')} />
             <IntegerInput value={item.height} setValue={this.propertySetter('height')} />
+          </div>
+          <label>Corner Radius</label>
+          <div style={{ display: 'flex' }}>
+            <IntegerInput value={item.radius} setValue={this.propertySetter('radius')} />
           </div>
         </React.Fragment>
       )
@@ -84,6 +89,11 @@ class PropertyEditor extends Component {
         <label>Rotation</label>
         <div style={{ display: 'flex' }}>
           <IntegerInput value={item.rotation} setValue={this.propertySetter('rotation')} />
+        </div>
+
+        <label>Fill Color</label>
+        <div style={{ display: 'flex' }}>
+          <ColorPicker value={item.fillColor} setValue={this.propertySetter('fillColor')} />
         </div>
 
         {this.classControls()}

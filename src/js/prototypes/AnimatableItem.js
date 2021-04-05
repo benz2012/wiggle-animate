@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx'
 
 import Keyframe from './Keyframe'
+import { paperColorToRGBStr } from '../util/color'
 
 class AnimatableItem {
   // Canvas Size Relative Values (0-100)
@@ -64,7 +65,7 @@ class AnimatableItem {
   get position() { return { x: this.x, y: this.y } }
   get scale() { return this._scale }
   get rotation() { return this._rotation }
-  get fillColor() { return this._fillColor }
+  get fillColor() { return paperColorToRGBStr(this._fillColor) }
 
   set x(value) {
     this.item.position.x = this.absolute(value)
