@@ -29,7 +29,8 @@ class App extends Component {
     return (
       <Grid
         minHeight="100vh"
-        gridTemplateRows="60px 1fr"
+        // maxHeight="100vh"
+        gridTemplateRows="60px minmax(0, 1fr)"
       >
         <ModeController mode={store.mode} />
         {store.mode.current === 'BUILD' &&

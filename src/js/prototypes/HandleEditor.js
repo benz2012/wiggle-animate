@@ -95,7 +95,6 @@ class HandleEditor {
       new this.paper.Path.Circle({
         point: topLeft,
         radius: 6,
-        // strokeColor: '#2176ff',
         strokeColor: 'rgb(30, 155, 255)',
         strokeWidth: 2,
         fillColor: new this.paper.Color(1, 0.01),
@@ -105,7 +104,6 @@ class HandleEditor {
       new this.paper.Path.Rectangle({
         point: [100, 100],
         size: [10, 10],
-        // fillColor: '#2176ff',
         fillColor: 'rgb(30, 155, 255)',
       })
     )

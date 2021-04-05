@@ -106,13 +106,16 @@ class BuildMode extends Component {
         <ProjectSettings store={this.props.store} />
         <ClearProject store={this.props.store} />
         <Grid
-          gridTemplateRows="auto 60px"
+          gridTemplateRows="minmax(0, 1fr) 60px"
           gridTemplateColumns="auto 340px"
+          // height="100%"
+          maxHeight="100%"
+          overflow="hidden"
         >
           <GridItem gridArea="1 / 1 / 1 / 2" id="build-container" padding="10px" alignSelf="center">
             <Viewer canvas={canvas} animation={animation} onSetup={this.onSetup} />
           </GridItem>
-          <GridItem gridArea="1 / 2 / 1 / 3" backgroundColor="rgb(210, 210, 210)">
+          <GridItem gridArea="1 / 2 / 1 / 3" backgroundColor="rgb(210, 210, 210)" maxHeight="100%" overflow="hidden">
             <PropertyEditor item={canvas.selected} now={animation.now} />
           </GridItem>
           <GridItem gridArea="2 / 1 / 2 / 3" backgroundColor="rgb(180, 180, 180)">
