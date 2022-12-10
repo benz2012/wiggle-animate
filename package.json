@@ -12,7 +12,7 @@
   },
   "author": "Ben Zenker",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.3"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
