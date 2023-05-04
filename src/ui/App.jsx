@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useRef, useEffect, useCallback } from 'react'
@@ -52,6 +53,7 @@ const App = observer(({ store }) => {
   ])
   /* End Main Loop */
 
+  /* Interaction Event Handlers */
   const handleDrag = action((event) => {
     const { selectedId, dragStart } = store.build
     if (!dragStart) return
@@ -61,7 +63,7 @@ const App = observer(({ store }) => {
 
     if (selectedId) {
       // TODO: replace this with findChild() once we have an actual tree
-      const selectedItem = store.rootContainer.children[selectedId]
+      const selectedItem = store.rootContainer.findItem(selectedId)
       selectedItem.position.add(relativeMovement)
     }
 
@@ -86,6 +88,35 @@ const App = observer(({ store }) => {
     }
   }
 
+  // Key Listener
+  const handleKeyEvent = action((event) => {
+    const { selectedId } = store.build
+
+    switch (event.key) {
+      case 'Backspace':
+      case 'Delete':
+        if (selectedId) {
+          store.setSelected(null)
+          const itemToDelete = store.rootContainer.findItem(selectedId)
+          itemToDelete.delete()
+        }
+        break
+
+      default:
+        break
+    }
+  })
+  const handleKeyEventMemoized = useCallback(
+    handleKeyEvent,
+    [handleKeyEvent, store.build.selectedId]
+  )
+  useEffect(() => {
+    window.addEventListener('keyup', handleKeyEventMemoized)
+    return () => window.removeEventListener('keyup', handleKeyEventMemoized)
+  }, [handleKeyEventMemoized])
+  /* End Interaction Event Handlers */
+
+  /* Complex Actions */
   const addItem = () => {
     const newItem = new Rectangle()
     store.rootContainer.add(newItem)
@@ -109,6 +140,7 @@ const App = observer(({ store }) => {
     // item.rotation.degrees += 15
     // item.scale[propToMove] += 0.1
   })
+  /* End Complex Actions */
 
   return (
     <div

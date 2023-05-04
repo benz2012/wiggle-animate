@@ -20,7 +20,7 @@ class Item {
   get nestedObservables() { return this._nestedObservables }
 
   delete() {
-    Item.rootContainer.searchAndDelete(this._id)
+    Item.rootContainer.findAndDelete(this._id)
   }
 }
 

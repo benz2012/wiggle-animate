@@ -38,13 +38,31 @@ class Container extends Animatable {
     delete this._children[itemId]
   }
 
-  searchAndDelete(itemId) {
+  findItem(itemId) {
+    if (itemId in this._children) {
+      return this._children[itemId]
+    }
+    let itemWithinChildContainer
+    Object.values(this._children).some((child) => {
+      if (child instanceof Container) {
+        const found = child.findItem(itemId)
+        if (found) {
+          itemWithinChildContainer = found
+          return true
+        }
+      }
+      return false
+    })
+    return itemWithinChildContainer
+  }
+
+  findAndDelete(itemId) {
     if (itemId in this._children) {
       this.remove(itemId)
     } else {
       Object.values(this._children).forEach((child) => {
         if (child instanceof Container) {
-          child.searchAndDelete(itemId)
+          child.findAndDelete(itemId)
         }
       })
     }
