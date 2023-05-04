@@ -3,29 +3,62 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "mobx": "^6.9.0",
+    "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "react-scripts build"
   },
   "eslintConfig": {
+    "env": {
+      "browser": true
+    },
     "extends": [
       "react-app",
-      "react-app/jest"
-    ]
+      "airbnb"
+    ],
+    "rules": {
+      "semi": [
+        "warn",
+        "never"
+      ],
+      "comma-dangle": [
+        "error",
+        {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "ignore"
+        }
+      ],
+      "no-unused-vars": "warn",
+      "no-underscore-dangle": "off",
+      "lines-between-class-members": [
+        "error",
+        "always",
+        {
+          "exceptAfterSingleLine": true
+        }
+      ],
+      "object-curly-newline": ["warn", { "multiline": true }],
+      "react/jsx-uses-react": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-one-expression-per-line": "off",
+      "react/jsx-props-no-spreading": "off",
+      "react/no-unknown-property": "off",
+      "react/function-component-definition": "off"
+    }
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">1.0%",
       "not dead",
       "not op_mini all"
     ],
