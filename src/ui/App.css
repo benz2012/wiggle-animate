@@ -27,6 +27,18 @@ button {
   border-radius: 2px;
   padding: 2px 4px;
 }
+button:hover {
+  cursor: pointer;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
 
 #stage {
   position: fixed;
@@ -55,10 +67,14 @@ button {
 }
 .left-menu-item:hover {
   cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .left-menu-item-selected {
   background-color: rgba(255, 255, 255, 0.8);
   color: rgb(33, 33, 33)
+}
+.left-menu-item-selected:hover {
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .temp-button {
@@ -68,7 +84,9 @@ button {
   font-size: 10px;
   line-height: 16px;
 }
-
+.temp-button:hover {
+  background-color: rgba(33, 150, 243);
+}
 .temp-button-selected {
-  background-color: #64b5f6;
+  background-color: #96a5b3;
 }

@@ -118,30 +118,27 @@ const App = observer(({ store }) => {
       onPointerUp={handlePointerEvent}
     >
       <div id="left-menu">
-        <button type="button" onClick={addItem}>+ add item</button>
-        <span style={{ marginTop: 4, marginBottom: 4 }}>{store.rootContainer.id.split('-')[0]}</span>
-        <ul>
-          {store.rootContainer.sortOrder.map((childId) => {
-            const child = store.rootContainer.children[childId]
-            const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
-            const buttonClass = `temp-button ${store.build.selectedId === childId && 'temp-button-selected'}`
-            return (
-              <li
-                key={childId}
-                className={listItemClass}
-                onClick={() => store.setSelected(childId)}
-              >
-                <span>{childId.split('-')[0]}</span>
-                <span>
-                  <button type="button" className={buttonClass} onClick={() => store.rootContainer.decreaseOrder(childId)}>↑</button>
-                  <button type="button" className={buttonClass} onClick={() => store.rootContainer.increaseOrder(childId)}>↓</button>
-                  <button type="button" className={buttonClass} onClick={() => child.delete()}>x</button>
-                  <button type="button" className={buttonClass} onClick={() => doSomething(childId)}>&</button>
-                </span>
-              </li>
-            )
-          })}
-        </ul>
+        <button type="button" onClick={addItem} style={{ marginBottom: 8 }} className="noselect">+ add item</button>
+        {store.rootContainer.sortOrder.map((childId) => {
+          const child = store.rootContainer.children[childId]
+          const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
+          const buttonClass = `noselect temp-button ${store.build.selectedId === childId && 'temp-button-selected'}`
+          return (
+            <li
+              key={childId}
+              className={listItemClass}
+              onClick={() => store.setSelected(childId)}
+            >
+              <span className="noselect">{childId.split('-')[0]}</span>
+              <span>
+                <button type="button" className={buttonClass} onClick={() => store.rootContainer.decreaseOrder(childId)}>↑</button>
+                <button type="button" className={buttonClass} onClick={() => store.rootContainer.increaseOrder(childId)}>↓</button>
+                <button type="button" className={buttonClass} onClick={() => child.delete()}>x</button>
+                <button type="button" className={buttonClass} onClick={() => doSomething(childId)}>&</button>
+              </span>
+            </li>
+          )
+        })}
       </div>
       <canvas
         ref={canvasRef}
