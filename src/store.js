@@ -1,4 +1,4 @@
-import { observable, autorun, makeObservable, action } from 'mobx'
+import { observable, autorun, makeObservable, action, computed } from 'mobx'
 
 import RootContainer from './structure/RootContainer'
 import { storageEnabled } from './utility/storage'
@@ -38,12 +38,27 @@ class RootStore {
     makeObservable(this, {
       rootContainer: observable,
       build: observable,
+      setHovered: action,
       setSelected: action,
       startDrag: action,
       stopDrag: action,
+      determineCurrentAction: computed,
     })
   }
 
+  get determineCurrentAction() {
+    if (this.build.hoveredId) {
+      if (this.build.selectedId) {
+        if (this.build.dragStart) {
+          return 'dragging'
+        }
+      }
+      return 'hovering'
+    }
+    return null
+  }
+
+  setHovered(value) { this.build.hoveredId = value }
   setSelected(value) { this.build.selectedId = value }
   startDrag(vector) { this.build.dragStart = vector }
   stopDrag() { this.build.dragStart = null }

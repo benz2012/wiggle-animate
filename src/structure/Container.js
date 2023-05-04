@@ -1,5 +1,6 @@
 import { makeObservable, action } from 'mobx'
 
+import Item from './Item'
 import Animatable from '../drawing/Animatable'
 import { insert } from '../utility/array'
 import { observeListOfProperties } from '../utility/state'
@@ -31,6 +32,7 @@ class Container extends Animatable {
     } else {
       this._sortOrder = [newId, ...this._sortOrder]
     }
+    Item.rootContainer.store.setSelected(newId)
   }
 
   remove(itemId) {

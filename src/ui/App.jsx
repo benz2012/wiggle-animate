@@ -15,8 +15,24 @@ const DPR = window.devicePixelRatio || 1
 
 const App = observer(({ store }) => {
   const parentEl = useRef(null)
-  const canvasRef = useRef(null)
+  const stageRef = useRef(null)
   const [windowWidth, windowHeight] = useWindowSize()
+
+  /* State Syncs */
+  useEffect(() => {
+    switch (store.determineCurrentAction) {
+      case 'dragging':
+        stageRef.current.style.cursor = 'grabbing'
+        break
+      case 'hovering':
+        stageRef.current.style.cursor = 'grab'
+        break
+      default:
+        stageRef.current.style.cursor = 'crosshair'
+        break
+    }
+  }, [store.determineCurrentAction])
+  /* End State Syncs */
 
   /* Main observation & drawing trigger */
   const peekAtObservables = (item) => {
@@ -40,7 +56,7 @@ const App = observer(({ store }) => {
   )
   const storeBuildProperties = JSON.stringify(Object.entries(store.build))
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = stageRef.current
     const ctx = canvas.getContext('2d')
     store.rootContainer.draw(ctx, canvas.width, canvas.height)
   }, [
@@ -77,7 +93,8 @@ const App = observer(({ store }) => {
     if (event.type === 'pointermove') {
       store.rootContainer.checkPointerIntersections(pointerVector)
     }
-    if (event.type === 'pointerdown' && event.target === canvasRef.current) {
+    if (event.type === 'pointerdown' && event.target === stageRef.current) {
+      store.rootContainer.checkPointerIntersections(pointerVector)
       store.setSelected(store.build.hoveredId)
       store.startDrag(pointerVector)
       parentEl.current.addEventListener('pointermove', handleDragMemoized)
@@ -97,6 +114,7 @@ const App = observer(({ store }) => {
       case 'Delete':
         if (selectedId) {
           store.setSelected(null)
+          store.setHovered(null)
           const itemToDelete = store.rootContainer.findItem(selectedId)
           itemToDelete.delete()
         }
@@ -173,7 +191,7 @@ const App = observer(({ store }) => {
         })}
       </div>
       <canvas
-        ref={canvasRef}
+        ref={stageRef}
         width={windowWidth * DPR}
         height={windowHeight * DPR}
         id="stage"

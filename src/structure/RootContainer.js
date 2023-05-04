@@ -27,12 +27,7 @@ class RootContainer extends Container {
 
   checkPointerIntersections(pointerVector) {
     const hovered = super.checkPointerIntersections(pointerVector, this.transform)
-    this.store.build.hoveredId = hovered
-    if (hovered != null) {
-      document.body.style.cursor = 'move'
-    } else {
-      document.body.style.cursor = 'default'
-    }
+    this.store.setHovered(hovered)
   }
 }
 

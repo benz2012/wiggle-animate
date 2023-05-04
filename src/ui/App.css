@@ -44,9 +44,6 @@ button:hover {
   position: fixed;
   z-index: -1;
 }
-#stage:hover {
-  cursor: crosshair;
-}
 
 #left-menu {
   position: absolute;
