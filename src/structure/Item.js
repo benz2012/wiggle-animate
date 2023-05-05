@@ -1,14 +1,16 @@
 import { v4 as uuidv4 } from 'uuid'
 
+import names from '../assets/names.json'
 import { observeListOfProperties } from '../utility/state'
+import { randomChoice } from '../utility/array'
 
 class Item {
   // This will be populated by the first instiated Container which will extend Item
   static rootContainer = null
 
-  constructor(name = '') {
+  constructor() {
     this._id = uuidv4()
-    this.name = name
+    this.name = randomChoice(names)
 
     this._observables = ['name']
     this._nestedObservables = []

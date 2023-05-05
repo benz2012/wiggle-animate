@@ -10,6 +10,7 @@ class Rectangle extends Shape {
     this.position.x = x
     this.position.y = y
     this.size = new Size(width, height)
+    this.name = `rectangle-${this.name}`
 
     const inheritedObservables = [...super.observables]
     this._observables = [...inheritedObservables, 'size']

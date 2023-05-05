@@ -40,6 +40,9 @@ button:hover {
             user-select: none;
 }
 
+.ml-4 { margin-left: 4px; }
+.mb-8 { margin-bottom: 8px; }
+
 #stage {
   position: fixed;
   z-index: -1;
@@ -77,17 +80,16 @@ button:hover {
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-.temp-button {
-  margin-left: 4px;
+.general-button {
   padding-left: 6px;
   padding-right: 6px;
   font-size: 10px;
   line-height: 16px;
 }
-.temp-button:hover {
+.general-button:hover {
   background-color: rgba(33, 150, 243);
 }
-.temp-button-selected {
+.general-button-selected {
   background-color: #96a5b3;
 }
 
@@ -103,4 +105,10 @@ button:hover {
   color: white;
   border: 1px solid white;
   font-size: 16px;
+}
+.percentage-text {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  line-height: 10px;
 }

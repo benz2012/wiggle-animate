@@ -10,8 +10,8 @@ import './App.css'
 import Stage from './Stage'
 import useWindowSize from './hooks/useWindowSize'
 import Rectangle from '../shapes/Rectangle'
-import { isObject } from '../utility/object'
 import Vector2 from '../structure/Vector2'
+import { isObject } from '../utility/object'
 
 const DPR = window.devicePixelRatio || 1
 
@@ -27,6 +27,7 @@ const App = observer(({ store }) => {
         stageRef.current.style.cursor = 'grabbing'
         break
       case 'hovering':
+      case 'readyToMoveView':
         stageRef.current.style.cursor = 'grab'
         break
       default:
@@ -64,10 +65,12 @@ const App = observer(({ store }) => {
   }, [
     store.rootContainer,
     store.rootContainer.sortOrder,
-    store.rootContainer.canvasSize,
-    store.rootContainer.canvasPosition,
+    store.rootContainer.canvasSize.width,
+    store.rootContainer.canvasSize.height,
+    store.rootContainer.canvasPosition.x,
+    store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
-    store.rootContainer.canvasFill,
+    store.rootContainer.canvasFill.color,
     allObserverablePropertiesInTheTree,
     storeBuildProperties,
     windowWidth,
@@ -84,10 +87,20 @@ const App = observer(({ store }) => {
     const relativeMovement = Vector2.subtract(pointerVector, dragStart)
     const relativeMovementScaledToCanvas = new Vector2(
       relativeMovement.x / store.rootContainer.canvasScale,
-      relativeMovement.y / store.rootContainer.canvasScale
+      relativeMovement.y / store.rootContainer.canvasScale,
     )
 
-    if (selectedId) {
+    if (store.view.isMoveable) {
+      const relativeMovementScaledToCanvasInverse = new Vector2(
+        relativeMovement.x * store.rootContainer.canvasScale,
+        relativeMovement.y * store.rootContainer.canvasScale,
+      )
+      const newCanvasPosition = Vector2.add(
+        store.rootContainer.canvasPosition,
+        relativeMovementScaledToCanvasInverse,
+      )
+      store.rootContainer.canvasPosition = newCanvasPosition
+    } else if (selectedId) {
       const selectedItem = store.rootContainer.findItem(selectedId)
       selectedItem.position.add(relativeMovementScaledToCanvas)
     }
@@ -100,73 +113,79 @@ const App = observer(({ store }) => {
   const handlePointerEvent = (event) => {
     const pointerVector = new Vector2(event.clientX * DPR, event.clientY * DPR)
     if (event.type === 'pointermove') {
-      store.rootContainer.checkPointerIntersections(pointerVector)
+      if (!store.build.dragStart) {
+        store.rootContainer.checkPointerIntersections(pointerVector)
+      }
     }
     if (event.type === 'pointerdown' && event.target === stageRef.current) {
       store.rootContainer.checkPointerIntersections(pointerVector)
       store.setSelected(store.build.hoveredId)
       store.startDrag(pointerVector)
-      parentEl.current.addEventListener('pointermove', handleDragMemoized)
     }
     if (event.type === 'pointerup') {
-      parentEl.current.removeEventListener('pointermove', handleDragMemoized)
       store.stopDrag(pointerVector)
     }
   }
 
   // Key Listener
-  const handleKeyEvent = action((event) => {
+  const handleKeyDownEvent = action((event) => {
+    switch (event.key) {
+      case ' ':
+        store.setIsMoveable(true)
+        store.setSelected(null)
+        break
+      default:
+        break
+    }
+  })
+  const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [handleKeyDownEvent])
+  const handleKeyUpEvent = action((event) => {
     const { selectedId } = store.build
 
     switch (event.key) {
       case 'Backspace':
       case 'Delete':
         if (selectedId) {
+          const itemToDelete = store.rootContainer.findItem(selectedId)
           store.setSelected(null)
           store.setHovered(null)
-          const itemToDelete = store.rootContainer.findItem(selectedId)
           itemToDelete.delete()
         }
+        break
+
+      case ' ':
+        store.setIsMoveable(false)
         break
 
       default:
         break
     }
   })
-  const handleKeyEventMemoized = useCallback(
-    handleKeyEvent,
-    [handleKeyEvent, store.build.selectedId]
-  )
+  const handleKeyUpEventMemoized = useCallback(handleKeyUpEvent, [handleKeyUpEvent])
   useEffect(() => {
-    window.addEventListener('keyup', handleKeyEventMemoized)
-    return () => window.removeEventListener('keyup', handleKeyEventMemoized)
-  }, [handleKeyEventMemoized])
+    window.addEventListener('keydown', handleKeyDownEventMemoized)
+    window.addEventListener('keyup', handleKeyUpEventMemoized)
+    window.addEventListener('pointermove', handleDragMemoized)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDownEventMemoized)
+      window.removeEventListener('keyup', handleKeyUpEventMemoized)
+      window.removeEventListener('pointermove', handleDragMemoized)
+    }
+  }, [
+    handleKeyDownEventMemoized,
+    handleKeyUpEventMemoized,
+    handleDragMemoized,
+  ])
   /* End Interaction Event Handlers */
 
   /* Complex Actions */
   const addItem = () => {
-    const newItem = new Rectangle()
+    const newItem = new Rectangle(
+      store.rootContainer.canvasSize.width / 2,
+      store.rootContainer.canvasSize.height / 2,
+    )
     store.rootContainer.add(newItem)
   }
-
-  const doSomething = action((itemId) => {
-    const choose = (choices) => {
-      const index = Math.floor(Math.random() * choices.length)
-      return choices[index]
-    }
-    const propToMove = choose(['x', 'x', 'y'])
-    const distanceToMove = choose([-150, -100, -50, 50, 100, 150])
-    const propToChange = choose(['width', 'height'])
-    const sizeToChange = choose([-20, -15, -10, -5, 5, 10, 15, 20])
-
-    const item = store.rootContainer.children[itemId]
-    item.position[propToMove] += distanceToMove
-    item.fill.color.alpha = (Math.random() * 0.8) + 0.2
-    item.rotation.degrees = (Math.random() * 45)
-    item[propToChange] += sizeToChange
-    // item.rotation.degrees += 15
-    // item.scale[propToMove] += 0.1
-  })
   /* End Complex Actions */
 
   return (
@@ -177,25 +196,25 @@ const App = observer(({ store }) => {
       onPointerUp={handlePointerEvent}
     >
       <div id="left-menu">
-        <button type="button" onClick={addItem} style={{ marginBottom: 8 }} className="noselect">+ add item</button>
+        <button
+          type="button"
+          className="noselect general-button left-menu-action-button mb-8"
+          onClick={addItem}
+        >
+          + add item
+        </button>
         <div style={{ flexGrow: 1 }}>
           {store.rootContainer.sortOrder.map((childId) => {
             const child = store.rootContainer.children[childId]
             const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
-            const buttonClass = `noselect temp-button ${store.build.selectedId === childId && 'temp-button-selected'}`
+            const buttonClass = `noselect general-button ml-4 ${store.build.selectedId === childId && 'general-button-selected'}`
             return (
               <li
                 key={childId}
                 className={listItemClass}
                 onClick={() => store.setSelected(childId)}
               >
-                <span className="noselect">{childId.split('-')[0]}</span>
-                <span>
-                  <button type="button" className={buttonClass} onClick={() => store.rootContainer.decreaseOrder(childId)}>↑</button>
-                  <button type="button" className={buttonClass} onClick={() => store.rootContainer.increaseOrder(childId)}>↓</button>
-                  <button type="button" className={buttonClass} onClick={() => child.delete()}>x</button>
-                  <button type="button" className={buttonClass} onClick={() => doSomething(childId)}>&</button>
-                </span>
+                <span className="noselect" style={{ lineHeight: '14px', fontSize: '14px' }}>{child.name}</span>
               </li>
             )
           })}
@@ -203,18 +222,31 @@ const App = observer(({ store }) => {
         <div id="left-menu-action-bottom">
           <button
             type="button"
-            className="noselect temp-button left-menu-action-button"
+            className="noselect general-button left-menu-action-button"
             onClick={() => { store.rootContainer.decrementScale() }}
           >
             -
           </button>
-          <span>{Math.trunc(store.rootContainer.canvasScale * 100)}%</span>
+          <span className="noselect percentage-text">
+            {Math.trunc(store.rootContainer.canvasScale * 100)}%
+          </span>
           <button
             type="button"
-            className="noselect temp-button left-menu-action-button"
+            className="noselect general-button left-menu-action-button"
             onClick={() => { store.rootContainer.incrementScale() }}
           >
             +
+          </button>
+          <button
+            type="button"
+            className="noselect general-button left-menu-action-button"
+            onClick={action(() => {
+              store.rootContainer.canvasScale = 1
+              store.rootContainer.canvasPosition.x = 0
+              store.rootContainer.canvasPosition.y = 0
+            })}
+          >
+            ⟲
           </button>
         </div>
       </div>

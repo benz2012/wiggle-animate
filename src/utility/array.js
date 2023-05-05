@@ -14,7 +14,12 @@ const insert = (arr, index, ...newItems) => ([
   ...arr.slice(index),
 ])
 
+const randomChoice = (choices) => {
+  const index = Math.floor(Math.random() * choices.length)
+  return choices[index]
+}
+
 export {
-  // eslint-disable-next-line import/prefer-default-export
   insert,
+  randomChoice,
 }

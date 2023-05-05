@@ -33,9 +33,13 @@ class RootStore {
       dragStart: null,
     }
 
+    this.view = { isMoveable: false }
+
     makeObservable(this, {
       rootContainer: observable,
       build: observable,
+      view: observable,
+      setIsMoveable: action,
       setHovered: action,
       setSelected: action,
       startDrag: action,
@@ -45,6 +49,13 @@ class RootStore {
   }
 
   get determineCurrentAction() {
+    if (this.view.isMoveable) {
+      if (this.build.dragStart) {
+        return 'dragging'
+      }
+      return 'readyToMoveView'
+    }
+
     if (this.build.hoveredId) {
       if (this.build.selectedId) {
         if (this.build.dragStart) {
@@ -53,9 +64,11 @@ class RootStore {
       }
       return 'hovering'
     }
+
     return null
   }
 
+  setIsMoveable(value) { this.view.isMoveable = value }
   setHovered(value) { this.build.hoveredId = value }
   setSelected(value) { this.build.selectedId = value }
   startDrag(vector) { this.build.dragStart = vector }

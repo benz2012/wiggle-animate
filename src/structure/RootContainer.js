@@ -16,12 +16,17 @@ class RootContainer extends Container {
     Item.rootContainer = this
     this.transform = identityMatrix()
 
+    // non-observable, just for local reference
+    this.rootWidth = null
+    this.rootHeight = null
+
+    this.canvasPosition = new Vector2(0, 0)
+    // TODO: figure out initial scale based on screen size and canvas size
+    //       and how much available space is left by the toolbars
+    this._canvasScale = 1
     // TODO: make these customizable
     this.canvasSize = new Size(1920, 1080)
-    this.canvasPosition = new Vector2(0, 0)
-    this._canvasScale = 1
     this.canvasFill = new Fill('black')
-    this.dotFill = new Fill('rgb(42, 45, 48)')
 
     makeObservable(this, {
       canvasSize: observable,
@@ -57,19 +62,30 @@ class RootContainer extends Container {
   incrementScale() { this.changeScaleByStep() }
   decrementScale() { this.changeScaleByStep(-1) }
 
+  get canvasTopLeft() {
+    if (!this.rootWidth || !this.rootHeight) return [0, 0]
+    return [
+      (this.rootWidth / 2)
+        - ((this.canvasSize.width / 2) * this.canvasScale)
+        + (this.canvasPosition.x / this.canvasScale),
+      (this.rootHeight / 2)
+      - ((this.canvasSize.height / 2) * this.canvasScale)
+      + (this.canvasPosition.y / this.canvasScale),
+    ]
+  }
+
   draw(ctx, rootWidth, rootHeight) {
     if (!rootWidth || !rootHeight) return
 
     this.ctx = ctx
+    this.rootWidth = rootWidth
+    this.rootHeight = rootHeight
 
     this.ctx.setTransform(identityMatrix())
     this.ctx.clearRect(0, 0, rootWidth, rootHeight)
 
     this.transform = identityMatrix()
-      .translateSelf(
-        (rootWidth / 2) - ((this.canvasSize.width / 2) * this.canvasScale),
-        (rootHeight / 2) - ((this.canvasSize.height / 2) * this.canvasScale),
-      )
+      .translateSelf(...this.canvasTopLeft)
       .scaleSelf(this.canvasScale, this.canvasScale)
 
     this.drawStageDots(rootWidth, rootHeight)
@@ -89,15 +105,20 @@ class RootContainer extends Container {
     this.ctx.setTransform(this.transform)
     this.ctx.translate(this.canvasSize.width / 2, this.canvasSize.height / 2)
 
+    const dotFill = new Fill('rgb(42, 45, 48)')
     const dotWidth = 4
     const dotSpacing = 48
     const segmentLength = (dotSpacing + dotWidth)
     const directions = [1, -1]
 
-    const xSpaceToWorkWith = ((rootWidth / 2) - (dotSpacing / 2)) / this.canvasScale
+    const xSpaceToWorkWith = (
+      (rootWidth / 2) - (dotSpacing / 2) + (Math.abs(this.canvasPosition.x) / this.canvasScale)
+    ) / this.canvasScale
     const numDotsX = Math.ceil(xSpaceToWorkWith / segmentLength)
     const numDotsXHeight = Math.ceil(
-      Math.ceil(((rootHeight / segmentLength) / this.canvasScale) / 2) * 2
+      Math.ceil(((
+        (rootHeight + (Math.abs(this.canvasPosition.y) * 2) / this.canvasScale) / segmentLength
+      ) / this.canvasScale) / 2) * 2
     )
 
     this.ctx.beginPath()
@@ -114,7 +135,7 @@ class RootContainer extends Container {
         })
       })
     })
-    this.dotFill.draw(this.ctx)
+    dotFill.draw(this.ctx)
   }
 
   drawCanvas() {
