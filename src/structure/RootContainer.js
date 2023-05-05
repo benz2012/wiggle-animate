@@ -149,8 +149,10 @@ class RootContainer extends Container {
   }
 
   checkPointerIntersections(pointerVector) {
-    const hovered = super.checkPointerIntersections(pointerVector, this.transform)
-    this.store.setHovered(hovered)
+    const foundIntersection = super.checkPointerIntersections(pointerVector, this.transform)
+    if (!foundIntersection) {
+      this.store.setHovered(null)
+    }
   }
 }
 

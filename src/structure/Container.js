@@ -10,6 +10,7 @@ class Container extends Animatable {
     super()
     this._children = {}
     this._sortOrder = []
+    this.name = `container-${this.name}`
 
     const inheritedObservables = [...super.observables]
     this._observables = [...inheritedObservables, '_children', '_sortOrder']
@@ -32,7 +33,10 @@ class Container extends Animatable {
     } else {
       this._sortOrder = [newId, ...this._sortOrder]
     }
-    Item.rootContainer.store.setSelected(newId)
+
+    if (!(newItem instanceof Container)) {
+      Item.rootContainer.store.setSelected(newId)
+    }
   }
 
   remove(itemId) {
@@ -41,21 +45,26 @@ class Container extends Animatable {
   }
 
   findItem(itemId) {
+    const result = this.findItemAndParent(itemId)
+    if (result) return result.item
+    return null
+  }
+
+  findItemAndParent(itemId) {
     if (itemId in this._children) {
-      return this._children[itemId]
+      return { item: this._children[itemId], parent: this }
     }
-    let itemWithinChildContainer
+
+    let found = null
     Object.values(this._children).some((child) => {
       if (child instanceof Container) {
-        const found = child.findItem(itemId)
-        if (found) {
-          itemWithinChildContainer = found
-          return true
-        }
+        found = child.findItemAndParent(itemId)
+        if (found) return true
       }
       return false
     })
-    return itemWithinChildContainer
+
+    return found
   }
 
   findAndDelete(itemId) {
@@ -113,16 +122,16 @@ class Container extends Animatable {
 
     // Array.some() will cause the iteration to short circuit on the first child
     // that has an intersection, like event bubble cancellation in the DOM
-    let hoveredChild = null
+    let hasIntersection = false
     this.sortOrder.some((childId) => {
       const child = this.children[childId]
-      const hasIntersection = child.checkPointerIntersections(pointerVector, thisTransform)
-      if (hasIntersection) {
-        hoveredChild = childId
+      hasIntersection = child.checkPointerIntersections(pointerVector, thisTransform)
+      if (!(child instanceof Container) && hasIntersection) {
+        Item.rootContainer.store.setHovered(childId)
       }
       return hasIntersection
     })
-    return hoveredChild
+    return hasIntersection
   }
 }
 

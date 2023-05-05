@@ -1,16 +1,15 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useRef, useEffect, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { action } from 'mobx'
 
 import './App.css'
 import Stage from './Stage'
+import LeftMenu from './LeftMenu'
 import useWindowSize from './hooks/useWindowSize'
 import Rectangle from '../shapes/Rectangle'
+import Container from '../structure/Container'
 import Vector2 from '../structure/Vector2'
 import { isObject } from '../utility/object'
 
@@ -194,12 +193,28 @@ const App = observer(({ store }) => {
   /* End Interaction Event Handlers */
 
   /* Complex Actions */
-  const addItem = () => {
-    const newItem = new Rectangle(
+  const addNewItem = (newItem) => {
+    const { selectedId } = store.build
+    const found = store.rootContainer.findItemAndParent(selectedId)
+    const selectedItem = found?.item
+    if (selectedItem instanceof Container) {
+      selectedItem.add(newItem)
+    } else if (selectedItem) {
+      found.parent.add(newItem)
+    } else {
+      store.rootContainer.add(newItem)
+    }
+  }
+
+  const addContainer = () => {
+    addNewItem(new Container())
+  }
+
+  const addRect = () => {
+    addNewItem(new Rectangle(
       store.rootContainer.canvasSize.width / 2,
       store.rootContainer.canvasSize.height / 2,
-    )
-    store.rootContainer.add(newItem)
+    ))
   }
 
   const resetView = action(() => {
@@ -216,57 +231,14 @@ const App = observer(({ store }) => {
       onPointerDown={handlePointerEvent}
       onPointerUp={handlePointerEvent}
     >
-      <div id="left-menu">
-        <button
-          type="button"
-          className="noselect general-button left-menu-action-button mb-8"
-          onClick={addItem}
-        >
-          + add item
-        </button>
-        <div style={{ flexGrow: 1 }}>
-          {store.rootContainer.sortOrder.map((childId) => {
-            const child = store.rootContainer.children[childId]
-            const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
-            const buttonClass = `noselect general-button ml-4 ${store.build.selectedId === childId && 'general-button-selected'}`
-            return (
-              <li
-                key={childId}
-                className={listItemClass}
-                onClick={() => store.setSelected(childId)}
-              >
-                <span className="noselect" style={{ lineHeight: '14px', fontSize: '14px' }}>{child.name}</span>
-              </li>
-            )
-          })}
-        </div>
-        <div id="left-menu-action-bottom">
-          <button
-            type="button"
-            className="noselect general-button left-menu-action-button"
-            onClick={() => { store.rootContainer.decrementScale() }}
-          >
-            -
-          </button>
-          <span className="noselect percentage-text">
-            {Math.trunc(store.rootContainer.canvasScale * 100)}%
-          </span>
-          <button
-            type="button"
-            className="noselect general-button left-menu-action-button"
-            onClick={() => { store.rootContainer.incrementScale() }}
-          >
-            +
-          </button>
-          <button
-            type="button"
-            className="noselect general-button left-menu-action-button"
-            onClick={resetView}
-          >
-            ⟲
-          </button>
-        </div>
-      </div>
+      <LeftMenu
+        store={store}
+        addRect={addRect}
+        addContainer={addContainer}
+        incrementScale={() => store.rootContainer.incrementScale()}
+        decrementScale={() => store.rootContainer.decrementScale()}
+        resetView={resetView}
+      />
       <Stage
         ref={stageRef}
         width={windowWidth}
