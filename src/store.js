@@ -95,8 +95,17 @@ class RootStore {
         if (this.build.dragStart) {
           return 'dragging'
         }
+        if (this.keyHeld.Meta || this.keyHeld.Shift) {
+          return 'adding'
+        }
       }
       return 'hovering'
+    }
+
+    if (this.keyHeld.Meta || this.keyHeld.Shift) {
+      if (this.build.selectedIds.length > 0) {
+        return 'adding'
+      }
     }
 
     return null

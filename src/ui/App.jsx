@@ -27,6 +27,9 @@ const App = observer(({ store }) => {
       case 'readyToMoveView':
         stageRef.current.style.cursor = 'grab'
         break
+      case 'adding':
+        stageRef.current.style.cursor = 'copy'
+        break
       default:
         stageRef.current.style.cursor = 'crosshair'
         break

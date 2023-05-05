@@ -51,6 +51,10 @@ const TopMenu = ({ projectName, saveStatus }) => {
         <span className="unicode-icon">↯</span>
         Export
       </button>
+
+      <button type="button" className="top-menu-item top-menu-item-button">
+        ?
+      </button>
     </div>
   )
 }
