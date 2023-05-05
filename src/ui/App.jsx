@@ -1,8 +1,12 @@
-import { useRef, useEffect, useState } from 'react'
+/* eslint-disable no-param-reassign */
+import { action } from 'mobx'
+
+import { useRef, useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import './App.css'
 import Stage from './Stage'
+import TopMenu from './TopMenu'
 import LeftMenu from './LeftMenu'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
@@ -78,6 +82,7 @@ const App = observer(({ store }) => {
     <>
       <KeyHandler store={store} />
       <PointerHandler store={store} ref={stageRef}>
+        <TopMenu projectName={store.project.name} saveStatus={store.project.saveStatus} />
         <LeftMenu
           store={store}
           incrementScale={() => store.rootContainer.incrementScale()}

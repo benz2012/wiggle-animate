@@ -1,0 +1,87 @@
+#top-menu {
+  position: absolute;
+  width: calc(100% - 16px);
+  height: 36px;
+  padding: 8px;
+  background-color: rgba(25, 117, 210, 0.2);
+  
+  display: flex;
+}
+
+.top-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 16px 4px 16px;
+  border-radius: 4px;
+  color: white;
+  background-color: transparent;
+  font-size: 14px;
+  line-height: 14px;
+  margin-right: 8px;
+}
+
+.top-menu-item-button {
+  font-weight: 700;
+}
+.top-menu-item-button:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.top-menu-item-button:active {
+  cursor: pointer;
+  background-color: rgba(33, 150, 243, 0.9);
+}
+
+.unicode-icon {
+  font-size: 20px;
+  line-height: 0;
+  margin-right: 8px;
+}
+
+.pb-3 {
+  padding-bottom: 3px;
+}
+
+.autosave-text {
+  font-size: 10px;
+  line-height: 10px;
+  margin-right: 16px;
+}
+.autosave-icon {
+  background-color: #4BB543;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  line-height: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 500ms;
+}
+
+.icon-bg-grey {
+  background-color: #767676; 
+}
+
+.icon-bg-warning {
+  background-color: #FFC107; 
+  color: #333333;
+  font-size: 14px;
+}
+
+.icon-spin {
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}

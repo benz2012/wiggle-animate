@@ -28,6 +28,11 @@ class RootStore {
 
     this.rootContainer = new RootContainer(this)
 
+    this.project = {
+      name: '',
+      saveStatus: 'unknown',
+    }
+
     this.build = {
       tool: '',
       selectedIds: [],
@@ -51,6 +56,7 @@ class RootStore {
 
     makeObservable(this, {
       rootContainer: observable,
+      project: observable,
       build: observable,
       selector: observable,
       view: observable,
