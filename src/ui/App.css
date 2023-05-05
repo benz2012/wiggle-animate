@@ -51,7 +51,7 @@ button:hover {
   height: 80vh;
   margin-top: 10vh;
   padding: 8px;
-  background-color: rgba(25, 117, 210, 0.8);
+  background-color: rgba(25, 117, 210, 0.2);
   border-radius: 0 4px 4px 0;
   
   display: flex;

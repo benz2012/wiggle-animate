@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite'
 import { action } from 'mobx'
 
 import './App.css'
+import Stage from './Stage'
 import useWindowSize from './hooks/useWindowSize'
 import Rectangle from '../shapes/Rectangle'
 import { isObject } from '../utility/object'
@@ -56,9 +57,9 @@ const App = observer(({ store }) => {
   )
   const storeBuildProperties = JSON.stringify(Object.entries(store.build))
   useEffect(() => {
-    const canvas = stageRef.current
-    const ctx = canvas.getContext('2d')
-    store.rootContainer.draw(ctx, canvas.width, canvas.height)
+    const stage = stageRef.current
+    const ctx = stage.getContext('2d')
+    store.rootContainer.draw(ctx, stage.width, stage.height)
   }, [
     store.rootContainer,
     store.rootContainer.sortOrder,
@@ -76,11 +77,14 @@ const App = observer(({ store }) => {
 
     const pointerVector = new Vector2(event.clientX * DPR, event.clientY * DPR)
     const relativeMovement = Vector2.subtract(pointerVector, dragStart)
+    const relativeMovementScaledToCanvas = new Vector2(
+      relativeMovement.x / store.rootContainer.canvasScale,
+      relativeMovement.y / store.rootContainer.canvasScale
+    )
 
     if (selectedId) {
-      // TODO: replace this with findChild() once we have an actual tree
       const selectedItem = store.rootContainer.findItem(selectedId)
-      selectedItem.position.add(relativeMovement)
+      selectedItem.position.add(relativeMovementScaledToCanvas)
     }
 
     // this will enable us to track distance moved since the last event
@@ -190,12 +194,11 @@ const App = observer(({ store }) => {
           )
         })}
       </div>
-      <canvas
+      <Stage
         ref={stageRef}
-        width={windowWidth * DPR}
-        height={windowHeight * DPR}
-        id="stage"
-        style={{ width: windowWidth, height: windowHeight }}
+        width={windowWidth}
+        height={windowHeight}
+        devicePixelRatio={DPR}
       />
     </div>
   )

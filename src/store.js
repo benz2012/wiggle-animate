@@ -25,8 +25,6 @@ class RootStore {
     // }
 
     this.rootContainer = new RootContainer(this)
-    this.rootContainer.position.x = 500
-    this.rootContainer.position.y = 200
 
     this.build = {
       tool: '',

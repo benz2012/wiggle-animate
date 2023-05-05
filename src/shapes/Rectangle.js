@@ -1,21 +1,27 @@
 import { makeObservable, action } from 'mobx'
 
 import Shape from '../drawing/Shape'
+import Size from '../structure/Size'
 import { observeListOfProperties } from '../utility/state'
 
 class Rectangle extends Shape {
-  constructor(x = 100, y = 100, width = 100, height = 100) {
+  constructor(x = 0, y = 0, width = 100, height = 100) {
     super()
     this.position.x = x
     this.position.y = y
-    this.width = width
-    this.height = height
+    this.size = new Size(width, height)
 
     const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'width', 'height']
+    this._observables = [...inheritedObservables, 'size']
+    this._nestedObservables = [...super.nestedObservables, 'size']
     observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { checkPointerIntersections: action })
   }
+
+  get width() { return this.size.width }
+  set width(value) { this.size.width = value }
+  get height() { return this.size.height }
+  set height(value) { this.size.height = value }
 
   get currentTransform() {
     return new DOMMatrix(this.parentTransform)

@@ -53,7 +53,8 @@
       "react/jsx-one-expression-per-line": "off",
       "react/jsx-props-no-spreading": "off",
       "react/no-unknown-property": "off",
-      "react/function-component-definition": "off"
+      "react/function-component-definition": "off",
+      "react/prop-types": "off"
     }
   },
   "browserslist": {
