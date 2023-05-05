@@ -5,6 +5,15 @@ import Size from '../structure/Size'
 import { observeListOfProperties } from '../utility/state'
 
 class Rectangle extends Shape {
+  /* Check if rectangle A overlaps rectangle B, or vise-versa
+   * requires top-left corner (x1, y1) & bottom-right corner (x2, y2)
+   */
+  static overlaps(a, b) {
+    if (a.x1 >= b.x2 || b.x1 >= a.x2) return false // no horizontal overlap
+    if (a.y1 >= b.y2 || b.y1 >= a.y2) return false // no vertical overlap
+    return true
+  }
+
   constructor(x = 0, y = 0, width = 100, height = 100) {
     super()
     this.position.x = x
@@ -41,7 +50,7 @@ class Rectangle extends Shape {
       .translateSelf(-1 * this.origin.x, -1 * this.origin.y)
   }
 
-  draw(parentTransform, hovered, selected) {
+  draw(parentTransform, isHovered, isSelected) {
     // TODO: get this somehow else
     this.parentTransform = parentTransform
 
@@ -56,7 +65,7 @@ class Rectangle extends Shape {
 
     // draw hovered rect
     // TODO: some of this should be abstracted
-    if (hovered === this.id && selected !== this.id) {
+    if (isHovered && !isSelected) {
       this.ctx.setTransform(this.currentTransform)
       this.ctx.beginPath()
       const strokeProtrusion = this.stroke.width / 2
@@ -74,7 +83,7 @@ class Rectangle extends Shape {
 
     // draw selected controller box
     // TODO: draw this on top of all other items
-    if (selected === this.id) {
+    if (isSelected) {
       this.ctx.setTransform(this.currentTransform)
       this.ctx.beginPath()
       const strokeProtrusion = this.stroke.width / 2
@@ -197,6 +206,38 @@ class Rectangle extends Shape {
 
     if (this.ctx.isPointInPath(...pointerVector.values)) return true
     return false
+  }
+
+  findRectIntersections(rectSpecTLBR, parentTransform) {
+    this.parentTransform = parentTransform
+
+    this.ctx.setTransform(this.currentTransform)
+    const strokeProtrusion = this.stroke.width / 2
+    this.ctx.translate(
+      this.width / -2 - strokeProtrusion,
+      this.height / -2 - strokeProtrusion,
+    )
+    const finalTransform = this.ctx.getTransform()
+    const thisRectSpecTLBR = [
+      finalTransform.e,
+      finalTransform.f,
+      finalTransform.e + this.width + this.stroke.width,
+      finalTransform.f + this.height + this.stroke.width,
+    ]
+
+    const hasOverlap = Rectangle.overlaps({
+      x1: rectSpecTLBR[0],
+      y1: rectSpecTLBR[1],
+      x2: rectSpecTLBR[2],
+      y2: rectSpecTLBR[3],
+    }, {
+      x1: thisRectSpecTLBR[0],
+      y1: thisRectSpecTLBR[1],
+      x2: thisRectSpecTLBR[2],
+      y2: thisRectSpecTLBR[3],
+    })
+    if (hasOverlap) return [this.id]
+    return []
   }
 }
 

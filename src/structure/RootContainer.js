@@ -5,6 +5,7 @@ import Item from './Item'
 import Size from './Size'
 import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
+import Stroke from '../visuals/Stroke'
 
 const identityMatrix = () => new DOMMatrix([1, 0, 0, 1, 0, 0])
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
@@ -34,6 +35,7 @@ class RootContainer extends Container {
       _canvasScale: observable,
       canvasFill: observable,
       checkPointerIntersections: action,
+      findRectIntersections: action,
       changeScaleByStep: action,
     })
   }
@@ -99,7 +101,10 @@ class RootContainer extends Container {
       this.transform,
       this.store.build.hoveredId,
       this.store.build.selectedId,
+      this.store.selector.hovers,
     )
+
+    this.drawSelector()
   }
 
   drawStageDots(rootWidth, rootHeight) {
@@ -148,11 +153,35 @@ class RootContainer extends Container {
     this.canvasFill.draw(this.ctx)
   }
 
+  drawSelector() {
+    const { selector } = this.store
+    if (selector.rect.area === 0) return
+
+    this.ctx.setTransform(identityMatrix())
+    this.ctx.beginPath()
+    // this might be OS dependent, but the -2 on X seems to get it
+    // more in line with the mouse glyph center point
+    this.ctx.rect(
+      selector.position.x - 2,
+      selector.position.y,
+      ...selector.rect.values,
+    )
+    const fill = new Fill('rgba(33, 150, 243, 0.1)')
+    fill.draw(this.ctx)
+    const stroke = new Stroke('rgb(33, 150, 243', 4)
+    stroke.draw(this.ctx)
+  }
+
   checkPointerIntersections(pointerVector) {
     const foundIntersection = super.checkPointerIntersections(pointerVector, this.transform)
     if (!foundIntersection) {
       this.store.setHovered(null)
     }
+  }
+
+  findRectIntersections(rectSpecTLBR) {
+    const foundIntersections = super.findRectIntersections(rectSpecTLBR, this.transform)
+    return foundIntersections
   }
 }
 

@@ -45,6 +45,10 @@ class Drawable extends Item {
   checkPointerIntersections() {
     return false
   }
+
+  findRectIntersections() {
+    return []
+  }
 }
 
 export default Drawable

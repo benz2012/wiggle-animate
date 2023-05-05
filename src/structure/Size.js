@@ -10,6 +10,12 @@ class Size {
   }
 
   get values() { return [this.width, this.height] }
+
+  get area() {
+    return (
+      Math.abs(this.width) * Math.abs(this.height)
+    )
+  }
 }
 
 export default Size

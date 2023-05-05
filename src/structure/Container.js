@@ -100,7 +100,7 @@ class Container extends Animatable {
     this.sortChild(childId, null, by)
   }
 
-  draw(parentTransform, hovered, selected) {
+  draw(parentTransform, hoveredId, selectedId, selectorHovers) {
     this.ctx.setTransform(parentTransform)
     this.ctx.translate(this.position.x, this.position.y)
     this.ctx.scale(this.scale.x, this.scale.y)
@@ -109,8 +109,13 @@ class Container extends Animatable {
 
     const drawOrder = [...this.sortOrder].reverse()
     drawOrder.forEach((childId) => {
+      const anyHovers = (hoveredId === childId) || selectorHovers.includes(childId)
       const child = this.children[childId]
-      child.draw(currentTransform, hovered, selected)
+      if (child instanceof Container) {
+        child.draw(currentTransform, hoveredId, selectedId, selectorHovers)
+      } else {
+        child.draw(currentTransform, anyHovers, selectedId === childId)
+      }
     })
   }
 
@@ -132,6 +137,23 @@ class Container extends Animatable {
       return hasIntersection
     })
     return hasIntersection
+  }
+
+  findRectIntersections(rectSpecTLBR, parentTransform) {
+    const thisTransform = new DOMMatrix(parentTransform)
+      .translateSelf(this.position.x, this.position.y)
+      .scaleSelf(this.scale.x, this.scale.y)
+      .rotateSelf(this.rotation.degrees)
+
+    // Array.some() will cause the iteration to short circuit on the first child
+    // that has an intersection, like event bubble cancellation in the DOM
+    const intersections = []
+    this.sortOrder.forEach((childId) => {
+      const child = this.children[childId]
+      const intersectionsWithinChild = child.findRectIntersections(rectSpecTLBR, thisTransform)
+      intersections.push(...intersectionsWithinChild)
+    })
+    return intersections
   }
 }
 

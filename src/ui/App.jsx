@@ -37,7 +37,7 @@ const App = observer(({ store }) => {
   }, [store.determineCurrentAction])
   /* End State Syncs */
 
-  /* Main observation & drawing trigger */
+  /* Main observations */
   const peekAtObservables = (item) => {
     let propsToLookAt = item.observables
     const hasNested = isObject(item) && 'nestedObservables' in item
@@ -57,7 +57,7 @@ const App = observer(({ store }) => {
   const allObserverablePropertiesInTheTree = JSON.stringify(
     Object.values(store.rootContainer.children).map(peekAtObservables)
   )
-  const storeBuildProperties = JSON.stringify(Object.entries(store.build))
+  /* Main drawing trigger */
   useEffect(() => {
     const stage = stageRef.current
     const ctx = stage.getContext('2d')
@@ -71,8 +71,11 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     store.rootContainer.canvasFill.color,
+    store.build.selectedId,
+    store.build.hoveredId,
+    store.selector.rect.area,
+    store.selector.hovers,
     allObserverablePropertiesInTheTree,
-    storeBuildProperties,
     windowWidth,
     windowHeight,
   ])
@@ -103,6 +106,9 @@ const App = observer(({ store }) => {
     } else if (selectedId) {
       const selectedItem = store.rootContainer.findItem(selectedId)
       selectedItem.position.add(relativeMovementScaledToCanvas)
+    } else {
+      store.selector.rect.width += relativeMovement.x
+      store.selector.rect.height += relativeMovement.y
     }
 
     // this will enable us to track distance moved since the last event
@@ -113,17 +119,29 @@ const App = observer(({ store }) => {
   const handlePointerEvent = (event) => {
     const pointerVector = new Vector2(event.clientX * DPR, event.clientY * DPR)
     if (event.type === 'pointermove') {
-      if (!store.build.dragStart) {
+      const { dragStart } = store.build
+      if (!dragStart) {
         store.rootContainer.checkPointerIntersections(pointerVector)
+      } else if (dragStart && store.selector.rect.area > 0) {
+        const x2 = store.selector.position.x + store.selector.rect.width
+        const y2 = store.selector.position.y + store.selector.rect.height
+        const intersectedIds = store.rootContainer.findRectIntersections([
+          Math.min(store.selector.position.x, x2),
+          Math.min(store.selector.position.y, y2),
+          Math.max(store.selector.position.x, x2),
+          Math.max(store.selector.position.y, y2),
+        ])
+        store.setSelectorHovers(intersectedIds)
       }
-    }
-    if (event.type === 'pointerdown' && event.target === stageRef.current) {
+    } else if (event.type === 'pointerdown' && event.target === stageRef.current) {
       store.rootContainer.checkPointerIntersections(pointerVector)
       store.setSelected(store.build.hoveredId)
       store.startDrag(pointerVector)
-    }
-    if (event.type === 'pointerup') {
+      store.setSelectorPosition(pointerVector)
+    } else if (event.type === 'pointerup') {
       store.stopDrag(pointerVector)
+      store.setSelectorRect(0, 0)
+      store.setSelectorHovers([])
     }
   }
 
