@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -63,6 +64,10 @@ const App = observer(({ store }) => {
   }, [
     store.rootContainer,
     store.rootContainer.sortOrder,
+    store.rootContainer.canvasSize,
+    store.rootContainer.canvasPosition,
+    store.rootContainer.canvasScale,
+    store.rootContainer.canvasFill,
     allObserverablePropertiesInTheTree,
     storeBuildProperties,
     windowWidth,
@@ -173,26 +178,45 @@ const App = observer(({ store }) => {
     >
       <div id="left-menu">
         <button type="button" onClick={addItem} style={{ marginBottom: 8 }} className="noselect">+ add item</button>
-        {store.rootContainer.sortOrder.map((childId) => {
-          const child = store.rootContainer.children[childId]
-          const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
-          const buttonClass = `noselect temp-button ${store.build.selectedId === childId && 'temp-button-selected'}`
-          return (
-            <li
-              key={childId}
-              className={listItemClass}
-              onClick={() => store.setSelected(childId)}
-            >
-              <span className="noselect">{childId.split('-')[0]}</span>
-              <span>
-                <button type="button" className={buttonClass} onClick={() => store.rootContainer.decreaseOrder(childId)}>↑</button>
-                <button type="button" className={buttonClass} onClick={() => store.rootContainer.increaseOrder(childId)}>↓</button>
-                <button type="button" className={buttonClass} onClick={() => child.delete()}>x</button>
-                <button type="button" className={buttonClass} onClick={() => doSomething(childId)}>&</button>
-              </span>
-            </li>
-          )
-        })}
+        <div style={{ flexGrow: 1 }}>
+          {store.rootContainer.sortOrder.map((childId) => {
+            const child = store.rootContainer.children[childId]
+            const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
+            const buttonClass = `noselect temp-button ${store.build.selectedId === childId && 'temp-button-selected'}`
+            return (
+              <li
+                key={childId}
+                className={listItemClass}
+                onClick={() => store.setSelected(childId)}
+              >
+                <span className="noselect">{childId.split('-')[0]}</span>
+                <span>
+                  <button type="button" className={buttonClass} onClick={() => store.rootContainer.decreaseOrder(childId)}>↑</button>
+                  <button type="button" className={buttonClass} onClick={() => store.rootContainer.increaseOrder(childId)}>↓</button>
+                  <button type="button" className={buttonClass} onClick={() => child.delete()}>x</button>
+                  <button type="button" className={buttonClass} onClick={() => doSomething(childId)}>&</button>
+                </span>
+              </li>
+            )
+          })}
+        </div>
+        <div id="left-menu-action-bottom">
+          <button
+            type="button"
+            className="noselect temp-button left-menu-action-button"
+            onClick={() => { store.rootContainer.decrementScale() }}
+          >
+            -
+          </button>
+          <span>{Math.trunc(store.rootContainer.canvasScale * 100)}%</span>
+          <button
+            type="button"
+            className="noselect temp-button left-menu-action-button"
+            onClick={() => { store.rootContainer.incrementScale() }}
+          >
+            +
+          </button>
+        </div>
       </div>
       <Stage
         ref={stageRef}

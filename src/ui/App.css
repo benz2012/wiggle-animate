@@ -90,3 +90,17 @@ button:hover {
 .temp-button-selected {
   background-color: #96a5b3;
 }
+
+#left-menu-action-bottom {
+  display: flex;
+  justify-content: space-between;
+}
+.left-menu-action-button {
+  /* padding: 2px 16px; */
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  font-size: 16px;
+}
