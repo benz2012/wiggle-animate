@@ -44,7 +44,10 @@ class RootContainer extends Container {
     const scaleLowerBound = scaleSteps[0]
     const scaleUpperBound = scaleSteps[scaleSteps.length - 1]
     if (value < scaleLowerBound || value > scaleUpperBound) return
+    const ratioBetweenScales = (value / this._canvasScale)
     this._canvasScale = value
+    this.canvasPosition.x *= (ratioBetweenScales ** 2)
+    this.canvasPosition.y *= (ratioBetweenScales ** 2)
   }
 
   changeScaleByStep(direction = 1) {
