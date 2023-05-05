@@ -90,6 +90,10 @@ class RootStore {
     this.build.selectedIds = this.build.selectedIds.filter((id) => id !== value)
   }
 
+  selectAll() {
+    this.setSelected(this.rootContainer.allItems)
+  }
+
   /* Selector Actions */
   setSelectorPosition(vector) {
     this.selector.position.x = vector.x

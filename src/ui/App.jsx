@@ -178,6 +178,12 @@ const App = observer(({ store }) => {
           store.rootContainer.incrementScale()
         }
         break
+      case 'a':
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault()
+          store.selectAll()
+        }
+        break
       default:
         break
     }

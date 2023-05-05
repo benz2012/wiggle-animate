@@ -79,6 +79,11 @@ class RootContainer extends Container {
     ]
   }
 
+  get allItems() {
+    // remove root container id from list
+    return super.allItems.slice(1)
+  }
+
   draw(ctx, rootWidth, rootHeight) {
     if (!rootWidth || !rootHeight) return
 

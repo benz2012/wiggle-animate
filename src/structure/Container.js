@@ -79,6 +79,18 @@ class Container extends Animatable {
     }
   }
 
+  get allItems() {
+    const children = [this.id]
+    Object.values(this._children).forEach((child) => {
+      if (child instanceof Container) {
+        children.push(...child.allItems)
+      } else {
+        children.push(child.id)
+      }
+    })
+    return children
+  }
+
   sortChild(childId, toIndex, byAmount) {
     const prevIndex = this._sortOrder.findIndex((element) => element === childId)
     const tempOrderWithoutChild = [...this._sortOrder]
