@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
@@ -131,8 +132,21 @@ const App = observer(({ store }) => {
   const handleKeyDownEvent = action((event) => {
     switch (event.key) {
       case ' ':
+        event.preventDefault()
         store.setIsMoveable(true)
         store.setSelected(null)
+        break
+      case '-':
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault()
+          store.rootContainer.decrementScale()
+        }
+        break
+      case '=':
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault()
+          store.rootContainer.incrementScale()
+        }
         break
       default:
         break
@@ -152,11 +166,12 @@ const App = observer(({ store }) => {
           itemToDelete.delete()
         }
         break
-
       case ' ':
         store.setIsMoveable(false)
         break
-
+      case 'f':
+        resetView()
+        break
       default:
         break
     }
@@ -186,6 +201,12 @@ const App = observer(({ store }) => {
     )
     store.rootContainer.add(newItem)
   }
+
+  const resetView = action(() => {
+    store.rootContainer.canvasScale = 1
+    store.rootContainer.canvasPosition.x = 0
+    store.rootContainer.canvasPosition.y = 0
+  })
   /* End Complex Actions */
 
   return (
@@ -240,11 +261,7 @@ const App = observer(({ store }) => {
           <button
             type="button"
             className="noselect general-button left-menu-action-button"
-            onClick={action(() => {
-              store.rootContainer.canvasScale = 1
-              store.rootContainer.canvasPosition.x = 0
-              store.rootContainer.canvasPosition.y = 0
-            })}
+            onClick={resetView}
           >
             ⟲
           </button>
