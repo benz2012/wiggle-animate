@@ -84,6 +84,18 @@ class RootContainer extends Container {
     return super.allItems.slice(1)
   }
 
+  findItem(itemId) {
+    const result = this.findItemAndParent(itemId)
+    if (result) return result.item
+    return null
+  }
+
+  findParent(itemId) {
+    const result = this.findItemAndParent(itemId)
+    if (result) return result.parent
+    return null
+  }
+
   draw(ctx, rootWidth, rootHeight) {
     if (!rootWidth || !rootHeight) return
 

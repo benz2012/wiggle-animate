@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Fragment } from 'react'
 
+import './LeftMenu.css'
 import Container from '../structure/Container'
 
 const CreateItemButton = ({ onClick, label }) => (
@@ -26,37 +27,99 @@ const LeftMenuActionBottom = ({ onClick, label }) => (
   </button>
 )
 
-const ContainerListOfChildren = ({ store, container }) => (
-  container.sortOrder.map((childId) => {
-    const child = container.children[childId]
-    const listItemClass = `left-menu-item ${store.build.selectedIds.includes(childId) && 'left-menu-item-selected'}`
-    return (
-      <Fragment key={childId}>
-        <li
-          className={listItemClass}
-          onClick={() => store.setSelected([childId])}
-        >
-          <span className="noselect" style={{ lineHeight: '14px', fontSize: '14px' }}>{child.name}</span>
-        </li>
-        <div style={{ marginLeft: 8 }}>
-          {child instanceof Container && (
-            <ContainerListOfChildren store={store} container={child} />
-          )}
-        </div>
-      </Fragment>
-    )
-  })
-)
+const ContainerListOfChildren = (props) => {
+  const { store, container, shiftKeyHeld, metaKeyHeld } = props
 
-const LeftMenu = ({ store, addRect, addContainer, decrementScale, incrementScale, resetView }) => (
+  const handleItemClick = (clickedId) => () => {
+    const { selectedIds } = store.build
+    if (metaKeyHeld) {
+      if (selectedIds.includes(clickedId)) {
+        store.removeFromSelection(clickedId)
+      } else {
+        store.addToSelection(clickedId)
+      }
+    } else if (shiftKeyHeld && selectedIds.length > 0) {
+      const parent = store.rootContainer.findParent(clickedId)
+      const preselectedSiblings = parent.sortOrder
+        .filter((siblingId) => selectedIds.includes(siblingId))
+      if (preselectedSiblings.length > 0) {
+        // sort siblings and then find lowest and hightest, compare to where we are clicking
+        const indexOfClickedChild = parent.sortOrder.findIndex((childId) => childId === clickedId)
+        const indexOfFirstSelectedSibling = parent.sortOrder.findIndex((childId) => (
+          childId === preselectedSiblings[0]
+        ))
+        const indexOflastSelectedSibling = parent.sortOrder.findIndex((childId) => (
+          childId === preselectedSiblings[preselectedSiblings.length - 1]
+        ))
+
+        if (indexOfClickedChild < indexOflastSelectedSibling) {
+          // select upwards from last
+          const childrenBetweenClickAndLast = parent.sortOrder.slice(
+            indexOfClickedChild,
+            indexOflastSelectedSibling + 1,
+          )
+          store.setSelected(childrenBetweenClickAndLast)
+        } else if (indexOfClickedChild > indexOfFirstSelectedSibling) {
+          // select downwards from first
+          const childrenBetweenFirstAndClick = parent.sortOrder.slice(
+            indexOfFirstSelectedSibling,
+            indexOfClickedChild + 1,
+          )
+          store.setSelected(childrenBetweenFirstAndClick)
+        } else {
+          // console.log('hallow')
+        }
+      } else {
+        store.setSelected([clickedId])
+      }
+    } else {
+      store.setSelected([clickedId])
+    }
+  }
+
+  return (
+    container.sortOrder.map((childId) => {
+      const child = container.children[childId]
+      const listItemClass = `left-menu-item ${store.build.selectedIds.includes(childId) && 'left-menu-item-selected'}`
+      return (
+        <Fragment key={childId}>
+          <li
+            className={listItemClass}
+            onClick={handleItemClick(childId)}
+          >
+            <span className="noselect" style={{ lineHeight: '14px', fontSize: '14px' }}>{child.name}</span>
+          </li>
+          <div style={{ marginLeft: 8 }}>
+            {child instanceof Container && (
+              <ContainerListOfChildren {...props} container={child} />
+            )}
+          </div>
+        </Fragment>
+      )
+    })
+  )
+}
+
+const LeftMenu = ({
+  store,
+  decrementScale,
+  incrementScale,
+  shiftKeyHeld,
+  metaKeyHeld,
+}) => (
   <div id="left-menu">
     <div style={{ display: 'flex' }}>
-      <CreateItemButton onClick={addRect} label="+ rect" />
+      <CreateItemButton onClick={() => store.addRect()} label="+ rect" />
       <div style={{ marginLeft: 8 }} />
-      <CreateItemButton onClick={addContainer} label="+ ctnr" />
+      <CreateItemButton onClick={() => store.addContainer()} label="+ ctnr" />
     </div>
     <div style={{ flexGrow: 1 }}>
-      <ContainerListOfChildren store={store} container={store.rootContainer} />
+      <ContainerListOfChildren
+        store={store}
+        container={store.rootContainer}
+        shiftKeyHeld={shiftKeyHeld}
+        metaKeyHeld={metaKeyHeld}
+      />
     </div>
     <div id="left-menu-action-bottom">
       <LeftMenuActionBottom label="-" onClick={decrementScale} />
@@ -64,7 +127,7 @@ const LeftMenu = ({ store, addRect, addContainer, decrementScale, incrementScale
         {Math.trunc(store.rootContainer.canvasScale * 100)}%
       </span>
       <LeftMenuActionBottom label="+" onClick={incrementScale} />
-      <LeftMenuActionBottom label="⟲" onClick={resetView} />
+      <LeftMenuActionBottom label="⟲" onClick={() => store.resetView()} />
     </div>
   </div>
 )

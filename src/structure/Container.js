@@ -44,12 +44,6 @@ class Container extends Animatable {
     delete this._children[itemId]
   }
 
-  findItem(itemId) {
-    const result = this.findItemAndParent(itemId)
-    if (result) return result.item
-    return null
-  }
-
   findItemAndParent(itemId) {
     if (itemId in this._children) {
       return { item: this._children[itemId], parent: this }
