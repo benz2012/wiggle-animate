@@ -100,7 +100,7 @@ class RootContainer extends Container {
     super.draw(
       this.transform,
       this.store.build.hoveredId,
-      this.store.build.selectedId,
+      this.store.build.selectedIds,
       this.store.selector.hovers,
     )
 

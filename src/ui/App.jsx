@@ -71,7 +71,7 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     store.rootContainer.canvasFill.color,
-    store.build.selectedId,
+    store.build.selectedIds,
     store.build.hoveredId,
     store.selector.rect.area,
     store.selector.hovers,
@@ -83,7 +83,7 @@ const App = observer(({ store }) => {
 
   /* Interaction Event Handlers */
   const handleDrag = action((event) => {
-    const { selectedId, dragStart } = store.build
+    const { selectedIds, dragStart } = store.build
     if (!dragStart) return
 
     const pointerVector = new Vector2(event.clientX * DPR, event.clientY * DPR)
@@ -103,9 +103,11 @@ const App = observer(({ store }) => {
         relativeMovementScaledToCanvasInverse,
       )
       store.rootContainer.canvasPosition = newCanvasPosition
-    } else if (selectedId) {
-      const selectedItem = store.rootContainer.findItem(selectedId)
-      selectedItem.position.add(relativeMovementScaledToCanvas)
+    } else if (selectedIds.length > 0) {
+      selectedIds.forEach((selectedId) => {
+        const selectedItem = store.rootContainer.findItem(selectedId)
+        selectedItem.position.add(relativeMovementScaledToCanvas)
+      })
     } else {
       store.selector.rect.width += relativeMovement.x
       store.selector.rect.height += relativeMovement.y
@@ -135,12 +137,23 @@ const App = observer(({ store }) => {
       }
     } else if (event.type === 'pointerdown' && event.target === stageRef.current) {
       store.rootContainer.checkPointerIntersections(pointerVector)
-      store.setSelected(store.build.hoveredId)
+      if (store.build.hoveredId) {
+        if (store.build.selectedIds.length === 0) {
+          store.setSelected([store.build.hoveredId])
+        } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {
+          store.setSelected([store.build.hoveredId])
+        }
+      } else {
+        store.setSelected([])
+      }
       store.startDrag(pointerVector)
       store.setSelectorPosition(pointerVector)
     } else if (event.type === 'pointerup') {
       store.stopDrag(pointerVector)
       store.setSelectorRect(0, 0)
+      if (store.selector.hovers.length > 0) {
+        store.setSelected(store.selector.hovers)
+      }
       store.setSelectorHovers([])
     }
   }
@@ -151,7 +164,7 @@ const App = observer(({ store }) => {
       case ' ':
         event.preventDefault()
         store.setIsMoveable(true)
-        store.setSelected(null)
+        store.setSelected([])
         break
       case '-':
         if (event.metaKey || event.ctrlKey) {
@@ -171,16 +184,18 @@ const App = observer(({ store }) => {
   })
   const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [handleKeyDownEvent])
   const handleKeyUpEvent = action((event) => {
-    const { selectedId } = store.build
+    const { selectedIds } = store.build
 
     switch (event.key) {
       case 'Backspace':
       case 'Delete':
-        if (selectedId) {
-          const itemToDelete = store.rootContainer.findItem(selectedId)
-          store.setSelected(null)
+        if (selectedIds.length > 0) {
+          const itemsToDelete = selectedIds.map((selectedId) => (
+            store.rootContainer.findItem(selectedId)
+          ))
+          store.setSelected([])
           store.setHovered(null)
-          itemToDelete.delete()
+          itemsToDelete.forEach((item) => { item.delete() })
         }
         break
       case ' ':
@@ -212,8 +227,8 @@ const App = observer(({ store }) => {
 
   /* Complex Actions */
   const addNewItem = (newItem) => {
-    const { selectedId } = store.build
-    const found = store.rootContainer.findItemAndParent(selectedId)
+    const { selectedIds } = store.build
+    const found = store.rootContainer.findItemAndParent(selectedIds[0])
     const selectedItem = found?.item
     if (selectedItem instanceof Container) {
       selectedItem.add(newItem)

@@ -35,7 +35,7 @@ class Container extends Animatable {
     }
 
     if (!(newItem instanceof Container)) {
-      Item.rootContainer.store.setSelected(newId)
+      Item.rootContainer.store.setSelected([newId])
     }
   }
 
@@ -100,7 +100,7 @@ class Container extends Animatable {
     this.sortChild(childId, null, by)
   }
 
-  draw(parentTransform, hoveredId, selectedId, selectorHovers) {
+  draw(parentTransform, hoveredId, selectedIds, selectorHovers) {
     this.ctx.setTransform(parentTransform)
     this.ctx.translate(this.position.x, this.position.y)
     this.ctx.scale(this.scale.x, this.scale.y)
@@ -112,9 +112,9 @@ class Container extends Animatable {
       const anyHovers = (hoveredId === childId) || selectorHovers.includes(childId)
       const child = this.children[childId]
       if (child instanceof Container) {
-        child.draw(currentTransform, hoveredId, selectedId, selectorHovers)
+        child.draw(currentTransform, hoveredId, selectedIds, selectorHovers)
       } else {
-        child.draw(currentTransform, anyHovers, selectedId === childId)
+        child.draw(currentTransform, anyHovers, selectedIds.includes(childId))
       }
     })
   }

@@ -29,12 +29,12 @@ const LeftMenuActionBottom = ({ onClick, label }) => (
 const ContainerListOfChildren = ({ store, container }) => (
   container.sortOrder.map((childId) => {
     const child = container.children[childId]
-    const listItemClass = `left-menu-item ${store.build.selectedId === childId && 'left-menu-item-selected'}`
+    const listItemClass = `left-menu-item ${store.build.selectedIds.includes(childId) && 'left-menu-item-selected'}`
     return (
       <Fragment key={childId}>
         <li
           className={listItemClass}
-          onClick={() => store.setSelected(childId)}
+          onClick={() => store.setSelected([childId])}
         >
           <span className="noselect" style={{ lineHeight: '14px', fontSize: '14px' }}>{child.name}</span>
         </li>

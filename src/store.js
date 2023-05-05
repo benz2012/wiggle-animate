@@ -30,7 +30,7 @@ class RootStore {
 
     this.build = {
       tool: '',
-      selectedId: null,
+      selectedIds: [],
       hoveredId: null,
       dragStart: null,
     }
@@ -69,7 +69,7 @@ class RootStore {
     }
 
     if (this.build.hoveredId) {
-      if (this.build.selectedId) {
+      if (this.build.selectedIds.length > 0) {
         if (this.build.dragStart) {
           return 'dragging'
         }
@@ -82,10 +82,15 @@ class RootStore {
 
   /* Build Actions */
   setHovered(value) { this.build.hoveredId = value }
-  setSelected(value) { this.build.selectedId = value }
   startDrag(vector) { this.build.dragStart = vector }
   stopDrag() { this.build.dragStart = null }
+  setSelected(values) { this.build.selectedIds = values }
+  addToSelection(value) { this.build.selectedIds.push(value) }
+  removeFromSelection(value) {
+    this.build.selectedIds = this.build.selectedIds.filter((id) => id !== value)
+  }
 
+  /* Selector Actions */
   setSelectorPosition(vector) {
     this.selector.position.x = vector.x
     this.selector.position.y = vector.y
