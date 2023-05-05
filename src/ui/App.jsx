@@ -74,27 +74,14 @@ const App = observer(({ store }) => {
   ])
   /* End Main Loop */
 
-  // Key Handler State
-  const [shiftKeyHeld, setShiftKeyHeld] = useState(false)
-  const [metaKeyHeld, setMetaKeyHeld] = useState(false)
-  const keyHeldSetterMap = {
-    Shift: setShiftKeyHeld,
-    Meta: setMetaKeyHeld,
-  }
-  const setKeyHeld = (key, state) => {
-    keyHeldSetterMap[key](state)
-  }
-
   return (
     <>
-      <KeyHandler store={store} setKeyHeld={setKeyHeld} />
+      <KeyHandler store={store} />
       <PointerHandler store={store} ref={stageRef}>
         <LeftMenu
           store={store}
           incrementScale={() => store.rootContainer.incrementScale()}
           decrementScale={() => store.rootContainer.decrementScale()}
-          shiftKeyHeld={shiftKeyHeld}
-          metaKeyHeld={metaKeyHeld}
         />
         <Stage
           ref={stageRef}

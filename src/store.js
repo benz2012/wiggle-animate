@@ -41,13 +41,20 @@ class RootStore {
       hovers: [],
     }
 
-    this.view = { isMoveable: false }
+    this.view = {}
+
+    this.keyHeld = {
+      Space: false,
+      Shift: false,
+      Meta: false,
+    }
 
     makeObservable(this, {
       rootContainer: observable,
       build: observable,
       selector: observable,
       view: observable,
+      keyHeld: observable,
 
       setHovered: action,
       setSelected: action,
@@ -61,15 +68,16 @@ class RootStore {
       setSelectorRect: action,
       setSelectorHovers: action,
 
-      setIsMoveable: action,
       resetView: action,
+
+      setKeyHeld: action,
 
       determineCurrentAction: computed,
     })
   }
 
   get determineCurrentAction() {
-    if (this.view.isMoveable) {
+    if (this.keyHeld.Space) {
       if (this.build.dragStart) {
         return 'dragging'
       }
@@ -141,12 +149,15 @@ class RootStore {
   setSelectorHovers(values) { this.selector.hovers = values }
 
   /* View Actions */
-  setIsMoveable(value) { this.view.isMoveable = value }
-
   resetView() {
     this.rootContainer.canvasScale = 1
     this.rootContainer.canvasPosition.x = 0
     this.rootContainer.canvasPosition.y = 0
+  }
+
+  /* Key Hold Actions */
+  setKeyHeld(key, state) {
+    this.keyHeld[key] = state
   }
 }
 

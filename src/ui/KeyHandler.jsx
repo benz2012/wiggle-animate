@@ -1,13 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
 
-const KeyHandler = ({ store, setKeyHeld }) => {
+const KeyHandler = ({ store }) => {
   /* -- KEY DOWN -- */
   const handleKeyDownEvent = action((event) => {
     switch (event.key) {
       case ' ':
         event.preventDefault()
-        store.setIsMoveable(true)
+        store.setKeyHeld('Space', true)
         store.setSelected([])
         break
 
@@ -33,7 +33,7 @@ const KeyHandler = ({ store, setKeyHeld }) => {
         break
 
       case 'Shift':
-        setKeyHeld('Shift', true)
+        store.setKeyHeld('Shift', true)
         break
 
       default:
@@ -41,7 +41,7 @@ const KeyHandler = ({ store, setKeyHeld }) => {
     }
 
     if (event.metaKey || event.ctrlKey) {
-      setKeyHeld('Meta', true)
+      store.setKeyHeld('Meta', true)
     }
   })
 
@@ -63,7 +63,7 @@ const KeyHandler = ({ store, setKeyHeld }) => {
         break
 
       case ' ':
-        store.setIsMoveable(false)
+        store.setKeyHeld('Space', false)
         break
 
       case 'f':
@@ -71,12 +71,12 @@ const KeyHandler = ({ store, setKeyHeld }) => {
         break
 
       case 'Shift':
-        setKeyHeld('Shift', false)
+        store.setKeyHeld('Shift', false)
         break
 
       case 'Meta':
       case 'Control':
-        setKeyHeld('Meta', false)
+        store.setKeyHeld('Meta', false)
         break
 
       default:

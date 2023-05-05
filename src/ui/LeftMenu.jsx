@@ -28,17 +28,17 @@ const LeftMenuActionBottom = ({ onClick, label }) => (
 )
 
 const ContainerListOfChildren = (props) => {
-  const { store, container, shiftKeyHeld, metaKeyHeld } = props
+  const { store, container } = props
 
   const handleItemClick = (clickedId) => () => {
     const { selectedIds } = store.build
-    if (metaKeyHeld) {
+    if (store.keyHeld.Meta) {
       if (selectedIds.includes(clickedId)) {
         store.removeFromSelection(clickedId)
       } else {
         store.addToSelection(clickedId)
       }
-    } else if (shiftKeyHeld && selectedIds.length > 0) {
+    } else if (store.keyHeld.Shift && selectedIds.length > 0) {
       const parent = store.rootContainer.findParent(clickedId)
       const preselectedSiblings = parent.sortOrder
         .filter((siblingId) => selectedIds.includes(siblingId))
@@ -104,8 +104,6 @@ const LeftMenu = ({
   store,
   decrementScale,
   incrementScale,
-  shiftKeyHeld,
-  metaKeyHeld,
 }) => (
   <div id="left-menu">
     <div style={{ display: 'flex' }}>
@@ -117,8 +115,6 @@ const LeftMenu = ({
       <ContainerListOfChildren
         store={store}
         container={store.rootContainer}
-        shiftKeyHeld={shiftKeyHeld}
-        metaKeyHeld={metaKeyHeld}
       />
     </div>
     <div id="left-menu-action-bottom">

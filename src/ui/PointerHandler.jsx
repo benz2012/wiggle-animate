@@ -19,7 +19,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       relativeMovement.y / store.rootContainer.canvasScale,
     )
 
-    if (store.view.isMoveable) {
+    if (store.keyHeld.Space) {
       const relativeMovementScaledToCanvasInverse = new Vector2(
         relativeMovement.x * store.rootContainer.canvasScale,
         relativeMovement.y * store.rootContainer.canvasScale,
@@ -66,6 +66,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       if (store.build.hoveredId) {
         if (store.build.selectedIds.length === 0) {
           store.setSelected([store.build.hoveredId])
+        } else if (store.keyHeld.Meta || store.keyHeld.Shift) {
+          store.addToSelection(store.build.hoveredId)
         } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {
           store.setSelected([store.build.hoveredId])
         }
