@@ -52,6 +52,9 @@
   background-color: transparent;
   border: 1px solid white;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .jump-button:hover {
   background-color: rgba(25, 117, 210, 0.5);

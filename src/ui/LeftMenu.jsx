@@ -17,13 +17,13 @@ const CreateItemButton = ({ onClick, label }) => (
   </button>
 )
 
-const LeftMenuActionBottom = ({ onClick, label }) => (
+const LeftMenuActionBottom = ({ onClick, label, paddingBottom, paddingRight }) => (
   <button
     type="button"
     className="noselect general-button left-menu-action-button"
     onClick={onClick}
   >
-    {label}
+    <span style={{ paddingBottom, paddingRight }}>{label}</span>
   </button>
 )
 
@@ -119,12 +119,21 @@ const LeftMenu = ({
         />
       </div>
       <div id="left-menu-action-bottom">
-        <LeftMenuActionBottom label="-" onClick={decrementScale} />
+        <LeftMenuActionBottom
+          label="-"
+          onClick={decrementScale}
+          paddingBottom={3}
+        />
         <span className="noselect percentage-text">
           {Math.trunc(store.rootContainer.canvasScale * 100)}%
         </span>
         <LeftMenuActionBottom label="+" onClick={incrementScale} />
-        <LeftMenuActionBottom label="⟲" onClick={() => store.resetView()} />
+        <LeftMenuActionBottom
+          label="⟲"
+          onClick={() => store.resetView()}
+          paddingBottom={3}
+          paddingRight={2}
+        />
       </div>
     </div>
   </div>

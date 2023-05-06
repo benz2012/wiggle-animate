@@ -51,17 +51,17 @@ const BottomMenu = ({ store, windowWidth }) => {
 
   return (
     <div id="bottom-menu">
-      <button type="button" id="bottom-menu-tab">▲</button>
+      <button type="button" id="bottom-menu-tab" className="noselect">▲</button>
       <div id="play-controls">
-        <button type="button" className="jump-button">⇤</button>
+        <button type="button" className="jump-button noselect">⇤</button>
         <button
           type="button"
-          className="jump-button font-12"
+          className="jump-button font-12 noselect"
           onClick={() => setIsPlaying(!isPlaying)}
         >
           {playPauseText}
         </button>
-        <button type="button" className="jump-button">⇥</button>
+        <button type="button" className="jump-button noselect">⇥</button>
       </div>
       <div id="timeline-container">
         <div id="timeline-horizontal-line" />
