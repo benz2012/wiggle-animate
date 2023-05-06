@@ -8,10 +8,10 @@ class Drawable extends Item {
   /* eslint-disable class-methods-use-this */
   static _ctx
 
-  constructor() {
+  constructor(x, y) {
     super()
     this.origin = new Vector2()
-    this._position = new Vector2()
+    this._position = new Vector2(x, y)
     this.scale = new Vector2(1, 1)
     this.rotation = new Angle()
 
@@ -23,6 +23,11 @@ class Drawable extends Item {
 
   get ctx() { return Drawable._ctx }
   set ctx(value) { Drawable._ctx = value }
+
+  get x() { return this._position.x }
+  set x(value) { this._position.x = value }
+  get y() { return this._position.y }
+  set y(value) { this._position.y = value }
 
   get position() { return this._position }
   set position(value) {
@@ -39,7 +44,7 @@ class Drawable extends Item {
   }
 
   draw() {
-    return this
+    return null
   }
 
   checkPointerIntersections() {

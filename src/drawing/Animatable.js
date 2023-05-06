@@ -4,8 +4,8 @@ import Drawable from './Drawable'
 import { observeListOfProperties } from '../utility/state'
 
 class Animatable extends Drawable {
-  constructor() {
-    super()
+  constructor(...args) {
+    super(...args)
     this.keyframes = {
       observables: [], // this might give us problems later
       position: observable([]),

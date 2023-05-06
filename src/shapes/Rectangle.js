@@ -1,8 +1,6 @@
 import { makeObservable, action } from 'mobx'
 
 import Shape from '../drawing/Shape'
-import Size from '../structure/Size'
-import { observeListOfProperties } from '../utility/state'
 
 class Rectangle extends Shape {
   /* Check if rectangle A overlaps rectangle B, or vise-versa
@@ -14,28 +12,15 @@ class Rectangle extends Shape {
     return true
   }
 
-  constructor(x = 0, y = 0, width = 100, height = 100) {
-    super()
-    this.position.x = x
-    this.position.y = y
-    this.size = new Size(width, height)
+  constructor(...args) {
+    super(...args)
     this.name = `rectangle-${this.name}`
-
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'size']
-    this._nestedObservables = [...super.nestedObservables, 'size']
-    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { checkPointerIntersections: action })
   }
 
-  get width() { return this.size.width }
-  set width(value) { this.size.width = value }
-  get height() { return this.size.height }
-  set height(value) { this.size.height = value }
-
   get currentTransform() {
     return new DOMMatrix(this.parentTransform)
-      .translateSelf(this.position.x, this.position.y)
+      .translateSelf(this.x, this.y)
       .translateSelf(this.origin.x, this.origin.y)
       .rotateSelf(this.rotation.degrees)
       .scaleSelf(this.scale.x, this.scale.y)
@@ -44,7 +29,7 @@ class Rectangle extends Shape {
 
   get currentTransformWithoutScale() {
     return new DOMMatrix(this.parentTransform)
-      .translateSelf(this.position.x, this.position.y)
+      .translateSelf(this.x, this.y)
       .translateSelf(this.origin.x, this.origin.y)
       .rotateSelf(this.rotation.degrees)
       .translateSelf(-1 * this.origin.x, -1 * this.origin.y)

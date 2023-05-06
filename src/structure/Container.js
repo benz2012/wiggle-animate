@@ -108,7 +108,7 @@ class Container extends Animatable {
 
   draw(parentTransform, hoveredId, selectedIds, selectorHovers) {
     this.ctx.setTransform(parentTransform)
-    this.ctx.translate(this.position.x, this.position.y)
+    this.ctx.translate(this.x, this.y)
     this.ctx.scale(this.scale.x, this.scale.y)
     this.ctx.rotate(this.rotation.radians)
     const currentTransform = this.ctx.getTransform()
@@ -127,7 +127,7 @@ class Container extends Animatable {
 
   checkPointerIntersections(pointerVector, parentTransform) {
     const thisTransform = new DOMMatrix(parentTransform)
-      .translateSelf(this.position.x, this.position.y)
+      .translateSelf(this.x, this.y)
       .scaleSelf(this.scale.x, this.scale.y)
       .rotateSelf(this.rotation.degrees)
 
@@ -147,7 +147,7 @@ class Container extends Animatable {
 
   findRectIntersections(rectSpecTLBR, parentTransform) {
     const thisTransform = new DOMMatrix(parentTransform)
-      .translateSelf(this.position.x, this.position.y)
+      .translateSelf(this.x, this.y)
       .scaleSelf(this.scale.x, this.scale.y)
       .rotateSelf(this.rotation.degrees)
 

@@ -1,41 +1,18 @@
 import { makeObservable, action } from 'mobx'
 
 import Shape from '../drawing/Shape'
-import Size from '../structure/Size'
-import { observeListOfProperties } from '../utility/state'
+import Rectangle from './Rectangle'
 
 class Ellipse extends Shape {
-  /* Check if rectangle A overlaps rectangle B, or vise-versa
-   * requires top-left corner (x1, y1) & bottom-right corner (x2, y2)
-   */
-  static overlaps(a, b) {
-    if (a.x1 >= b.x2 || b.x1 >= a.x2) return false // no horizontal overlap
-    if (a.y1 >= b.y2 || b.y1 >= a.y2) return false // no vertical overlap
-    return true
-  }
-
-  constructor(x = 0, y = 0, width = 100, height = 100) {
-    super()
-    this.position.x = x
-    this.position.y = y
-    this.size = new Size(width, height)
+  constructor(...args) {
+    super(...args)
     this.name = `ellipse-${this.name}`
-
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'size']
-    this._nestedObservables = [...super.nestedObservables, 'size']
-    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { checkPointerIntersections: action })
   }
 
-  get width() { return this.size.width }
-  set width(value) { this.size.width = value }
-  get height() { return this.size.height }
-  set height(value) { this.size.height = value }
-
   get currentTransform() {
     return new DOMMatrix(this.parentTransform)
-      .translateSelf(this.position.x, this.position.y)
+      .translateSelf(this.x, this.y)
       .translateSelf(this.origin.x, this.origin.y)
       .rotateSelf(this.rotation.degrees)
       .scaleSelf(this.scale.x, this.scale.y)
@@ -44,7 +21,7 @@ class Ellipse extends Shape {
 
   get currentTransformWithoutScale() {
     return new DOMMatrix(this.parentTransform)
-      .translateSelf(this.position.x, this.position.y)
+      .translateSelf(this.x, this.y)
       .translateSelf(this.origin.x, this.origin.y)
       .rotateSelf(this.rotation.degrees)
       .translateSelf(-1 * this.origin.x, -1 * this.origin.y)
@@ -228,7 +205,7 @@ class Ellipse extends Shape {
       bottomLeftTransform.f,
     ]
 
-    const hasOverlap = Ellipse.overlaps({
+    const hasOverlap = Rectangle.overlaps({
       x1: rectSpecTLBR[0],
       y1: rectSpecTLBR[1],
       x2: rectSpecTLBR[2],
