@@ -67,7 +67,7 @@ const TopMenu = ({ store }) => {
                 icon={<div className="list-item-icon-rectangle" />}
                 label="Rectangle"
                 hotkeyIndicator="r"
-                onClick={() => store.addRect()}
+                onClick={() => store.addRectangle()}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-ellipse" />}
