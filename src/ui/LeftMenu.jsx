@@ -6,17 +6,6 @@ import { Fragment } from 'react'
 import './LeftMenu.css'
 import Container from '../structure/Container'
 
-const CreateItemButton = ({ onClick, label }) => (
-  <button
-    type="button"
-    className="noselect general-button left-menu-action-button mb-8"
-    style={{ flexGrow: 1 }}
-    onClick={onClick}
-  >
-    {label}
-  </button>
-)
-
 const LeftMenuActionBottom = ({ onClick, label, paddingBottom, paddingRight }) => (
   <button
     type="button"
@@ -107,10 +96,8 @@ const LeftMenu = ({
 }) => (
   <div id="left-menu-container">
     <div id="left-menu">
-      <div style={{ display: 'flex' }}>
-        <CreateItemButton onClick={() => store.addRect()} label="+ rect" />
-        <div style={{ marginLeft: 8 }} />
-        <CreateItemButton onClick={() => store.addContainer()} label="+ ctnr" />
+      <div style={{ display: 'flex', marginBottom: 8 }}>
+        Layers
       </div>
       <div style={{ flexGrow: 1 }}>
         <ContainerListOfChildren

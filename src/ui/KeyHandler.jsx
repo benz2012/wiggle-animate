@@ -79,6 +79,14 @@ const KeyHandler = ({ store }) => {
         store.setKeyHeld('Meta', false)
         break
 
+      case 'n':
+        store.addContainer()
+        break
+
+      case 'r':
+        store.addRect()
+        break
+
       default:
         break
     }

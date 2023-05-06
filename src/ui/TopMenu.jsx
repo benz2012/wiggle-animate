@@ -1,8 +1,19 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
 import './TopMenu.css'
 
-const TopMenu = ({ projectName, saveStatus }) => {
+const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
+  <div className="insert-menu-list-item" onClick={onClick}>
+    <div className="insert-menu-list-item-icon">{icon}</div>
+    <div className="insert-menu-list-item-label">{label}</div>
+    <div className="insert-menu-list-item-hotkey">{hotkeyIndicator}</div>
+  </div>
+)
+
+const TopMenu = ({ store }) => {
   const [insertMenuOpen, setInsertMenuOpen] = useState(false)
+  const { saveStatus } = store.project
 
   let iconClass = 'autosave-icon'
   if (saveStatus === 'saving') { iconClass = 'autosave-icon icon-bg-grey icon-spin' }
@@ -23,7 +34,10 @@ const TopMenu = ({ projectName, saveStatus }) => {
         Project
       </button>
 
-      <button type="button" className="top-menu-item top-menu-item-button noselect">
+      <button
+        type="button"
+        className="top-menu-item top-menu-item-button noselect"
+      >
         <span className="unicode-icon" style={{ fontSize: '14px' }}>⌘</span>
         Hotkeys
       </button>
@@ -31,23 +45,40 @@ const TopMenu = ({ projectName, saveStatus }) => {
       <button
         type="button"
         className="top-menu-item top-menu-item-button noselect"
+        // my hacky backdrop thing is messing click up, also sucks on mobile
+        // replace this with better menu/diaglog components in the future
         onClick={() => setInsertMenuOpen(!insertMenuOpen)}
-        onPointerLeave={() => { console.log('leave') }}
+        onPointerEnter={() => setInsertMenuOpen(true)}
+        onPointerLeave={() => setInsertMenuOpen(false)}
+        style={{ position: 'relative' }}
       >
         <span className="unicode-icon">+</span>
         Insert
         {insertMenuOpen && (
-          <div className="dialog-menu">
-            <span>Container</span>
-            <span>Rectangle</span>
-          </div>
+          <>
+            <div className="dialog-menu">
+              <InsertMenuListItem
+                icon={<div className="list-item-icon-container" />}
+                label="Container"
+                hotkeyIndicator="n"
+                onClick={() => store.addContainer()}
+              />
+              <InsertMenuListItem
+                icon={<div className="list-item-icon-rectangle" />}
+                label="Rectangle"
+                hotkeyIndicator="r"
+                onClick={() => store.addRect()}
+              />
+            </div>
+            <div className="dialog-backdrop" />
+          </>
         )}
       </button>
 
       <div style={{ flexGrow: 1 }} />
 
       <div className="top-menu-item noselect" style={{ marginRight: 0, paddingRight: 0 }}>
-        ✎ {projectName || 'Unnamed Project'}
+        ✎ {store.project.name || 'Unnamed Project'}
       </div>
 
       <div className="top-menu-item noselect">

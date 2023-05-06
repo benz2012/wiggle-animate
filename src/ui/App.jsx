@@ -83,7 +83,7 @@ const App = observer(({ store }) => {
     <>
       <KeyHandler store={store} />
       <PointerHandler store={store} ref={stageRef}>
-        <TopMenu projectName={store.project.name} saveStatus={store.project.saveStatus} />
+        <TopMenu store={store} />
         <LeftMenu
           store={store}
           incrementScale={() => store.rootContainer.incrementScale()}

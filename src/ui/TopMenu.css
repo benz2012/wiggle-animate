@@ -4,8 +4,9 @@
   height: 36px;
   padding: 8px;
   background-color: rgba(25, 117, 210, 0.2);
-  
+
   display: flex;
+  z-index: 50;
 }
 
 .top-menu-item {
@@ -17,6 +18,7 @@
   background-color: transparent;
   font-size: 14px;
   line-height: 14px;
+  z-index: 60;
 }
 .top-menu-item:not(:last-child) {
   margin-right: 8px;
@@ -90,12 +92,12 @@
 
 .dialog-menu {
   position: absolute;
-  top: calc(36px + 8px + 4px);
-  transform: translate(-16px, 0px);
+  top: calc(36px + 4px);
+  left: 0;
   min-width: 200px;
   min-height: 100px;
 
-  padding: 8px;
+  /* padding: 8px; */
   border-radius: 4px;
   border: 3px solid rgba(0, 0, 0, 0.1);
   background-color: rgba(33, 33, 33, 1);
@@ -104,8 +106,61 @@
   display: flex;
   flex-direction: column;
   align-items: start;
+  z-index: 100;
 
   box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 4px -2px,
     rgba(0, 0, 0, 0.21) 0px 3px 6px 0px,
     rgba(0, 0, 0, 0.18) 0px 1px 10px 0px;
+}
+
+.dialog-backdrop {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 120px;
+  height: 64px;
+  z-index: -10;
+}
+
+
+.insert-menu-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: calc(100%);
+  height: 36px;
+  padding: 4px 0;
+}
+.insert-menu-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.insert-menu-list-item-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.insert-menu-list-item-label {
+  flex-grow: 1;
+  text-align: start;
+  font-weight: normal;
+  color: rgb(240, 240, 240);
+  margin-left: 8px;
+}
+.insert-menu-list-item-hotkey {
+  color: rgb(60, 60, 60);
+  min-width: 36px;
+}
+
+.list-item-icon-container {
+  width: 20px;
+  height: 20px;
+  border: 3px dashed rgba(140, 140, 140);
+}
+
+.list-item-icon-rectangle {
+  width: 20px;
+  height: 20px;
+  background-color: hsl(335, 70%, 70%);
 }
