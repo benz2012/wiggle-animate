@@ -11,6 +11,7 @@ class Item {
   constructor() {
     this._id = uuidv4()
     this.name = randomChoice(names)
+    this.DPR = window.devicePixelRatio || 1
 
     this._observables = ['name']
     this._nestedObservables = []

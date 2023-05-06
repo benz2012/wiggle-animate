@@ -125,18 +125,13 @@ class Container extends Animatable {
     })
   }
 
-  checkPointerIntersections(pointerVector, parentTransform) {
-    const thisTransform = new DOMMatrix(parentTransform)
-      .translateSelf(this.x, this.y)
-      .scaleSelf(this.scale.x, this.scale.y)
-      .rotateSelf(this.rotation.degrees)
-
+  checkPointerIntersections(pointerVector) {
     // Array.some() will cause the iteration to short circuit on the first child
     // that has an intersection, like event bubble cancellation in the DOM
     let hasIntersection = false
     this.sortOrder.some((childId) => {
       const child = this.children[childId]
-      hasIntersection = child.checkPointerIntersections(pointerVector, thisTransform)
+      hasIntersection = child.checkPointerIntersections(pointerVector)
       if (!(child instanceof Container) && hasIntersection) {
         Item.rootContainer.store.setHovered(childId)
       }
@@ -145,18 +140,11 @@ class Container extends Animatable {
     return hasIntersection
   }
 
-  findRectIntersections(rectSpecTLBR, parentTransform) {
-    const thisTransform = new DOMMatrix(parentTransform)
-      .translateSelf(this.x, this.y)
-      .scaleSelf(this.scale.x, this.scale.y)
-      .rotateSelf(this.rotation.degrees)
-
-    // Array.some() will cause the iteration to short circuit on the first child
-    // that has an intersection, like event bubble cancellation in the DOM
+  findRectIntersections(rectSpecTLBR) {
     const intersections = []
     this.sortOrder.forEach((childId) => {
       const child = this.children[childId]
-      const intersectionsWithinChild = child.findRectIntersections(rectSpecTLBR, thisTransform)
+      const intersectionsWithinChild = child.findRectIntersections(rectSpecTLBR)
       intersections.push(...intersectionsWithinChild)
     })
     return intersections

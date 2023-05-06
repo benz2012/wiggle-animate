@@ -43,16 +43,35 @@ class Drawable extends Item {
     }
   }
 
-  draw() {
-    return null
+  get currentTranslation() {
+    return new DOMMatrix(this.parentTransform)
+      .translateSelf(this.x, this.y)
+      .translateSelf(this.origin.x, this.origin.y)
   }
 
-  checkPointerIntersections() {
-    return false
+  get currentTranslationRotation() {
+    return this.currentTranslation
+      .rotateSelf(this.rotation.degrees)
   }
 
-  findRectIntersections() {
-    return []
+  get currentOriginInverseTranslation() {
+    return [-1 * this.origin.x, -1 * this.origin.y]
+  }
+
+  get currentTransform() {
+    return this.currentTranslationRotation
+      .scaleSelf(this.scale.x, this.scale.y)
+      .translateSelf(...this.currentOriginInverseTranslation)
+  }
+
+  get currentTransformWithoutScale() {
+    return this.currentTranslationRotation
+      .translateSelf(...this.currentOriginInverseTranslation)
+  }
+
+  draw(parentTransform) {
+    this.parentTransform = parentTransform
+    this.ctx.setTransform(this.currentTransform)
   }
 }
 

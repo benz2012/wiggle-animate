@@ -190,15 +190,10 @@ class RootContainer extends Container {
   }
 
   checkPointerIntersections(pointerVector) {
-    const foundIntersection = super.checkPointerIntersections(pointerVector, this.transform)
+    const foundIntersection = super.checkPointerIntersections(pointerVector)
     if (!foundIntersection) {
       this.store.setHovered(null)
     }
-  }
-
-  findRectIntersections(rectSpecTLBR) {
-    const foundIntersections = super.findRectIntersections(rectSpecTLBR, this.transform)
-    return foundIntersections
   }
 
   moveAllSelectedByIncrement(relativeMovement) {

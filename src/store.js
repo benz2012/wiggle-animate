@@ -160,6 +160,7 @@ class RootStore {
 
   /* Selector Actions */
   setSelectorPosition(vector) {
+
     this.selector.position.x = vector.x
     this.selector.position.y = vector.y
   }
