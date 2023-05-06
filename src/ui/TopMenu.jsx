@@ -1,8 +1,6 @@
 import './TopMenu.css'
 
 const TopMenu = ({ projectName, saveStatus }) => {
-  // default case is 'autosaved'
-
   let iconClass = 'autosave-icon'
   if (saveStatus === 'saving') { iconClass = 'autosave-icon icon-bg-grey icon-spin' }
   if (saveStatus === 'error saving') { iconClass = 'autosave-icon icon-bg-warning' }

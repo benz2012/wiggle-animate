@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-import { action } from 'mobx'
-
 import { useRef, useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 
@@ -8,6 +5,7 @@ import './App.css'
 import Stage from './Stage'
 import TopMenu from './TopMenu'
 import LeftMenu from './LeftMenu'
+import BottomMenu from './BottomMenu'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import useWindowSize from './hooks/useWindowSize'
@@ -91,6 +89,7 @@ const App = observer(({ store }) => {
           incrementScale={() => store.rootContainer.incrementScale()}
           decrementScale={() => store.rootContainer.decrementScale()}
         />
+        <BottomMenu store={store} windowWidth={windowWidth} />
         <Stage
           ref={stageRef}
           width={windowWidth}

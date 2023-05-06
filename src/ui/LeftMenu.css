@@ -1,14 +1,40 @@
+#left-menu-container {
+  height: 100%;
+}
+
 #left-menu {
   position: absolute;
   width: 200px;
-  height: 80vh;
-  margin-top: 10vh;
+
+  /* 16 for own padding,
+   * 72 for top and bottom bar
+   * 8*4 padding for top and bottom bar
+   * 
+   */
+  height: calc(100% - 16px - 72px - 32px - 12vh);
+  margin-top: calc(36px + 8px + 8px + 6vh);
+
   padding: 8px;
   background-color: rgba(25, 117, 210, 0.2);
   border-radius: 0 4px 4px 0;
   
   display: flex;
   flex-direction: column;
+}
+@media (max-height: 700px) {
+  #left-menu {
+    height: calc(100% - 16px - 72px - 32px - 6vh);
+    margin-top: calc(36px + 8px + 8px + 3vh);
+  }
+}
+@media (max-height: 600px) {
+  #left-menu {
+    height: calc(100% - 16px - 72px - 32px - 2px);
+    margin-top: calc(36px + 8px + 8px);
+    border-radius: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
 
 .left-menu-item {
@@ -37,7 +63,7 @@
   line-height: 16px;
 }
 .general-button:hover {
-  background-color: rgba(33, 150, 243);
+  background-color: rgba(33, 150, 243, 0.5);
 }
 .general-button-selected {
   background-color: #96a5b3;
@@ -48,7 +74,6 @@
   justify-content: space-between;
 }
 .left-menu-action-button {
-  /* padding: 2px 16px; */
   padding-left: 16px;
   padding-right: 16px;
   background-color: transparent;

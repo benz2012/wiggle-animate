@@ -105,25 +105,27 @@ const LeftMenu = ({
   decrementScale,
   incrementScale,
 }) => (
-  <div id="left-menu">
-    <div style={{ display: 'flex' }}>
-      <CreateItemButton onClick={() => store.addRect()} label="+ rect" />
-      <div style={{ marginLeft: 8 }} />
-      <CreateItemButton onClick={() => store.addContainer()} label="+ ctnr" />
-    </div>
-    <div style={{ flexGrow: 1 }}>
-      <ContainerListOfChildren
-        store={store}
-        container={store.rootContainer}
-      />
-    </div>
-    <div id="left-menu-action-bottom">
-      <LeftMenuActionBottom label="-" onClick={decrementScale} />
-      <span className="noselect percentage-text">
-        {Math.trunc(store.rootContainer.canvasScale * 100)}%
-      </span>
-      <LeftMenuActionBottom label="+" onClick={incrementScale} />
-      <LeftMenuActionBottom label="⟲" onClick={() => store.resetView()} />
+  <div id="left-menu-container">
+    <div id="left-menu">
+      <div style={{ display: 'flex' }}>
+        <CreateItemButton onClick={() => store.addRect()} label="+ rect" />
+        <div style={{ marginLeft: 8 }} />
+        <CreateItemButton onClick={() => store.addContainer()} label="+ ctnr" />
+      </div>
+      <div style={{ flexGrow: 1 }}>
+        <ContainerListOfChildren
+          store={store}
+          container={store.rootContainer}
+        />
+      </div>
+      <div id="left-menu-action-bottom">
+        <LeftMenuActionBottom label="-" onClick={decrementScale} />
+        <span className="noselect percentage-text">
+          {Math.trunc(store.rootContainer.canvasScale * 100)}%
+        </span>
+        <LeftMenuActionBottom label="+" onClick={incrementScale} />
+        <LeftMenuActionBottom label="⟲" onClick={() => store.resetView()} />
+      </div>
     </div>
   </div>
 )

@@ -23,6 +23,9 @@
       "react-app",
       "airbnb"
     ],
+    "plugins": [
+      "only-warn"
+    ],
     "rules": {
       "semi": [
         "warn",
@@ -47,7 +50,12 @@
           "exceptAfterSingleLine": true
         }
       ],
-      "object-curly-newline": ["warn", { "multiline": true }],
+      "object-curly-newline": [
+        "warn",
+        {
+          "multiline": true
+        }
+      ],
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
       "react/jsx-one-expression-per-line": "off",
@@ -68,5 +76,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^8.40.0",
+    "eslint-plugin-only-warn": "^1.1.0"
   }
 }

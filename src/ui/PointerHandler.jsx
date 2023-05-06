@@ -66,10 +66,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       if (store.build.hoveredId) {
         if (store.build.selectedIds.length === 0) {
           store.setSelected([store.build.hoveredId])
-        } else if (store.keyHeld.Meta || store.keyHeld.Shift) {
-          store.addToSelection(store.build.hoveredId)
         } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {
-          store.setSelected([store.build.hoveredId])
+          if (store.keyHeld.Meta || store.keyHeld.Shift) {
+            store.addToSelection(store.build.hoveredId)
+          } else {
+            store.setSelected([store.build.hoveredId])
+          }
         }
       } else {
         store.setSelected([])
