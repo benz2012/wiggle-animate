@@ -5,7 +5,7 @@ import Container from './structure/Container'
 import Vector2 from './structure/Vector2'
 import Size from './structure/Size'
 import Rectangle from './shapes/Rectangle'
-import Circle from './shapes/Circle'
+import Ellipse from './shapes/Ellipse'
 import { storageEnabled } from './utility/storage'
 
 class RootStore {
@@ -137,8 +137,8 @@ class RootStore {
     ))
   }
 
-  addCircle() {
-    this.addNewItem(new Circle(
+  addEllipse() {
+    this.addNewItem(new Ellipse(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))

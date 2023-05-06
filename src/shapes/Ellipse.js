@@ -4,7 +4,7 @@ import Shape from '../drawing/Shape'
 import Size from '../structure/Size'
 import { observeListOfProperties } from '../utility/state'
 
-class Circle extends Shape {
+class Ellipse extends Shape {
   /* Check if rectangle A overlaps rectangle B, or vise-versa
    * requires top-left corner (x1, y1) & bottom-right corner (x2, y2)
    */
@@ -19,7 +19,7 @@ class Circle extends Shape {
     this.position.x = x
     this.position.y = y
     this.size = new Size(width, height)
-    this.name = `circle-${this.name}`
+    this.name = `ellipse-${this.name}`
 
     const inheritedObservables = [...super.observables]
     this._observables = [...inheritedObservables, 'size']
@@ -228,7 +228,7 @@ class Circle extends Shape {
       bottomLeftTransform.f,
     ]
 
-    const hasOverlap = Circle.overlaps({
+    const hasOverlap = Ellipse.overlaps({
       x1: rectSpecTLBR[0],
       y1: rectSpecTLBR[1],
       x2: rectSpecTLBR[2],
@@ -244,4 +244,4 @@ class Circle extends Shape {
   }
 }
 
-export default Circle
+export default Ellipse

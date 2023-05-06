@@ -98,8 +98,8 @@ const KeyHandler = ({ store }) => {
         store.addRectangle()
         break
 
-      case 'c':
-        store.addCircle()
+      case 'e':
+        store.addEllipse()
         break
 
       case 'ArrowUp':

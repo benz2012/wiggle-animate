@@ -70,10 +70,10 @@ const TopMenu = ({ store }) => {
                 onClick={() => store.addRect()}
               />
               <InsertMenuListItem
-                icon={<div className="list-item-icon-circle" />}
-                label="Circle"
-                hotkeyIndicator="c"
-                onClick={() => store.addCircle()}
+                icon={<div className="list-item-icon-ellipse" />}
+                label="Ellipse"
+                hotkeyIndicator="e"
+                onClick={() => store.addEllipse()}
               />
             </div>
             <div className="dialog-backdrop" />
