@@ -1,11 +1,12 @@
 import { observable, autorun, makeObservable, action, computed } from 'mobx'
 
 import RootContainer from './structure/RootContainer'
-import { storageEnabled } from './utility/storage'
 import Container from './structure/Container'
 import Vector2 from './structure/Vector2'
 import Size from './structure/Size'
 import Rectangle from './shapes/Rectangle'
+import Circle from './shapes/Circle'
+import { storageEnabled } from './utility/storage'
 
 class RootStore {
   constructor() {
@@ -129,8 +130,15 @@ class RootStore {
     this.addNewItem(new Container())
   }
 
-  addRect() {
+  addRectangle() {
     this.addNewItem(new Rectangle(
+      this.rootContainer.canvasSize.width / 2,
+      this.rootContainer.canvasSize.height / 2,
+    ))
+  }
+
+  addCircle() {
+    this.addNewItem(new Circle(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))

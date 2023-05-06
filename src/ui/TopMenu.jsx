@@ -69,6 +69,12 @@ const TopMenu = ({ store }) => {
                 hotkeyIndicator="r"
                 onClick={() => store.addRect()}
               />
+              <InsertMenuListItem
+                icon={<div className="list-item-icon-circle" />}
+                label="Circle"
+                hotkeyIndicator="c"
+                onClick={() => store.addCircle()}
+              />
             </div>
             <div className="dialog-backdrop" />
           </>

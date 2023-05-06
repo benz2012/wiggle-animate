@@ -95,7 +95,11 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'r':
-        store.addRect()
+        store.addRectangle()
+        break
+
+      case 'c':
+        store.addCircle()
         break
 
       case 'ArrowUp':
