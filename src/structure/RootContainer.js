@@ -200,6 +200,17 @@ class RootContainer extends Container {
     const foundIntersections = super.findRectIntersections(rectSpecTLBR, this.transform)
     return foundIntersections
   }
+
+  moveAllSelectedByIncrement(relativeMovement) {
+    this.store.build.selectedIds.forEach((selectedId) => {
+      const relativeMovementScaledToCanvas = new Vector2(
+        relativeMovement.x / this.canvasScale,
+        relativeMovement.y / this.canvasScale,
+      )
+      const selectedItem = this.findItem(selectedId)
+      selectedItem.position.add(relativeMovementScaledToCanvas)
+    })
+  }
 }
 
 export default RootContainer

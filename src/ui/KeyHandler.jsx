@@ -1,7 +1,18 @@
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
+import Vector2 from '../structure/Vector2'
 
 const KeyHandler = ({ store }) => {
+  const ONE_UP = new Vector2(0, -1 * store.DPR)
+  const ONE_DOWN = new Vector2(0, 1 * store.DPR)
+  const ONE_LEFT = new Vector2(-1 * store.DPR, 0)
+  const ONE_RIGHT = new Vector2(1 * store.DPR, 0)
+
+  const TEN_UP = new Vector2(0, -10 * store.DPR)
+  const TEN_DOWN = new Vector2(0, 10 * store.DPR)
+  const TEN_LEFT = new Vector2(-10 * store.DPR, 0)
+  const TEN_RIGHT = new Vector2(10 * store.DPR, 0)
+
   /* -- KEY DOWN -- */
   const handleKeyDownEvent = action((event) => {
     switch (event.key) {
@@ -85,6 +96,35 @@ const KeyHandler = ({ store }) => {
 
       case 'r':
         store.addRect()
+        break
+
+      case 'ArrowUp':
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_UP)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_UP)
+        }
+        break
+      case 'ArrowDown':
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_DOWN)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_DOWN)
+        }
+        break
+      case 'ArrowLeft':
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT)
+        }
+        break
+      case 'ArrowRight':
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT)
+        }
         break
 
       default:

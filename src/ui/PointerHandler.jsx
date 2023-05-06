@@ -14,10 +14,6 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
     const relativeMovement = Vector2.subtract(pointerVector, dragStart)
-    const relativeMovementScaledToCanvas = new Vector2(
-      relativeMovement.x / store.rootContainer.canvasScale,
-      relativeMovement.y / store.rootContainer.canvasScale,
-    )
 
     if (store.keyHeld.Space) {
       const relativeMovementScaledToCanvasInverse = new Vector2(
@@ -30,10 +26,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       )
       store.rootContainer.canvasPosition = newCanvasPosition
     } else if (selectedIds.length > 0) {
-      selectedIds.forEach((selectedId) => {
-        const selectedItem = store.rootContainer.findItem(selectedId)
-        selectedItem.position.add(relativeMovementScaledToCanvas)
-      })
+      store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
     } else {
       store.selector.rect.width += relativeMovement.x
       store.selector.rect.height += relativeMovement.y
