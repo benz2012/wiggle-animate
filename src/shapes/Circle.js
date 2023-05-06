@@ -219,11 +219,13 @@ class Circle extends Shape {
       this.height / -2 - strokeProtrusion,
     )
     const finalTransform = this.ctx.getTransform()
+    this.ctx.translate(this.width + this.stroke.width, this.height + this.stroke.width)
+    const bottomLeftTransform = this.ctx.getTransform()
     const thisRectSpecTLBR = [
       finalTransform.e,
       finalTransform.f,
-      finalTransform.e + this.width + this.stroke.width,
-      finalTransform.f + this.height + this.stroke.width,
+      bottomLeftTransform.e,
+      bottomLeftTransform.f,
     ]
 
     const hasOverlap = Circle.overlaps({
