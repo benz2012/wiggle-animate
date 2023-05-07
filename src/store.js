@@ -174,9 +174,7 @@ class RootStore {
 
   /* View Actions */
   resetView() {
-    this.rootContainer.canvasScale = 1
-    this.rootContainer.canvasPosition.x = 0
-    this.rootContainer.canvasPosition.y = 0
+    this.rootContainer.setCanvasToBestFit()
   }
 
   /* Key Hold Actions */

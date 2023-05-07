@@ -18,16 +18,15 @@ class RootContainer extends Container {
     this.transform = identityMatrix()
 
     // non-observable, just for local reference
-    this.rootWidth = null
-    this.rootHeight = null
+    this.rootWidth = window.innerWidth * this.DPR
+    this.rootHeight = window.innerHeight * this.DPR
 
     this.canvasPosition = new Vector2(0, 0)
-    // TODO: figure out initial scale based on screen size and canvas size
-    //       and how much available space is left by the toolbars
     this._canvasScale = 1
     // TODO: make these customizable
     this.canvasSize = new Size(1920, 1080)
     this.canvasFill = new Fill('black')
+    this.setCanvasToBestFit()
 
     makeObservable(this, {
       canvasSize: observable,
@@ -60,6 +59,26 @@ class RootContainer extends Container {
     this.canvasPosition.y *= (ratioBetweenScales ** 2)
   }
 
+  setCanvasToBestFit() {
+    if (!this.rootWidth || !this.rootHeight) return
+
+    const leftMenuSizeInCanvasPixels = 216 * this.DPR
+    // the extra 16 pixels is just for some padding/wiggle room
+    const spaceToWorkWith = this.rootWidth - leftMenuSizeInCanvasPixels - 16
+    const existingRatio = spaceToWorkWith / this.canvasSize.width
+    let bestScale
+    scaleSteps.some((scaleStep) => {
+      if (scaleStep > existingRatio) return true
+      bestScale = scaleStep
+      if (scaleStep === 1) return true
+      return false
+    })
+
+    this._canvasScale = bestScale
+    this.canvasPosition.x = (leftMenuSizeInCanvasPixels / 2) * bestScale
+    this.canvasPosition.y = 0
+  }
+
   changeScaleByStep(direction = 1) {
     let stepsWithCurrentScale
     if (scaleSteps.includes(this._canvasScale)) {
@@ -76,7 +95,6 @@ class RootContainer extends Container {
   decrementScale() { this.changeScaleByStep(-1) }
 
   get canvasTopLeft() {
-    if (!this.rootWidth || !this.rootHeight) return [0, 0]
     return [
       (this.rootWidth / 2)
         - ((this.canvasSize.width / 2) * this.canvasScale)
