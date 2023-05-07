@@ -31,6 +31,10 @@ button:hover {
   cursor: pointer;
 }
 
+canvas:focus {
+  outline: none;
+}
+
 .noselect {
   -webkit-touch-callout: none;
     -webkit-user-select: none;

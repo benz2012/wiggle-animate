@@ -56,6 +56,8 @@ class RootStore {
       MiddleMouse: false,
     }
 
+    this.propertyEditor = { position: new Vector2(-16, 42 + 16) }
+
     makeObservable(this, {
       rootContainer: observable,
       project: observable,
@@ -63,6 +65,7 @@ class RootStore {
       selector: observable,
       view: observable,
       keyHeld: observable,
+      propertyEditor: observable,
 
       setHovered: action,
       setSelected: action,
@@ -80,6 +83,9 @@ class RootStore {
 
       setKeyHeld: action,
 
+      setPropertyEditorPosition: action,
+
+      /* Computeds */
       determineCurrentAction: computed,
     })
   }
@@ -125,6 +131,7 @@ class RootStore {
     } else {
       this.rootContainer.add(newItem)
     }
+    return newItem
   }
 
   addContainer() {
@@ -132,10 +139,11 @@ class RootStore {
   }
 
   addRectangle() {
-    this.addNewItem(new Rectangle(
+    const item = this.addNewItem(new Rectangle(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
+    window._item = item
   }
 
   addEllipse() {
@@ -149,7 +157,10 @@ class RootStore {
   setHovered(value) { this.build.hoveredId = value }
   startDrag(vector) { this.build.dragStart = vector }
   stopDrag() { this.build.dragStart = null }
-  setSelected(values) { this.build.selectedIds = values }
+  setSelected(values) {
+    this.build.selectedIds = values
+  }
+
   addToSelection(value) { this.build.selectedIds = [...this.build.selectedIds, value] }
   removeFromSelection(value) {
     this.build.selectedIds = this.build.selectedIds.filter((id) => id !== value)
@@ -180,6 +191,12 @@ class RootStore {
   /* Key Hold Actions */
   setKeyHeld(key, state) {
     this.keyHeld[key] = state
+  }
+
+  /* Property Editor Actions */
+  setPropertyEditorPosition(value) {
+    this.propertyEditor.position.x = value.x
+    this.propertyEditor.position.y = value.y
   }
 }
 

@@ -30,6 +30,7 @@ class Vector2 {
   }
 
   get values() { return [this.x, this.y] }
+  get object() { return { x: this.x, y: this.y } }
 
   add(anotherVector) {
     this.x += anotherVector.x

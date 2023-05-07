@@ -16,6 +16,8 @@ class Item {
     this._observables = ['name']
     this._nestedObservables = []
     observeListOfProperties(this, this.observables)
+
+    this.editables = [['name', 'string']]
   }
 
   get id() { return this._id }

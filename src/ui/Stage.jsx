@@ -7,6 +7,7 @@ const Stage = forwardRef(({ width, height, devicePixelRatio }, stageRef) => (
     width={width * devicePixelRatio}
     height={height * devicePixelRatio}
     style={{ width, height }}
+    tabIndex="0"
   />
 ))
 

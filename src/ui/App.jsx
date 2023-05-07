@@ -6,6 +6,7 @@ import Stage from './Stage'
 import TopMenu from './TopMenu'
 import LeftMenu from './LeftMenu'
 import BottomMenu from './BottomMenu'
+import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import useWindowSize from './hooks/useWindowSize'
@@ -81,6 +82,7 @@ const App = observer(({ store }) => {
 
   return (
     <>
+      <PropertyEditor store={store} />
       <KeyHandler store={store} />
       <PointerHandler store={store} ref={stageRef}>
         <TopMenu store={store} />

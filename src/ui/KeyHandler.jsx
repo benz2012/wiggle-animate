@@ -15,8 +15,11 @@ const KeyHandler = ({ store }) => {
 
   /* -- KEY DOWN -- */
   const handleKeyDownEvent = action((event) => {
+    const STAGE_HAS_FOCUS = document.activeElement.id === 'stage'
+
     switch (event.key) {
       case ' ':
+        if (!STAGE_HAS_FOCUS) break
         event.preventDefault()
         store.setKeyHeld('Space', true)
         store.setSelected([])
@@ -37,6 +40,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'a':
+        if (!STAGE_HAS_FOCUS) break
         if (event.metaKey || event.ctrlKey) {
           event.preventDefault()
           store.selectAll()
@@ -44,6 +48,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'Shift':
+        if (!STAGE_HAS_FOCUS) break
         store.setKeyHeld('Shift', true)
         break
 
@@ -58,11 +63,13 @@ const KeyHandler = ({ store }) => {
 
   /* -- KEY UP -- */
   const handleKeyUpEvent = action((event) => {
+    const STAGE_HAS_FOCUS = document.activeElement.id === 'stage'
     const { selectedIds } = store.build
 
     switch (event.key) {
       case 'Backspace':
       case 'Delete':
+        if (!STAGE_HAS_FOCUS) break
         if (selectedIds.length > 0) {
           const itemsToDelete = selectedIds.map((selectedId) => (
             store.rootContainer.findItem(selectedId)
@@ -74,14 +81,17 @@ const KeyHandler = ({ store }) => {
         break
 
       case ' ':
+        if (!STAGE_HAS_FOCUS) break
         store.setKeyHeld('Space', false)
         break
 
       case 'f':
+        if (!STAGE_HAS_FOCUS) break
         store.resetView()
         break
 
       case 'Shift':
+        if (!STAGE_HAS_FOCUS) break
         store.setKeyHeld('Shift', false)
         break
 
@@ -91,18 +101,22 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'c':
+        if (!STAGE_HAS_FOCUS) break
         store.addContainer()
         break
 
       case 'r':
+        if (!STAGE_HAS_FOCUS) break
         store.addRectangle()
         break
 
       case 'e':
+        if (!STAGE_HAS_FOCUS) break
         store.addEllipse()
         break
 
       case 'ArrowUp':
+        if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
           store.rootContainer.moveAllSelectedByIncrement(TEN_UP)
         } else {
@@ -110,6 +124,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowDown':
+        if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
           store.rootContainer.moveAllSelectedByIncrement(TEN_DOWN)
         } else {
@@ -117,6 +132,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowLeft':
+        if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
           store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT)
         } else {
@@ -124,6 +140,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowRight':
+        if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
           store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT)
         } else {

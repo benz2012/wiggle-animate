@@ -4,11 +4,14 @@
   "private": true,
   "dependencies": {
     "eslint-config-airbnb": "^19.0.4",
-    "mobx": "^6.9.0",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint": "^8.40.0",
+    "leva": "^0.9.34",
     "mobx-react-lite": "^3.4.3",
-    "react": "^18.2.0",
+    "mobx": "^6.9.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
+    "react": "^18.2.0",
     "uuid": "^9.0.0"
   },
   "scripts": {
@@ -76,9 +79,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "eslint": "^8.40.0",
-    "eslint-plugin-only-warn": "^1.1.0"
   }
 }

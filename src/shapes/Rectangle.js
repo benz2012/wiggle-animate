@@ -2,6 +2,9 @@ import ControllerBox from './ControllerBox'
 import Shape from '../drawing/Shape'
 
 class Rectangle extends Shape {
+  // TODO: add corner radius property
+  // this will get complicated with stroke. maybe rounded rect as separarate object?
+
   constructor(...args) {
     super('rectangle', ...args)
   }
