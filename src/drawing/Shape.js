@@ -42,7 +42,7 @@ class Shape extends Animatable {
   drawHoveredRect(rectSpec, isHovered, isSelected) {
     if (!isHovered || isSelected) return
 
-    const lineWidth = 2 * this.DPR
+    const lineWidth = 4
     this.ctx.setTransform(this.currentTransform)
     this.ctx.beginPath()
     const strokeProtrusion = this.stroke.width / 2

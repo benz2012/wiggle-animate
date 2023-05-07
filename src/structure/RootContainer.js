@@ -184,17 +184,19 @@ class RootContainer extends Container {
     if (selector.rect.area === 0) return
 
     this.ctx.setTransform(identityMatrix())
+
     this.ctx.beginPath()
-    // this might be OS dependent, but the -2 on X seems to get it
-    // more in line with the mouse glyph center point
+    // this might be OS dependent, ~shrugs~
+    const mouseGlyphOffset = this.DPR === 2 ? 2 : 0
     this.ctx.rect(
-      selector.position.x - 2,
+      selector.position.x - mouseGlyphOffset,
       selector.position.y,
       ...selector.rect.values,
     )
     const fill = new Fill('rgba(33, 150, 243, 0.1)')
     fill.draw(this.ctx)
-    const stroke = new Stroke('rgb(33, 150, 243', 4)
+    const lineWidth = 1 * this.DPR
+    const stroke = new Stroke('rgb(33, 150, 243', lineWidth)
     stroke.draw(this.ctx)
   }
 

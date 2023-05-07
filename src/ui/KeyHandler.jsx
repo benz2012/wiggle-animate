@@ -90,7 +90,7 @@ const KeyHandler = ({ store }) => {
         store.setKeyHeld('Meta', false)
         break
 
-      case 'n':
+      case 'c':
         store.addContainer()
         break
 

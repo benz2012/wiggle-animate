@@ -60,7 +60,7 @@ const TopMenu = ({ store }) => {
               <InsertMenuListItem
                 icon={<div className="list-item-icon-container" />}
                 label="Container"
-                hotkeyIndicator="n"
+                hotkeyIndicator="c"
                 onClick={() => store.addContainer()}
               />
               <InsertMenuListItem
