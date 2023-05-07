@@ -45,9 +45,17 @@ class RootContainer extends Container {
     if (value == null) return
     const scaleLowerBound = scaleSteps[0]
     const scaleUpperBound = scaleSteps[scaleSteps.length - 1]
-    if (value < scaleLowerBound || value > scaleUpperBound) return
-    const ratioBetweenScales = (value / this._canvasScale)
-    this._canvasScale = value
+
+    // Trim to 2 Sig Figs, compress at bounds
+    let finalValue = Math.round((value + Number.EPSILON) * 100) / 100
+    if (value < scaleLowerBound) {
+      finalValue = scaleLowerBound
+    } else if (value > scaleUpperBound) {
+      finalValue = scaleUpperBound
+    }
+
+    const ratioBetweenScales = (finalValue / this._canvasScale)
+    this._canvasScale = finalValue
     this.canvasPosition.x *= (ratioBetweenScales ** 2)
     this.canvasPosition.y *= (ratioBetweenScales ** 2)
   }
@@ -125,7 +133,8 @@ class RootContainer extends Container {
   }
 
   drawStageDots(rootWidth, rootHeight) {
-    if (this.canvasScale < 0.4) return
+    if (this.DPR > 1 && this.canvasScale < 0.4) return
+    if (this.canvasScale < 0.25) return
 
     this.ctx.setTransform(this.transform)
     this.ctx.translate(this.canvasSize.width / 2, this.canvasSize.height / 2)
@@ -209,3 +218,4 @@ class RootContainer extends Container {
 }
 
 export default RootContainer
+export { scaleSteps }

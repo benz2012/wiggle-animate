@@ -53,6 +53,7 @@ class RootStore {
       Space: false,
       Shift: false,
       Meta: false,
+      MiddleMouse: false,
     }
 
     makeObservable(this, {
@@ -84,7 +85,7 @@ class RootStore {
   }
 
   get determineCurrentAction() {
-    if (this.keyHeld.Space) {
+    if (this.keyHeld.Space || this.keyHeld.MiddleMouse) {
       if (this.build.dragStart) {
         return 'dragging'
       }
@@ -160,7 +161,6 @@ class RootStore {
 
   /* Selector Actions */
   setSelectorPosition(vector) {
-
     this.selector.position.x = vector.x
     this.selector.position.y = vector.y
   }

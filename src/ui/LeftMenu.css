@@ -9,7 +9,6 @@
   /* 16 for own padding,
    * 72 for top and bottom bar
    * 8*4 padding for top and bottom bar
-   * 
    */
   height: calc(100% - 16px - 72px - 32px - 12vh);
   margin-top: calc(36px + 8px + 8px + 6vh);
@@ -17,7 +16,7 @@
   padding: 8px;
   background-color: rgba(25, 117, 210, 0.2);
   border-radius: 0 4px 4px 0;
-  
+
   display: flex;
   flex-direction: column;
 }
@@ -84,6 +83,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.left-menu-action-button:disabled {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.15);
+}
+.left-menu-action-button:disabled:hover {
+  background-color: transparent;
+  cursor: not-allowed;
 }
 .percentage-text {
   display: flex;

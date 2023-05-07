@@ -5,12 +5,14 @@ import { Fragment } from 'react'
 
 import './LeftMenu.css'
 import Container from '../structure/Container'
+import { scaleSteps } from '../structure/RootContainer'
 
-const LeftMenuActionBottom = ({ onClick, label, paddingBottom, paddingRight }) => (
+const LeftMenuActionBottom = ({ onClick, label, paddingBottom, paddingRight, disabled }) => (
   <button
     type="button"
     className="noselect general-button left-menu-action-button"
     onClick={onClick}
+    disabled={disabled}
   >
     <span style={{ paddingBottom, paddingRight }}>{label}</span>
   </button>
@@ -55,8 +57,6 @@ const ContainerListOfChildren = (props) => {
             indexOfClickedChild + 1,
           )
           store.setSelected(childrenBetweenFirstAndClick)
-        } else {
-          // console.log('hallow')
         }
       } else {
         store.setSelected([clickedId])
@@ -110,11 +110,16 @@ const LeftMenu = ({
           label="-"
           onClick={decrementScale}
           paddingBottom={3}
+          disabled={store.rootContainer.canvasScale === scaleSteps[0]}
         />
         <span className="noselect percentage-text">
           {Math.trunc(store.rootContainer.canvasScale * 100)}%
         </span>
-        <LeftMenuActionBottom label="+" onClick={incrementScale} />
+        <LeftMenuActionBottom
+          label="+"
+          onClick={incrementScale}
+          disabled={store.rootContainer.canvasScale === scaleSteps[scaleSteps.length - 1]}
+        />
         <LeftMenuActionBottom
           label="⟲"
           onClick={() => store.resetView()}

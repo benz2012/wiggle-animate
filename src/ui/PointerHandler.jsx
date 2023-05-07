@@ -15,7 +15,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
     const relativeMovement = Vector2.subtract(pointerVector, dragStart)
 
-    if (store.keyHeld.Space) {
+    if (store.keyHeld.Space || store.keyHeld.MiddleMouse) {
       const relativeMovementScaledToCanvasInverse = new Vector2(
         relativeMovement.x * store.rootContainer.canvasScale,
         relativeMovement.y * store.rootContainer.canvasScale,
@@ -37,8 +37,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
 
+  /* POINTER MOVEMENT */
   const handlePointerEvent = (event) => {
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
+
     if (event.type === 'pointermove') {
       const { dragStart } = store.build
       if (!dragStart) {
@@ -56,6 +58,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       }
     } else if (event.type === 'pointerdown' && event.target === stageRef.current) {
       store.rootContainer.checkPointerIntersections(pointerVector)
+
+      if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
+
       if (store.build.hoveredId) {
         if (store.build.selectedIds.length === 0) {
           store.setSelected([store.build.hoveredId])
@@ -69,17 +74,42 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else {
         store.setSelected([])
       }
+
       store.startDrag(pointerVector)
       store.setSelectorPosition(pointerVector)
     } else if (event.type === 'pointerup') {
+      if (event.button === 1) { store.setKeyHeld('MiddleMouse', false) }
+
       store.stopDrag(pointerVector)
       store.setSelectorRect(0, 0)
+
       if (store.selector.hovers.length > 0) {
         store.setSelected(store.selector.hovers)
       }
+
       store.setSelectorHovers([])
     }
   }
+
+  /* SCROLL HANDLER */
+  const handleWheelEvent = action((event) => {
+    const { canvasScale } = store.rootContainer
+    if (event.target === stageRef.current) {
+      if (canvasScale <= 0.25) {
+        store.rootContainer.canvasScale -= event.deltaY * 0.0001
+      } else if (canvasScale <= 0.5) {
+        store.rootContainer.canvasScale -= event.deltaY * 0.0002
+      } else if (canvasScale <= 0.75) {
+        store.rootContainer.canvasScale -= event.deltaY * 0.0003
+      } else if (canvasScale <= 1) {
+        store.rootContainer.canvasScale -= event.deltaY * 0.0005
+      } else if (canvasScale <= 2.5) {
+        store.rootContainer.canvasScale -= event.deltaY * 0.001
+      } else {
+        store.rootContainer.canvasScale -= event.deltaY * 0.005
+      }
+    }
+  })
 
   /* Window Listener Registration */
   useEffect(() => {
@@ -96,6 +126,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       onPointerMove={handlePointerEvent}
       onPointerDown={handlePointerEvent}
       onPointerUp={handlePointerEvent}
+      onWheel={handleWheelEvent}
     >
       {children}
     </div>
