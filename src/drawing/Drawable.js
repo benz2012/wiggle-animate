@@ -19,6 +19,8 @@ class Drawable extends Item {
     this._observables = [...inheritedObservables, 'origin', '_position', 'scale', 'rotation']
     this._nestedObservables = [...super.nestedObservables, 'origin', '_position', 'scale', 'rotation']
     observeListOfProperties(this, this.observables, inheritedObservables)
+
+    this.editables = [...this.editables, ['origin', 'Vector2'], ['position', 'Vector2'], ['scale', 'Vector2'], ['rotation', 'Angle']]
   }
 
   get ctx() { return Drawable._ctx }
