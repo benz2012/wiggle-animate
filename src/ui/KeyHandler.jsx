@@ -115,6 +115,11 @@ const KeyHandler = ({ store }) => {
         store.addEllipse()
         break
 
+      case 't':
+        if (!STAGE_HAS_FOCUS) break
+        store.addText()
+        break
+
       case 'ArrowUp':
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {

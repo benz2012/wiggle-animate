@@ -75,6 +75,12 @@ const TopMenu = ({ store }) => {
                 hotkeyIndicator="e"
                 onClick={() => store.addEllipse()}
               />
+              <InsertMenuListItem
+                icon={<div className="list-item-icon-text" />}
+                label="Text"
+                hotkeyIndicator="t"
+                onClick={() => store.addText()}
+              />
             </div>
             <div className="dialog-backdrop" />
           </>

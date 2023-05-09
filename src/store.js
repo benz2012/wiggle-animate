@@ -6,6 +6,7 @@ import Vector2 from './structure/Vector2'
 import Size from './structure/Size'
 import Rectangle from './shapes/Rectangle'
 import Ellipse from './shapes/Ellipse'
+import Text from './shapes/Text'
 import { storageEnabled } from './utility/storage'
 
 class RootStore {
@@ -131,6 +132,8 @@ class RootStore {
     } else {
       this.rootContainer.add(newItem)
     }
+    // TODO: removing this after debugging
+    window._item = newItem
     return newItem
   }
 
@@ -139,15 +142,21 @@ class RootStore {
   }
 
   addRectangle() {
-    const item = this.addNewItem(new Rectangle(
+    this.addNewItem(new Rectangle(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
-    window._item = item
   }
 
   addEllipse() {
     this.addNewItem(new Ellipse(
+      this.rootContainer.canvasSize.width / 2,
+      this.rootContainer.canvasSize.height / 2,
+    ))
+  }
+
+  addText() {
+    this.addNewItem(new Text(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))

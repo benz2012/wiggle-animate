@@ -1,6 +1,7 @@
 import { makeObservable, action } from 'mobx'
 
 import Animatable from './Animatable'
+import ControllerBox from './ControllerBox'
 import Size from '../structure/Size'
 import Color from '../visuals/Color'
 import Fill from '../visuals/Fill'
@@ -39,7 +40,25 @@ class Shape extends Animatable {
   get height() { return this.size.height }
   set height(value) { this.size.height = value }
 
-  drawHoveredRect(rectSpec, isHovered, isSelected) {
+  get rectSpec() {
+    return [this.width / -2, this.height / -2, this.width, this.height]
+  }
+
+  drawShape() {
+    // overwrite this method in your subclass
+    return this
+  }
+
+  draw(parentTransform, isHovered, isSelected) {
+    super.draw(parentTransform)
+
+    this.drawShape()
+
+    this.drawHoveredRect(isHovered, isSelected)
+    if (isSelected) { ControllerBox.draw(this) }
+  }
+
+  drawHoveredRect(isHovered, isSelected) {
     if (!isHovered || isSelected) return
 
     const lineWidth = 4
@@ -47,12 +66,12 @@ class Shape extends Animatable {
     this.ctx.beginPath()
     const strokeProtrusion = this.stroke.width / 2
     this.ctx.rect(
-      rectSpec[0] - strokeProtrusion - ((lineWidth / 2) / this.scale.x),
-      rectSpec[1] - strokeProtrusion - ((lineWidth / 2) / this.scale.y),
-      rectSpec[2] + this.stroke.width + (lineWidth / this.scale.x),
-      rectSpec[3] + this.stroke.width + (lineWidth / this.scale.y),
+      this.rectSpec[0] - strokeProtrusion - ((lineWidth / 2) / this.scale.x),
+      this.rectSpec[1] - strokeProtrusion - ((lineWidth / 2) / this.scale.y),
+      this.rectSpec[2] + this.stroke.width + (lineWidth / this.scale.x),
+      this.rectSpec[3] + this.stroke.width + (lineWidth / this.scale.y),
     )
-    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.8)'
+    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.7)'
     this.ctx.lineWidth = lineWidth
     this.ctx.setTransform(this.currentTransformWithoutScale)
     this.ctx.stroke()

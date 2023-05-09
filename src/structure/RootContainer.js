@@ -55,6 +55,12 @@ class RootContainer extends Container {
 
     const ratioBetweenScales = (finalValue / this._canvasScale)
     this._canvasScale = finalValue
+
+    // this keeps the canvas "centered" when scaling
+    // TODO: the center actually needs to align with the offset from BestFit
+    //       this is complicated because it begs the question, will the user be working
+    //       in the center of the screen or in the center of the "screen minus left menu"
+    // TODO: if scaling with mousewheel, we should reposition towards the mouse, not the "center"
     this.canvasPosition.x *= (ratioBetweenScales ** 2)
     this.canvasPosition.y *= (ratioBetweenScales ** 2)
   }

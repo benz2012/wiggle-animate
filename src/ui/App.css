@@ -3,6 +3,12 @@
   padding: 0;
 }
 
+html, body {
+  /* Prevents the rubber-banding effect when scrolling outside of the 100% document */
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

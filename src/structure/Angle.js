@@ -7,6 +7,10 @@ class Angle {
     return degrees * (Math.PI / 180)
   }
 
+  static rad2Deg(radians) {
+    return radians * (180 / Math.PI)
+  }
+
   constructor(degrees = 0) {
     this.degrees = degrees
 
@@ -16,6 +20,9 @@ class Angle {
   }
 
   get radians() { return Angle.deg2Rad(this.degrees) }
+  set radians(value) {
+    this.degrees = Angle.rad2Deg(value)
+  }
 }
 
 export default Angle

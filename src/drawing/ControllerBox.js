@@ -2,18 +2,16 @@
 
 // TODO: draw this on top of all other items
 
-const draw = (instance, rectSpec) => {
-  // rectSpec will need to change once we're no longer drawing controllers around rects, maybe?
-
+const draw = (instance) => {
   instance.ctx.setTransform(instance.currentTransform)
 
   instance.ctx.beginPath()
   const strokeProtrusion = instance.stroke.width / 2
   instance.ctx.rect(
-    rectSpec[0] - strokeProtrusion - (3 / instance.scale.x),
-    rectSpec[1] - strokeProtrusion - (3 / instance.scale.y),
-    rectSpec[2] + instance.stroke.width + (6 / instance.scale.x),
-    rectSpec[3] + instance.stroke.width + (6 / instance.scale.y),
+    instance.rectSpec[0] - strokeProtrusion - (3 / instance.scale.x),
+    instance.rectSpec[1] - strokeProtrusion - (3 / instance.scale.y),
+    instance.rectSpec[2] + instance.stroke.width + (6 / instance.scale.x),
+    instance.rectSpec[3] + instance.stroke.width + (6 / instance.scale.y),
   )
   instance.ctx.strokeStyle = 'rgba(33, 150, 243)'
   instance.ctx.lineWidth = 6
@@ -24,26 +22,26 @@ const draw = (instance, rectSpec) => {
   instance.ctx.setTransform(instance.currentTransform)
   instance.ctx.beginPath()
   instance.ctx.rect(
-    rectSpec[0] - strokeProtrusion - (11 / instance.scale.x),
-    rectSpec[1] - strokeProtrusion - (11 / instance.scale.y),
+    instance.rectSpec[0] - strokeProtrusion - (11 / instance.scale.x),
+    instance.rectSpec[1] - strokeProtrusion - (11 / instance.scale.y),
     16 / instance.scale.x,
     16 / instance.scale.y,
   )
   instance.ctx.rect(
-    (rectSpec[0] * -1) + strokeProtrusion - (5 / instance.scale.x),
-    rectSpec[1] - strokeProtrusion - (11 / instance.scale.y),
+    (instance.rectSpec[0] * -1) + strokeProtrusion - (5 / instance.scale.x),
+    instance.rectSpec[1] - strokeProtrusion - (11 / instance.scale.y),
     16 / instance.scale.x,
     16 / instance.scale.y,
   )
   instance.ctx.rect(
-    (rectSpec[0] * -1) + strokeProtrusion - (5 / instance.scale.x),
-    (rectSpec[1] * -1) + strokeProtrusion - (5 / instance.scale.y),
+    (instance.rectSpec[0] * -1) + strokeProtrusion - (5 / instance.scale.x),
+    (instance.rectSpec[1] * -1) + strokeProtrusion - (5 / instance.scale.y),
     16 / instance.scale.x,
     16 / instance.scale.y,
   )
   instance.ctx.rect(
-    rectSpec[0] - strokeProtrusion - (11 / instance.scale.x),
-    (rectSpec[1] * -1) + strokeProtrusion - (5 / instance.scale.y),
+    instance.rectSpec[0] - strokeProtrusion - (11 / instance.scale.x),
+    (instance.rectSpec[1] * -1) + strokeProtrusion - (5 / instance.scale.y),
     16 / instance.scale.x,
     16 / instance.scale.y,
   )

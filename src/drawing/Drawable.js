@@ -45,6 +45,12 @@ class Drawable extends Item {
     }
   }
 
+  // TODO: when setting item's origin, position should be inverted by current scale and rotation
+  // eg. if an item is rotated by 180deg and you move origin by 200 pixels in y direction
+  // the position of the item should move by 200 pixels in the "opposite" direction,
+  // which is only "opposite" because of how 180deg opperates. It's where the item would be
+  // before rotation if the origin was moved from that point in time
+
   get currentTranslation() {
     return new DOMMatrix(this.parentTransform)
       .translateSelf(this.x, this.y)

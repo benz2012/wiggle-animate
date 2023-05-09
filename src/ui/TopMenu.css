@@ -169,3 +169,21 @@
   border-radius: 20px;
   background-color: hsl(182, 70%, 70%);
 }
+
+.list-item-icon-text {
+  width: 20px;
+  height: 17px;
+  border-bottom: 2px solid rgb(200, 200, 200);
+  /* border-radius: 20px; */
+}
+.list-item-icon-text:before {
+  content: "T";
+  position: relative;
+  top: 4px;
+  left: -4px;
+
+  font-size: 24px;
+  line-height: 0;
+  color: rgb(200, 200, 200);
+  font-family: serif;
+}

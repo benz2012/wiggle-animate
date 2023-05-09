@@ -12,11 +12,15 @@ class Stroke extends Colorable {
     observeListOfProperties(this, this.observables, inheritedObservables)
   }
 
-  draw(ctx) {
-    // TODO: gradients
+  prepare(ctx) {
     ctx.strokeStyle = this.color.toString()
     ctx.lineWidth = this.width
     ctx.lineJoin = this.join
+  }
+
+  draw(ctx) {
+    // TODO: gradients
+    this.prepare(ctx)
     if (this.color.opacity === 0 || this.width === 0) return
     ctx.stroke()
   }
