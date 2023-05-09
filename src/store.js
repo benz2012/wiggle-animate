@@ -56,7 +56,7 @@ class RootStore {
       MiddleMouse: false,
     }
 
-    this.propertyEditor = { position: new Vector2(-16, 42 + 16) }
+    this.propertyEditor = { position: new Vector2(16, 42 + 16 + 8) }
 
     makeObservable(this, {
       rootContainer: observable,

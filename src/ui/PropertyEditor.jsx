@@ -1,6 +1,7 @@
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 
+import './PropertyEditor.css'
 import Vector2 from '../structure/Vector2'
 import Angle from '../structure/Angle'
 
@@ -67,7 +68,9 @@ const PropertyEditor = observer(({ store }) => {
   }
 
   return (
-    <div>Property Editor Placeholder</div>
+    <div id="property-editor-container" style={{ top: store.propertyEditor.position.y, right: store.propertyEditor.position.x }}>
+      Property Editor Placeholder
+    </div>
   )
 })
 
