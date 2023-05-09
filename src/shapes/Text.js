@@ -6,15 +6,16 @@ class Text extends Shape {
   constructor(...args) {
     super('text', ...args)
 
+    // TODO: make these observable/changable
     this.text = this.name
-    this.fontSize = 200
+    this.fontSize = 100
     this.font = 'sans-serif'
     this.align = 'center'
-    // this.align = 'start'
+    this.direction = 'ltr'
+
     // I don't think we should allow baseline to be changed because it messes with how we
     // draw shapes, with the expectation that drawing always happens from the position x & y
     this.baseline = 'middle'
-    this.direction = 'ltr'
 
     this.middleToTop = 0
 

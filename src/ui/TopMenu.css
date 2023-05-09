@@ -171,15 +171,15 @@
 }
 
 .list-item-icon-text {
-  width: 20px;
-  height: 17px;
+  width: 22px;
+  height: 20px;
+  margin-left: 2px;
   border-bottom: 2px solid rgb(200, 200, 200);
-  /* border-radius: 20px; */
 }
 .list-item-icon-text:before {
   content: "T";
   position: relative;
-  top: 4px;
+  top: 6px;
   left: -4px;
 
   font-size: 24px;
