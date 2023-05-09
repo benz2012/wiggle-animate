@@ -6,8 +6,8 @@ import Size from './Size'
 import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
 import Stroke from '../visuals/Stroke'
+import { identityMatrix } from '../utility/matrix'
 
-const identityMatrix = () => new DOMMatrix([1, 0, 0, 1, 0, 0])
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 
 class RootContainer extends Container {

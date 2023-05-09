@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import './BottomMenu.css'
 
-const identityMatrix = () => new DOMMatrix([1, 0, 0, 1, 0, 0])
+import './BottomMenu.css'
+import { identityMatrix } from '../utility/matrix'
 
 const BottomMenu = ({ store, windowWidth }) => {
   const playheadRef = useRef()
