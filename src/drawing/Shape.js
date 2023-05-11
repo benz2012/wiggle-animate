@@ -71,7 +71,7 @@ class Shape extends Animatable {
       this.rectSpec[2] + this.stroke.width + (lineWidth / this.scale.x),
       this.rectSpec[3] + this.stroke.width + (lineWidth / this.scale.y),
     )
-    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.7)'
+    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.8)'
     this.ctx.lineWidth = lineWidth
     this.ctx.setTransform(this.currentTransformWithoutScale)
     this.ctx.stroke()

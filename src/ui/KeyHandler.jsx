@@ -2,6 +2,11 @@ import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
 import Vector2 from '../structure/Vector2'
 
+const doesStageHaveFocus = () => [
+  'stage',
+  'left-menu-container',
+].includes(document.activeElement.id)
+
 const KeyHandler = ({ store }) => {
   const ONE_UP = new Vector2(0, -1 * store.DPR)
   const ONE_DOWN = new Vector2(0, 1 * store.DPR)
@@ -15,7 +20,7 @@ const KeyHandler = ({ store }) => {
 
   /* -- KEY DOWN -- */
   const handleKeyDownEvent = action((event) => {
-    const STAGE_HAS_FOCUS = document.activeElement.id === 'stage'
+    const STAGE_HAS_FOCUS = doesStageHaveFocus()
 
     switch (event.key) {
       case ' ':
@@ -63,7 +68,7 @@ const KeyHandler = ({ store }) => {
 
   /* -- KEY UP -- */
   const handleKeyUpEvent = action((event) => {
-    const STAGE_HAS_FOCUS = document.activeElement.id === 'stage'
+    const STAGE_HAS_FOCUS = doesStageHaveFocus()
     const { selectedIds } = store.build
 
     switch (event.key) {

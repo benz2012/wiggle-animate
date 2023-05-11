@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -94,7 +95,7 @@ const LeftMenu = ({
   decrementScale,
   incrementScale,
 }) => (
-  <div id="left-menu-container">
+  <div id="left-menu-container" tabIndex="0">
     <div id="left-menu">
       <div style={{ display: 'flex', marginBottom: 8 }}>
         Layers
