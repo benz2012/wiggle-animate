@@ -1,8 +1,11 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Fragment } from 'react'
+import { action } from 'mobx'
 
 import './LeftMenu.css'
 import Container from '../structure/Container'
@@ -11,7 +14,7 @@ import { scaleSteps } from '../structure/RootContainer'
 const LeftMenuActionBottom = ({ onClick, label, paddingBottom, paddingRight, disabled }) => (
   <button
     type="button"
-    className="noselect general-button left-menu-action-button"
+    className="noselect left-menu-action-button"
     onClick={onClick}
     disabled={disabled}
   >
@@ -67,20 +70,41 @@ const ContainerListOfChildren = (props) => {
     }
   }
 
+  const handleDropdownClick = (child) => action(() => {
+    child.showChildren = !child.showChildren
+  })
+
   return (
     container.sortOrder.map((childId) => {
       const child = container.children[childId]
-      const listItemClass = `left-menu-item ${store.build.selectedIds.includes(childId) && 'left-menu-item-selected'}`
+      const isContainer = child instanceof Container
+
+      let listItemClass = 'left-menu-item'
+      if (store.build.selectedIds.includes(childId)) {
+        listItemClass += ' left-menu-item-selected'
+      }
+      if (isContainer) {
+        listItemClass += ' left-menu-item-container'
+      }
+
       return (
         <Fragment key={childId}>
-          <li
-            className={listItemClass}
-            onClick={handleItemClick(childId)}
-          >
-            <span className="noselect" style={{ lineHeight: '14px', fontSize: '14px' }}>{child.name}</span>
-          </li>
-          <div style={{ marginLeft: 8 }}>
-            {child instanceof Container && (
+          {isContainer ? (
+            <li className={listItemClass}>
+              <div className="noselect left-menu-container-dropwdown" onClick={handleDropdownClick(child)}>
+                <div className={`left-menu-container-dropwdown-text ${child.showChildren ? 'open' : 'closed'}`}>
+                  {'>'}
+                </div>
+              </div>
+              <div className="noselect left-menu-item-name left-menu-item-container-name" onClick={handleItemClick(childId)}>{child.name}</div>
+            </li>
+          ) : (
+            <li className={listItemClass} onClick={handleItemClick(childId)}>
+              <span className="noselect left-menu-item-name">{child.name}</span>
+            </li>
+          )}
+          <div style={{ marginLeft: 12 }}>
+            {(isContainer && child.showChildren) && (
               <ContainerListOfChildren {...props} container={child} />
             )}
           </div>
@@ -100,12 +124,14 @@ const LeftMenu = ({
       <div style={{ display: 'flex', marginBottom: 8 }}>
         Layers
       </div>
+
       <div style={{ flexGrow: 1 }}>
         <ContainerListOfChildren
           store={store}
           container={store.rootContainer}
         />
       </div>
+
       <div id="left-menu-action-bottom">
         <LeftMenuActionBottom
           label="-"

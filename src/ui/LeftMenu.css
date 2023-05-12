@@ -38,14 +38,18 @@
 
 .left-menu-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 4px 4px 4px 8px;
+  padding: 4px 8px 4px 8px;
   border-radius: 4px;
+  /* padding-left: 20px; */
 }
 .left-menu-item:hover {
   cursor: pointer;
   background-color: rgba(255, 255, 255, 0.1);
+}
+.left-menu-item-name {
+  font-size: 14px;
+  line-height: 14px;
 }
 .left-menu-item-selected {
   background-color: rgba(255, 255, 255, 0.8);
@@ -55,17 +59,47 @@
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-.general-button {
-  padding-left: 6px;
-  padding-right: 6px;
-  font-size: 10px;
-  line-height: 16px;
+.left-menu-item-container {
+  padding: 0;
+  margin-left: 0;
+  background-color: inherit;
 }
-.general-button:hover {
-  background-color: rgba(33, 150, 243, 0.5);
+.left-menu-item-container:hover {
+  background-color: inherit;
 }
-.general-button-selected {
-  background-color: #96a5b3;
+.left-menu-container-dropwdown {
+  padding: 4px 2px 4px 2px;
+  border-radius: 4px 0px 0px 4px;
+  margin-right: 2px;
+}
+.left-menu-container-dropwdown:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.left-menu-container-dropwdown:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.left-menu-container-dropwdown-text {
+  transform: scale(.5, 1);
+  width: 10px;
+  font-size: 14px;
+  line-height: 14px;
+}
+.left-menu-container-dropwdown-text.open {
+  transform: translate(1px, 1px) scale(1, .5) rotate(90deg);
+}
+.left-menu-item-container-name {
+  flex-grow: 1;
+  padding: 4px 4px 4px 4px;
+  border-radius: 0px 4px 4px 0px;
+}
+.left-menu-item-container-name:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.left-menu-item-selected > .left-menu-item-container-name {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+.left-menu-item-selected > div > .left-menu-container-dropwdown-text {
+  color: white;
 }
 
 #left-menu-action-bottom {
@@ -80,9 +114,16 @@
   color: white;
   border: 1px solid white;
   font-size: 16px;
+  line-height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.left-menu-action-button:hover {
+  background-color: rgba(33, 150, 243, 0.5);
+}
+.left-menu-action-button:active {
+  background-color: rgba(33, 150, 243, 0.7);
 }
 .left-menu-action-button:disabled {
   border-color: rgba(255, 255, 255, 0.15);

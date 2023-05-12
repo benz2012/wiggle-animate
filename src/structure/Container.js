@@ -11,9 +11,10 @@ class Container extends Animatable {
     this._children = {}
     this._sortOrder = []
     this.name = `container-${this.name}`
+    this.showChildren = true
 
     const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, '_children', '_sortOrder']
+    this._observables = [...inheritedObservables, '_children', '_sortOrder', 'showChildren']
     observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, {
       add: action,
