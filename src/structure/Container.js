@@ -6,6 +6,8 @@ import { insert } from '../utility/array'
 import { observeListOfProperties } from '../utility/state'
 
 class Container extends Animatable {
+  static get IGNORE_WHEN_PEEKING() { return ['_children', '_sortOrder', 'showChildren'] }
+
   constructor() {
     super()
     this._children = {}
@@ -20,6 +22,7 @@ class Container extends Animatable {
       add: action,
       remove: action,
       sortChild: action,
+      updatePropertiesForFrame: action,
     })
   }
 
@@ -105,6 +108,13 @@ class Container extends Animatable {
 
   decreaseOrder(childId, by = -1) {
     this.sortChild(childId, null, by)
+  }
+
+  updatePropertiesForFrame(frame) {
+    // TODO: this needs to update its own properties as well (position, origin, etc)
+    Object.values(this.children).forEach((child) => {
+      child.updatePropertiesForFrame(frame)
+    })
   }
 
   draw(parentTransform, hoveredId, selectedIds, selectorHovers) {

@@ -78,3 +78,11 @@
 .font-12 {
   font-size: 12px;
 }
+
+#frame-ticker {
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}

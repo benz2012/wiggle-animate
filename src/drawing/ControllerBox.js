@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 
 // TODO: draw this on top of all other items
+// TODO: ^ with that, potentially also draw an invisible box where the shape exists
+//         so that layers underneath can be moved without accidentaly selecting
+//         the item(s) above it
 
 const draw = (instance) => {
   instance.ctx.setTransform(instance.currentTransform)

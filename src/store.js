@@ -7,7 +7,9 @@ import Size from './structure/Size'
 import Rectangle from './shapes/Rectangle'
 import Ellipse from './shapes/Ellipse'
 import Text from './shapes/Text'
-import { storageEnabled } from './utility/storage'
+import Animation from './animation/Animation'
+
+// import { storageEnabled } from './utility/storage'
 
 class RootStore {
   constructor() {
@@ -59,6 +61,8 @@ class RootStore {
 
     this.propertyEditor = { position: new Vector2(16, 42 + 16 + 8) }
 
+    this.animation = new Animation()
+
     makeObservable(this, {
       rootContainer: observable,
       project: observable,
@@ -67,6 +71,7 @@ class RootStore {
       view: observable,
       keyHeld: observable,
       propertyEditor: observable,
+      // animation: Never changes, no need for observable
 
       setHovered: action,
       setSelected: action,

@@ -27,6 +27,8 @@ const TopMenu = ({ store }) => {
   if (saveStatus === 'error saving') { icon = '⚠' }
   if (saveStatus === 'unknown') { icon = '?' }
 
+  // TODO: after inserting item, set DOM focus back to canvas
+
   return (
     <div id="top-menu">
       <button type="button" className="top-menu-item top-menu-item-button noselect">

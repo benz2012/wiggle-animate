@@ -49,6 +49,14 @@ class Shape extends Animatable {
     return this
   }
 
+  updatePropertiesForFrame(frame) {
+    // TODO: expand this method to handle all properties
+    // & maybe this method should be on each tier of item, which means
+    // animatable needs to be below drawable in the inheritance chain
+    this.x = this.valueForFrame(frame, 'x')
+    this.y = this.valueForFrame(frame, 'y')
+  }
+
   draw(parentTransform, isHovered, isSelected) {
     super.draw(parentTransform)
 

@@ -10,7 +10,7 @@ import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import useWindowSize from './hooks/useWindowSize'
-import { isObject } from '../utility/object'
+import { peekAtObservables, peekAtKeyframes } from '../utility/tree'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)
@@ -34,35 +34,31 @@ const App = observer(({ store }) => {
         break
     }
   }, [store.determineCurrentAction])
-  /* End State Syncs */
 
   /* Main observations */
-  const peekAtObservables = (item) => {
-    let propsToLookAt = item.observables
-    const hasNested = isObject(item) && 'nestedObservables' in item
-    if (hasNested) {
-      propsToLookAt = propsToLookAt.filter((prop) => (
-        item.nestedObservables.includes(prop) === false
-      ))
-    }
-    const peeked = propsToLookAt.map((property) => item[property])
-    if (isObject(item) && 'nestedObservables' in item) {
-      peeked.push(
-        ...item.nestedObservables.map((property) => peekAtObservables(item[property]))
-      )
-    }
-    return peeked
-  }
   const allObserverablePropertiesInTheTree = JSON.stringify(
     Object.values(store.rootContainer.children).map(peekAtObservables)
   )
+  const allKeyframedPropertiesInTheTree = JSON.stringify(
+    Object.values(store.rootContainer.children).map(peekAtKeyframes)
+  )
+
+  /* Animation Updater */
+  useEffect(() => {
+    /* eslint-disable react-hooks/exhaustive-deps */
+    store.rootContainer.updatePropertiesForFrame(store.animation.now)
+  }, [
+    store.animation.now,
+    allKeyframedPropertiesInTheTree,
+  ])
+
   /* Main drawing trigger */
   useEffect(() => {
+    /* eslint-disable react-hooks/exhaustive-deps */
     const stage = stageRef.current
     const ctx = stage.getContext('2d')
     store.rootContainer.draw(ctx, stage.width, stage.height)
   }, [
-    store.rootContainer,
     store.rootContainer.sortOrder,
     store.rootContainer.canvasSize.width,
     store.rootContainer.canvasSize.height,
@@ -78,7 +74,6 @@ const App = observer(({ store }) => {
     windowWidth,
     windowHeight,
   ])
-  /* End Main Loop */
 
   return (
     <>
