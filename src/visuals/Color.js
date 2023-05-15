@@ -1,4 +1,5 @@
 import { observeListOfProperties } from '../utility/state'
+import { rgbToLch, lchToRgb } from '../utility/color'
 
 class Color {
   static randomPastel() {
@@ -21,6 +22,10 @@ class Color {
     const rgb = [255 * f(0), 255 * f(8), 255 * f(4)].map((val) => Math.round(val))
     return rgb
   }
+
+  static fromLCH = (lchSpec) => (
+    new Color(lchToRgb(lchSpec))
+  )
 
   constructor(inputSpec) {
     this.colorString = null
@@ -60,6 +65,10 @@ class Color {
     observeListOfProperties(this, this.observables)
   }
 
+  toLCH() {
+    return rgbToLch({ r: this.red, g: this.green, b: this.blue })
+  }
+
   toString() {
     if (this.colorString != null) {
       return this.colorString
@@ -67,5 +76,8 @@ class Color {
     return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`
   }
 }
+
+// TODO: remove this after debugging
+window.Color = Color
 
 export default Color

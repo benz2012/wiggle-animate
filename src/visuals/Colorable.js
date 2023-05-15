@@ -24,6 +24,11 @@ class Colorable {
   set color(value) {
     this._color = Colorable.takeColorOrMakeColor(value)
   }
+
+  get opacity() { return this.color.alpha }
+  set opacity(value) {
+    this._color.alpha = value
+  }
 }
 
 export default Colorable

@@ -37,12 +37,13 @@ class Shape extends Drawable {
       ...this.keyframes,
       width: observable([]),
       height: observable([]),
-      // need to allow animation of nested props
-      // need to create interpolation method for color
-      // fill.color
-      // stroke.color
+      'fill.color': observable([]),
+      'fill.opacity': observable([]),
+      'stroke.color': observable([]),
+      'stroke.opacity': observable([]),
       'stroke.width': observable([]),
-      // shadow.color
+      'shadow.color': observable([]),
+      'shadow.opacity': observable([]),
       'shadow.blur': observable([]),
       'shadow.offset': observable([]),
     }
@@ -66,10 +67,13 @@ class Shape extends Drawable {
     super.updatePropertiesForFrame(frame)
     this.width = this.valueForFrame(frame, 'width')
     this.height = this.valueForFrame(frame, 'height')
-    // fill.color
-    // stroke.color
+    this.fill.color = this.valueForFrame(frame, 'fill.color')
+    this.fill.opacity = this.valueForFrame(frame, 'fill.opacity')
+    this.stroke.color = this.valueForFrame(frame, 'stroke.color')
+    this.stroke.opacity = this.valueForFrame(frame, 'stroke.opacity')
     this.stroke.width = this.valueForFrame(frame, 'stroke.width')
-    // shadow.color
+    this.shadow.color = this.valueForFrame(frame, 'shadow.color')
+    this.shadow.opacity = this.valueForFrame(frame, 'shadow.opacity')
     this.shadow.blur = this.valueForFrame(frame, 'shadow.blur')
     this.shadow.offset = this.valueForFrame(frame, 'shadow.offset')
   }
