@@ -9,6 +9,7 @@ const doesStageHaveFocus = () => [
 
 const doesBottomMenuHaveFocus = () => [
   'bottom-menu',
+  'play-pause-button',
 ].includes(document.activeElement.id)
 
 const KeyHandler = ({ store }) => {
@@ -25,9 +26,14 @@ const KeyHandler = ({ store }) => {
   /* -- KEY DOWN -- */
   const handleKeyDownEvent = action((event) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
+    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
 
     switch (event.key) {
       case ' ':
+        if (BOTTOM_HAS_FOCUS && document.activeElement.id !== 'play-pause-button') {
+          document.getElementById('play-pause-button').focus()
+          document.getElementById('play-pause-button').click()
+        }
         if (!STAGE_HAS_FOCUS) break
         event.preventDefault()
         store.setKeyHeld('Space', true)
@@ -57,8 +63,55 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'Shift':
-        if (!STAGE_HAS_FOCUS) break
+        if (!(STAGE_HAS_FOCUS || BOTTOM_HAS_FOCUS)) break
         store.setKeyHeld('Shift', true)
+        break
+
+      case 'ArrowUp':
+        if (!STAGE_HAS_FOCUS) break
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_UP)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_UP)
+        }
+        break
+      case 'ArrowDown':
+        if (!STAGE_HAS_FOCUS) break
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_DOWN)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_DOWN)
+        }
+        break
+      case 'ArrowLeft':
+        if (BOTTOM_HAS_FOCUS) {
+          if (store.keyHeld.Shift) {
+            store.animation.goToFirst()
+          } else {
+            store.animation.goToPrev()
+          }
+        }
+        if (!STAGE_HAS_FOCUS) break
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT)
+        }
+        break
+      case 'ArrowRight':
+        if (BOTTOM_HAS_FOCUS) {
+          if (store.keyHeld.Shift) {
+            store.animation.goToLast()
+          } else {
+            store.animation.goToNext()
+          }
+        }
+        if (!STAGE_HAS_FOCUS) break
+        if (store.keyHeld.Shift) {
+          store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT)
+        } else {
+          store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT)
+        }
         break
 
       default:
@@ -73,7 +126,6 @@ const KeyHandler = ({ store }) => {
   /* -- KEY UP -- */
   const handleKeyUpEvent = action((event) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
-    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
 
     const { selectedIds } = store.build
 
@@ -92,7 +144,6 @@ const KeyHandler = ({ store }) => {
         break
 
       case ' ':
-        if (!STAGE_HAS_FOCUS) break
         store.setKeyHeld('Space', false)
         break
 
@@ -102,7 +153,6 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'Shift':
-        if (!STAGE_HAS_FOCUS) break
         store.setKeyHeld('Shift', false)
         break
 
@@ -129,45 +179,6 @@ const KeyHandler = ({ store }) => {
       case 't':
         if (!STAGE_HAS_FOCUS) break
         store.addText()
-        break
-
-      case 'ArrowUp':
-        if (!STAGE_HAS_FOCUS) break
-        if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_UP)
-        } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_UP)
-        }
-        break
-      case 'ArrowDown':
-        if (!STAGE_HAS_FOCUS) break
-        if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_DOWN)
-        } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_DOWN)
-        }
-        break
-      case 'ArrowLeft':
-        if (BOTTOM_HAS_FOCUS) {
-          store.animation.goToPrev()
-        }
-        if (!STAGE_HAS_FOCUS) break
-        if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT)
-        } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT)
-        }
-        break
-      case 'ArrowRight':
-        if (BOTTOM_HAS_FOCUS) {
-          store.animation.goToNext()
-        }
-        if (!STAGE_HAS_FOCUS) break
-        if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT)
-        } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT)
-        }
         break
 
       default:

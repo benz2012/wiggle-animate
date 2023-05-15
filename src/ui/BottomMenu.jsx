@@ -64,6 +64,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     drawPlayhead(ctx)
   }, [
     drawPlayhead,
+    playheadCanvasWidth,
     store.DPR,
     store.animation.now,
     store.animation.frames,
@@ -90,6 +91,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         </button>
         <button
           type="button"
+          id="play-pause-button"
           className="jump-button font-12 noselect"
           onClick={handlePlayPauseClick}
         >
