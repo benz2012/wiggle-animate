@@ -82,6 +82,7 @@ class Shape extends Drawable {
     super.draw(parentTransform)
 
     this.drawShape()
+    Shadow.clear(this.ctx)
 
     this.drawHoveredRect(isHovered, isSelected)
     if (isSelected) { ControllerBox.draw(this) }

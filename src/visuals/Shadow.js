@@ -28,10 +28,13 @@ class Shadow extends Colorable {
   }
 
   prepare(ctx) {
+    // Apparently the DOM Renderer doesn't scale the offset params by the existing ctx transform
+    // so we do it ourselves
+    const currentTransform = ctx.getTransform()
     ctx.shadowColor = this.color
     ctx.shadowBlur = this.blur
-    ctx.shadowOffsetX = this.offset.x
-    ctx.shadowOffsetY = this.offset.y
+    ctx.shadowOffsetX = this.offset.x * currentTransform.a
+    ctx.shadowOffsetY = this.offset.y * currentTransform.d
   }
 }
 

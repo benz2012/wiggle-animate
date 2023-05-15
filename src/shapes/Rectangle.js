@@ -14,6 +14,14 @@ class Rectangle extends Shape {
 
     this.shadow.prepare(this.ctx)
     this.fill.draw(this.ctx)
+    // TODO: Stroke's shadow draws out of order
+    // not sure there is a solution actually unless we draw the stroke twice, since I can't draw the shadow manually
+    // Would need to be: Stroke+Shadow -> Fill+Shadow -> Stroke w/no shadow
+    // This will get even more complicated when we change the stroke drawing order to account for stroke.flow
+    // maybe we should design our own shadow module that we control the drawing of
+    // Oh, and apparently fill.opacity affect shadow.opacity as well, just another reason
+    // could use https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter
+    // but it's not supported in Safari sadly
     this.stroke.draw(this.ctx)
   }
 }
