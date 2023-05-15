@@ -111,7 +111,7 @@ class Container extends Drawable {
   }
 
   updatePropertiesForFrame(frame) {
-    // TODO: this needs to update its own properties as well (position, origin, etc)
+    super.updatePropertiesForFrame(frame)
     Object.values(this.children).forEach((child) => {
       child.updatePropertiesForFrame(frame)
     })
