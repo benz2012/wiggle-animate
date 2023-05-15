@@ -8,6 +8,9 @@
 
   display: flex;
 }
+#bottom-menu:focus {
+  outline: none;
+}
 
 #bottom-menu-tab {
   position: absolute;

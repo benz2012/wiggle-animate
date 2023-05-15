@@ -7,6 +7,10 @@ const doesStageHaveFocus = () => [
   'left-menu-container',
 ].includes(document.activeElement.id)
 
+const doesBottomMenuHaveFocus = () => [
+  'bottom-menu',
+].includes(document.activeElement.id)
+
 const KeyHandler = ({ store }) => {
   const ONE_UP = new Vector2(0, -1 * store.DPR)
   const ONE_DOWN = new Vector2(0, 1 * store.DPR)
@@ -69,6 +73,8 @@ const KeyHandler = ({ store }) => {
   /* -- KEY UP -- */
   const handleKeyUpEvent = action((event) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
+    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
+
     const { selectedIds } = store.build
 
     switch (event.key) {
@@ -142,6 +148,9 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowLeft':
+        if (BOTTOM_HAS_FOCUS) {
+          store.animation.goToPrev()
+        }
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
           store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT)
@@ -150,6 +159,9 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowRight':
+        if (BOTTOM_HAS_FOCUS) {
+          store.animation.goToNext()
+        }
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
           store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT)

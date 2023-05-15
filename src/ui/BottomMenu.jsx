@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { useCallback, useEffect, useRef } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
@@ -77,10 +78,16 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   })
 
   return (
-    <div id="bottom-menu">
+    <div id="bottom-menu" tabIndex="0">
       <button type="button" id="bottom-menu-tab" className="noselect">▲</button>
       <div id="play-controls">
-        <button type="button" className="jump-button noselect" onClick={action(() => { store.animation.goToFirst() })}>⇤</button>
+        <button
+          type="button"
+          className="jump-button noselect"
+          onClick={action(() => { store.animation.goToFirst() })}
+        >
+          ⇤
+        </button>
         <button
           type="button"
           className="jump-button font-12 noselect"
@@ -88,7 +95,13 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         >
           {playPauseText}
         </button>
-        <button type="button" className="jump-button noselect" onClick={action(() => { store.animation.goToLast() })}>⇥</button>
+        <button
+          type="button"
+          className="jump-button noselect"
+          onClick={action(() => { store.animation.goToLast() })}
+        >
+          ⇥
+        </button>
       </div>
       <div id="timeline-container">
         <div id="timeline-horizontal-line" style={{ marginRight: (playheadWidth / 2) - 4 }} />

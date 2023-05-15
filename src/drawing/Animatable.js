@@ -1,27 +1,18 @@
-import { observable } from 'mobx'
-
-import Drawable from './Drawable'
+import Item from '../structure/Item'
 import Keyframe from '../animation/Keyframe'
 
-class Animatable extends Drawable {
-  constructor(...args) {
-    super(...args)
-    this.keyframes = {
-      // TODO: remove these defaults, allow manipulation, merge x&y into position
-      x: observable([
-        new Keyframe(1, Math.random() * 1920 + 100),
-        new Keyframe(100, Math.random() * 1920 + 100),
-      ]),
-      y: observable([
-        new Keyframe(1, Math.random() * 1080 + 100),
-        new Keyframe(100, Math.random() * 1080 + 100),
-      ]),
-      scale: observable([]),
-      rotation: observable([]),
-    }
+class Animatable extends Item {
+  constructor() {
+    super()
+    // All keyframable properties should be statically defined within the constructor
+    // within each inherited child
+    this.keyframes = {}
   }
 
-  static valueForFrame = (frame, keyframes) => {
+  valueForFrame(frame, property) {
+    const keyframes = this.keyframes[property]
+    if (keyframes.length === 0) return this[property]
+
     const frames = keyframes.map((key) => (key.frame))
 
     // is frame a keyframe
@@ -43,10 +34,6 @@ class Animatable extends Drawable {
     const before = keyframes[where - 1]
     const after = keyframes[where]
     return Keyframe.interpolate(before, after, frame)
-  }
-
-  valueForFrame(frame, property) {
-    return Animatable.valueForFrame(frame, this.keyframes[property])
   }
 }
 

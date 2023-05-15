@@ -1,11 +1,11 @@
 import { makeObservable, action } from 'mobx'
 
 import Item from './Item'
-import Animatable from '../drawing/Animatable'
+import Drawable from '../drawing/Drawable'
 import { insert } from '../utility/array'
 import { observeListOfProperties } from '../utility/state'
 
-class Container extends Animatable {
+class Container extends Drawable {
   static get IGNORE_WHEN_PEEKING() { return ['_children', '_sortOrder', 'showChildren'] }
 
   constructor() {

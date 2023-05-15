@@ -1,6 +1,6 @@
-import { makeObservable, action } from 'mobx'
+import { makeObservable, action, observable } from 'mobx'
 
-import Animatable from './Animatable'
+import Drawable from './Drawable'
 import ControllerBox from './ControllerBox'
 import Size from '../structure/Size'
 import Color from '../visuals/Color'
@@ -9,7 +9,7 @@ import Stroke from '../visuals/Stroke'
 import Shadow from '../visuals/Shadow'
 import { observeListOfProperties } from '../utility/state'
 
-class Shape extends Animatable {
+class Shape extends Drawable {
   static doRectsOverlap(a, b) {
     /* Check if rectangle A overlaps rectangle B, or vise-versa
      * requires top-left corner (x1, y1) & bottom-right corner (x2, y2)
@@ -23,7 +23,6 @@ class Shape extends Animatable {
     super(x, y)
     this.name = `${shapeType}-${this.name}`
     this.size = new Size(width, height)
-
     this.fill = new Fill(Color.randomPastel())
     this.stroke = new Stroke()
     this.shadow = new Shadow()
@@ -33,6 +32,20 @@ class Shape extends Animatable {
     this._nestedObservables = [...super.nestedObservables, 'size', 'fill', 'stroke', 'shadow']
     observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { checkPointerIntersections: action })
+
+    this.keyframes = {
+      ...this.keyframes,
+      width: observable([]),
+      height: observable([]),
+      // need to allow animation of nested props
+      // need to create interpolation method for color
+      // fill.color
+      // stroke.color
+      // stroke.width
+      // shadow.color
+      // shadow.blur
+      // shadow.offset
+    }
   }
 
   get width() { return this.size.width }
@@ -50,11 +63,15 @@ class Shape extends Animatable {
   }
 
   updatePropertiesForFrame(frame) {
-    // TODO: expand this method to handle all properties
-    // & maybe this method should be on each tier of item, which means
-    // animatable needs to be below drawable in the inheritance chain
-    this.x = this.valueForFrame(frame, 'x')
-    this.y = this.valueForFrame(frame, 'y')
+    super.updatePropertiesForFrame(frame)
+    this.width = this.valueForFrame(frame, 'width')
+    this.height = this.valueForFrame(frame, 'height')
+    // fill.color
+    // stroke.color
+    // stroke.width
+    // shadow.color
+    // shadow.blur
+    // shadow.offset
   }
 
   draw(parentTransform, isHovered, isSelected) {

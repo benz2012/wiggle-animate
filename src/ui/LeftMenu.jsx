@@ -96,7 +96,12 @@ const ContainerListOfChildren = (props) => {
                   {'>'}
                 </div>
               </div>
-              <div className="noselect left-menu-item-name left-menu-item-container-name" onClick={handleItemClick(childId)}>{child.name}</div>
+              <div
+                className="noselect left-menu-item-name left-menu-item-container-name"
+                onClick={handleItemClick(childId)}
+              >
+                {child.name}
+              </div>
             </li>
           ) : (
             <li className={listItemClass} onClick={handleItemClick(childId)}>

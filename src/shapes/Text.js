@@ -1,15 +1,16 @@
-import { makeObservable, action } from 'mobx'
+import { makeObservable, action, observable } from 'mobx'
 
 import Shape from '../drawing/Shape'
+import { observeListOfProperties } from '../utility/state'
 
 class Text extends Shape {
   constructor(...args) {
     super('text', ...args)
 
-    // TODO: make these observable/changable
     this.text = this.name
     this.fontSize = 100
     this.font = 'sans-serif'
+    // TODO: alignment modes other than center misrepresent bounding box
     this.align = 'center'
     this.direction = 'ltr'
 
@@ -19,7 +20,22 @@ class Text extends Shape {
 
     this.middleToTop = 0
 
+    const inheritedObservables = [...super.observables]
+    this._observables = [...inheritedObservables, 'text', 'fontSize', 'font', 'align', 'direction']
+    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { measureAndSetSize: action })
+
+    this.keyframes = {
+      ...this.keyframes,
+      text: observable([]),
+      fontSize: observable([]),
+    }
+  }
+
+  updatePropertiesForFrame(frame) {
+    super.updatePropertiesForFrame(frame)
+    this.text = this.valueForFrame(frame, 'text')
+    this.fontSize = this.valueForFrame(frame, 'fontSize')
   }
 
   measureAndSetSize() {

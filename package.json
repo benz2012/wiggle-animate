@@ -29,6 +29,7 @@
       "only-warn"
     ],
     "rules": {
+      "max-len": ["warn", { "code": 120 }],
       "semi": [
         "warn",
         "never"
