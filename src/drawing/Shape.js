@@ -41,10 +41,10 @@ class Shape extends Drawable {
       // need to create interpolation method for color
       // fill.color
       // stroke.color
-      // stroke.width
+      'stroke.width': observable([]),
       // shadow.color
-      // shadow.blur
-      // shadow.offset
+      'shadow.blur': observable([]),
+      'shadow.offset': observable([]),
     }
   }
 
@@ -68,10 +68,10 @@ class Shape extends Drawable {
     this.height = this.valueForFrame(frame, 'height')
     // fill.color
     // stroke.color
-    // stroke.width
+    this.stroke.width = this.valueForFrame(frame, 'stroke.width')
     // shadow.color
-    // shadow.blur
-    // shadow.offset
+    this.shadow.blur = this.valueForFrame(frame, 'shadow.blur')
+    this.shadow.offset = this.valueForFrame(frame, 'shadow.offset')
   }
 
   draw(parentTransform, isHovered, isSelected) {

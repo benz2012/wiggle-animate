@@ -46,24 +46,27 @@ class Keyframe {
     const valueRatio = curve.y(timeRatio)
 
     // Choose interpolation method based on value type
+    // Check from highest-complexity class-type to lowest (eg. Vector2 before Obj.x&y)
     const oneValue = k1.value
     let interpolated = k1.value
-    if (Number.isFinite(oneValue)) {
-      interpolated = ((k2.value - k1.value) * valueRatio) + k1.value
+    if (oneValue instanceof Vector2) {
+      interpolated = new Vector2(
+        ((k2.value.x - k1.value.x) * valueRatio) + k1.value.x,
+        ((k2.value.y - k1.value.y) * valueRatio) + k1.value.y,
+      )
+    } else if (oneValue instanceof Color) {
+      // TODO: implement this, likely based on some sort of La*b* space
+    } else if (oneValue instanceof Angle) {
+      interpolated = new Angle(
+        ((k2.value.degrees - k1.value.degrees) * valueRatio) + k1.value.degrees
+      )
     } else if (isObject(oneValue) && 'x' in oneValue && 'y' in oneValue) {
       interpolated = {
         x: ((k2.value.x - k1.value.x) * valueRatio) + k1.value.x,
         y: ((k2.value.y - k1.value.y) * valueRatio) + k1.value.y,
       }
-    } else if (oneValue instanceof Vector2) {
-      interpolated = new Vector2(
-        ((k2.value.x - k1.value.x) * valueRatio) + k1.value.x,
-        ((k2.value.y - k1.value.y) * valueRatio) + k1.value.y,
-      )
-    } else if (oneValue instanceof Angle) {
-      interpolated = new Angle(
-        ((k2.value.degrees - k1.value.degrees) * valueRatio) + k1.value.degrees
-      )
+    } else if (Number.isFinite(oneValue)) {
+      interpolated = ((k2.value - k1.value) * valueRatio) + k1.value
     } else if (isString(oneValue)) {
       const startingCharCodes = Array.from(k1.value).map((char) => char.charCodeAt(0))
       const endingCharCodes = Array.from(k2.value).map((char) => char.charCodeAt(0))
@@ -75,8 +78,6 @@ class Keyframe {
         return interpolatedCharCode
       })
       interpolated = String.fromCharCode(...interpolatedCharCodes)
-    } else if (oneValue instanceof Color) {
-      // TODO: implement this, likely based on some sort of La*b* space
     }
 
     return interpolated

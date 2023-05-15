@@ -1,4 +1,5 @@
 import Colorable from './Colorable'
+import Shadow from './Shadow'
 
 class Fill extends Colorable {
   prepare(ctx) {
@@ -10,6 +11,7 @@ class Fill extends Colorable {
     this.prepare(ctx)
     if (this.color === 'transparent') return
     ctx.fill()
+    Shadow.clear(ctx)
   }
 }
 

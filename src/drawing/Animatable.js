@@ -11,7 +11,15 @@ class Animatable extends Item {
 
   valueForFrame(frame, property) {
     const keyframes = this.keyframes[property]
-    if (keyframes.length === 0) return this[property]
+    if (keyframes.length === 0) {
+      // We support unnested & singly-nested properties
+      // If we want deeper path support, we should make this function more robust
+      if (property.includes('.')) {
+        const [parentProp, childProp] = property.split('.')
+        return this[parentProp][childProp]
+      }
+      return this[property]
+    }
 
     const frames = keyframes.map((key) => (key.frame))
 

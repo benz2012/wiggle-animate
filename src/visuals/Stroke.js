@@ -6,6 +6,14 @@ class Stroke extends Colorable {
     super(color)
     this.width = width
     this.join = join
+    // TODO: make this observable
+    // TODO: tweak the drawing stack so that these 3 options are possible
+    //       this could get complicted depending on shape, we'll see
+    //       might need to draw/cut 1 less pixel otherwise there could be a subpixel/gpu gap line
+    //       - middle = default
+    //       - inside = draw width*2, cut mask around shape
+    //       - outside = draw width*2, cut subtraction within shape
+    this.flow = 'middle' // one of: inside | outside | middle
 
     const inheritedObservables = [...super.observables]
     this._observables = [...inheritedObservables, 'width', 'join']

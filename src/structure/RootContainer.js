@@ -220,7 +220,7 @@ class RootContainer extends Container {
     const fill = new Fill('rgba(33, 150, 243, 0.1)')
     fill.draw(this.ctx)
     const lineWidth = 1 * this.DPR
-    const stroke = new Stroke('rgb(33, 150, 243', lineWidth)
+    const stroke = new Stroke('rgb(33, 150, 243)', lineWidth)
     stroke.draw(this.ctx)
   }
 
