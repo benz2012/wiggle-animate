@@ -33,7 +33,7 @@ const TopMenu = ({ store }) => {
     <div id="top-menu">
       <button type="button" className="top-menu-item top-menu-item-button noselect">
         <span className="unicode-icon pb-3">⚙</span>
-        Project
+        Settings
       </button>
 
       <button
@@ -41,7 +41,8 @@ const TopMenu = ({ store }) => {
         className="top-menu-item top-menu-item-button noselect"
       >
         <span className="unicode-icon" style={{ fontSize: '14px' }}>⌘</span>
-        Hotkeys
+        Edit
+        {/* This menu can have like undo/redo */}
       </button>
 
       <button

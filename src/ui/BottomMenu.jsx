@@ -52,10 +52,6 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
     ctx.setTransform(identityMatrix())
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-    // TODO: remove after debugging
-    // ctx.beginPath()
-    // ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'
-    // ctx.fillRect(0, 0, canvasWidth - 10, canvasHeight)
     ctx.translate(0, canvasHeight / 2 + 1)
     ctx.scale(store.DPR / 2, store.DPR / 2)
 
