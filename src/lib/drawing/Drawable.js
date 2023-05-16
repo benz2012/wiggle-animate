@@ -3,9 +3,9 @@ import { observable } from 'mobx'
 import Animatable from './Animatable'
 import Vector2 from '../structure/Vector2'
 import Angle from '../structure/Angle'
-import { observeListOfProperties } from '../utility/state'
-import { isObject } from '../utility/object'
-import { identityMatrix } from '../utility/matrix'
+import { observeListOfProperties } from '../../utility/state'
+import { isObject } from '../../utility/object'
+import { identityMatrix } from '../../utility/matrix'
 
 class Drawable extends Animatable {
   /* eslint-disable class-methods-use-this */

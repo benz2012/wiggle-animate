@@ -7,7 +7,7 @@ import Color from '../visuals/Color'
 import Fill from '../visuals/Fill'
 import Stroke from '../visuals/Stroke'
 import Shadow from '../visuals/Shadow'
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Shape extends Drawable {
   static doRectsOverlap(a, b) {

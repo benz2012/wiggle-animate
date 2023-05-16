@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import names from '../assets/names.json'
-import { observeListOfProperties } from '../utility/state'
-import { randomChoice } from '../utility/array'
+import names from '../../assets/names.json'
+import { observeListOfProperties } from '../../utility/state'
+import { randomChoice } from '../../utility/array'
 
 class Item {
   // This will be populated by the first instiated Container which will extend Item

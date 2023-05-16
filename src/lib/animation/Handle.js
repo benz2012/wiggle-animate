@@ -1,6 +1,6 @@
 import { computed, makeObservable } from 'mobx'
 
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Handle {
   static get TYPES() { return ['IN', 'OUT'] }

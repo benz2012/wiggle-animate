@@ -1,4 +1,4 @@
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 import Color from './Color'
 
 class Colorable {

@@ -1,5 +1,5 @@
-import { observeListOfProperties } from '../utility/state'
-import { rgbToLch, lchToRgb } from '../utility/color'
+import { observeListOfProperties } from '../../utility/state'
+import { rgbToLch, lchToRgb } from '../../utility/color'
 
 class Color {
   static randomPastel() {

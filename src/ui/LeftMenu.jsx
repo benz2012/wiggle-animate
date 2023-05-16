@@ -8,8 +8,8 @@ import { Fragment } from 'react'
 import { action } from 'mobx'
 
 import './LeftMenu.css'
-import Container from '../structure/Container'
-import { scaleSteps } from '../structure/RootContainer'
+import Container from '../lib/structure/Container'
+import { scaleSteps } from '../lib/structure/RootContainer'
 
 const LeftMenuActionBottom = ({ onClick, label, paddingBottom, paddingRight, disabled }) => (
   <button

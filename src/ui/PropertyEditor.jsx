@@ -2,8 +2,8 @@ import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 
 import './PropertyEditor.css'
-import Vector2 from '../structure/Vector2'
-import Angle from '../structure/Angle'
+import Vector2 from '../lib/structure/Vector2'
+import Angle from '../lib/structure/Angle'
 
 const PropertyEditor = observer(({ store }) => {
   const { build, propertyEditor, rootContainer } = store

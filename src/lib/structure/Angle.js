@@ -1,6 +1,6 @@
 import { makeObservable, computed } from 'mobx'
 
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Angle {
   static deg2Rad(degrees) {

@@ -2,7 +2,7 @@
 import { forwardRef, useCallback, useEffect } from 'react'
 import { action } from 'mobx'
 
-import Vector2 from '../structure/Vector2'
+import Vector2 from '../lib/structure/Vector2'
 
 const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref

@@ -3,9 +3,9 @@ import bezierApproximation from './Bezier'
 import Vector2 from '../structure/Vector2'
 import Angle from '../structure/Angle'
 import Color from '../visuals/Color'
-import { observeListOfProperties } from '../utility/state'
-import { isObject } from '../utility/object'
-import { isString, START_OF_NORMAL_CHARS, END_OF_NORMAL_CHARS } from '../utility/string'
+import { observeListOfProperties } from '../../utility/state'
+import { isObject } from '../../utility/object'
+import { isString, START_OF_NORMAL_CHARS, END_OF_NORMAL_CHARS } from '../../utility/string'
 
 class Keyframe {
   static curveCache = {}

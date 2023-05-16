@@ -1,4 +1,4 @@
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Vector2 {
   static add(vectorA, vectorB) {

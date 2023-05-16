@@ -1,4 +1,4 @@
-import Container from '../structure/Container'
+import Container from '../lib/structure/Container'
 import { isObject } from './object'
 
 const peekAtObservables = (item) => {

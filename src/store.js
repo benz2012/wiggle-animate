@@ -1,13 +1,13 @@
 import { observable, autorun, makeObservable, action, computed } from 'mobx'
 
-import RootContainer from './structure/RootContainer'
-import Container from './structure/Container'
-import Vector2 from './structure/Vector2'
-import Size from './structure/Size'
-import Rectangle from './shapes/Rectangle'
-import Ellipse from './shapes/Ellipse'
-import Text from './shapes/Text'
-import Animation from './animation/Animation'
+import RootContainer from './lib/structure/RootContainer'
+import Container from './lib/structure/Container'
+import Vector2 from './lib/structure/Vector2'
+import Size from './lib/structure/Size'
+import Rectangle from './lib/shapes/Rectangle'
+import Ellipse from './lib/shapes/Ellipse'
+import Text from './lib/shapes/Text'
+import Animation from './lib/animation/Animation'
 
 // import { storageEnabled } from './utility/storage'
 

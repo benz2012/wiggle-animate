@@ -1,6 +1,6 @@
 import Colorable from './Colorable'
 import Vector2 from '../structure/Vector2'
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Shadow extends Colorable {
   static clear(ctx) {
@@ -33,6 +33,8 @@ class Shadow extends Colorable {
     const currentTransform = ctx.getTransform()
     ctx.shadowColor = this.color
     ctx.shadowBlur = this.blur
+    // TODO: This gets rotation wrong, we should likely take the transform and apply the offset as a
+    //       translation, then get the output translation and apply it as the offsetx&y
     ctx.shadowOffsetX = this.offset.x * currentTransform.a
     ctx.shadowOffsetY = this.offset.y * currentTransform.d
   }

@@ -1,5 +1,5 @@
 import Colorable from './Colorable'
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Stroke extends Colorable {
   constructor(color = 'transparent', width = 0, join = 'miter') {

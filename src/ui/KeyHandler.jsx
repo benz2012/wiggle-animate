@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
-import Vector2 from '../structure/Vector2'
+import Vector2 from '../lib/structure/Vector2'
 
 const doesStageHaveFocus = () => [
   'stage',

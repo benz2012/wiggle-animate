@@ -1,7 +1,7 @@
 import { makeObservable, action, observable } from 'mobx'
 
 import Shape from '../drawing/Shape'
-import { observeListOfProperties } from '../utility/state'
+import { observeListOfProperties } from '../../utility/state'
 
 class Text extends Shape {
   constructor(...args) {
