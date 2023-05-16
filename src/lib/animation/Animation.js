@@ -17,7 +17,6 @@ class Animation {
     this.sync = 0
     this.requestId = null
     this.mode = 'LOOP'
-    this.mode = 'ONCE'
 
     makeAutoObservable(this)
   }

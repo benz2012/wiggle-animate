@@ -1,49 +1,25 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { useCallback, useEffect, useRef } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 
 import './BottomMenu.css'
+import Animation from '../lib/animation/Animation'
 import { identityMatrix } from '../utility/matrix'
+import { drawPlayhead } from '../utility/drawing'
 
 const BottomMenu = observer(({ store, windowWidth }) => {
   const playheadRef = useRef()
-  const playheadCanvasWidth = windowWidth - 143
+  const playheadCanvasWidth = windowWidth - 177
   const playheadCanvasHeight = 40
   const playheadWidth = 24
 
   const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
 
-  const drawPlayhead = useCallback((ctx) => {
-    const thinLineOffset = store.DPR === 1 ? 0.5 : 0
-    ctx.translate(thinLineOffset, -thinLineOffset)
+  const playModeText = store.animation.mode === 'LOOP' ? '∞' : '⇒'
 
-    ctx.beginPath()
-    ctx.fillStyle = 'rgba(25, 117, 210, 1)'
-    ctx.strokeStyle = 'rgba(13, 71, 161, 1)'
-    ctx.lineWidth = 4
-    const upperWidth = playheadWidth
-    const playheadLeft = 2
-    ctx.moveTo(playheadLeft, 6)
-    ctx.lineTo(upperWidth / 2 + playheadLeft, 20)
-    ctx.lineTo(upperWidth + playheadLeft, 6)
-    ctx.lineTo(upperWidth + playheadLeft, -24)
-    ctx.lineTo(playheadLeft, -24)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.fill()
-
-    ctx.beginPath()
-    ctx.lineWidth = 2
-    ctx.strokeStyle = 'rgba(13, 71, 161, 0.5)'
-    ctx.moveTo(playheadLeft + upperWidth / 4, 0)
-    ctx.lineTo(playheadLeft + upperWidth / 4, -14)
-    ctx.moveTo(playheadLeft + (upperWidth / 4) * 2, 4)
-    ctx.lineTo(playheadLeft + (upperWidth / 4) * 2, -18)
-    ctx.moveTo(playheadLeft + (upperWidth / 4) * 3, 0)
-    ctx.lineTo(playheadLeft + (upperWidth / 4) * 3, -14)
-    ctx.stroke()
-  }, [store.DPR])
+  const drawPlayheadMemo = useCallback((ctx) => drawPlayhead(ctx, store.DPR, playheadWidth), [store.DPR])
 
   useEffect(() => {
     const canvas = playheadRef.current
@@ -57,9 +33,9 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
     const pixelsPerFrame = (canvasWidth - playheadWidth) / store.animation.frames
     ctx.translate(pixelsPerFrame * (store.animation.now - 1), 0)
-    drawPlayhead(ctx)
+    drawPlayheadMemo(ctx)
   }, [
-    drawPlayhead,
+    drawPlayheadMemo,
     playheadCanvasWidth,
     store.DPR,
     store.animation.now,
@@ -71,6 +47,15 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       store.animation.pause()
     } else {
       store.animation.play()
+    }
+  })
+
+  const handlePlayModeClick = action(() => {
+    /* eslint-disable prefer-destructuring */
+    if (store.animation.mode === Animation.PLAYBACK_MODES[0]) {
+      store.animation.mode = Animation.PLAYBACK_MODES[1]
+    } else if (store.animation.mode === Animation.PLAYBACK_MODES[1]) {
+      store.animation.mode = Animation.PLAYBACK_MODES[0]
     }
   })
 
@@ -101,6 +86,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
           ⇥
         </button>
       </div>
+
       <div id="timeline-container">
         <div id="timeline-horizontal-line" style={{ marginRight: (playheadWidth / 2) - 4 }} />
         <canvas
@@ -111,7 +97,16 @@ const BottomMenu = observer(({ store, windowWidth }) => {
           style={{ width: playheadCanvasWidth, height: playheadCanvasHeight }}
         />
       </div>
+
       <span id="frame-ticker">{store.animation.now}</span>
+
+      <button
+        type="button"
+        className="jump-button noselect"
+        onClick={handlePlayModeClick}
+      >
+        {playModeText}
+      </button>
     </div>
   )
 })
