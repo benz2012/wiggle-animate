@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
 import Vector2 from '../lib/structure/Vector2'
+import Animation from '../lib/animation/Animation'
 
 const doesStageHaveFocus = () => [
   'stage',
@@ -126,6 +127,7 @@ const KeyHandler = ({ store }) => {
   /* -- KEY UP -- */
   const handleKeyUpEvent = action((event) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
+    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
 
     const { selectedIds } = store.build
 
@@ -162,6 +164,10 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'c':
+        if (BOTTOM_HAS_FOCUS) {
+          store.animation.setIn(Animation.FIRST)
+          store.animation.setOut(store.animation.frames)
+        }
         if (!STAGE_HAS_FOCUS) break
         store.addContainer()
         break
@@ -179,6 +185,16 @@ const KeyHandler = ({ store }) => {
       case 't':
         if (!STAGE_HAS_FOCUS) break
         store.addText()
+        break
+
+      case 'i':
+        if (!BOTTOM_HAS_FOCUS) break
+        store.animation.setIn(store.animation.now)
+        break
+
+      case 'o':
+        if (!BOTTOM_HAS_FOCUS) break
+        store.animation.setOut(store.animation.now)
         break
 
       default:

@@ -14,6 +14,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   const playheadCanvasWidth = windowWidth - 189
   const playheadCanvasHeight = 40
   const playheadWidth = 24
+  const playbackRegionHeight = 16
 
   const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
 
@@ -28,11 +29,31 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     const { width: canvasWidth, height: canvasHeight } = canvas
 
     ctx.setTransform(identityMatrix())
+    ctx.scale(store.DPR / 2, store.DPR / 2)
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx.translate(0, canvasHeight / 2 + 1)
-    ctx.scale(store.DPR / 2, store.DPR / 2)
 
     const pixelsPerFrame = (canvasWidth - playheadWidth) / store.animation.frames
+
+    // draw the playback in/out regions
+    ctx.fillStyle = 'rgba(25, 117, 210, 0.3)'
+    if (store.animation.firstFrame !== Animation.FIRST) {
+      ctx.fillRect(
+        playheadWidth / 2,
+        playheadCanvasHeight / 6,
+        pixelsPerFrame * (store.animation.firstFrame - 1),
+        playbackRegionHeight,
+      )
+    }
+    if (store.animation.lastFrame !== store.animation.frames) {
+      ctx.fillRect(
+        pixelsPerFrame * store.animation.lastFrame,
+        playheadCanvasHeight / 6,
+        pixelsPerFrame * (store.animation.frames - store.animation.lastFrame),
+        playbackRegionHeight,
+      )
+    }
+
     ctx.translate(pixelsPerFrame * (store.animation.now - 1), 0)
     drawPlayheadMemo(ctx)
   }, [
@@ -41,6 +62,8 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     store.DPR,
     store.animation.now,
     store.animation.frames,
+    store.animation.firstFrame,
+    store.animation.lastFrame,
   ])
 
   const handlePlayPauseClick = action(() => {
