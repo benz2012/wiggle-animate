@@ -7,6 +7,7 @@
   background-color: rgba(25, 117, 210, 0.2);
 
   display: flex;
+  align-items: center;
 }
 #bottom-menu:focus {
   outline: none;
@@ -89,4 +90,20 @@
   justify-content: center;
   font-size: 12px;
   margin-right: 8px;
+}
+
+#play-mode-button {
+  font-size: 8px;
+  line-height: 8px;
+  width: 36px;
+  height: 18px;
+  border: none;
+  font-weight: 900;
+  color: rgb(190, 200, 220);
+  margin-top: 1px;
+  align-items: center;
+}
+#play-mode-button:hover,
+#play-mode-button:active {
+  color: white;
 }

@@ -11,13 +11,14 @@ import { drawPlayhead } from '../utility/drawing'
 
 const BottomMenu = observer(({ store, windowWidth }) => {
   const playheadRef = useRef()
-  const playheadCanvasWidth = windowWidth - 177
+  const playheadCanvasWidth = windowWidth - 189
   const playheadCanvasHeight = 40
   const playheadWidth = 24
 
   const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
 
-  const playModeText = store.animation.mode === 'LOOP' ? '∞' : '⇒'
+  // const playModeText = store.animation.mode === 'LOOP' ? '∞' : '⇒'
+  const playModeText = store.animation.mode
 
   const drawPlayheadMemo = useCallback((ctx) => drawPlayhead(ctx, store.DPR, playheadWidth), [store.DPR])
 
@@ -102,6 +103,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
       <button
         type="button"
+        id="play-mode-button"
         className="jump-button noselect"
         onClick={handlePlayModeClick}
       >
