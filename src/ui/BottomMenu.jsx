@@ -11,9 +11,15 @@ import { drawPlayhead } from '../utility/drawing'
 
 const BottomMenu = observer(({ store, windowWidth }) => {
   const playheadRef = useRef()
-  const playheadCanvasWidth = windowWidth - 189
+  // TODO: move all these units to the store for easier access & reuse
+  // defined at DPR 1 aka CSS units
+  const playheadCanvasWidth = windowWidth - 184
   const playheadCanvasHeight = 40
+  // defined at DPR 2
   const playheadWidth = 24
+  const playheadTotalStroke = 4
+  // divide out the DPR-2 that was used to define the unit values above
+  const playheadCSSTrueHalf = ((playheadWidth + playheadTotalStroke) / 2) / 2
   const playbackRegionHeight = 16
 
   const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
@@ -21,7 +27,31 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   // const playModeText = store.animation.mode === 'LOOP' ? '∞' : '⇒'
   const playModeText = store.animation.mode
 
-  const drawPlayheadMemo = useCallback((ctx) => drawPlayhead(ctx, store.DPR, playheadWidth), [store.DPR])
+  useEffect(() => {
+    if (store.view.playheadHovered) {
+      playheadRef.current.style.cursor = 'ew-resize'
+    } else {
+      playheadRef.current.style.cursor = 'inherit'
+    }
+  }, [store.view.playheadHovered])
+
+  const drawPlayheadMemo = useCallback((ctx) => (
+    drawPlayhead(ctx, store.DPR, playheadWidth, store.view.playheadHovered)
+  ), [
+    store.DPR,
+    store.view.playheadHovered,
+  ])
+
+  useEffect(() => {
+    // playheadWidth is defined in DPR ratio units, whereas playheadCanvasWidth is in CSS units
+    const pixelsPerFrame = (playheadCanvasWidth - playheadCSSTrueHalf * 2) / (store.animation.frames - 1)
+    store.setPlayheadPixelsPerFrame(pixelsPerFrame)
+  }, [
+    playheadCanvasWidth,
+    playheadCSSTrueHalf,
+    store,
+    store.animation.frames,
+  ])
 
   useEffect(() => {
     const canvas = playheadRef.current
@@ -33,13 +63,13 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx.translate(0, canvasHeight / 2 + 1)
 
-    const pixelsPerFrame = (canvasWidth - playheadWidth) / store.animation.frames
+    const pixelsPerFrame = store.view.playheadPixelsPerFrame * store.DPR
 
     // draw the playback in/out regions
     ctx.fillStyle = 'rgba(25, 117, 210, 0.3)'
     if (store.animation.firstFrame !== Animation.FIRST) {
       ctx.fillRect(
-        playheadWidth / 2,
+        playheadCSSTrueHalf * store.DPR,
         playheadCanvasHeight / 6,
         pixelsPerFrame * (store.animation.firstFrame - 1),
         playbackRegionHeight,
@@ -49,7 +79,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       ctx.fillRect(
         pixelsPerFrame * store.animation.lastFrame,
         playheadCanvasHeight / 6,
-        pixelsPerFrame * (store.animation.frames - store.animation.lastFrame),
+        pixelsPerFrame * (store.animation.frames - store.animation.lastFrame) - (playheadTotalStroke / store.DPR),
         playbackRegionHeight,
       )
     }
@@ -57,13 +87,15 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     ctx.translate(pixelsPerFrame * (store.animation.now - 1), 0)
     drawPlayheadMemo(ctx)
   }, [
+    playheadCSSTrueHalf,
     drawPlayheadMemo,
-    playheadCanvasWidth,
+    store,
     store.DPR,
     store.animation.now,
     store.animation.frames,
     store.animation.firstFrame,
     store.animation.lastFrame,
+    store.view.playheadPixelsPerFrame,
   ])
 
   const handlePlayPauseClick = action(() => {
@@ -112,7 +144,13 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       </div>
 
       <div id="timeline-container">
-        <div id="timeline-horizontal-line" style={{ marginRight: (playheadWidth / 2) - 4 }} />
+        <div
+          id="timeline-horizontal-line"
+          style={{
+            marginLeft: playheadCSSTrueHalf,
+            marginRight: playheadCSSTrueHalf,
+          }}
+        />
         <canvas
           ref={playheadRef}
           id="playhead-canvas"
@@ -122,7 +160,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         />
       </div>
 
-      <span id="frame-ticker">{store.animation.now}</span>
+      <span id="frame-ticker" className="noselect">{store.animation.now}</span>
 
       <button
         type="button"

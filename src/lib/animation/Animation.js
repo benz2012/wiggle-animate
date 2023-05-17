@@ -85,6 +85,7 @@ class Animation {
   }
 
   goToFrame(frame) {
+    if (frame < Animation.FIRST || frame > this.frames) return
     this.now = frame
   }
 

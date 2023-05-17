@@ -10,41 +10,71 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   /* DRAG HANDLER */
   const handleDrag = action((event) => {
     const { selectedIds, dragStart } = store.build
-    if (!dragStart) return
+    const { playheadDragStart } = store.view
 
-    const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
-    const relativeMovement = Vector2.subtract(pointerVector, dragStart)
+    if (dragStart) {
+      const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
+      const relativeMovement = Vector2.subtract(pointerVector, dragStart)
 
-    if (store.keyHeld.Space || store.keyHeld.MiddleMouse) {
-      const relativeMovementScaledToCanvasInverse = new Vector2(
-        relativeMovement.x * store.rootContainer.canvasScale,
-        relativeMovement.y * store.rootContainer.canvasScale,
-      )
-      const newCanvasPosition = Vector2.add(
-        store.rootContainer.canvasPosition,
-        relativeMovementScaledToCanvasInverse,
-      )
-      store.rootContainer.canvasPosition = newCanvasPosition
-    } else if (selectedIds.length > 0) {
-      store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
-    } else {
-      store.selector.rect.width += relativeMovement.x
-      store.selector.rect.height += relativeMovement.y
+      if (store.keyHeld.Space || store.keyHeld.MiddleMouse) {
+        const relativeMovementScaledToCanvasInverse = new Vector2(
+          relativeMovement.x * store.rootContainer.canvasScale,
+          relativeMovement.y * store.rootContainer.canvasScale,
+        )
+        const newCanvasPosition = Vector2.add(
+          store.rootContainer.canvasPosition,
+          relativeMovementScaledToCanvasInverse,
+        )
+        store.rootContainer.canvasPosition = newCanvasPosition
+      } else if (selectedIds.length > 0) {
+        store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
+      } else {
+        store.selector.rect.width += relativeMovement.x
+        store.selector.rect.height += relativeMovement.y
+      }
+
+      // this will enable us to track distance moved since the last event
+      store.startDrag(pointerVector)
+    } else if (playheadDragStart) {
+      const pointerVector = new Vector2(event.clientX, event.clientY)
+      const distanceFromPlayheadOne = pointerVector.x - store.view.playheadCSSFrameOneStart
+      const frameToGoToFloat = distanceFromPlayheadOne / store.view.playheadPixelsPerFrame
+      const frameToGoTo = Math.round(frameToGoToFloat)
+      store.animation.goToFrame(frameToGoTo)
     }
-
-    // this will enable us to track distance moved since the last event
-    store.startDrag(pointerVector)
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
 
   /* POINTER MOVEMENT */
   const handlePointerEvent = (event) => {
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
+    const pointerVectorRatioOne = new Vector2(event.clientX, event.clientY)
 
     if (event.type === 'pointermove') {
+      // Note: This is not drag handling, see above
       const { dragStart } = store.build
+      const { playheadDragStart } = store.view
+
       if (!dragStart) {
         store.rootContainer.checkPointerIntersections(pointerVector)
+        if (!playheadDragStart && event.target.id === 'playhead-canvas') {
+          // check for playhead hover
+          const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
+            + (store.animation.now * store.view.playheadPixelsPerFrame)
+          const pointerX = pointerVectorRatioOne.x
+          // TODO: this should be in the store
+          const playheadCSSTrueHalf = 7
+          if (
+            pointerX >= playheadBucketToCheck - playheadCSSTrueHalf
+            && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf
+          ) {
+            store.setPlayheadHovered(true)
+          } else {
+            store.setPlayheadHovered(false)
+          }
+        } else if (!playheadDragStart) {
+          store.setPlayheadHovered(false)
+        }
       } else if (dragStart && store.selector.rect.area > 0) {
         const x2 = store.selector.position.x + store.selector.rect.width
         const y2 = store.selector.position.y + store.selector.rect.height
@@ -56,32 +86,37 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         ])
         store.setSelectorHovers(intersectedIds)
       }
-    } else if (event.type === 'pointerdown' && event.target === stageRef.current) {
-      store.rootContainer.checkPointerIntersections(pointerVector)
+    } else if (event.type === 'pointerdown') {
+      if (event.target === stageRef.current) {
+        store.rootContainer.checkPointerIntersections(pointerVector)
 
-      if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
+        if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
 
-      if (store.build.hoveredId) {
-        if (store.build.selectedIds.length === 0) {
-          store.setSelected([store.build.hoveredId])
-        } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {
-          if (store.keyHeld.Meta || store.keyHeld.Shift) {
-            store.addToSelection(store.build.hoveredId)
-          } else {
+        if (store.build.hoveredId) {
+          if (store.build.selectedIds.length === 0) {
             store.setSelected([store.build.hoveredId])
+          } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {
+            if (store.keyHeld.Meta || store.keyHeld.Shift) {
+              store.addToSelection(store.build.hoveredId)
+            } else {
+              store.setSelected([store.build.hoveredId])
+            }
           }
+        } else {
+          store.setSelected([])
         }
-      } else {
-        store.setSelected([])
-      }
 
-      store.startDrag(pointerVector)
-      store.setSelectorPosition(pointerVector)
+        store.startDrag(pointerVector)
+        store.setSelectorPosition(pointerVector)
+      } else if (event.target.id === 'playhead-canvas') {
+        store.startPlayheadDrag(pointerVectorRatioOne)
+      }
     } else if (event.type === 'pointerup') {
       if (event.button === 1) { store.setKeyHeld('MiddleMouse', false) }
 
-      store.stopDrag(pointerVector)
+      store.stopDrag()
       store.setSelectorRect(0, 0)
+      store.stopPlayheadDrag()
 
       if (store.selector.hovers.length > 0) {
         store.setSelected(store.selector.hovers)

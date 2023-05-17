@@ -50,7 +50,13 @@ class RootStore {
       hovers: [],
     }
 
-    this.view = {}
+    // TODO: make a playhead store obj
+    this.view = {
+      playheadHovered: false,
+      playheadDragStart: null,
+      playheadPixelsPerFrame: null,
+      playheadCSSFrameOneStart: 100,
+    }
 
     this.keyHeld = {
       Space: false,
@@ -85,6 +91,10 @@ class RootStore {
       setSelectorRect: action,
       setSelectorHovers: action,
 
+      setPlayheadHovered: action,
+      startPlayheadDrag: action,
+      stopPlayheadDrag: action,
+      setPlayheadPixelsPerFrame: action,
       resetView: action,
 
       setKeyHeld: action,
@@ -198,6 +208,10 @@ class RootStore {
   setSelectorHovers(values) { this.selector.hovers = values }
 
   /* View Actions */
+  setPlayheadHovered(value) { this.view.playheadHovered = value }
+  startPlayheadDrag(vector) { this.view.playheadDragStart = vector }
+  stopPlayheadDrag() { this.view.playheadDragStart = null }
+  setPlayheadPixelsPerFrame(value) { this.view.playheadPixelsPerFrame = value }
   resetView() {
     this.rootContainer.setCanvasToBestFit()
   }

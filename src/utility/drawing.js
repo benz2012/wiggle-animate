@@ -12,13 +12,13 @@ const drawCenterPoint = (ctx, currentTransform, origin) => {
   ctx.fill()
 }
 
-const drawPlayhead = (ctx, DPR, playheadWidth) => {
+const drawPlayhead = (ctx, DPR, playheadWidth, isHovered) => {
   const thinLineOffset = DPR === 1 ? 0.5 : 0
   ctx.translate(thinLineOffset, -thinLineOffset)
 
   ctx.beginPath()
   ctx.fillStyle = 'rgba(25, 117, 210, 1)'
-  ctx.strokeStyle = 'rgba(13, 71, 161, 1)'
+  ctx.strokeStyle = isHovered ? 'rgba(45, 147, 255, 1)' : 'rgba(13, 71, 161, 1)'
   ctx.lineWidth = 4
   const upperWidth = playheadWidth
   const playheadLeft = 2
@@ -33,7 +33,7 @@ const drawPlayhead = (ctx, DPR, playheadWidth) => {
 
   ctx.beginPath()
   ctx.lineWidth = 2
-  ctx.strokeStyle = 'rgba(13, 71, 161, 0.5)'
+  ctx.strokeStyle = isHovered ? 'rgba(215, 235, 255, 0.4)' : 'rgba(13, 71, 161, 0.5)'
   ctx.moveTo(playheadLeft + upperWidth / 4, 0)
   ctx.lineTo(playheadLeft + upperWidth / 4, -14)
   ctx.moveTo(playheadLeft + (upperWidth / 4) * 2, 4)
