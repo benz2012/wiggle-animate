@@ -195,6 +195,11 @@ const KeyHandler = ({ store }) => {
         store.addText()
         break
 
+      case 'p':
+        if (!STAGE_HAS_FOCUS) break
+        store.addPolygon()
+        break
+
       case 'i':
         if (!BOTTOM_HAS_FOCUS) break
         store.animation.setIn(store.animation.now)

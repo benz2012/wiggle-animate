@@ -82,6 +82,12 @@ const TopMenu = ({ store }) => {
                 onClick={handleInsertActionWith(() => store.addEllipse())}
               />
               <InsertMenuListItem
+                icon={<div className="list-item-icon-polygon" />}
+                label="Polygon"
+                hotkeyIndicator="p"
+                onClick={handleInsertActionWith(() => store.addPolygon())}
+              />
+              <InsertMenuListItem
                 icon={<div className="list-item-icon-text" />}
                 label="Text"
                 hotkeyIndicator="t"

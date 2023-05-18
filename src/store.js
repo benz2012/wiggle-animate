@@ -7,6 +7,7 @@ import Size from './lib/structure/Size'
 import Rectangle from './lib/shapes/Rectangle'
 import Ellipse from './lib/shapes/Ellipse'
 import Text from './lib/shapes/Text'
+import Polygon from './lib/shapes/Polygon'
 import Animation from './lib/animation/Animation'
 
 // import { storageEnabled } from './utility/storage'
@@ -179,6 +180,13 @@ class RootStore {
 
   addText() {
     this.addNewItem(new Text(
+      this.rootContainer.canvasSize.width / 2,
+      this.rootContainer.canvasSize.height / 2,
+    ))
+  }
+
+  addPolygon() {
+    this.addNewItem(new Polygon(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))

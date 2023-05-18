@@ -187,3 +187,11 @@
   color: rgb(200, 200, 200);
   font-family: serif;
 }
+
+.list-item-icon-polygon {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 16px solid hsl(259, 70%, 70%);
+}
