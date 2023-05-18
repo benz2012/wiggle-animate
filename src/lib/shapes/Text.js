@@ -10,18 +10,17 @@ class Text extends Shape {
     this.text = this.name
     this.fontSize = 100
     this.font = 'sans-serif'
-    // TODO: alignment modes other than center misrepresent bounding box
-    this.align = 'center'
     this.direction = 'ltr'
 
-    // I don't think we should allow baseline to be changed because it messes with how we
-    // draw shapes, with the expectation that drawing always happens from the position x & y
+    // These mess with drawing operations too much, lock these in but allow normal
+    // rectangular/shape alignment to contribute
     this.baseline = 'middle'
+    this.align = 'center'
 
     this.middleToTop = 0
 
     const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'text', 'fontSize', 'font', 'align', 'direction']
+    this._observables = [...inheritedObservables, 'text', 'fontSize', 'font', 'direction']
     observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { measureAndSetSize: action })
 
@@ -57,13 +56,16 @@ class Text extends Shape {
     // draw based on position with width & height
     this.ctx.translate(0, this.middleToTop - (this.height / 2))
 
-    this.ctx.beginPath()
+    // Adjust for rectangular/shape alignment
+    const [rectX, rectY, rectW, rectH] = this.rectSpec
+    this.ctx.translate(rectX + rectW / 2, rectY + rectH / 2)
 
+    this.ctx.beginPath()
     this.shadow.prepare(this.ctx)
-    this.fill.prepare(this.ctx)
-    this.ctx.fillText(this.text, 0, 0)
     this.stroke.prepare(this.ctx)
     this.ctx.strokeText(this.text, 0, 0)
+    this.fill.prepare(this.ctx)
+    this.ctx.fillText(this.text, 0, 0)
   }
 }
 

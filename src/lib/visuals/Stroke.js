@@ -13,7 +13,7 @@ class Stroke extends Colorable {
     //       - middle = default
     //       - inside = draw width*2, cut mask around shape
     //       - outside = draw width*2, cut subtraction within shape
-    this.flow = 'middle' // one of: inside | outside | middle
+    this.flow = 'outside' // one of: inside | outside | middle
 
     const inheritedObservables = [...super.observables]
     this._observables = [...inheritedObservables, 'width', 'join']

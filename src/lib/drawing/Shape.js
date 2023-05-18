@@ -3,6 +3,7 @@ import { makeObservable, action, observable } from 'mobx'
 import Drawable from './Drawable'
 import ControllerBox from './ControllerBox'
 import Size from '../structure/Size'
+import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
 import Fill from '../visuals/Fill'
 import Stroke from '../visuals/Stroke'
@@ -26,10 +27,11 @@ class Shape extends Drawable {
     this.fill = new Fill(Color.randomPastel())
     this.stroke = new Stroke()
     this.shadow = new Shadow()
+    this.alignment = new Alignment()
 
     const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'size', 'fill', 'stroke', 'shadow']
-    this._nestedObservables = [...super.nestedObservables, 'size', 'fill', 'stroke', 'shadow']
+    this._observables = [...inheritedObservables, 'size', 'fill', 'stroke', 'shadow', 'alignment']
+    this._nestedObservables = [...super.nestedObservables, 'size', 'fill', 'stroke', 'shadow', 'alignment']
     observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { checkPointerIntersections: action })
 
@@ -55,7 +57,22 @@ class Shape extends Drawable {
   set height(value) { this.size.height = value }
 
   get rectSpec() {
-    return [this.width / -2, this.height / -2, this.width, this.height]
+    // Defaults are for [CENTER, CENTER]
+    let xLocation = this.width / -2
+    let yLocation = this.height / -2
+
+    if (this.alignment.x === Alignment.LEFT) {
+      xLocation = 0
+    } else if (this.alignment.x === Alignment.RIGHT) {
+      xLocation = this.width * -1
+    }
+    if (this.alignment.y === Alignment.TOP) {
+      yLocation = 0
+    } else if (this.alignment.y === Alignment.BOTTOM) {
+      yLocation = this.height * -1
+    }
+
+    return [xLocation, yLocation, this.width, this.height]
   }
 
   drawShape() {
@@ -110,10 +127,10 @@ class Shape extends Drawable {
   createIntersectionsPath() {
     // overwrite this if your shape doesn't use a rectangle for intersections
     const rectSpec = [
-      this.width / -2 - (this.stroke.width / 2),
-      this.height / -2 - (this.stroke.width / 2),
-      this.width + this.stroke.width,
-      this.height + this.stroke.width,
+      this.rectSpec[0] - (this.stroke.width / 2),
+      this.rectSpec[1] - (this.stroke.width / 2),
+      this.rectSpec[2] + this.stroke.width,
+      this.rectSpec[3] + this.stroke.width,
     ]
     this.ctx.rect(...rectSpec)
   }
@@ -130,11 +147,14 @@ class Shape extends Drawable {
     this.ctx.setTransform(this.currentTransform)
     const strokeProtrusion = this.stroke.width / 2
     this.ctx.translate(
-      this.width / -2 - strokeProtrusion,
-      this.height / -2 - strokeProtrusion,
+      this.rectSpec[0] - strokeProtrusion,
+      this.rectSpec[1] - strokeProtrusion,
     )
     const finalTransform = this.ctx.getTransform()
-    this.ctx.translate(this.width + this.stroke.width, this.height + this.stroke.width)
+    this.ctx.translate(
+      this.rectSpec[2] + this.stroke.width,
+      this.rectSpec[3] + this.stroke.width
+    )
     const bottomLeftTransform = this.ctx.getTransform()
 
     const hasOverlap = Shape.doRectsOverlap({

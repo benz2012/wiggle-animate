@@ -6,109 +6,112 @@
 //         the item(s) above it
 
 const draw = (instance) => {
-  instance.ctx.setTransform(instance.currentTransform)
+  const { ctx, origin, scale, stroke, rectSpec } = instance
+  const [rectX, rectY, rectW, rectH] = rectSpec
 
-  instance.ctx.beginPath()
-  const strokeProtrusion = instance.stroke.width / 2
-  instance.ctx.rect(
-    instance.rectSpec[0] - strokeProtrusion - (3 / instance.scale.x),
-    instance.rectSpec[1] - strokeProtrusion - (3 / instance.scale.y),
-    instance.rectSpec[2] + instance.stroke.width + (6 / instance.scale.x),
-    instance.rectSpec[3] + instance.stroke.width + (6 / instance.scale.y),
+  ctx.setTransform(instance.currentTransform)
+
+  ctx.beginPath()
+  const strokeProtrusion = stroke.width / 2
+  ctx.rect(
+    rectX - strokeProtrusion - (3 / scale.x),
+    rectY - strokeProtrusion - (3 / scale.y),
+    rectW + stroke.width + (6 / scale.x),
+    rectH + stroke.width + (6 / scale.y),
   )
-  instance.ctx.strokeStyle = 'rgba(33, 150, 243)'
-  instance.ctx.lineWidth = 6
-  instance.ctx.setTransform(instance.currentTransformWithoutScale)
-  instance.ctx.stroke()
+  ctx.strokeStyle = 'rgba(33, 150, 243)'
+  ctx.lineWidth = 6
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.stroke()
 
   // handles
-  instance.ctx.setTransform(instance.currentTransform)
-  instance.ctx.beginPath()
-  instance.ctx.rect(
-    instance.rectSpec[0] - strokeProtrusion - (11 / instance.scale.x),
-    instance.rectSpec[1] - strokeProtrusion - (11 / instance.scale.y),
-    16 / instance.scale.x,
-    16 / instance.scale.y,
+  ctx.setTransform(instance.currentTransform)
+  ctx.beginPath()
+  ctx.rect(
+    rectX - strokeProtrusion - (11 / scale.x),
+    rectY - strokeProtrusion - (11 / scale.y),
+    16 / scale.x,
+    16 / scale.y,
   )
-  instance.ctx.rect(
-    (instance.rectSpec[0] * -1) + strokeProtrusion - (5 / instance.scale.x),
-    instance.rectSpec[1] - strokeProtrusion - (11 / instance.scale.y),
-    16 / instance.scale.x,
-    16 / instance.scale.y,
+  ctx.rect(
+    (rectX + rectW) + strokeProtrusion - (5 / scale.x),
+    rectY - strokeProtrusion - (11 / scale.y),
+    16 / scale.x,
+    16 / scale.y,
   )
-  instance.ctx.rect(
-    (instance.rectSpec[0] * -1) + strokeProtrusion - (5 / instance.scale.x),
-    (instance.rectSpec[1] * -1) + strokeProtrusion - (5 / instance.scale.y),
-    16 / instance.scale.x,
-    16 / instance.scale.y,
+  ctx.rect(
+    (rectX + rectW) + strokeProtrusion - (5 / scale.x),
+    (rectY + rectH) + strokeProtrusion - (5 / scale.y),
+    16 / scale.x,
+    16 / scale.y,
   )
-  instance.ctx.rect(
-    instance.rectSpec[0] - strokeProtrusion - (11 / instance.scale.x),
-    (instance.rectSpec[1] * -1) + strokeProtrusion - (5 / instance.scale.y),
-    16 / instance.scale.x,
-    16 / instance.scale.y,
+  ctx.rect(
+    rectX - strokeProtrusion - (11 / scale.x),
+    (rectY + rectH) + strokeProtrusion - (5 / scale.y),
+    16 / scale.x,
+    16 / scale.y,
   )
-  instance.ctx.fillStyle = 'white'
-  instance.ctx.strokeStyle = 'rgb(33, 150, 243)'
-  instance.ctx.lineWidth = 6
-  instance.ctx.setTransform(instance.currentTransformWithoutScale)
-  instance.ctx.fill()
-  instance.ctx.stroke()
+  ctx.fillStyle = 'white'
+  ctx.strokeStyle = 'rgb(33, 150, 243)'
+  ctx.lineWidth = 6
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.fill()
+  ctx.stroke()
 
   // origin
-  instance.ctx.setTransform(instance.currentTransform)
-  instance.ctx.translate(instance.origin.x, instance.origin.y)
-  instance.ctx.beginPath()
-  instance.ctx.moveTo(0 / instance.scale.x, -10 / instance.scale.y)
-  instance.ctx.lineTo(0 / instance.scale.x, 10 / instance.scale.y)
-  instance.ctx.moveTo(-10 / instance.scale.x, 0 / instance.scale.y)
-  instance.ctx.lineTo(10 / instance.scale.x, 0 / instance.scale.y)
-  instance.ctx.lineWidth = 8
-  instance.ctx.strokeStyle = 'white'
-  instance.ctx.setTransform(instance.currentTransformWithoutScale)
-  instance.ctx.stroke()
+  ctx.setTransform(instance.currentTransform)
+  ctx.translate(origin.x, origin.y)
+  ctx.beginPath()
+  ctx.moveTo(0 / scale.x, -10 / scale.y)
+  ctx.lineTo(0 / scale.x, 10 / scale.y)
+  ctx.moveTo(-10 / scale.x, 0 / scale.y)
+  ctx.lineTo(10 / scale.x, 0 / scale.y)
+  ctx.lineWidth = 8
+  ctx.strokeStyle = 'white'
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.stroke()
   // -- more
-  instance.ctx.setTransform(instance.currentTransform)
-  instance.ctx.translate(instance.origin.x, instance.origin.y)
-  instance.ctx.beginPath()
-  instance.ctx.moveTo(0 / instance.scale.x, -8 / instance.scale.y)
-  instance.ctx.lineTo(0 / instance.scale.x, 8 / instance.scale.y)
-  instance.ctx.moveTo(-8 / instance.scale.x, 0 / instance.scale.y)
-  instance.ctx.lineTo(8 / instance.scale.x, 0 / instance.scale.y)
-  instance.ctx.lineWidth = 4
-  instance.ctx.strokeStyle = 'rgb(33, 150, 243)'
-  instance.ctx.setTransform(instance.currentTransformWithoutScale)
-  instance.ctx.stroke()
+  ctx.setTransform(instance.currentTransform)
+  ctx.translate(origin.x, origin.y)
+  ctx.beginPath()
+  ctx.moveTo(0 / scale.x, -8 / scale.y)
+  ctx.lineTo(0 / scale.x, 8 / scale.y)
+  ctx.moveTo(-8 / scale.x, 0 / scale.y)
+  ctx.lineTo(8 / scale.x, 0 / scale.y)
+  ctx.lineWidth = 4
+  ctx.strokeStyle = 'rgb(33, 150, 243)'
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.stroke()
 
   // rotation handle
-  instance.ctx.setTransform(instance.currentTransform)
-  instance.ctx.translate(0, instance.height / -2 + strokeProtrusion)
-  instance.ctx.beginPath()
-  instance.ctx.moveTo(0, 0)
-  instance.ctx.lineTo(0 / instance.scale.x, -75 / instance.scale.y)
-  instance.ctx.strokeStyle = 'rgba(33, 150, 243)'
-  instance.ctx.lineWidth = 6
-  instance.ctx.setTransform(instance.currentTransformWithoutScale)
-  instance.ctx.stroke()
+  ctx.setTransform(instance.currentTransform)
+  ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
+  ctx.beginPath()
+  ctx.moveTo(0, 0)
+  ctx.lineTo(0 / scale.x, -75 / scale.y)
+  ctx.strokeStyle = 'rgba(33, 150, 243)'
+  ctx.lineWidth = 6
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.stroke()
   // -- more
-  instance.ctx.setTransform(instance.currentTransform)
-  instance.ctx.translate(0, instance.height / -2 + strokeProtrusion)
-  instance.ctx.beginPath()
-  instance.ctx.ellipse(
+  ctx.setTransform(instance.currentTransform)
+  ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
+  ctx.beginPath()
+  ctx.ellipse(
     0,
-    -75 / instance.scale.y,
-    8 / instance.scale.x,
-    8 / instance.scale.y,
+    -75 / scale.y,
+    8 / scale.x,
+    8 / scale.y,
     0,
     0,
     Math.PI * 2
   )
-  instance.ctx.fillStyle = 'white'
-  instance.ctx.strokeStyle = 'rgb(33, 150, 243)'
-  instance.ctx.lineWidth = 6
-  instance.ctx.setTransform(instance.currentTransformWithoutScale)
-  instance.ctx.fill()
-  instance.ctx.stroke()
+  ctx.fillStyle = 'white'
+  ctx.strokeStyle = 'rgb(33, 150, 243)'
+  ctx.lineWidth = 6
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.fill()
+  ctx.stroke()
 }
 
 export default { draw }
