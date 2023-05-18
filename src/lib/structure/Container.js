@@ -39,9 +39,7 @@ class Container extends Drawable {
       this._sortOrder = [newId, ...this._sortOrder]
     }
 
-    if (!(newItem instanceof Container)) {
-      Item.rootContainer.store.setSelected([newId])
-    }
+    Item.rootContainer.store.setSelected([newId])
   }
 
   remove(itemId) {
