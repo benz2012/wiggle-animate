@@ -38,7 +38,7 @@ const KeyHandler = ({ store }) => {
         if (!STAGE_HAS_FOCUS) break
         event.preventDefault()
         store.setKeyHeld('Space', true)
-        store.setSelected([])
+        // store.setSelected([])
         break
 
       case '-':
@@ -71,20 +71,24 @@ const KeyHandler = ({ store }) => {
       case 'ArrowUp':
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_UP)
+          store.rootContainer.moveAllSelectedByIncrement(TEN_UP, true)
         } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_UP)
+          store.rootContainer.moveAllSelectedByIncrement(ONE_UP, true)
         }
         break
       case 'ArrowDown':
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_DOWN)
+          store.rootContainer.moveAllSelectedByIncrement(TEN_DOWN, true)
         } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_DOWN)
+          store.rootContainer.moveAllSelectedByIncrement(ONE_DOWN, true)
         }
         break
       case 'ArrowLeft':
+        if (event.metaKey || event.ctrlKey) {
+          // Prevents accidental page navigation
+          event.preventDefault()
+        }
         if (BOTTOM_HAS_FOCUS) {
           if (store.keyHeld.Shift) {
             store.animation.goToFirst()
@@ -94,12 +98,16 @@ const KeyHandler = ({ store }) => {
         }
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT)
+          store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT, true)
         } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT)
+          store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT, true)
         }
         break
       case 'ArrowRight':
+        if (event.metaKey || event.ctrlKey) {
+          // Prevents accidental page navigation
+          event.preventDefault()
+        }
         if (BOTTOM_HAS_FOCUS) {
           if (store.keyHeld.Shift) {
             store.animation.goToLast()
@@ -109,9 +117,9 @@ const KeyHandler = ({ store }) => {
         }
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT)
+          store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT, true)
         } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT)
+          store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT, true)
         }
         break
 

@@ -27,7 +27,10 @@ const TopMenu = ({ store }) => {
   if (saveStatus === 'error saving') { icon = '⚠' }
   if (saveStatus === 'unknown') { icon = '?' }
 
-  // TODO: after inserting item, set DOM focus back to canvas
+  const handleInsertActionWith = (func) => () => {
+    func()
+    document.getElementById('stage').focus()
+  }
 
   return (
     <div id="top-menu">
@@ -64,25 +67,25 @@ const TopMenu = ({ store }) => {
                 icon={<div className="list-item-icon-container" />}
                 label="Container"
                 hotkeyIndicator="c"
-                onClick={() => store.addContainer()}
+                onClick={handleInsertActionWith(() => store.addContainer())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-rectangle" />}
                 label="Rectangle"
                 hotkeyIndicator="r"
-                onClick={() => store.addRectangle()}
+                onClick={handleInsertActionWith(() => store.addRectangle())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-ellipse" />}
                 label="Ellipse"
                 hotkeyIndicator="e"
-                onClick={() => store.addEllipse()}
+                onClick={handleInsertActionWith(() => store.addEllipse())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-text" />}
                 label="Text"
                 hotkeyIndicator="t"
-                onClick={() => store.addText()}
+                onClick={handleInsertActionWith(() => store.addText())}
               />
             </div>
             <div className="dialog-backdrop" />

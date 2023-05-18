@@ -233,14 +233,14 @@ class RootContainer extends Container {
     }
   }
 
-  moveAllSelectedByIncrement(relativeMovement) {
+  moveAllSelectedByIncrement(relativeMovement, fromArrowKey = false) {
     this.store.build.selectedIds.forEach((selectedId) => {
       const relativeMovementScaledToCanvas = new Vector2(
         relativeMovement.x / this.canvasScale,
         relativeMovement.y / this.canvasScale,
       )
       const selectedItem = this.findItem(selectedId)
-      if (this.store.build.hoveredControl === 'position') {
+      if (this.store.build.hoveredControl === 'position' || fromArrowKey) {
         selectedItem.position.add(relativeMovementScaledToCanvas)
       } else if (this.store.build.hoveredControl === 'origin') {
         selectedItem.origin.add(relativeMovementScaledToCanvas)
