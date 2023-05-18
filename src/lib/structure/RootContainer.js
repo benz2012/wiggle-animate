@@ -149,6 +149,7 @@ class RootContainer extends Container {
     super.draw(
       this.transform,
       this.store.build.hoveredId,
+      this.store.build.hoveredControl,
       this.store.build.selectedIds,
       this.store.selector.hovers,
     )
@@ -228,6 +229,7 @@ class RootContainer extends Container {
     const foundIntersection = super.checkPointerIntersections(pointerVector)
     if (!foundIntersection) {
       this.store.setHovered(null)
+      this.store.setHoveredControl(null)
     }
   }
 
@@ -238,7 +240,11 @@ class RootContainer extends Container {
         relativeMovement.y / this.canvasScale,
       )
       const selectedItem = this.findItem(selectedId)
-      selectedItem.position.add(relativeMovementScaledToCanvas)
+      if (this.store.build.hoveredControl === 'position') {
+        selectedItem.position.add(relativeMovementScaledToCanvas)
+      } else if (this.store.build.hoveredControl === 'origin') {
+        selectedItem.origin.add(relativeMovementScaledToCanvas)
+      }
     })
   }
 }

@@ -1,7 +1,5 @@
 /* Useful for debugging position, origin, scale, rotation */
-const drawCenterPoint = (ctx, currentTransform, origin) => {
-  ctx.setTransform(currentTransform)
-  ctx.translate(origin.x, origin.y)
+const drawCenterPoint = (ctx, origin) => {
   ctx.beginPath()
   ctx.rect(-4, -4, 8, 8)
   ctx.fillStyle = 'white'
@@ -10,6 +8,51 @@ const drawCenterPoint = (ctx, currentTransform, origin) => {
   ctx.rect(-2, -2, 4, 4)
   ctx.fillStyle = 'black'
   ctx.fill()
+
+  if (origin) {
+    ctx.translate(...origin.values)
+    drawCenterPoint(ctx)
+  }
+}
+
+const ContainerControllerSizes = {
+  originBox: 100,
+  positionBox: 200,
+  rotationCircle: 12,
+}
+const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
+  const { originBox, positionBox, rotationCircle } = ContainerControllerSizes
+
+  ctx.strokeStyle = 'rgba(255, 208, 66, 1)'
+  ctx.lineWidth = 2
+
+  ctx.beginPath()
+  ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
+  ctx.stroke()
+  if (isOriginHovered) {
+    ctx.fillStyle = 'rgba(255, 208, 66, 0.2)'
+    ctx.fill()
+  }
+
+  ctx.beginPath()
+  ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
+  ctx.stroke()
+  if (isPositionHovered) {
+    ctx.beginPath()
+    ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
+    ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
+    ctx.fillStyle = 'rgba(255, 208, 66, 0.2)'
+    ctx.fill('evenodd')
+  }
+
+  ctx.beginPath()
+  ctx.moveTo(0, -originBox)
+  ctx.lineTo(0, -originBox - 75)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.ellipse(0, -originBox - 75 - rotationCircle, rotationCircle, rotationCircle, Math.PI * 2, 0, Math.PI * 2)
+  ctx.stroke()
 }
 
 const drawPlayhead = (ctx, DPR, playheadWidth, isHovered) => {
@@ -45,5 +88,7 @@ const drawPlayhead = (ctx, DPR, playheadWidth, isHovered) => {
 
 export {
   drawCenterPoint,
+  ContainerControllerSizes,
+  drawContainerController,
   drawPlayhead,
 }

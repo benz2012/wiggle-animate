@@ -68,6 +68,7 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasFill.color,
     store.build.selectedIds,
     store.build.hoveredId,
+    store.build.hoveredControl,
     store.selector.rect.area,
     store.selector.hovers,
     allObserverablePropertiesInTheTree,

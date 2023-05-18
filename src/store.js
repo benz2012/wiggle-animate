@@ -41,6 +41,7 @@ class RootStore {
       tool: '',
       selectedIds: [],
       hoveredId: null,
+      hoveredControl: null,
       dragStart: null,
     }
 
@@ -70,16 +71,17 @@ class RootStore {
     this.animation = new Animation()
 
     makeObservable(this, {
-      rootContainer: observable,
+      // rootContainer: Never changes, no need for observable, observable within
       project: observable,
       build: observable,
       selector: observable,
       view: observable,
       keyHeld: observable,
       propertyEditor: observable,
-      // animation: Never changes, no need for observable
+      // animation: Never changes, no need for observable, observable within
 
       setHovered: action,
+      setHoveredControl: action,
       setSelected: action,
       addToSelection: action,
       removeFromSelection: action,
@@ -153,7 +155,12 @@ class RootStore {
   }
 
   addContainer() {
-    this.addNewItem(new Container())
+    const newContainer = new Container()
+    newContainer.origin = [
+      this.rootContainer.canvasSize.width / 2,
+      this.rootContainer.canvasSize.height / 2,
+    ]
+    this.addNewItem(newContainer)
   }
 
   addRectangle() {
@@ -179,6 +186,7 @@ class RootStore {
 
   /* Build Actions */
   setHovered(value) { this.build.hoveredId = value }
+  setHoveredControl(value) { this.build.hoveredControl = value }
   startDrag(vector) { this.build.dragStart = vector }
   stopDrag() { this.build.dragStart = null }
   setSelected(values) {
