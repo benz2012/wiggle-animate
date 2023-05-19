@@ -13,6 +13,7 @@ const doesBottomMenuHaveFocus = () => [
   'play-pause-button',
   'jump-start-button',
   'jump-end-button',
+  'play-mode-button',
 ].includes(document.activeElement.id)
 
 const KeyHandler = ({ store }) => {
