@@ -8,8 +8,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref
 
   /* Convienience Methods */
-  const goToFrameWithPointerX = (pointerX) => {
-    // TODO: this should be in the store
+  const getFrameWithPointerX = (pointerX) => {
+    // TODO: playheadCSSTrueHalf should be in the store
     const playheadCSSTrueHalf = 7
     const distanceFromPlayheadOne = (
       pointerX
@@ -19,7 +19,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     )
     const frameToGoToFloat = distanceFromPlayheadOne / store.view.playheadPixelsPerFrame
     const frameToGoTo = Math.round(frameToGoToFloat)
-    store.animation.goToFrame(frameToGoTo)
+    return frameToGoTo
+  }
+  const goToFrameWithPointerX = (pointerX) => {
+    store.animation.goToFrame(getFrameWithPointerX(pointerX))
   }
 
   /* DRAG HANDLER */
@@ -85,11 +88,14 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
             && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf * 2
           ) {
             store.setPlayheadHovered(true)
+            store.setPlayheadHoverLineFrame(null)
           } else {
             store.setPlayheadHovered(false)
+            store.setPlayheadHoverLineFrame(getFrameWithPointerX(pointerX))
           }
         } else if (!playheadDragStart) {
           store.setPlayheadHovered(false)
+          store.setPlayheadHoverLineFrame(null)
         }
       } else if (dragStart && store.selector.rect.area > 0) {
         const x2 = store.selector.position.x + store.selector.rect.width
@@ -127,6 +133,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else if (event.target.id === 'playhead-canvas') {
         store.startPlayheadDrag(pointerVectorRatioOne)
         store.setPlayheadHovered(true)
+        store.setPlayheadHoverLineFrame(null)
         goToFrameWithPointerX(pointerVectorRatioOne.x)
       }
     } else if (event.type === 'pointerup') {

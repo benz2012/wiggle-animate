@@ -56,6 +56,7 @@ class RootStore {
     // TODO: make a playhead store obj
     this.view = {
       playheadHovered: false,
+      playheadHoverLineFrame: null,
       playheadDragStart: null,
       playheadPixelsPerFrame: null,
       playheadCSSFrameOneStart: 100,
@@ -98,6 +99,7 @@ class RootStore {
       setSelectorHovers: action,
 
       setPlayheadHovered: action,
+      setPlayheadHoverLineFrame: action,
       startPlayheadDrag: action,
       stopPlayheadDrag: action,
       setPlayheadPixelsPerFrame: action,
@@ -235,6 +237,7 @@ class RootStore {
 
   /* View Actions */
   setPlayheadHovered(value) { this.view.playheadHovered = value }
+  setPlayheadHoverLineFrame(value) { this.view.playheadHoverLineFrame = value }
   startPlayheadDrag(vector) { this.view.playheadDragStart = vector }
   stopPlayheadDrag() { this.view.playheadDragStart = null }
   setPlayheadPixelsPerFrame(value) { this.view.playheadPixelsPerFrame = value }

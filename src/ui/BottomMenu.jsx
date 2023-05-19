@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite'
 import './BottomMenu.css'
 import Animation from '../lib/animation/Animation'
 import { identityMatrix } from '../utility/matrix'
-import { drawPlayhead } from '../utility/drawing'
+import { drawPlayheadHoverLine, drawPlayhead } from '../utility/drawing'
 import { doesBottomMenuHaveFocus } from './KeyHandler'
 
 const FRAME_TICK_MIN_WIDTH = 10
@@ -38,12 +38,18 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
   }, [store.view.playheadHovered])
 
+  const drawPlayheadHoverLineMemo = useCallback((ctx) => {
+    if (!store.view.playheadHoverLineFrame) return
+    const drawLineAt = store.view.playheadHoverLineFrame * store.view.playheadPixelsPerFrame
+    drawPlayheadHoverLine(ctx, store.DPR, drawLineAt)
+  }, [
+    store.DPR,
+    store.view.playheadHoverLineFrame,
+    store.view.playheadPixelsPerFrame,
+  ])
   const drawPlayheadMemo = useCallback((ctx) => (
     drawPlayhead(ctx, store.DPR, playheadWidth, store.view.playheadHovered)
-  ), [
-    store.DPR,
-    store.view.playheadHovered,
-  ])
+  ), [store.DPR, store.view.playheadHovered])
 
   useEffect(() => {
     // playheadWidth is defined in DPR ratio units, whereas playheadCanvasWidth is in CSS units
@@ -89,10 +95,15 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       )
     }
 
+    const preDrawTransform = ctx.getTransform()
+    drawPlayheadHoverLineMemo(ctx)
+
+    ctx.setTransform(preDrawTransform)
     ctx.translate(pixelsPerFrame * (store.animation.now - 1), 0)
     drawPlayheadMemo(ctx)
   }, [
     playheadCSSTrueHalf,
+    drawPlayheadHoverLineMemo,
     drawPlayheadMemo,
     store,
     store.DPR,
@@ -134,6 +145,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     framesLeftWithNoTick = (numTicksFloat - numTicks) * tickIntervalToDisplay
   }
 
+  // Focus Listener / Syncer
   const [hasFocus, setHasFocus] = useState(false)
   const onFocusChange = useCallback(() => {
     if (doesBottomMenuHaveFocus()) {
@@ -148,8 +160,6 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       document.removeEventListener('focusin', onFocusChange, true)
     }
   }, [onFocusChange])
-
-  console.log(hasFocus)
 
   return (
     <div id="bottom-menu" tabIndex="0">
