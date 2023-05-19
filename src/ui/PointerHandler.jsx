@@ -91,7 +91,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
             store.setPlayheadHoverLineFrame(null)
           } else {
             store.setPlayheadHovered(false)
-            store.setPlayheadHoverLineFrame(getFrameWithPointerX(pointerX))
+            const lineFrame = getFrameWithPointerX(pointerX)
+            store.setPlayheadHoverLineFrame(lineFrame)
           }
         } else if (!playheadDragStart) {
           store.setPlayheadHovered(false)

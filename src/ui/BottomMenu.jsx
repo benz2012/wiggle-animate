@@ -38,18 +38,9 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
   }, [store.view.playheadHovered])
 
-  const drawPlayheadHoverLineMemo = useCallback((ctx) => {
-    if (!store.view.playheadHoverLineFrame) return
-    const drawLineAt = store.view.playheadHoverLineFrame * store.view.playheadPixelsPerFrame
-    drawPlayheadHoverLine(ctx, store.DPR, drawLineAt)
-  }, [
-    store.DPR,
-    store.view.playheadHoverLineFrame,
-    store.view.playheadPixelsPerFrame,
-  ])
   const drawPlayheadMemo = useCallback((ctx) => (
-    drawPlayhead(ctx, store.DPR, playheadWidth, store.view.playheadHovered)
-  ), [store.DPR, store.view.playheadHovered])
+    drawPlayhead(ctx, playheadWidth, store.view.playheadHovered)
+  ), [store.view.playheadHovered])
 
   useEffect(() => {
     // playheadWidth is defined in DPR ratio units, whereas playheadCanvasWidth is in CSS units
@@ -95,15 +86,21 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       )
     }
 
+    const thinLineOffset = store.DPR === 1 ? 0.5 : 0
+    ctx.translate(thinLineOffset, 0)
     const preDrawTransform = ctx.getTransform()
-    drawPlayheadHoverLineMemo(ctx)
+
+    const drawLineAt = (store.view.playheadHoverLineFrame - 1) * pixelsPerFrame + (playheadCSSTrueHalf * store.DPR)
+    ctx.translate(drawLineAt, 0)
+    if (store.view.playheadHoverLineFrame > 0 && store.view.playheadHoverLineFrame <= store.animation.frames) {
+      drawPlayheadHoverLine(ctx)
+    }
 
     ctx.setTransform(preDrawTransform)
-    ctx.translate(pixelsPerFrame * (store.animation.now - 1), 0)
+    ctx.translate((store.animation.now - 1) * pixelsPerFrame, 0)
     drawPlayheadMemo(ctx)
   }, [
     playheadCSSTrueHalf,
-    drawPlayheadHoverLineMemo,
     drawPlayheadMemo,
     store,
     store.DPR,
@@ -112,6 +109,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     store.animation.firstFrame,
     store.animation.lastFrame,
     store.view.playheadPixelsPerFrame,
+    store.view.playheadHoverLineFrame,
   ])
 
   const handlePlayPauseClick = action(() => {
@@ -155,9 +153,9 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
   }, [])
   useEffect(() => {
-    document.addEventListener('focusin', onFocusChange, true)
+    window.addEventListener('focusin', onFocusChange, true)
     return () => {
-      document.removeEventListener('focusin', onFocusChange, true)
+      window.removeEventListener('focusin', onFocusChange, true)
     }
   }, [onFocusChange])
 

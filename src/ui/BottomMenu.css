@@ -20,7 +20,7 @@
   top: -1px;
   left: 0px;
   right: calc(36px + 72px + 1px);
-  border-top: 1px solid rgba(25, 117, 210, 0.8);
+  border-top: 1px solid rgba(25, 117, 210, 0.75);
 }
 #bottom-menu-outliner-2 {
   position: absolute;
@@ -30,16 +30,16 @@
   width: 72px;
   border-radius: 5px 5px 0 0;
 
-  border-top: 1px solid rgba(25, 117, 210, 0.8);
-  border-right: 1px solid rgba(25, 117, 210, 0.8);
-  border-left: 1px solid rgba(25, 117, 210, 0.8);
+  border-top: 1px solid rgba(25, 117, 210, 0.75);
+  border-right: 1px solid rgba(25, 117, 210, 0.75);
+  border-left: 1px solid rgba(25, 117, 210, 0.75);
 }
 #bottom-menu-outliner-3 {
   position: absolute;
   top: -1px;
   left: calc(100% - 36px + 1px);
   right: 0px;
-  border-top: 1px solid rgba(25, 117, 210, 0.8);
+  border-top: 1px solid rgba(25, 117, 210, 0.75);
 }
 
 #bottom-menu-tab {

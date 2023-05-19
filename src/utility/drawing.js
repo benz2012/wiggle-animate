@@ -55,24 +55,16 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
   ctx.stroke()
 }
 
-const drawPlayheadHoverLine = (ctx, DPR, lineX) => {
-  const thinLineOffset = DPR === 1 ? 0.5 : 0
-  ctx.translate(thinLineOffset, 0)
-
+const drawPlayheadHoverLine = (ctx) => {
   ctx.strokeStyle = 'rgba(25, 117, 210, 0.5)'
   ctx.lineWidth = 2
-  ctx.translate((lineX * DPR) - 2, 0)
-
   ctx.beginPath()
   ctx.moveTo(0, -30)
   ctx.lineTo(0, 23)
   ctx.stroke()
 }
 
-const drawPlayhead = (ctx, DPR, playheadWidth, isHovered) => {
-  const thinLineOffset = DPR === 1 ? 0.5 : 0
-  ctx.translate(thinLineOffset, -thinLineOffset)
-
+const drawPlayhead = (ctx, playheadWidth, isHovered) => {
   ctx.beginPath()
   ctx.fillStyle = 'rgba(25, 117, 210, 1)'
   ctx.strokeStyle = isHovered ? 'rgba(45, 147, 255, 1)' : 'rgba(13, 71, 161, 1)'
