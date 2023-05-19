@@ -195,3 +195,16 @@
   border-right: 10px solid transparent;
   border-bottom: 16px solid hsl(259, 70%, 70%);
 }
+
+.list-item-icon-line {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(to top right,
+             rgba(0,0,0,0) 0%,
+             rgba(0,0,0,0) calc(50% - 1.6px),
+             rgb(200,200,200) calc(50% - 1.5px),
+             rgb(200,200,200) 50%,
+             rgb(200,200,200) calc(50% + 1.5px),
+             rgba(0,0,0,0) calc(50% + 1.6px),
+             rgba(0,0,0,0) 100%)
+}

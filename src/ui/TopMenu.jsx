@@ -84,7 +84,7 @@ const TopMenu = ({ store }) => {
               <InsertMenuListItem
                 icon={<div className="list-item-icon-polygon" />}
                 label="Polygon"
-                hotkeyIndicator="p"
+                hotkeyIndicator="y"
                 onClick={handleInsertActionWith(() => store.addPolygon())}
               />
               <InsertMenuListItem
@@ -92,6 +92,12 @@ const TopMenu = ({ store }) => {
                 label="Text"
                 hotkeyIndicator="t"
                 onClick={handleInsertActionWith(() => store.addText())}
+              />
+              <InsertMenuListItem
+                icon={<div className="list-item-icon-line" />}
+                label="Line"
+                hotkeyIndicator="l"
+                onClick={handleInsertActionWith(() => store.addLine())}
               />
             </div>
             <div className="dialog-backdrop" />

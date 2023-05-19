@@ -195,9 +195,14 @@ const KeyHandler = ({ store }) => {
         store.addText()
         break
 
-      case 'p':
+      case 'y':
         if (!STAGE_HAS_FOCUS) break
         store.addPolygon()
+        break
+
+      case 'l':
+        if (!STAGE_HAS_FOCUS) break
+        store.addLine()
         break
 
       case 'i':

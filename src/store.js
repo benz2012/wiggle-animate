@@ -9,6 +9,7 @@ import Ellipse from './lib/shapes/Ellipse'
 import Text from './lib/shapes/Text'
 import Polygon from './lib/shapes/Polygon'
 import Animation from './lib/animation/Animation'
+import Line from './lib/shapes/Line'
 
 // import { storageEnabled } from './utility/storage'
 
@@ -189,6 +190,13 @@ class RootStore {
 
   addPolygon() {
     this.addNewItem(new Polygon(
+      this.rootContainer.canvasSize.width / 2,
+      this.rootContainer.canvasSize.height / 2,
+    ))
+  }
+
+  addLine() {
+    this.addNewItem(new Line(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))

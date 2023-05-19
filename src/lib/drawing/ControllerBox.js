@@ -6,51 +6,73 @@
 //         the item(s) above it
 
 const draw = (instance) => {
-  const { ctx, origin, scale, stroke, rectSpec } = instance
+  const { controllerType, ctx, origin, scale, stroke, rectSpec } = instance
   const [rectX, rectY, rectW, rectH] = rectSpec
+  const strokeProtrusion = stroke.width / 2
 
   ctx.setTransform(instance.currentTransform)
 
+  // strong outline
   ctx.beginPath()
-  const strokeProtrusion = stroke.width / 2
-  ctx.rect(
-    rectX - strokeProtrusion - (3 / scale.x),
-    rectY - strokeProtrusion - (3 / scale.y),
-    rectW + stroke.width + (6 / scale.x),
-    rectH + stroke.width + (6 / scale.y),
-  )
+  if (controllerType === 'Line') {
+    ctx.moveTo(rectX, rectY + rectH / 2)
+    ctx.lineTo(rectX + rectW, rectY + rectH / 2)
+    ctx.lineWidth = 2
+  } else {
+    ctx.rect(
+      rectX - strokeProtrusion - (3 / scale.x),
+      rectY - strokeProtrusion - (3 / scale.y),
+      rectW + stroke.width + (6 / scale.x),
+      rectH + stroke.width + (6 / scale.y),
+    )
+    ctx.lineWidth = 6
+  }
   ctx.strokeStyle = 'rgba(33, 150, 243)'
-  ctx.lineWidth = 6
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
 
   // handles
   ctx.setTransform(instance.currentTransform)
   ctx.beginPath()
-  ctx.rect(
-    rectX - strokeProtrusion - (11 / scale.x),
-    rectY - strokeProtrusion - (11 / scale.y),
-    16 / scale.x,
-    16 / scale.y,
-  )
-  ctx.rect(
-    (rectX + rectW) + strokeProtrusion - (5 / scale.x),
-    rectY - strokeProtrusion - (11 / scale.y),
-    16 / scale.x,
-    16 / scale.y,
-  )
-  ctx.rect(
-    (rectX + rectW) + strokeProtrusion - (5 / scale.x),
-    (rectY + rectH) + strokeProtrusion - (5 / scale.y),
-    16 / scale.x,
-    16 / scale.y,
-  )
-  ctx.rect(
-    rectX - strokeProtrusion - (11 / scale.x),
-    (rectY + rectH) + strokeProtrusion - (5 / scale.y),
-    16 / scale.x,
-    16 / scale.y,
-  )
+  if (controllerType === 'Line') {
+    ctx.rect(
+      rectX - (8 / scale.x),
+      rectY + rectH / 2 - (8 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
+    )
+    ctx.rect(
+      (rectX + rectW) - (8 / scale.x),
+      rectY + rectH / 2 - (8 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
+    )
+  } else {
+    ctx.rect(
+      rectX - strokeProtrusion - (11 / scale.x),
+      rectY - strokeProtrusion - (11 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
+    )
+    ctx.rect(
+      (rectX + rectW) + strokeProtrusion - (5 / scale.x),
+      rectY - strokeProtrusion - (11 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
+    )
+    ctx.rect(
+      (rectX + rectW) + strokeProtrusion - (5 / scale.x),
+      (rectY + rectH) + strokeProtrusion - (5 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
+    )
+    ctx.rect(
+      rectX - strokeProtrusion - (11 / scale.x),
+      (rectY + rectH) + strokeProtrusion - (5 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
+    )
+  }
   ctx.fillStyle = 'white'
   ctx.strokeStyle = 'rgb(33, 150, 243)'
   ctx.lineWidth = 6
