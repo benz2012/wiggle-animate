@@ -13,10 +13,39 @@
   outline: none;
 }
 
+/* use this when not fouced, maybe? */
+/* outline: 1px solid rgba(0, 0, 0, 0.3); */
+#bottom-menu-outliner-1 {
+  position: absolute;
+  top: -1px;
+  left: 0px;
+  right: calc(36px + 72px + 1px);
+  border-top: 1px solid rgba(25, 117, 210, 0.8);
+}
+#bottom-menu-outliner-2 {
+  position: absolute;
+  top: -21px;
+  right: 35px;
+  height: 20px;
+  width: 72px;
+  border-radius: 5px 5px 0 0;
+
+  border-top: 1px solid rgba(25, 117, 210, 0.8);
+  border-right: 1px solid rgba(25, 117, 210, 0.8);
+  border-left: 1px solid rgba(25, 117, 210, 0.8);
+}
+#bottom-menu-outliner-3 {
+  position: absolute;
+  top: -1px;
+  left: calc(100% - 36px + 1px);
+  right: 0px;
+  border-top: 1px solid rgba(25, 117, 210, 0.8);
+}
+
 #bottom-menu-tab {
   position: absolute;
+  z-index: 50;
   top: -20px;
-  /* left: calc(95% - 36px); */
   right: 36px;
   height: 20px;
   width: 72px;
@@ -91,7 +120,7 @@
 
 #playhead-canvas {
   position: absolute;
-  top: 0px;
+  top: 7px;
 }
 
 .font-12 {

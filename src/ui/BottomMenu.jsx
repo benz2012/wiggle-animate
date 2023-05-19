@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 
@@ -8,6 +8,7 @@ import './BottomMenu.css'
 import Animation from '../lib/animation/Animation'
 import { identityMatrix } from '../utility/matrix'
 import { drawPlayhead } from '../utility/drawing'
+import { doesBottomMenuHaveFocus } from './KeyHandler'
 
 const FRAME_TICK_MIN_WIDTH = 10
 
@@ -16,7 +17,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   // TODO: move all these units to the store for easier access & reuse
   // defined at DPR 1 aka CSS units
   const playheadCanvasWidth = windowWidth - 184
-  const playheadCanvasHeight = 40
+  const playheadCanvasHeight = 33
   // defined at DPR 2
   const playheadWidth = 24
   const playheadTotalStroke = 4
@@ -63,17 +64,18 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     ctx.setTransform(identityMatrix())
     ctx.scale(store.DPR / 2, store.DPR / 2)
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-    ctx.translate(0, canvasHeight / 2 + 1)
+    ctx.translate(0, 26)
 
     const pixelsPerFrame = store.view.playheadPixelsPerFrame * store.DPR
 
     // draw the playback in/out regions
     ctx.fillStyle = 'rgba(25, 117, 210, 0.3)'
     const regionLeftStart = playheadCSSTrueHalf * store.DPR
+    const regionTopStart = 6
     if (store.animation.firstFrame !== Animation.FIRST) {
       ctx.fillRect(
         regionLeftStart,
-        playheadCanvasHeight / 6,
+        regionTopStart,
         pixelsPerFrame * (store.animation.firstFrame - 1),
         playbackRegionHeight,
       )
@@ -81,7 +83,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     if (store.animation.lastFrame !== store.animation.frames) {
       ctx.fillRect(
         regionLeftStart + (pixelsPerFrame * (store.animation.lastFrame - 1)),
-        playheadCanvasHeight / 6,
+        regionTopStart,
         pixelsPerFrame * (store.animation.frames - store.animation.lastFrame),
         playbackRegionHeight,
       )
@@ -119,10 +121,8 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   })
 
   let numTicks = 0
-  let tickWidth = 0
   let framesLeftWithNoTick = 0
   if (store.view.playheadPixelsPerFrame > 0) {
-    tickWidth = store.view.playheadPixelsPerFrame
     let tickIntervalToDisplay = 1
 
     if (store.view.playheadPixelsPerFrame < FRAME_TICK_MIN_WIDTH) {
@@ -132,11 +132,24 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     const numTicksFloat = (store.animation.frames - 1) / tickIntervalToDisplay
     numTicks = Math.floor((store.animation.frames - 1) / tickIntervalToDisplay)
     framesLeftWithNoTick = (numTicksFloat - numTicks) * tickIntervalToDisplay
-
-    const widthToWorkWith = store.view.playheadPixelsPerFrame * (store.animation.frames - 1 - framesLeftWithNoTick)
-    // subtraction accounts for the 1 pixel border-right for each line
-    tickWidth = (widthToWorkWith / numTicks) - 1
   }
+
+  const [hasFocus, setHasFocus] = useState(false)
+  const onFocusChange = useCallback(() => {
+    if (doesBottomMenuHaveFocus()) {
+      setHasFocus(true)
+    } else {
+      setHasFocus(false)
+    }
+  }, [])
+  useEffect(() => {
+    document.addEventListener('focusin', onFocusChange, true)
+    return () => {
+      document.removeEventListener('focusin', onFocusChange, true)
+    }
+  }, [onFocusChange])
+
+  console.log(hasFocus)
 
   return (
     <div id="bottom-menu" tabIndex="0">
@@ -144,6 +157,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       <div id="play-controls">
         <button
           type="button"
+          id="jump-start-button"
           className="jump-button noselect"
           onClick={action(() => { store.animation.goToFirst() })}
         >
@@ -159,6 +173,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         </button>
         <button
           type="button"
+          id="jump-end-button"
           className="jump-button noselect"
           onClick={action(() => { store.animation.goToLast() })}
         >
@@ -204,6 +219,14 @@ const BottomMenu = observer(({ store, windowWidth }) => {
       >
         {playModeText}
       </button>
+
+      {hasFocus && (
+        <>
+          <div id="bottom-menu-outliner-1" />
+          <div id="bottom-menu-outliner-2" />
+          <div id="bottom-menu-outliner-3" />
+        </>
+      )}
     </div>
   )
 })

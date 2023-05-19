@@ -11,6 +11,8 @@ const doesStageHaveFocus = () => [
 const doesBottomMenuHaveFocus = () => [
   'bottom-menu',
   'play-pause-button',
+  'jump-start-button',
+  'jump-end-button',
 ].includes(document.activeElement.id)
 
 const KeyHandler = ({ store }) => {
@@ -240,4 +242,5 @@ const KeyHandler = ({ store }) => {
   return null
 }
 
+export { doesBottomMenuHaveFocus }
 export default KeyHandler
