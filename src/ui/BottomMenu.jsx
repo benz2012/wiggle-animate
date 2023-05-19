@@ -9,6 +9,8 @@ import Animation from '../lib/animation/Animation'
 import { identityMatrix } from '../utility/matrix'
 import { drawPlayhead } from '../utility/drawing'
 
+const FRAME_TICK_MIN_WIDTH = 10
+
 const BottomMenu = observer(({ store, windowWidth }) => {
   const playheadRef = useRef()
   // TODO: move all these units to the store for easier access & reuse
@@ -67,9 +69,10 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
     // draw the playback in/out regions
     ctx.fillStyle = 'rgba(25, 117, 210, 0.3)'
+    const regionLeftStart = playheadCSSTrueHalf * store.DPR
     if (store.animation.firstFrame !== Animation.FIRST) {
       ctx.fillRect(
-        playheadCSSTrueHalf * store.DPR,
+        regionLeftStart,
         playheadCanvasHeight / 6,
         pixelsPerFrame * (store.animation.firstFrame - 1),
         playbackRegionHeight,
@@ -77,9 +80,9 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
     if (store.animation.lastFrame !== store.animation.frames) {
       ctx.fillRect(
-        pixelsPerFrame * store.animation.lastFrame,
+        regionLeftStart + (pixelsPerFrame * (store.animation.lastFrame - 1)),
         playheadCanvasHeight / 6,
-        pixelsPerFrame * (store.animation.frames - store.animation.lastFrame) - (playheadTotalStroke / store.DPR),
+        pixelsPerFrame * (store.animation.frames - store.animation.lastFrame),
         playbackRegionHeight,
       )
     }
@@ -115,6 +118,26 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
   })
 
+  let numTicks = 0
+  let tickWidth = 0
+  let framesLeftWithNoTick = 0
+  if (store.view.playheadPixelsPerFrame > 0) {
+    tickWidth = store.view.playheadPixelsPerFrame
+    let tickIntervalToDisplay = 1
+
+    if (store.view.playheadPixelsPerFrame < FRAME_TICK_MIN_WIDTH) {
+      tickIntervalToDisplay = Math.ceil(FRAME_TICK_MIN_WIDTH / store.view.playheadPixelsPerFrame)
+    }
+
+    const numTicksFloat = (store.animation.frames - 1) / tickIntervalToDisplay
+    numTicks = Math.floor((store.animation.frames - 1) / tickIntervalToDisplay)
+    framesLeftWithNoTick = (numTicksFloat - numTicks) * tickIntervalToDisplay
+
+    const widthToWorkWith = store.view.playheadPixelsPerFrame * (store.animation.frames - 1 - framesLeftWithNoTick)
+    // subtraction accounts for the 1 pixel border-right for each line
+    tickWidth = (widthToWorkWith / numTicks) - 1
+  }
+
   return (
     <div id="bottom-menu" tabIndex="0">
       <button type="button" id="bottom-menu-tab" className="noselect">▲</button>
@@ -145,12 +168,23 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
       <div id="timeline-container">
         <div
-          id="timeline-horizontal-line"
+          id="timeline-tick-container"
           style={{
-            marginLeft: playheadCSSTrueHalf,
+            marginLeft: playheadCSSTrueHalf - 0.5,
             marginRight: playheadCSSTrueHalf,
           }}
-        />
+        >
+          {Array(numTicks).fill(true).map((_, index) => (
+            /* eslint-disable react/no-array-index-key */
+            <div key={index} className="timeline-tick" />
+          ))}
+          {Boolean(framesLeftWithNoTick) && (
+            <div
+              className="timeline-tick timeline-tick-leftover"
+              style={{ width: framesLeftWithNoTick * store.view.playheadPixelsPerFrame }}
+            />
+          )}
+        </div>
         <canvas
           ref={playheadRef}
           id="playhead-canvas"

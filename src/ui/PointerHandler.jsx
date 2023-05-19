@@ -7,6 +7,21 @@ import Vector2 from '../lib/structure/Vector2'
 const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref
 
+  /* Convienience Methods */
+  const goToFrameWithPointerX = (pointerX) => {
+    // TODO: this should be in the store
+    const playheadCSSTrueHalf = 7
+    const distanceFromPlayheadOne = (
+      pointerX
+      - store.view.playheadCSSFrameOneStart
+      + (store.view.playheadPixelsPerFrame * 1)
+      - playheadCSSTrueHalf
+    )
+    const frameToGoToFloat = distanceFromPlayheadOne / store.view.playheadPixelsPerFrame
+    const frameToGoTo = Math.round(frameToGoToFloat)
+    store.animation.goToFrame(frameToGoTo)
+  }
+
   /* DRAG HANDLER */
   const handleDrag = action((event) => {
     const { selectedIds, dragStart } = store.build
@@ -41,10 +56,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       store.startDrag(pointerVector)
     } else if (playheadDragStart) {
       const pointerVector = new Vector2(event.clientX, event.clientY)
-      const distanceFromPlayheadOne = pointerVector.x - store.view.playheadCSSFrameOneStart
-      const frameToGoToFloat = distanceFromPlayheadOne / store.view.playheadPixelsPerFrame
-      const frameToGoTo = Math.round(frameToGoToFloat)
-      store.animation.goToFrame(frameToGoTo)
+      goToFrameWithPointerX(pointerVector.x)
     }
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
@@ -64,13 +76,13 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         if (!playheadDragStart && event.target.id === 'playhead-canvas') {
           // check for playhead hover
           const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
-            + (store.animation.now * store.view.playheadPixelsPerFrame)
+            + ((store.animation.now - 1) * store.view.playheadPixelsPerFrame)
           const pointerX = pointerVectorRatioOne.x
           // TODO: this should be in the store
           const playheadCSSTrueHalf = 7
           if (
-            pointerX >= playheadBucketToCheck - playheadCSSTrueHalf
-            && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf
+            pointerX >= playheadBucketToCheck
+            && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf * 2
           ) {
             store.setPlayheadHovered(true)
           } else {
@@ -114,6 +126,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setSelectorPosition(pointerVector)
       } else if (event.target.id === 'playhead-canvas') {
         store.startPlayheadDrag(pointerVectorRatioOne)
+        store.setPlayheadHovered(true)
+        goToFrameWithPointerX(pointerVectorRatioOne.x)
       }
     } else if (event.type === 'pointerup') {
       if (event.button === 1) { store.setKeyHeld('MiddleMouse', false) }

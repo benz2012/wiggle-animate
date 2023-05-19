@@ -5,11 +5,11 @@ class Animation {
   static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }
 
   constructor() {
-    // firstFrame & lastFrame are simply the viewing window
     // Animation timeline is always 1-to-#frames
+    this.frames = 100
+    // firstFrame & lastFrame are simply the viewing window
     this.firstFrame = Animation.FIRST
-    this.lastFrame = 100
-    this.frames = (this.lastFrame - this.firstFrame) + 1
+    this.lastFrame = this.frames
 
     this.fps = 30
     this.now = this.firstFrame
@@ -21,11 +21,17 @@ class Animation {
     makeAutoObservable(this)
   }
 
-  setLength(length) {
-    this.frames = length
-    if (length < this.lastFrame) {
-      this.lastFrame = length
+  setLength(newLength) {
+    if (this.firstFrame > newLength) {
+      this.firstFrame = Animation.FIRST
     }
+    if (this.lastFrame > newLength) {
+      this.lastFrame = newLength
+    }
+    if (this.now > newLength) {
+      this.now = newLength
+    }
+    this.frames = newLength
   }
 
   setIn(frame) {

@@ -70,6 +70,8 @@ class RootStore {
     this.propertyEditor = { position: new Vector2(16, 42 + 16 + 8) }
 
     this.animation = new Animation()
+    // TODO: removing this after debugging
+    window._animation = this.animation
 
     makeObservable(this, {
       // rootContainer: Never changes, no need for observable, observable within

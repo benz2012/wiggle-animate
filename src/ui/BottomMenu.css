@@ -69,10 +69,26 @@
   flex-grow: 1;
   margin-left: 8px;
 }
-#timeline-horizontal-line {
-  height: 23px;
-  border-bottom: 1px solid rgba(25, 117, 210, 0.5);
+
+#timeline-tick-container {
+  margin-top: 8px;
+  height: 16px;
+  border-left: 1px solid rgba(25, 117, 210, 0.5);
+
+  display: flex;
+  align-items: end;
 }
+.timeline-tick {
+  height: 50%;
+  flex-grow: 1;
+  border-bottom: 1px solid rgba(25, 117, 210, 0.5);
+  border-right: 1px solid rgba(25, 117, 210, 0.5);
+}
+.timeline-tick-leftover {
+  border-right: none;
+  flex-grow: 0;
+}
+
 #playhead-canvas {
   position: absolute;
   top: 0px;
