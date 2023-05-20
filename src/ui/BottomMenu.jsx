@@ -59,11 +59,14 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     const { width: canvasWidth, height: canvasHeight } = canvas
 
     ctx.setTransform(identityMatrix())
-    ctx.scale(store.DPR / 2, store.DPR / 2)
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+    ctx.scale(store.DPR / 2, store.DPR / 2)
     ctx.translate(0, 26)
 
-    const pixelsPerFrame = store.view.playheadPixelsPerFrame * store.DPR
+    // umm Not DPR But I Must Have Defined Something As Half, not sure what, for now
+    // designed a lot of this when DPR was 2
+    const ummDoubleIt = 2
+    const pixelsPerFrame = store.view.playheadPixelsPerFrame * ummDoubleIt
 
     // draw the playback in/out regions
     ctx.fillStyle = 'rgba(25, 117, 210, 0.3)'
@@ -90,7 +93,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     ctx.translate(thinLineOffset, 0)
     const preDrawTransform = ctx.getTransform()
 
-    const drawLineAt = (store.view.playheadHoverLineFrame - 1) * pixelsPerFrame + (playheadCSSTrueHalf * store.DPR)
+    const drawLineAt = (store.view.playheadHoverLineFrame - 1) * pixelsPerFrame + (playheadCSSTrueHalf * ummDoubleIt)
     ctx.translate(drawLineAt, 0)
     if (store.view.playheadHoverLineFrame > 0 && store.view.playheadHoverLineFrame <= store.animation.frames) {
       drawPlayheadHoverLine(ctx)
