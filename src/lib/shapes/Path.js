@@ -1,4 +1,5 @@
 import { makeObservable, action } from 'mobx'
+import polylabel from '../_external/polylabel'
 
 import Shape from '../drawing/Shape'
 import Item from '../structure/Item'
@@ -6,6 +7,7 @@ import Vector2 from '../structure/Vector2'
 import Color from '../visuals/Color'
 import { observeListOfProperties } from '../../utility/state'
 import { drawPathPoint } from '../../utility/drawing'
+import Alignment from '../structure/Alignment'
 
 class Path extends Shape {
   static get NEARITY_THRESHOLD() { return 8 }
@@ -17,13 +19,29 @@ class Path extends Shape {
     this.fill.color.alpha = 0
     this.stroke.color = new Color(this.fill.color.spec)
     this.stroke.width = 3
+    this.controllerType = 'Path'
 
     this.points = []
-    this.close = false
+    this.closed = false
     this.hoveringOverStart = false
+    this.pointsVisible = true
+
+    // TODO: Allow Path to be edited in Object mode or Point mode
+    // Object mode -- similar to shapes now (move, scale, rotate the object as a whole)
+    // Point mode -- move each point individually, or move/scale/rotate mutliple points at once
+    //               any changes here only affect the position of each point, and nothing else
+
+    // ignore alignment since drawing is done from points instead of relation to this.position
+    this.alignment = {
+      observables: [],
+      get x() { return Alignment.CENTER },
+      set x(value) {}, // eslint-disable-line
+      get y() { return Alignment.CENTER },
+      set y(value) {}, // eslint-disable-line
+    }
 
     const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'points', 'close', 'hoveringOverStart']
+    this._observables = [...inheritedObservables, 'points', 'closed', 'hoveringOverStart']
     observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, {
       processBounds: action,
@@ -35,7 +53,7 @@ class Path extends Shape {
   addPoint(pointerVector) {
     // return true if path should be "committed"
     if (this.hoveringOverStart) {
-      this.close = true
+      this.closed = true
       this.hoveringOverStart = false
       return true
     }
@@ -68,57 +86,100 @@ class Path extends Shape {
     return false
   }
 
+  calculateOrigin() {
+    const polygonSpec = this.points.map((point) => (point.values))
+    const poleOfInaccessibility = polylabel([polygonSpec])
+    this.origin = poleOfInaccessibility
+  }
+
+  commitPath() {
+    this.calculateOrigin()
+    this.pointsVisible = false
+  }
+
+  drawThePath() {
+    this.ctx.moveTo(...this.points[0].values)
+    this.points.slice(1).forEach((point) => {
+      this.ctx.lineTo(...point.values)
+    })
+    if (this.closed) {
+      this.ctx.closePath()
+    }
+  }
+
   processBounds() {
     // TODO: this only needs to run when this.points changes, not during draw
 
     if (this.points.length === 0) {
       this.width = 0
       this.height = 0
-      return
+      return [0, 0]
     }
 
-    let maxX = Number.POSITIVE_INFINITY
-    let minX = Number.NEGATIVE_INFINITY
-    let maxY = Number.POSITIVE_INFINITY
-    let minY = Number.NEGATIVE_INFINITY
+    let maxX = Number.NEGATIVE_INFINITY
+    let minX = Number.POSITIVE_INFINITY
+    let maxY = Number.NEGATIVE_INFINITY
+    let minY = Number.POSITIVE_INFINITY
 
     this.points.forEach((point) => {
       if (point.x > maxX) {
         maxX = point.x
-      } else if (point.x < minX) {
+      }
+      if (point.x < minX) {
         minX = point.x
       }
-
       if (point.y > maxY) {
         maxY = point.y
-      } else if (point.y < minY) {
+      }
+      if (point.y < minY) {
         minY = point.y
       }
     })
 
     this.width = maxX - minX
     this.height = maxY - minY
+    return [minX, minY]
   }
 
-  drawShape() {
+  get rectSpec() {
+    const topLeft = this.processBounds()
+    return [topLeft[0], topLeft[1], this.width, this.height]
+  }
+
+  drawHoveredIndicator(isHovered, isSelected) {
+    if (!isHovered || isSelected) return
+
+    this.ctx.setTransform(this.currentTransform)
+    this.ctx.beginPath()
+    this.drawThePath()
+    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.8)'
+    this.ctx.lineWidth = 2
+    this.ctx.setTransform(this.currentTransformWithoutScale)
+    this.ctx.stroke()
+  }
+
+  checkPointerIntersections(pointerVector) {
+    this.ctx.setTransform(this.currentTransform)
+    this.ctx.beginPath()
+    this.drawThePath()
+    // make a fake stroke around the path to check for "near" intersections
+    this.ctx.lineWidth = 10
+    if (this.ctx.isPointInStroke(...pointerVector.values)) return true
+    return false
+  }
+
+  drawShape(isHovered, isSelected) {
     if (this.points.length === 0) return
-    this.processBounds()
-    // const [rectX, rectY, rectW, rectH] = this.rectSpec
 
     // Draw the Path Itself
     this.ctx.beginPath()
-    this.ctx.moveTo(...this.points[0].values)
-    this.points.slice(1).forEach((point) => {
-      this.ctx.lineTo(...point.values)
-    })
-    if (this.close) {
-      this.ctx.closePath()
-    }
+    this.drawThePath()
     this.shadow.prepare(this.ctx)
     this.stroke.draw(this.ctx)
     this.fill.draw(this.ctx)
 
     // Draw Point Handles on top of it
+    if (!this.pointsVisible && !isSelected) return
     this.ctx.setTransform(this.currentTransform)
     this.ctx.translate(...this.points[0].values)
     drawPathPoint(this.ctx, this.hoveringOverStart)

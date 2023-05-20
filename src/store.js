@@ -228,9 +228,17 @@ class RootStore {
   }
 
   commitPath() {
+    let pathId
+    if (this.build.activePath) {
+      pathId = this.build.activePath.id
+      this.build.activePath.commitPath()
+    }
     this.build.tool = ''
     this.build.activePath = null
     this.build.pointerPosition = null
+    if (pathId) {
+      this.setSelected([pathId])
+    }
   }
 
   /* Build Actions */

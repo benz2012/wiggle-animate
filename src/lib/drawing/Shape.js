@@ -98,14 +98,14 @@ class Shape extends Drawable {
   draw(parentTransform, isHovered, isSelected) {
     super.draw(parentTransform)
 
-    this.drawShape()
+    this.drawShape(isHovered, isSelected)
     Shadow.clear(this.ctx)
 
-    this.drawHoveredRect(isHovered, isSelected)
+    this.drawHoveredIndicator(isHovered, isSelected)
     if (isSelected) { ControllerBox.draw(this) }
   }
 
-  drawHoveredRect(isHovered, isSelected) {
+  drawHoveredIndicator(isHovered, isSelected) {
     if (!isHovered || isSelected) return
 
     const lineWidth = 4

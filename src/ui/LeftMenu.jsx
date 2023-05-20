@@ -74,6 +74,8 @@ const ContainerListOfChildren = (props) => {
     child.showChildren = !child.showChildren
   })
 
+  // TODO: When hovering over item in left menu, show hover outline on canvas as well
+
   return (
     container.sortOrder.map((childId) => {
       const child = container.children[childId]

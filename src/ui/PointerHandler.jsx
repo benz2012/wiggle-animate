@@ -151,6 +151,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           const shouldCommit = store.build.activePath.addPoint(pointerVector)
           if (shouldCommit) {
             store.commitPath()
+            return
           }
         } else {
           // Don't check for pointer intersections with other shapes if a tool is active

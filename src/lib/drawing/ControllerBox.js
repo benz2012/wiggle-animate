@@ -107,7 +107,11 @@ const draw = (instance) => {
 
   // rotation handle
   ctx.setTransform(instance.currentTransform)
-  ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
+  if (controllerType === 'Line' || controllerType === 'Path') {
+    ctx.translate(origin.x, origin.y)
+  } else {
+    ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
+  }
   ctx.beginPath()
   ctx.moveTo(0, 0)
   ctx.lineTo(0 / scale.x, -75 / scale.y)
@@ -115,9 +119,13 @@ const draw = (instance) => {
   ctx.lineWidth = 6
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
-  // -- more
+  // -- rotation circle
   ctx.setTransform(instance.currentTransform)
-  ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
+  if (controllerType === 'Line' || controllerType === 'Path') {
+    ctx.translate(origin.x, origin.y)
+  } else {
+    ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
+  }
   ctx.beginPath()
   ctx.ellipse(
     0,
