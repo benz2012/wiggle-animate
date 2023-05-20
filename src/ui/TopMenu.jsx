@@ -3,11 +3,11 @@
 import { useState } from 'react'
 import './TopMenu.css'
 
-const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
-  <div className="insert-menu-list-item" onClick={onClick}>
-    <div className="insert-menu-list-item-icon">{icon}</div>
-    <div className="insert-menu-list-item-label">{label}</div>
-    <div className="insert-menu-list-item-hotkey">{hotkeyIndicator}</div>
+const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick, captureClickId }) => (
+  <div className="insert-menu-list-item" onClick={onClick} data-capture-click-id={captureClickId}>
+    <div className="insert-menu-list-item-icon" data-capture-click-id={captureClickId}>{icon}</div>
+    <div className="insert-menu-list-item-label" data-capture-click-id={captureClickId}>{label}</div>
+    <div className="insert-menu-list-item-hotkey" data-capture-click-id={captureClickId}>{hotkeyIndicator}</div>
   </div>
 )
 
@@ -98,6 +98,13 @@ const TopMenu = ({ store }) => {
                 label="Line"
                 hotkeyIndicator="l"
                 onClick={handleInsertActionWith(() => store.addLine())}
+              />
+              <InsertMenuListItem
+                captureClickId="insert-menu-start-path-tool"
+                icon={<div className="list-item-icon-line" data-capture-click-id="insert-menu-start-path-tool" />}
+                label="Path"
+                hotkeyIndicator="p"
+                onClick={handleInsertActionWith(() => store.setTool(store.tools.PATH))}
               />
             </div>
             <div className="dialog-backdrop" />

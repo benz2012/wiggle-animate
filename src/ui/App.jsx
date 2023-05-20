@@ -18,6 +18,13 @@ const App = observer(({ store }) => {
 
   /* State Syncs */
   useEffect(() => {
+    /* Initial Autofocus of the Stage */
+    if (stageRef.current) {
+      stageRef.current.focus()
+    }
+  }, [])
+  useEffect(() => {
+    /* Pointer Cursor Styles */
     switch (store.determineCurrentAction) {
       case 'dragging':
         stageRef.current.style.cursor = 'grabbing'
@@ -28,6 +35,9 @@ const App = observer(({ store }) => {
         break
       case 'adding':
         stageRef.current.style.cursor = 'copy'
+        break
+      case 'addingPathPoints':
+        stageRef.current.style.cursor = 'none'
         break
       default:
         stageRef.current.style.cursor = 'crosshair'
@@ -66,6 +76,9 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     store.rootContainer.canvasFill.color,
+    store.build.tool,
+    store.build.activePath,
+    store.build.pointerPosition,
     store.build.selectedIds,
     store.build.hoveredId,
     store.build.hoveredControl,

@@ -75,7 +75,29 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       const { playheadDragStart } = store.view
 
       if (!dragStart) {
-        store.rootContainer.checkPointerIntersections(pointerVector)
+        if (!store.build.tool) {
+          // Don't check for pointer intersections with other shapes if a tool is active
+          store.rootContainer.checkPointerIntersections(pointerVector)
+        }
+
+        // Tool operations within the stage, when not dragging
+        if (event.target.id === 'stage') {
+          // Path Builder Tool
+          if (store.build.tool === store.tools.PATH) {
+            let hoveringNearStartPoint = false
+            // you can't close a path with less than 3 points, so don't show the hoverNearStart interaction
+            if (store.build.activePath && store.build.activePath.points.length > 2) {
+              hoveringNearStartPoint = store.build.activePath.pointerNearStart(pointerVector)
+            }
+
+            if (hoveringNearStartPoint) {
+              store.setPointerPosition(null)
+            } else {
+              store.setPointerPosition(pointerVector)
+            }
+          }
+        }
+
         if (!playheadDragStart && event.target.id === 'playhead-canvas') {
           // check for playhead hover
           const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
@@ -110,10 +132,30 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setSelectorHovers(intersectedIds)
       }
     } else if (event.type === 'pointerdown') {
-      if (event.target === stageRef.current) {
-        store.rootContainer.checkPointerIntersections(pointerVector)
+      if (event.target.getAttribute('data-capture-click-id') === 'insert-menu-start-path-tool') {
+        // allows the PotentialPointerPoint to render when someone launches the tool from the menu
+        // this will also happen as soon as they move the mouse, but since we are rendering the mouse
+        // as "none" once the tool is active, we want the PPP to be rendered immediatley to prevent
+        // a jarring UX
+        store.setPointerPosition(pointerVector)
+      }
 
+      if (event.target === stageRef.current) {
         if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
+
+        if (store.build.tool === store.tools.PATH) {
+          if (!store.build.activePath) {
+            store.addNewPath()
+          }
+
+          const shouldCommit = store.build.activePath.addPoint(pointerVector)
+          if (shouldCommit) {
+            store.commitPath()
+          }
+        } else {
+          // Don't check for pointer intersections with other shapes if a tool is active
+          store.rootContainer.checkPointerIntersections(pointerVector)
+        }
 
         if (store.build.hoveredId) {
           if (store.build.selectedIds.length === 0) {
@@ -129,8 +171,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.setSelected([])
         }
 
-        store.startDrag(pointerVector)
-        store.setSelectorPosition(pointerVector)
+        if (!store.build.tool) {
+          // Don't activate a shape drag or selector drag if a tool is active
+          store.startDrag(pointerVector)
+          store.setSelectorPosition(pointerVector)
+        }
       } else if (event.target.id === 'playhead-canvas') {
         store.startPlayheadDrag(pointerVectorRatioOne)
         store.setPlayheadHovered(true)

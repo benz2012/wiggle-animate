@@ -92,10 +92,58 @@ const drawPlayhead = (ctx, playheadWidth, isHovered) => {
   ctx.stroke()
 }
 
+const drawPotentialPathPoint = (ctx, brightCanvas = false) => {
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
+  if (brightCanvas) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+  }
+
+  // Dull Point "Stroke"
+  ctx.beginPath()
+  ctx.ellipse(0, 0, 9, 9, 0, 0, Math.PI * 2)
+  ctx.ellipse(0, 0, 6, 6, 0, 0, Math.PI * 2)
+  ctx.fill('evenodd')
+
+  // Cross FG
+  ctx.beginPath()
+  ctx.rect(-18, -25, 2, 16)
+  ctx.rect(-25, -18, 16, 2)
+  ctx.fill()
+}
+
+const drawPathPoint = (ctx, isHovered) => {
+  // Hovered "Stroke"
+  if (isHovered) {
+    ctx.beginPath()
+    ctx.ellipse(0, 0, 11, 11, 0, 0, Math.PI * 2)
+    ctx.ellipse(0, 0, 9, 9, 0, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(8, 207, 101, 1)'
+    ctx.fill('evenodd')
+  }
+
+  // Point "Stroke"
+  ctx.beginPath()
+  ctx.ellipse(0, 0, 9, 9, 0, 0, Math.PI * 2)
+  ctx.ellipse(0, 0, 6, 6, 0, 0, Math.PI * 2)
+  ctx.fillStyle = 'rgba(255, 208, 66, 1)'
+  ctx.fill('evenodd')
+
+  // Dull Point Center
+  if (isHovered) {
+    ctx.beginPath()
+    ctx.ellipse(0, 0, 6, 6, 0, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fillStyle = 'rgba(255, 208, 66, 0.5)'
+    ctx.fill()
+  }
+}
+
 export {
   drawCenterPoint,
   ContainerControllerSizes,
   drawContainerController,
   drawPlayheadHoverLine,
   drawPlayhead,
+  drawPotentialPathPoint,
+  drawPathPoint,
 }

@@ -65,8 +65,12 @@ class Color {
     observeListOfProperties(this, this.observables)
   }
 
+  get spec() {
+    return ({ r: this.red, g: this.green, b: this.blue })
+  }
+
   toLCH() {
-    return rgbToLch({ r: this.red, g: this.green, b: this.blue })
+    return rgbToLch(this.spec)
   }
 
   toString() {

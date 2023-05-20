@@ -8,8 +8,9 @@ import Rectangle from './lib/shapes/Rectangle'
 import Ellipse from './lib/shapes/Ellipse'
 import Text from './lib/shapes/Text'
 import Polygon from './lib/shapes/Polygon'
-import Animation from './lib/animation/Animation'
 import Line from './lib/shapes/Line'
+import Path from './lib/shapes/Path'
+import Animation from './lib/animation/Animation'
 
 // import { storageEnabled } from './utility/storage'
 
@@ -41,10 +42,16 @@ class RootStore {
 
     this.build = {
       tool: '',
+      pointerPosition: null,
+      activePath: null,
       selectedIds: [],
       hoveredId: null,
       hoveredControl: null,
       dragStart: null,
+    }
+    this.tools = {
+      PATH: 'path',
+      // what else?
     }
 
     this.selector = {
@@ -85,6 +92,11 @@ class RootStore {
       propertyEditor: observable,
       // animation: Never changes, no need for observable, observable within
 
+      addNewPath: action,
+      commitPath: action,
+
+      setTool: action,
+      setPointerPosition: action,
       setHovered: action,
       setHoveredControl: action,
       setSelected: action,
@@ -115,6 +127,11 @@ class RootStore {
   }
 
   get determineCurrentAction() {
+    if (this.build.tool === this.tools.PATH) {
+      // TODO: make it possible to move the canvas, while building a path, without adding a point
+      return 'addingPathPoints'
+    }
+
     if (this.keyHeld.Space || this.keyHeld.MiddleMouse) {
       if (this.build.dragStart) {
         return 'dragging'
@@ -204,7 +221,21 @@ class RootStore {
     ))
   }
 
+  addNewPath() {
+    const newPath = new Path()
+    this.addNewItem(newPath)
+    this.build.activePath = newPath
+  }
+
+  commitPath() {
+    this.build.tool = ''
+    this.build.activePath = null
+    this.build.pointerPosition = null
+  }
+
   /* Build Actions */
+  setTool(value) { this.build.tool = value }
+  setPointerPosition(value) { this.build.pointerPosition = value }
   setHovered(value) { this.build.hoveredId = value }
   setHoveredControl(value) { this.build.hoveredControl = value }
   startDrag(vector) { this.build.dragStart = vector }

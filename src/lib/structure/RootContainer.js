@@ -7,6 +7,7 @@ import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
 import Stroke from '../visuals/Stroke'
 import { identityMatrix } from '../../utility/matrix'
+import { drawPotentialPathPoint } from '../../utility/drawing'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 
@@ -24,7 +25,7 @@ class RootContainer extends Container {
     this._canvasScale = 1
     // TODO: make these customizable
     this.canvasSize = new Size(1920, 1080)
-    this.canvasFill = new Fill('black')
+    this.canvasFill = new Fill({ r: 0, g: 0, b: 0 })
     this.setCanvasToBestFit()
 
     makeObservable(this, {
@@ -152,6 +153,8 @@ class RootContainer extends Container {
       this.store.selector.hovers,
     )
 
+    this.drawPotentialPathPoint()
+
     this.drawSelector()
   }
 
@@ -200,6 +203,22 @@ class RootContainer extends Container {
     this.ctx.beginPath()
     this.ctx.rect(0, 0, ...this.canvasSize.values)
     this.canvasFill.draw(this.ctx)
+  }
+
+  drawPotentialPathPoint() {
+    if (this.store.build.tool !== this.store.tools.PATH) return
+    if (!this.store.build.pointerPosition) return
+
+    const pointerInCanvasSpace = DOMMatrix
+      .fromMatrix(this.currentTransform)
+      .invertSelf()
+      .translateSelf(...this.store.build.pointerPosition.values)
+    this.ctx.setTransform(this.currentTransform)
+    this.ctx.translate(pointerInCanvasSpace.e, pointerInCanvasSpace.f)
+
+    const { color } = this.canvasFill
+    const brighterCanvas = ((color.red + color.green + color.blue) / 3) > 145
+    drawPotentialPathPoint(this.ctx, brighterCanvas)
   }
 
   drawSelector() {

@@ -156,6 +156,13 @@ const KeyHandler = ({ store }) => {
         }
         break
 
+      case 'Escape':
+        if (!STAGE_HAS_FOCUS) break
+        if (store.build.tool === store.tools.PATH) {
+          store.commitPath()
+        }
+        break
+
       case ' ':
         store.setKeyHeld('Space', false)
         break
@@ -206,6 +213,11 @@ const KeyHandler = ({ store }) => {
       case 'l':
         if (!STAGE_HAS_FOCUS) break
         store.addLine()
+        break
+
+      case 'p':
+        if (!STAGE_HAS_FOCUS) break
+        store.setTool(store.tools.PATH)
         break
 
       case 'i':
