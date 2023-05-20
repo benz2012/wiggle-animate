@@ -15,7 +15,6 @@ class RootContainer extends Container {
     super()
     this.store = store
     Item.rootContainer = this
-    this.transform = identityMatrix()
 
     // non-observable, just for local reference
     this.rootWidth = window.innerWidth * this.DPR
@@ -138,16 +137,15 @@ class RootContainer extends Container {
     this.ctx.setTransform(identityMatrix())
     this.ctx.clearRect(0, 0, rootWidth, rootHeight)
 
-    this.transform = identityMatrix()
+    this.parentTransform = identityMatrix()
       .translateSelf(...this.canvasTopLeft)
       .scaleSelf(this.canvasScale, this.canvasScale)
 
     this.drawStageDots(rootWidth, rootHeight)
     this.drawCanvas()
 
-    this.ctx.setTransform(this.transform)
     super.draw(
-      this.transform,
+      this.parentTransform,
       this.store.build.hoveredId,
       this.store.build.hoveredControl,
       this.store.build.selectedIds,
@@ -161,7 +159,7 @@ class RootContainer extends Container {
     if (this.DPR > 1 && this.canvasScale < 0.4) return
     if (this.canvasScale < 0.25) return
 
-    this.ctx.setTransform(this.transform)
+    this.ctx.setTransform(this.currentTransform)
     this.ctx.translate(this.canvasSize.width / 2, this.canvasSize.height / 2)
 
     const dotFill = new Fill('rgb(42, 45, 48)')
@@ -198,7 +196,7 @@ class RootContainer extends Container {
   }
 
   drawCanvas() {
-    this.ctx.setTransform(this.transform)
+    this.ctx.setTransform(this.currentTransform)
     this.ctx.beginPath()
     this.ctx.rect(0, 0, ...this.canvasSize.values)
     this.canvasFill.draw(this.ctx)
