@@ -4,10 +4,12 @@ import polylabel from '../_external/polylabel'
 import Shape from '../drawing/Shape'
 import Item from '../structure/Item'
 import Vector2 from '../structure/Vector2'
+import Point from '../structure/Point'
+import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
 import { observeListOfProperties } from '../../utility/state'
 import { drawPathPoint } from '../../utility/drawing'
-import Alignment from '../structure/Alignment'
+import { randomChoice } from '../../utility/array'
 
 class Path extends Shape {
   static get NEARITY_THRESHOLD() { return 8 }
@@ -64,7 +66,14 @@ class Path extends Shape {
       .invertSelf()
       .translateSelf(...pointerVector.values)
 
-    this.points.push(new Vector2(pointInCanvasSpace.e, pointInCanvasSpace.f))
+    // TODO: implement bezier control point adjustments
+    // just using random cps for now for proof of drawing
+    const thisPoint = new Point(pointInCanvasSpace.e, pointInCanvasSpace.f)
+    thisPoint.controlOut.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
+    thisPoint.controlOut.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
+    thisPoint.controlIn.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
+    thisPoint.controlIn.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
+    this.points.push(thisPoint)
     return false
   }
 
@@ -99,11 +108,30 @@ class Path extends Shape {
 
   drawThePath() {
     this.ctx.moveTo(...this.points[0].values)
-    this.points.slice(1).forEach((point) => {
-      this.ctx.lineTo(...point.values)
+    this.points.slice(1).forEach((point, index) => {
+      const prevControl = this.points[index].controlOut
+      const thisControl = point.controlIn
+      this.ctx.bezierCurveTo(
+        prevControl.x,
+        prevControl.y,
+        thisControl.x,
+        thisControl.y,
+        point.x,
+        point.y,
+      )
     })
+
     if (this.closed) {
-      this.ctx.closePath()
+      const lastPoint = this.points[this.points.length - 1]
+      const firstPoint = this.points[0]
+      this.ctx.bezierCurveTo(
+        lastPoint.controlOut.x,
+        lastPoint.controlOut.y,
+        firstPoint.controlIn.x,
+        firstPoint.controlIn.y,
+        firstPoint.x,
+        firstPoint.y,
+      )
     }
   }
 
