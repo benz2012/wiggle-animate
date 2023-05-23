@@ -158,6 +158,21 @@ class RootContainer extends Container {
     this.drawSelector()
   }
 
+  drawForExport(ctx, rootWidth, rootHeight) {
+    if (!rootWidth || !rootHeight) return
+
+    this.ctx = ctx
+    this.rootWidth = rootWidth
+    this.rootHeight = rootHeight
+
+    this.ctx.setTransform(identityMatrix())
+    this.ctx.clearRect(0, 0, rootWidth, rootHeight)
+    this.parentTransform = identityMatrix()
+
+    this.drawCanvas()
+    super.draw(this.parentTransform, null, null, [], [])
+  }
+
   drawStageDots(rootWidth, rootHeight) {
     if (this.DPR > 1 && this.canvasScale < 0.4) return
     if (this.canvasScale < 0.25) return

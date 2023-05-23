@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ffmpeg/core": "^0.11.0",
+    "@ffmpeg/ffmpeg": "^0.11.6",
     "eslint": "^8.40.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-only-warn": "^1.1.0",
@@ -29,7 +31,12 @@
       "only-warn"
     ],
     "rules": {
-      "max-len": ["warn", { "code": 120 }],
+      "max-len": [
+        "warn",
+        {
+          "code": 120
+        }
+      ],
       "semi": [
         "warn",
         "never"
@@ -79,5 +86,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^2.0.6"
   }
 }

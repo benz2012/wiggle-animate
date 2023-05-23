@@ -11,6 +11,8 @@ import Polygon from './lib/shapes/Polygon'
 import Line from './lib/shapes/Line'
 import Path from './lib/shapes/Path'
 import Animation from './lib/animation/Animation'
+import { prepareAPI, exportOneFrame, exportVideo, downloadVideo } from './utility/video'
+import Angle from './lib/structure/Angle'
 
 // import { storageEnabled } from './utility/storage'
 
@@ -38,6 +40,7 @@ class RootStore {
     this.project = {
       name: '',
       saveStatus: 'unknown',
+      isExporting: false,
     }
 
     this.build = {
@@ -92,6 +95,7 @@ class RootStore {
       propertyEditor: observable,
       // animation: Never changes, no need for observable, observable within
 
+      setExporting: action,
       addNewPath: action,
       commitPath: action,
 
@@ -183,39 +187,39 @@ class RootStore {
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ]
-    this.addNewItem(newContainer)
+    return this.addNewItem(newContainer)
   }
 
   addRectangle() {
-    this.addNewItem(new Rectangle(
+    return this.addNewItem(new Rectangle(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
   }
 
   addEllipse() {
-    this.addNewItem(new Ellipse(
+    return this.addNewItem(new Ellipse(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
   }
 
   addText() {
-    this.addNewItem(new Text(
+    return this.addNewItem(new Text(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
   }
 
   addPolygon() {
-    this.addNewItem(new Polygon(
+    return this.addNewItem(new Polygon(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
   }
 
   addLine() {
-    this.addNewItem(new Line(
+    return this.addNewItem(new Line(
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
     ))
@@ -225,6 +229,7 @@ class RootStore {
     const newPath = new Path()
     this.addNewItem(newPath)
     this.build.activePath = newPath
+    return newPath
   }
 
   commitPath() {
@@ -240,6 +245,9 @@ class RootStore {
       this.setSelected([pathId])
     }
   }
+
+  /* Project Actions */
+  setExporting(value) { this.project.isExporting = value }
 
   /* Build Actions */
   setTool(value) { this.build.tool = value }
@@ -293,6 +301,52 @@ class RootStore {
   setPropertyEditorPosition(value) {
     this.propertyEditor.position.x = value.x
     this.propertyEditor.position.y = value.y
+  }
+
+  /* Output Actions */
+  export = async () => {
+    // TODO: Have this open a modal with settings & confirmation
+    // TODO: Add a no-click handler to the screen since interacting with the stage
+    //       will not cause a re-draw, and will actually be misleading/error-prone
+    // TODO: Have progress output displayed Prepare-boolean, Frames-progress, video progress
+    //       how do we capture the logs from ffmpeg.wasm?!
+
+    this.animation.pause()
+    this.animation.goToFirst()
+    this.setSelected([])
+
+    this.setExporting(true)
+
+    await prepareAPI('export-canvas')
+    await this.animation.animateForExport(exportOneFrame)
+    const videoData = await exportVideo()
+    downloadVideo(videoData)
+
+    this.setExporting(false)
+    this.animation.goToFirst()
+  }
+
+  /* Temp Functions */
+  populate = () => {
+    const r1 = this.addRectangle()
+    const r2 = this.addRectangle()
+    const r3 = this.addRectangle()
+    const e4 = this.addEllipse()
+    this.addText()
+
+    r1.addKey('position', 1, new Vector2(100, 100))
+    r1.addKey('position', 100, new Vector2(1820, 980))
+
+    r2.addKey('position', 1, new Vector2(1820, 100))
+    r2.addKey('position', 100, new Vector2(100, 980))
+
+    r3.position.y = 300
+    r3.addKey('rotation', 1, new Angle(0))
+    r3.addKey('rotation', 100, new Angle(720))
+
+    e4.position.y = 800
+    e4.addKey('width', 1, 100)
+    e4.addKey('width', 100, 1000)
   }
 }
 

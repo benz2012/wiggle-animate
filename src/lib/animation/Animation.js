@@ -134,6 +134,27 @@ class Animation {
     })
     loop()
   }
+
+  animateForExport(exportOneFrame) {
+    return new Promise((resolve) => {
+      const loop = action(() => {
+        exportOneFrame(this.now)
+
+        if (this.now === this.frames) {
+          resolve()
+          return
+        }
+
+        const nextFrame = this.nextFrame()
+        if (nextFrame === null) return
+
+        this.now = nextFrame
+        this.requestId = requestAnimationFrame(loop)
+      })
+
+      loop()
+    })
+  }
 }
 
 export default Animation

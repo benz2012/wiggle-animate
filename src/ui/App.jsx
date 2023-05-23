@@ -14,6 +14,7 @@ import { peekAtObservables, peekAtKeyframes } from '../utility/tree'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)
+  const exportCanvasRef = useRef(null)
   const [windowWidth, windowHeight] = useWindowSize()
 
   /* State Syncs */
@@ -65,9 +66,15 @@ const App = observer(({ store }) => {
   /* Main drawing trigger */
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
-    const stage = stageRef.current
-    const ctx = stage.getContext('2d')
-    store.rootContainer.draw(ctx, stage.width, stage.height)
+    if (store.project.isExporting) {
+      const exportCanvas = exportCanvasRef.current
+      const ctx = exportCanvas.getContext('2d')
+      store.rootContainer.drawForExport(ctx, exportCanvas.width, exportCanvas.height)
+    } else {
+      const stage = stageRef.current
+      const ctx = stage.getContext('2d')
+      store.rootContainer.draw(ctx, stage.width, stage.height)
+    }
   }, [
     store.rootContainer.sortOrder,
     store.rootContainer.canvasSize.width,
@@ -76,6 +83,7 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     store.rootContainer.canvasFill.color,
+    store.project.isExporting,
     store.build.tool,
     store.build.activePath,
     store.build.pointerPosition,
@@ -107,6 +115,15 @@ const App = observer(({ store }) => {
           height={windowHeight}
           devicePixelRatio={store.DPR}
         />
+        {store.project.isExporting && (
+          <canvas
+            ref={exportCanvasRef}
+            id="export-canvas"
+            style={{ visibility: 'hidden' }}
+            width={store.rootContainer.canvasSize.width}
+            height={store.rootContainer.canvasSize.height}
+          />
+        )}
       </PointerHandler>
     </>
   )

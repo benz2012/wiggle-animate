@@ -127,7 +127,11 @@ const TopMenu = ({ store }) => {
 
       <div style={{ flexGrow: 1 }} />
 
-      <button type="button" className="top-menu-item top-menu-item-button noselect">
+      <button
+        type="button"
+        className="top-menu-item top-menu-item-button noselect"
+        onClick={store.export}
+      >
         <span className="unicode-icon">↯</span>
         Export
       </button>
