@@ -30,6 +30,7 @@
       "only-warn"
     ],
     "rules": {
+      "no-console": "off",
       "max-len": [
         "warn",
         {

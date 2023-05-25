@@ -6,8 +6,10 @@ import Vector2 from '../lib/structure/Vector2'
 import Angle from '../lib/structure/Angle'
 
 const PropertyEditor = observer(({ store }) => {
-  const { build, propertyEditor, rootContainer } = store
+  const { build, rootContainer } = store
+  // const { propertyEditor } = store
 
+  // eslint-disable-next-line no-unused-vars
   const placeholdFunc1 = () => {
     const { selectedIds } = build
 

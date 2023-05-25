@@ -1,4 +1,5 @@
-import { observable, autorun, makeObservable, action, computed } from 'mobx'
+import { observable, makeObservable, action, computed } from 'mobx'
+// import { autorun } from 'mobx'
 
 import RootContainer from './lib/structure/RootContainer'
 import Container from './lib/structure/Container'
@@ -13,7 +14,7 @@ import Path from './lib/shapes/Path'
 import Animation from './lib/animation/Animation'
 import Angle from './lib/structure/Angle'
 import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
-import { storageEnabled } from './utility/storage'
+// import { storageEnabled } from './utility/storage'
 import { sleep } from './utility/time'
 
 class RootStore {
