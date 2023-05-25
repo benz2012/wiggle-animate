@@ -129,7 +129,7 @@ const LeftMenu = ({
   <div id="left-menu-container" tabIndex="0">
     <div id="left-menu">
       <div id="left-menu-header">
-        Layers <button onClick={store.populate}>populate</button>
+        Layers
       </div>
 
       <div style={{ flexGrow: 1 }}>
