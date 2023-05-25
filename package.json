@@ -2,6 +2,7 @@
   "name": "wiggle-animate",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/animate",
   "dependencies": {
     "eslint": "^8.40.0",
     "eslint-config-airbnb": "^19.0.4",
