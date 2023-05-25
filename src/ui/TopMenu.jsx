@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
+
 import './TopMenu.css'
+import bCurveIcon from '../assets/b-curve-icon.png'
 
 const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick, captureClickId }) => (
   <div className="insert-menu-list-item" onClick={onClick} data-capture-click-id={captureClickId}>
@@ -101,7 +103,14 @@ const TopMenu = ({ store }) => {
               />
               <InsertMenuListItem
                 captureClickId="insert-menu-start-path-tool"
-                icon={<div className="list-item-icon-line" data-capture-click-id="insert-menu-start-path-tool" />}
+                icon={(
+                  <img
+                    alt="bezier-curve-icon"
+                    src={bCurveIcon}
+                    className="list-item-icon-path"
+                    data-capture-click-id="insert-menu-start-path-tool"
+                  />
+                )}
                 label="Path"
                 hotkeyIndicator="p"
                 onClick={handleInsertActionWith(() => store.setTool(store.tools.PATH))}

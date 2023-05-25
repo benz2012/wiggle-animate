@@ -208,3 +208,8 @@
              rgba(0,0,0,0) calc(50% + 1.6px),
              rgba(0,0,0,0) 100%)
 }
+
+.list-item-icon-path {
+  width: 20px;
+  height: 20px;
+}
