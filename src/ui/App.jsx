@@ -66,15 +66,14 @@ const App = observer(({ store }) => {
   /* Main drawing trigger */
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
+    let canvasEl = stageRef.current
+    let drawFunc = 'draw'
     if (store.project.isExporting) {
-      const exportCanvas = exportCanvasRef.current
-      const ctx = exportCanvas.getContext('2d')
-      store.rootContainer.drawForExport(ctx, exportCanvas.width, exportCanvas.height)
-    } else {
-      const stage = stageRef.current
-      const ctx = stage.getContext('2d')
-      store.rootContainer.draw(ctx, stage.width, stage.height)
+      canvasEl = exportCanvasRef.current
+      drawFunc = 'drawForExport'
     }
+    const ctx = canvasEl.getContext('2d')
+    store.rootContainer[drawFunc](ctx, canvasEl.width, canvasEl.height)
   }, [
     store.rootContainer.sortOrder,
     store.rootContainer.canvasSize.width,

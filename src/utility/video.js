@@ -1,82 +1,83 @@
-import { createFFmpeg } from '@ffmpeg/ffmpeg'
+/* global VideoEncoder, VideoFrame */
 
-const BASE64_MARKER = ';base64,'
-const FRAME_FILE_PREFIX = 'img_'
-const OUTPUT_FILE_PREFIX = 'animation-'
+import { Muxer, ArrayBufferTarget } from 'webm-muxer'
 
-// TODO: make this configurable along with other export options
-const FRAME_FILE_TYPE = 'jpeg'
-const OUTPUT_FRAME_RATE = 30
-const OUTPUT_CODEC = 'libx264'
-const OUTPUT_CONTAINER = 'mp4'
-const OUTPUT_PIX_FMT = 'yuv420p'
+// TODO: make this a class
 
-const ffmpeg = createFFmpeg({ log: true })
+// TODO: make these configurable along with other export options
+const MUXER_CODEC = 'V_VP9'
+const OUTPUT_CONTAINER = 'webm'
 
-const writtenImages = []
+const CODEC_PROFILE = '00' // Only 4:2:0. Allows only 8 bits per color component.
+const CODEC_LEVEL = '41' // 4.1, see https://www.webmproject.org/vp9/levels/
+const CODEC_BIT_DEPTH = '08' // 8-bits per channel
+const WEBM_CODEC_PARAMS = `vp09.${CODEC_PROFILE}.${CODEC_LEVEL}.${CODEC_BIT_DEPTH}`
 
 let canvasToTarget = null
-const prepareAPI = async (canvasId) => {
-  await ffmpeg.load()
-  canvasToTarget = canvasId
-}
-
-const writeImage = (imgData, frameNum, fileType) => {
-  const paddedNum = `0000000${frameNum}`.slice(-8)
-  const fileName = `${FRAME_FILE_PREFIX}${paddedNum}.${fileType}`
-  writtenImages.push(fileName)
-  return ffmpeg.FS('writeFile', fileName, imgData)
-}
-
-const convertDataURIToBinary = (dataURI) => {
-  const base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length
-  const base64 = dataURI.substring(base64Index)
-  const raw = window.atob(base64)
-  const rawLength = raw.length
-  const array = new Uint8Array(new ArrayBuffer(rawLength))
-
-  for (let i = 0; i < rawLength; i += 1) {
-    array[i] = raw.charCodeAt(i)
+let outputFrameRate = null
+let muxer = null
+let videoEncoder = null
+const prepareForExport = (canvasId, width, height, frameRate) => {
+  if (!('VideoEncoder' in window)) {
+    // false representing that we are *not* preparred
+    return false
   }
-  return array
+
+  canvasToTarget = null
+  outputFrameRate = null
+  muxer = null
+  videoEncoder = null
+
+  canvasToTarget = canvasId
+  outputFrameRate = frameRate
+
+  muxer = new Muxer({
+    target: new ArrayBufferTarget(),
+    video: {
+      codec: MUXER_CODEC,
+      width,
+      height,
+    },
+  })
+
+  videoEncoder = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    // eslint-disable-next-line
+    error: (err) => console.error(err),
+  })
+
+  videoEncoder.configure({
+    codec: WEBM_CODEC_PARAMS,
+    width,
+    height,
+  })
+  return true
 }
 
-const exportOneFrame = (frameNum) => {
-  if (!canvasToTarget) return
+const exportOneFrame = async (frameNum) => {
+  // BUG: Safari isn't letting the canvas render on each frame
+  //      as if it sees consequitive canvas updates and has some sort of
+  //      internal debounce that waits a few mills before drawing the canvas updates
   const canvas = document.getElementById(canvasToTarget)
-  const imgDataUrl = canvas.toDataURL(`image/${FRAME_FILE_TYPE}`)
-  const imgData = convertDataURIToBinary(imgDataUrl)
-  writeImage(imgData, frameNum, FRAME_FILE_TYPE)
+  const millisecondsPerFrame = 1000 / outputFrameRate
+  const microsecondsPerFrame = millisecondsPerFrame * 1000
+  const timestampOfFrame = Math.round((frameNum - 1) * microsecondsPerFrame)
+
+  console.log(canvasToTarget)
+  const frame = new VideoFrame(canvas, { timestamp: timestampOfFrame })
+  await videoEncoder.encode(frame, { keyFrame: frameNum % 60 === 0 })
+  frame.close()
 }
 
 const exportVideo = async () => {
-  const command = [
-    '-framerate', `${OUTPUT_FRAME_RATE}`,
-    '-i', `${FRAME_FILE_PREFIX}%08d.${FRAME_FILE_TYPE}`,
-    '-c:v', OUTPUT_CODEC,
-    '-pix_fmt', OUTPUT_PIX_FMT,
-    `out.${OUTPUT_CONTAINER}`,
-  ]
-  await ffmpeg.run(...command)
-  const data = ffmpeg.FS('readFile', 'out.mp4')
-
-  // Clean up the memory used
-  writtenImages.forEach((imageName) => {
-    ffmpeg.FS('unlink', imageName)
-  })
-  while (writtenImages.length > 0) {
-    writtenImages.pop()
-  }
-  ffmpeg.FS('unlink', 'out.mp4')
-
-  ffmpeg.exit()
-  canvasToTarget = null
-
-  return data
+  await videoEncoder.flush()
+  muxer.finalize()
+  const videoAsBlob = new Blob([muxer.target.buffer], { type: `video/${OUTPUT_CONTAINER}` })
+  return videoAsBlob
 }
 
-const downloadVideo = (videoData) => {
-  const videoObjUrl = URL.createObjectURL(new Blob([videoData.buffer], { type: `video/${OUTPUT_CONTAINER}` }))
+const downloadBlob = (blobData, fileExtension) => {
+  const videoObjUrl = URL.createObjectURL(blobData)
   const aTag = document.createElement('a')
   aTag.href = videoObjUrl
   const dateStamp = (new Date()).toISOString()
@@ -84,7 +85,7 @@ const downloadVideo = (videoData) => {
     .replaceAll('T', '')
     .replaceAll(':', '')
     .slice(0, 12)
-  aTag.download = `${OUTPUT_FILE_PREFIX}${dateStamp}.${OUTPUT_CONTAINER}`
+  aTag.download = `animation-${dateStamp}.${fileExtension}`
   document.body.appendChild(aTag)
   aTag.click()
   URL.revokeObjectURL(videoObjUrl)
@@ -92,8 +93,8 @@ const downloadVideo = (videoData) => {
 }
 
 export {
-  prepareAPI,
+  prepareForExport,
   exportOneFrame,
   exportVideo,
-  downloadVideo,
+  downloadBlob,
 }

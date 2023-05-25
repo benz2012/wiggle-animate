@@ -25,7 +25,7 @@ class Animation {
     if (this.firstFrame > newLength) {
       this.firstFrame = Animation.FIRST
     }
-    if (this.lastFrame > newLength) {
+    if (this.lastFrame > newLength || this.lastFrame === this.frames) {
       this.lastFrame = newLength
     }
     if (this.now > newLength) {
@@ -119,6 +119,9 @@ class Animation {
     const interval = 1000 / this.fps
     let then = Date.now()
 
+    // NOTE: wait a second, this doesn't do anything with the interval, is it even written properly
+    //       am I going insane? did I lose the code?!
+
     const loop = action(() => {
       if (this.playing === false) return
       this.requestId = requestAnimationFrame(loop)
@@ -135,22 +138,24 @@ class Animation {
     loop()
   }
 
-  animateForExport(exportOneFrame) {
+  animateForExport(exportOneFrameAsync) {
     return new Promise((resolve) => {
-      const loop = action(() => {
-        exportOneFrame(this.now)
+      const loop = async () => {
+        await exportOneFrameAsync(this.now)
+        const nextSteps = action(() => {
+          if (this.now === this.frames) {
+            resolve()
+            return
+          }
 
-        if (this.now === this.frames) {
-          resolve()
-          return
-        }
+          const nextFrame = this.nextFrame()
+          if (nextFrame === null) return
 
-        const nextFrame = this.nextFrame()
-        if (nextFrame === null) return
-
-        this.now = nextFrame
-        this.requestId = requestAnimationFrame(loop)
-      })
+          this.now = nextFrame
+          requestAnimationFrame(loop)
+        })
+        nextSteps()
+      }
 
       loop()
     })

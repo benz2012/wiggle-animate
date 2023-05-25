@@ -11,10 +11,10 @@ import Polygon from './lib/shapes/Polygon'
 import Line from './lib/shapes/Line'
 import Path from './lib/shapes/Path'
 import Animation from './lib/animation/Animation'
-import { prepareAPI, exportOneFrame, exportVideo, downloadVideo } from './utility/video'
 import Angle from './lib/structure/Angle'
-
-// import { storageEnabled } from './utility/storage'
+import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
+import { storageEnabled } from './utility/storage'
+import { sleep } from './utility/time'
 
 class RootStore {
   constructor() {
@@ -309,18 +309,25 @@ class RootStore {
     // TODO: Add a no-click handler to the screen since interacting with the stage
     //       will not cause a re-draw, and will actually be misleading/error-prone
     // TODO: Have progress output displayed Prepare-boolean, Frames-progress, video progress
-    //       how do we capture the logs from ffmpeg.wasm?!
+    // TODO: wrap this whole thing in a giant error handler
 
     this.animation.pause()
     this.animation.goToFirst()
     this.setSelected([])
 
     this.setExporting(true)
+    await sleep(1) // give React a tick to render the export-canvas
 
-    await prepareAPI('export-canvas')
-    await this.animation.animateForExport(exportOneFrame)
-    const videoData = await exportVideo()
-    downloadVideo(videoData)
+    const { canvasSize } = this.rootContainer
+    const prepared = prepareForExport('export-canvas', canvasSize.width, canvasSize.height, this.animation.fps)
+    if (prepared) {
+      await this.animation.animateForExport(exportOneFrame)
+      const videoAsBlob = await exportVideo()
+      downloadBlob(videoAsBlob, 'webm')
+    } else {
+      // TODO: tell the user that we can't export using their browser
+      console.warn('This browser is not preparred/capable of exporting video in the way the developer wants')
+    }
 
     this.setExporting(false)
     this.animation.goToFirst()
