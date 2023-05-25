@@ -5,9 +5,8 @@ import Item from './Item'
 import Size from './Size'
 import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
-import Stroke from '../visuals/Stroke'
 import { identityMatrix } from '../../utility/matrix'
-import { drawPotentialPathPoint } from '../../utility/drawing'
+import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 
@@ -180,37 +179,7 @@ class RootContainer extends Container {
     this.ctx.setTransform(this.currentTransform)
     this.ctx.translate(this.canvasSize.width / 2, this.canvasSize.height / 2)
 
-    const dotFill = new Fill('rgb(42, 45, 48)')
-    const dotWidth = 4
-    const dotSpacing = 48
-    const segmentLength = (dotSpacing + dotWidth)
-    const directions = [1, -1]
-
-    const xSpaceToWorkWith = (
-      (rootWidth / 2) - (dotSpacing / 2) + (Math.abs(this.canvasPosition.x) / this.canvasScale)
-    ) / this.canvasScale
-    const numDotsX = Math.ceil(xSpaceToWorkWith / segmentLength)
-    const numDotsXHeight = Math.ceil(
-      Math.ceil(((
-        (rootHeight + (Math.abs(this.canvasPosition.y) * 2) / this.canvasScale) / segmentLength
-      ) / this.canvasScale) / 2) * 2
-    )
-
-    this.ctx.beginPath()
-    directions.forEach((direction) => {
-      Array.from(Array(numDotsX)).forEach((_, xIndex) => {
-        Array.from(Array(numDotsXHeight)).forEach((__, yIndex) => {
-          const actualYIndex = ((numDotsXHeight / -2) + yIndex)
-          this.ctx.rect(
-            direction * xIndex * segmentLength + (direction * (segmentLength / 2)),
-            actualYIndex * segmentLength,
-            dotWidth,
-            dotWidth,
-          )
-        })
-      })
-    })
-    dotFill.draw(this.ctx)
+    drawStageDots(this.ctx, rootWidth, rootHeight, this.canvasPosition, this.canvasScale)
   }
 
   drawCanvas() {
@@ -241,20 +210,7 @@ class RootContainer extends Container {
     if (selector.rect.area === 0) return
 
     this.ctx.setTransform(identityMatrix())
-
-    this.ctx.beginPath()
-    // this might be OS dependent, ~shrugs~
-    const mouseGlyphOffset = this.DPR === 2 ? 2 : 0
-    this.ctx.rect(
-      selector.position.x - mouseGlyphOffset,
-      selector.position.y,
-      ...selector.rect.values,
-    )
-    const fill = new Fill('rgba(33, 150, 243, 0.1)')
-    fill.draw(this.ctx)
-    const lineWidth = 1 * this.DPR
-    const stroke = new Stroke('rgb(33, 150, 243)', lineWidth)
-    stroke.draw(this.ctx)
+    drawSelector(this.ctx, selector, this.DPR)
   }
 
   checkPointerIntersections(pointerVector) {

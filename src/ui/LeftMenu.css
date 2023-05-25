@@ -14,7 +14,7 @@
   margin-top: calc(36px + 8px + 8px + 6vh);
 
   padding: 8px;
-  background-color: rgba(25, 117, 210, 0.2);
+  background-color: var(--palette-primary_dark-20);
   border-radius: 0 4px 4px 0;
 
   display: flex;
@@ -31,9 +31,14 @@
     height: calc(100% - 16px - 72px - 32px - 2px);
     margin-top: calc(36px + 8px + 8px);
     border-radius: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--palette-action-hover);
+    border-bottom: 1px solid var(--palette-action-hover);
   }
+}
+
+#left-menu-header {
+  display: flex;
+  margin-bottom: 8px;
 }
 
 .left-menu-item {
@@ -41,22 +46,21 @@
   align-items: center;
   padding: 4px 8px 4px 8px;
   border-radius: 4px;
-  /* padding-left: 20px; */
 }
 .left-menu-item:hover {
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--palette-action-hover);
 }
 .left-menu-item-name {
   font-size: 14px;
   line-height: 14px;
 }
 .left-menu-item-selected {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: rgb(33, 33, 33)
+  background-color: var(--palette-action-selected);
+  color: var(--palette-text-secondary);
 }
 .left-menu-item-selected:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--palette-action-selected);
 }
 
 .left-menu-item-container {
@@ -73,10 +77,10 @@
   margin-right: 2px;
 }
 .left-menu-container-dropwdown:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--palette-action-hover);
 }
 .left-menu-container-dropwdown:active {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--palette-action-active);
 }
 .left-menu-container-dropwdown-text {
   transform: scale(.5, 1);
@@ -93,10 +97,10 @@
   border-radius: 0px 4px 4px 0px;
 }
 .left-menu-item-container-name:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--palette-action-hover);
 }
 .left-menu-item-selected > .left-menu-item-container-name {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--palette-action-selected);
 }
 .left-menu-item-selected > div > .left-menu-container-dropwdown-text {
   color: white;
@@ -111,23 +115,23 @@
   padding-left: 16px;
   padding-right: 16px;
   background-color: transparent;
-  color: white;
-  border: 1px solid white;
+  color: var(--palette-text-main_tinted_primary);
+  border: 1px solid var(--palette-text-main_tinted_primary);
   font-size: 16px;
   line-height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.left-menu-action-button:active,
 .left-menu-action-button:hover {
-  background-color: rgba(33, 150, 243, 0.5);
-}
-.left-menu-action-button:active {
-  background-color: rgba(33, 150, 243, 0.7);
+  background-color: var(--palette-primary_dark-50);
+  color: var(--palette-text-main);
+  border: 1px solid var(--palette-text-main);
 }
 .left-menu-action-button:disabled {
-  border-color: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.15);
+  border-color: var(--palette-action-disabled);
+  color: var(--palette-action-disabled);
 }
 .left-menu-action-button:disabled:hover {
   background-color: transparent;
@@ -136,6 +140,8 @@
 .percentage-text {
   display: flex;
   align-items: center;
+  justify-content: center;
   font-size: 10px;
   line-height: 10px;
+  width: 32px;
 }

@@ -24,7 +24,7 @@ const TopMenu = ({ store }) => {
 
   let icon = '✓'
   if (saveStatus === 'saving') {
-    icon = (<span style={{ fontSize: '14px', paddingBottom: '3px', paddingLeft: '2px' }}>⟳</span>)
+    icon = (<span className="autosave-icon-wheel">⟳</span>)
   }
   if (saveStatus === 'error saving') { icon = '⚠' }
   if (saveStatus === 'unknown') { icon = '?' }
@@ -45,7 +45,7 @@ const TopMenu = ({ store }) => {
         type="button"
         className="top-menu-item top-menu-item-button noselect"
       >
-        <span className="unicode-icon" style={{ fontSize: '14px' }}>⌘</span>
+        <span className="unicode-icon font-14">⌘</span>
         Edit
         {/* This menu can have like undo/redo */}
       </button>

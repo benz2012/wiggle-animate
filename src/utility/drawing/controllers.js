@@ -1,11 +1,13 @@
 /* eslint-disable no-param-reassign */
 
+import theme from '../../ui/theme'
+
 // TODO: draw this on top of all other items
 // TODO: ^ with that, potentially also draw an invisible box where the shape exists
 //         so that layers underneath can be moved without accidentaly selecting
 //         the item(s) above it
-
-const draw = (instance) => {
+const drawControllerBox = (instance) => {
+  /* instance: type Shape */
   const { controllerType, ctx, origin, scale, stroke, rectSpec } = instance
   const [rectX, rectY, rectW, rectH] = rectSpec
   const strokeProtrusion = stroke.width / 2
@@ -27,7 +29,7 @@ const draw = (instance) => {
     )
     ctx.lineWidth = 6
   }
-  ctx.strokeStyle = 'rgba(33, 150, 243)'
+  ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
 
@@ -73,8 +75,8 @@ const draw = (instance) => {
       16 / scale.y,
     )
   }
-  ctx.fillStyle = 'white'
-  ctx.strokeStyle = 'rgb(33, 150, 243)'
+  ctx.fillStyle = `${theme.palette.WHITE}`
+  ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.fill()
@@ -89,7 +91,7 @@ const draw = (instance) => {
   ctx.moveTo(-10 / scale.x, 0 / scale.y)
   ctx.lineTo(10 / scale.x, 0 / scale.y)
   ctx.lineWidth = 8
-  ctx.strokeStyle = 'white'
+  ctx.strokeStyle = `${theme.palette.WHITE}`
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
   // -- more
@@ -101,7 +103,7 @@ const draw = (instance) => {
   ctx.moveTo(-8 / scale.x, 0 / scale.y)
   ctx.lineTo(8 / scale.x, 0 / scale.y)
   ctx.lineWidth = 4
-  ctx.strokeStyle = 'rgb(33, 150, 243)'
+  ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
 
@@ -115,7 +117,7 @@ const draw = (instance) => {
   ctx.beginPath()
   ctx.moveTo(0, 0)
   ctx.lineTo(0 / scale.x, -75 / scale.y)
-  ctx.strokeStyle = 'rgba(33, 150, 243)'
+  ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
@@ -136,12 +138,56 @@ const draw = (instance) => {
     0,
     Math.PI * 2
   )
-  ctx.fillStyle = 'white'
-  ctx.strokeStyle = 'rgb(33, 150, 243)'
+  ctx.fillStyle = `${theme.palette.WHITE}`
+  ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.fill()
   ctx.stroke()
 }
 
-export default { draw }
+const ContainerControllerSizes = {
+  originBox: 100,
+  positionBox: 200,
+  rotationCircle: 12,
+}
+const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
+  const { originBox, positionBox, rotationCircle } = ContainerControllerSizes
+
+  ctx.strokeStyle = `${theme.palette.tertiary[100]}`
+  ctx.lineWidth = 2
+
+  ctx.beginPath()
+  ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
+  ctx.stroke()
+  if (isOriginHovered) {
+    ctx.fillStyle = `${theme.palette.tertiary[20]}`
+    ctx.fill()
+  }
+
+  ctx.beginPath()
+  ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
+  ctx.stroke()
+  if (isPositionHovered) {
+    ctx.beginPath()
+    ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
+    ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
+    ctx.fillStyle = `${theme.palette.tertiary[20]}`
+    ctx.fill('evenodd')
+  }
+
+  ctx.beginPath()
+  ctx.moveTo(0, -originBox)
+  ctx.lineTo(0, -originBox - 75)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.ellipse(0, -originBox - 75 - rotationCircle, rotationCircle, rotationCircle, Math.PI * 2, 0, Math.PI * 2)
+  ctx.stroke()
+}
+
+export {
+  drawControllerBox,
+  ContainerControllerSizes,
+  drawContainerController,
+}

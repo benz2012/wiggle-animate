@@ -4,6 +4,7 @@
   height: 32px;
   padding: 8px;
 
+  /* values tbd, not variables yet */
   background-color: rgb(33, 50, 72);
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 10px 3px;

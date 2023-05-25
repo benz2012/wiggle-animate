@@ -5,6 +5,7 @@ import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 
 import './BottomMenu.css'
+import theme from './theme'
 import Animation from '../lib/animation/Animation'
 import { identityMatrix } from '../utility/matrix'
 import { drawPlayheadHoverLine, drawPlayhead } from '../utility/drawing'
@@ -69,7 +70,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     const pixelsPerFrame = store.view.playheadPixelsPerFrame * ummDoubleIt
 
     // draw the playback in/out regions
-    ctx.fillStyle = 'rgba(25, 117, 210, 0.3)'
+    ctx.fillStyle = theme.palette.primary_dark[30].toString()
     const regionLeftStart = playheadCSSTrueHalf * store.DPR
     const regionTopStart = 6
     if (store.animation.firstFrame !== Animation.FIRST) {
@@ -124,7 +125,6 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   })
 
   const handlePlayModeClick = action(() => {
-    /* eslint-disable prefer-destructuring */
     if (store.animation.mode === Animation.PLAYBACK_MODES[0]) {
       store.animation.mode = Animation.PLAYBACK_MODES[1]
     } else if (store.animation.mode === Animation.PLAYBACK_MODES[1]) {

@@ -4,7 +4,7 @@
   width: calc(100% - 16px);
   height: 24px;
   padding: 8px;
-  background-color: rgba(25, 117, 210, 0.2);
+  background-color: var(--palette-primary_dark-20);
 
   display: flex;
   align-items: center;
@@ -13,14 +13,12 @@
   outline: none;
 }
 
-/* use this when not fouced, maybe? */
-/* outline: 1px solid rgba(0, 0, 0, 0.3); */
 #bottom-menu-outliner-1 {
   position: absolute;
   top: -1px;
   left: 0px;
   right: calc(36px + 72px + 1px);
-  border-top: 1px solid rgba(25, 117, 210, 0.75);
+  border-top: 1px solid var(--palette-primary_dark-75);
 }
 #bottom-menu-outliner-2 {
   position: absolute;
@@ -30,16 +28,16 @@
   width: 72px;
   border-radius: 5px 5px 0 0;
 
-  border-top: 1px solid rgba(25, 117, 210, 0.75);
-  border-right: 1px solid rgba(25, 117, 210, 0.75);
-  border-left: 1px solid rgba(25, 117, 210, 0.75);
+  border-top: 1px solid var(--palette-primary_dark-75);
+  border-right: 1px solid var(--palette-primary_dark-75);
+  border-left: 1px solid var(--palette-primary_dark-75);
 }
 #bottom-menu-outliner-3 {
   position: absolute;
   top: -1px;
   left: calc(100% - 36px + 1px);
   right: 0px;
-  border-top: 1px solid rgba(25, 117, 210, 0.75);
+  border-top: 1px solid var(--palette-primary_dark-75);
 }
 
 #bottom-menu-tab {
@@ -51,11 +49,13 @@
   width: 72px;
   border: none;
   border-radius: 4px 4px 0 0;
-  background-color: rgba(25, 117, 210, 0.2);
-  color: white;
+  background-color: var(--palette-primary_dark-20);
+  color: var(--palette-text-main_tinted_primary);
 }
+#bottom-menu-tab:active,
 #bottom-menu-tab:hover {
-  background-color: rgba(25, 117, 210, 0.3);
+  background-color: var(--palette-primary_dark-30);
+  color: var(--palette-text-main);
 }
 
 #play-controls {
@@ -65,32 +65,22 @@
   align-items: center;
   justify-content: space-between;
 }
-.play-button {
-  font-size: 16px;
-  width: 24px;
-  height: 24px;
-  background-color: #96a5b3;
-  border: 1px solid #96a5b3;
-  color: black;
-}
-.play-button:hover {
-  background-color: rgba(25, 117, 210, 0.5);
-  border-color: rgba(25, 117, 210, 1);
-  color: white;
-}
 .jump-button {
   font-size: 16px;
   width: 24px;
   height: 24px;
   background-color: transparent;
-  border: 1px solid white;
-  color: white;
+  border: 1px solid var(--palette-text-main_tinted_primary);
+  color: var(--palette-text-main_tinted_primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.jump-button:active,
 .jump-button:hover {
-  background-color: rgba(25, 117, 210, 0.5);
+  background-color: var(--palette-primary_dark-50);
+  border-color: var(--palette-text-main);
+  color: var(--pallete-text-main);
 }
 
 #timeline-container {
@@ -102,7 +92,7 @@
 #timeline-tick-container {
   margin-top: 8px;
   height: 16px;
-  border-left: 1px solid rgba(25, 117, 210, 0.5);
+  border-left: 1px solid var(--palette-primary_dark-50);
 
   display: flex;
   align-items: end;
@@ -110,8 +100,8 @@
 .timeline-tick {
   height: 50%;
   flex-grow: 1;
-  border-bottom: 1px solid rgba(25, 117, 210, 0.5);
-  border-right: 1px solid rgba(25, 117, 210, 0.5);
+  border-bottom: 1px solid var(--palette-primary_dark-50);
+  border-right: 1px solid var(--palette-primary_dark-50);
 }
 .timeline-tick-leftover {
   border-right: none;
@@ -121,10 +111,6 @@
 #playhead-canvas {
   position: absolute;
   top: 7px;
-}
-
-.font-12 {
-  font-size: 12px;
 }
 
 #frame-ticker {
@@ -142,11 +128,11 @@
   height: 18px;
   border: none;
   font-weight: 900;
-  color: rgb(190, 200, 220);
+  color: var(--palette-text-main_tinted_primary);
   margin-top: 1px;
   align-items: center;
 }
 #play-mode-button:hover,
 #play-mode-button:active {
-  color: white;
+  color: var(--palette-text-main);
 }

@@ -128,7 +128,7 @@ const LeftMenu = ({
 }) => (
   <div id="left-menu-container" tabIndex="0">
     <div id="left-menu">
-      <div style={{ display: 'flex', marginBottom: 8 }}>
+      <div id="left-menu-header">
         Layers <button onClick={store.populate}>populate</button>
       </div>
 

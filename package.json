@@ -65,6 +65,7 @@
           "multiline": true
         }
       ],
+      "prefer-destructuring": ["error", {"object": true, "array": false}],
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
       "react/jsx-one-expression-per-line": "off",

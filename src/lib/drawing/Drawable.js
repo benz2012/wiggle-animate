@@ -43,7 +43,6 @@ class Drawable extends Animatable {
   get position() { return this._position }
   set position(value) {
     if (Array.isArray(value) && value.length === 2) {
-      /* eslint-disable prefer-destructuring */
       this._position.x = value[0]
       this._position.y = value[1]
     } else if (isObject(value) && 'x' in value && 'y' in value) {
@@ -91,7 +90,6 @@ class Drawable extends Animatable {
   get scale() { return this._scale }
   set scale(value) {
     if (Array.isArray(value) && value.length === 2) {
-      /* eslint-disable prefer-destructuring */
       this._scale.x = value[0]
       this._scale.y = value[1]
     } else if (isObject(value) && 'x' in value && 'y' in value) {

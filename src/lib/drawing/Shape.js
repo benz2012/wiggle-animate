@@ -1,13 +1,13 @@
 import { makeObservable, action, observable } from 'mobx'
 
 import Drawable from './Drawable'
-import ControllerBox from './ControllerBox'
 import Size from '../structure/Size'
 import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
 import Fill from '../visuals/Fill'
 import Stroke from '../visuals/Stroke'
 import Shadow from '../visuals/Shadow'
+import { drawHoveredIndicator, drawControllerBox } from '../../utility/drawing'
 import { observeListOfProperties } from '../../utility/state'
 
 class Shape extends Drawable {
@@ -101,27 +101,21 @@ class Shape extends Drawable {
     this.drawShape(isHovered, isSelected)
     Shadow.clear(this.ctx)
 
-    this.drawHoveredIndicator(isHovered, isSelected)
-    if (isSelected) { ControllerBox.draw(this) }
+    if (isSelected) {
+      this.drawControllerBox()
+    } else if (isHovered) {
+      this.drawHoveredIndicator()
+    }
   }
 
-  drawHoveredIndicator(isHovered, isSelected) {
-    if (!isHovered || isSelected) return
+  drawHoveredIndicator() {
+    // Allows being overwritten by subclass
+    drawHoveredIndicator(this)
+  }
 
-    const lineWidth = 4
-    this.ctx.setTransform(this.currentTransform)
-    this.ctx.beginPath()
-    const strokeProtrusion = this.stroke.width / 2
-    this.ctx.rect(
-      this.rectSpec[0] - strokeProtrusion - ((lineWidth / 2) / this.scale.x),
-      this.rectSpec[1] - strokeProtrusion - ((lineWidth / 2) / this.scale.y),
-      this.rectSpec[2] + this.stroke.width + (lineWidth / this.scale.x),
-      this.rectSpec[3] + this.stroke.width + (lineWidth / this.scale.y),
-    )
-    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.8)'
-    this.ctx.lineWidth = lineWidth
-    this.ctx.setTransform(this.currentTransformWithoutScale)
-    this.ctx.stroke()
+  drawControllerBox() {
+    // Allows being overwritten by subclass
+    drawControllerBox(this)
   }
 
   createIntersectionsPath() {

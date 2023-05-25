@@ -68,7 +68,13 @@ const PropertyEditor = observer(({ store }) => {
   }
 
   return (
-    <div id="property-editor-container" style={{ top: store.propertyEditor.position.y, right: store.propertyEditor.position.x }}>
+    <div
+      id="property-editor-container"
+      style={{
+        top: store.propertyEditor.position.y,
+        right: store.propertyEditor.position.x,
+      }}
+    >
       Property Editor Placeholder
     </div>
   )

@@ -8,7 +8,7 @@ import Point from '../structure/Point'
 import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
 import { observeListOfProperties } from '../../utility/state'
-import { drawPathPoint } from '../../utility/drawing'
+import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
 class Path extends Shape {
@@ -174,16 +174,8 @@ class Path extends Shape {
     return [topLeft[0], topLeft[1], this.width, this.height]
   }
 
-  drawHoveredIndicator(isHovered, isSelected) {
-    if (!isHovered || isSelected) return
-
-    this.ctx.setTransform(this.currentTransform)
-    this.ctx.beginPath()
-    this.drawThePath()
-    this.ctx.strokeStyle = 'rgba(33, 150, 243, 0.8)'
-    this.ctx.lineWidth = 2
-    this.ctx.setTransform(this.currentTransformWithoutScale)
-    this.ctx.stroke()
+  drawHoveredIndicator() {
+    drawHoveredIndicatorPath(this)
   }
 
   checkPointerIntersections(pointerVector) {

@@ -18,7 +18,7 @@ body {
   line-height: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: white;
+  color: var(--palette-text-main);
 }
 
 ul {
@@ -40,18 +40,6 @@ button:hover {
 canvas:focus {
   outline: none;
 }
-
-.noselect {
-  -webkit-touch-callout: none;
-    -webkit-user-select: none;
-     -khtml-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-}
-
-.ml-4 { margin-left: 4px; }
-.mb-8 { margin-bottom: 8px; }
 
 #stage {
   position: fixed;

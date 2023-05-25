@@ -3,7 +3,7 @@
   width: calc(100% - 16px);
   height: 36px;
   padding: 8px;
-  background-color: rgba(25, 117, 210, 0.2);
+  background-color: var(--palette-primary_dark-20);
 
   display: flex;
   z-index: 50;
@@ -29,11 +29,11 @@
 }
 .top-menu-item-button:hover {
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--palette-action-hover);
 }
 .top-menu-item-button:active {
   cursor: pointer;
-  background-color: rgba(33, 150, 243, 0.9);
+  background-color: var(--palette-primary_dark-50);
 }
 
 .unicode-icon {
@@ -63,6 +63,11 @@
   align-items: center;
   transition: background-color 500ms;
 }
+.autosave-icon-wheel {
+  font-size: 14px;
+  padding-bottom: 3px;
+  padding-left: 2px;
+}
 
 .icon-bg-grey {
   background-color: #767676; 
@@ -90,6 +95,7 @@
     }
 }
 
+/* this will be replaced so I'm not gonna bother with palette here */
 .dialog-menu {
   position: absolute;
   top: calc(36px + 4px);
