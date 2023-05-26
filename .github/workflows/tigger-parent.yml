@@ -12,5 +12,5 @@ jobs:
           -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}"
           -H "Accept: application/vnd.github.everest-preview+json"
           -H "Content-Type: application/json"
-          --data '{"ref": "master"}'
+          --data '{"ref": "main"}'
           https://api.github.com/repos/benz2012/wiggle-tools/actions/workflows/firebase-hosting-merge.yml/dispatches
