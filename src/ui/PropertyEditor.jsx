@@ -1,5 +1,6 @@
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
+import { Portal } from '@mui/base'
 
 import './PropertyEditor.css'
 import Vector2 from '../lib/structure/Vector2'
@@ -70,15 +71,17 @@ const PropertyEditor = observer(({ store }) => {
   }
 
   return (
-    <div
-      id="property-editor-container"
-      style={{
-        top: store.propertyEditor.position.y,
-        right: store.propertyEditor.position.x,
-      }}
-    >
-      Property Editor Placeholder
-    </div>
+    <Portal>
+      <div
+        id="property-editor-container"
+        style={{
+          top: store.propertyEditor.position.y,
+          right: store.propertyEditor.position.x,
+        }}
+      >
+        Property Editor Placeholder
+      </div>
+    </Portal>
   )
 })
 
