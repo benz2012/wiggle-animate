@@ -1,0 +1,16 @@
+name: Trigger Parent Repo CD Pipeline
+on:
+  push:
+    branches:
+      - master
+jobs:
+  trigger_parent:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+        curl -X POST \
+        -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}" \
+        -H "Accept: application/vnd.github.everest-preview+json" \
+        -H "Content-Type: application/json" \
+        --data '{"ref": "master"}' \
+        https://api.github.com/repos/benz2012/wiggle-tools/actions/workflows/firebase-hosting-merge.yml/dispatches
