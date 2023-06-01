@@ -188,6 +188,12 @@ class Path extends Shape {
     return false
   }
 
+  /*
+    TODO: add a custom findRectIntersections() implementation that works
+    more similarly to checkPointerIntersections. Currently it checks against
+    the rectSpec which doesn't account for concave path paths and/or holes
+  */
+
   drawShape(isHovered, isSelected) {
     if (this.points.length === 0) return
 

@@ -26,6 +26,13 @@ class Polygon extends Shape {
   get radius() { return this.size.width / 2 }
   set radius(value) { this.size.width = value * 2 }
 
+  /*
+    TODO: add a custom findRectIntersections() implementation that checks
+    against a polygon path, instead of the existing hover/controller rectSpec
+    this will only partially be resolved by changing the rectSpec implementation, as will still be
+    a rectangle Spec, the there are gaps between a polygon and it's rect bounds (most notable on 3 & 5 sides)
+  */
+
   drawShape() {
     // Adjust for rectangular/shape alignment
     const [rectX, rectY, rectW, rectH] = this.rectSpec

@@ -5,6 +5,11 @@ class Ellipse extends Shape {
     super('ellipse', ...args)
   }
 
+  /*
+    TODO: add a custom findRectIntersections() implementation that checks
+    against an elipse path, instead of the existing hover/controller rectSpec
+  */
+
   drawShape() {
     const [rectX, rectY, rectW, rectH] = this.rectSpec
     this.ctx.beginPath()
