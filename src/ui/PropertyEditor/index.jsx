@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import { Portal } from '@mui/base'
@@ -8,6 +8,7 @@ import Paper from '@mui/material/Paper'
 import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
 import Header from './Header'
 import Contents from './Contents'
+import usePrevious from '../hooks/usePrevious'
 
 const PropertyEditor = observer(({ store }) => {
   // TODO: support multi-selected property edit case
@@ -16,10 +17,12 @@ const PropertyEditor = observer(({ store }) => {
   const { build, rootContainer } = store
   const { selectedIds } = build
   const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
+  const numTopLevelItems = rootContainer.sortOrder.length
+  const prevNumTopLevelItems = usePrevious(numTopLevelItems)
 
   const contentsMeasurerRef = useRef(null)
 
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
   const [expansionAnimationDone, setAnimationDone] = useState(true)
   const expand = () => {
     setAnimationDone(false)
@@ -31,7 +34,17 @@ const PropertyEditor = observer(({ store }) => {
     setAnimationDone(false)
     setTimeout(() => { setAnimationDone(true) }, EXPANSION_DURATION + 1)
   }
+  useEffect(() => {
+    if (!prevNumTopLevelItems && numTopLevelItems) {
+      // Force expand the property editor when first item added to stage
+      expand()
+    } else if (prevNumTopLevelItems && !numTopLevelItems) {
+      // Force close the property editor when last item removed from stage
+      contract()
+    }
+  }, [numTopLevelItems, prevNumTopLevelItems])
 
+  const [isDragging, setIsDragging] = useState(false)
   const startDrag = (event) => {
     const dragStart = { pointer: { x: event.clientX, y: event.clientY }, panel: store.propertyEditor.position.object }
     const handlePointerMove = action((moveEvent) => {
@@ -40,10 +53,12 @@ const PropertyEditor = observer(({ store }) => {
       store.setPropertyEditorPosition({ x: newX, y: newY })
     })
     window.addEventListener('pointermove', handlePointerMove)
+    setIsDragging(true)
 
     const stopDrag = () => {
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', stopDrag)
+      setIsDragging(false)
     }
     window.addEventListener('pointerup', stopDrag)
   }
@@ -80,6 +95,7 @@ const PropertyEditor = observer(({ store }) => {
             expanded={expanded}
             setExpanded={expanded ? contract : expand}
             startDrag={startDrag}
+            isDragging={isDragging}
           />
         </Box>
 

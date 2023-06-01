@@ -3,7 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import SettingsIcon from '@mui/icons-material/Settings'
 
-const Header = ({ expanded, setExpanded, startDrag }) => (
+const Header = ({ expanded, setExpanded, startDrag, isDragging }) => (
   <>
     <button type="button" className="button-style-reset" onClick={() => setExpanded(!expanded)}>
       <Box
@@ -29,7 +29,6 @@ const Header = ({ expanded, setExpanded, startDrag }) => (
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        cursor: 'grab',
 
         transition: `color ${theme.transitions.duration.shortest}ms`,
         color: 'text.icon',
@@ -39,7 +38,7 @@ const Header = ({ expanded, setExpanded, startDrag }) => (
       <button
         type="button"
         className="button-style-reset"
-        style={{ cursor: 'grab', width: '100%' }}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab', width: '100%' }}
         onPointerDown={startDrag}
       >
         <DragIndicatorIcon sx={{ transform: 'rotate(90deg)' }} />
