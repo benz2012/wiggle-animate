@@ -7,6 +7,8 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.1",
+    "@mui/base": "^5.0.0-beta.2",
+    "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.2",
     "eslint": "^8.40.0",
     "eslint-config-airbnb": "^19.0.4",

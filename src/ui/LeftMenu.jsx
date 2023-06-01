@@ -107,7 +107,7 @@ const ContainerListOfChildren = (props) => {
             </li>
           ) : (
             <li className={listItemClass} onClick={handleItemClick(childId)}>
-              <span className="noselect left-menu-item-name">{child.name}</span>
+              <span className="noselect left-menu-item-name">{child.name || '\u00A0'}</span>
             </li>
           )}
           <div style={{ marginLeft: 12 }}>

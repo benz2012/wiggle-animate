@@ -1,4 +1,7 @@
 /* eslint-disable object-curly-newline */
+
+import { createTheme } from '@mui/material/styles'
+
 import Color from '../lib/visuals/Color'
 
 const color = (...rgba) => new Color({ r: rgba[0], g: rgba[1], b: rgba[2], a: rgba[3] ?? 1 })
@@ -45,6 +48,7 @@ const theme = {
       primary: {
         100: this.base.palette.primary,
         75: new Color({ ...this.base.palette.primary.spec, a: 0.75 }),
+        15: new Color({ ...this.base.palette.primary.spec, a: 0.15 }),
         10: new Color({ ...this.base.palette.primary.spec, a: 0.10 }),
       },
 
@@ -80,8 +84,6 @@ const theme = {
   },
 }
 
-// const theme = themeInit()
-
 Object.entries(theme.spacing).forEach(([name, value]) => {
   const cssVariableName = `--spacing-${name}`
   document.documentElement.style.setProperty(cssVariableName, `${value}px`)
@@ -96,4 +98,19 @@ Object.entries(theme.palette).forEach(([category, colors]) => {
   })
 })
 
+const muiTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: `${theme.base.palette.primary}`,
+    },
+    background: {
+      paper: `${theme.base.palette.background}`,
+    },
+  },
+})
+
 export default theme
+export {
+  muiTheme,
+}
