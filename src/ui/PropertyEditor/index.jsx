@@ -16,6 +16,7 @@ const PropertyEditor = observer(({ store }) => {
   // SETTINGS MENU TODO:
   //  - reset the position of the editor
   //  - Live Update |or| Update on Enter
+  //  - ClickAway Updates Value |or| Ignores Value
 
   const { build, rootContainer } = store
   const { selectedIds } = build

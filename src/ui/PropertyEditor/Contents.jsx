@@ -8,6 +8,7 @@ import Vector2Input from '../inputs/Vector2Input'
 import SizeInput from '../inputs/SizeInput'
 import FloatInput from '../inputs/FloatInput'
 import IntegerInput from '../inputs/IntegerInput'
+import AngleInput from '../inputs/AngleInput'
 
 const INPUT_WIDTH = PANEL_WIDTH - 100
 const inputClasses = {
@@ -16,6 +17,7 @@ const inputClasses = {
   Size: SizeInput,
   Float: FloatInput,
   Integer: IntegerInput,
+  Angle: AngleInput,
 }
 
 const Contents = observer(({ numSelected, selectedItem }) => {

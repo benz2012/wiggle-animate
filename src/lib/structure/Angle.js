@@ -24,7 +24,7 @@ class Angle {
   }
 
   toString() {
-    return `${this.degrees}`
+    return `Angle(${this.degrees})`
   }
 }
 
