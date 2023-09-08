@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react-lite'
+import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { PANEL_WIDTH } from './config'
+import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
+import usePrevious from '../hooks/usePrevious'
 import StringInput from '../inputs/StringInput'
 import Vector2Input from '../inputs/Vector2Input'
 import SizeInput from '../inputs/SizeInput'
@@ -21,6 +23,17 @@ const inputClasses = {
 }
 
 const Contents = observer(({ numSelected, selectedItem }) => {
+  const [contentOpacity, setContentOpacity] = useState(1)
+  const previousNumSelected = usePrevious(numSelected)
+  useEffect(() => {
+    if (previousNumSelected !== 1 && numSelected === 1) {
+      setContentOpacity(0)
+      setTimeout(() => { setContentOpacity(1) })
+    } else {
+      setContentOpacity(0)
+    }
+  }, [numSelected])
+
   if (numSelected !== 1) {
     let text = ''
     if (numSelected === 0) {
@@ -40,7 +53,15 @@ const Contents = observer(({ numSelected, selectedItem }) => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 0.5,
+        transition: contentOpacity === 1 ? `opacity ${EXPANSION_DURATION - 50}ms 50ms` : '',
+        opacity: contentOpacity,
+      }}
+    >
       {selectedItem.editables.map((propertyName) => {
         const property = selectedItem[propertyName]
         const name = propertyName.startsWith('_') ? propertyName.slice(1) : propertyName

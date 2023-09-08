@@ -67,6 +67,12 @@ const PropertyEditor = observer(({ store }) => {
     window.addEventListener('pointerup', stopDrag)
   }
 
+  const [contentHeight, setContentHeight] = useState(0)
+  useEffect(() => {
+    if (expanded && !expansionAnimationDone) return
+    setContentHeight(contentsMeasurerRef.current?.clientHeight)
+  }, [selectedItem.id, expanded, expansionAnimationDone])
+
   return (
     <Portal>
       <Paper
@@ -104,7 +110,7 @@ const PropertyEditor = observer(({ store }) => {
             sx={{
               borderRadius: 2,
               transition: `height ${EXPANSION_DURATION}ms`,
-              height: expanded ? contentsMeasurerRef.current?.clientHeight : 0,
+              height: expanded ? contentHeight : 0,
             }}
           >
             <Box
