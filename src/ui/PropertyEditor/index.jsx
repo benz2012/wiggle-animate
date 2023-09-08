@@ -12,7 +12,10 @@ import usePrevious from '../hooks/usePrevious'
 
 const PropertyEditor = observer(({ store }) => {
   // TODO: support multi-selected property edit case
-  // TODO: add a menu button to reset the position of the editor in case user moves it off screen
+
+  // SETTINGS MENU TODO:
+  //  - reset the position of the editor
+  //  - Live Update |or| Update on Enter
 
   const { build, rootContainer } = store
   const { selectedIds } = build

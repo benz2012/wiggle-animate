@@ -4,6 +4,7 @@ import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
 import { PANEL_WIDTH } from './config'
+import Vector2Input from '../inputs/Vector2Input'
 
 const INPUT_WIDTH = PANEL_WIDTH - 100
 
@@ -26,12 +27,11 @@ const Contents = observer(({ numSelected, selectedItem, setter }) => {
     )
   }
 
-  // TODO: iterate over the editable props and display their type-based line items
   return (
-    <Box sx={{}}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
       <Box
         /* This is exclusivley a Text-type property line item */
-        sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+        sx={{ display: 'flex', alignItems: 'center' }}
       >
         <Typography
           component="label"
@@ -69,75 +69,21 @@ const Contents = observer(({ numSelected, selectedItem, setter }) => {
           onChange={setter}
         />
       </Box>
-
-      <Box
-        /* This is exclusivley a Vector-type property line item */
-        sx={{ display: 'flex', alignItems: 'center' }}
-      >
-        <Typography
-          component="label"
-          htmlFor="input-position-x"
-          sx={{
-            fontFamily: 'monospace',
-            fontSize: 12,
-            color: 'text.disabled',
-            cursor: 'pointer',
-            '&:hover': { color: 'text.secondary' },
-          }}
-        >
-          position
-        </Typography>
-        <Box sx={{ flexGrow: 1 }} />
-        <InputBase
-          id="input-position-x"
-          sx={(theme) => ({
-            width: `calc(${(INPUT_WIDTH / 2)}px - ${theme.spacing(0.5)})`,
-            bgcolor: 'action.hover',
-            borderRadius: 1,
-            px: 1,
-            py: 0.5,
-            mr: 1,
-            '&:hover': { backgroundColor: 'action.selected' },
-            '&:focus-within': { outline: `1px solid ${theme.palette.primary.main}` },
-          })}
-          inputProps={{
-            sx: {
-              p: 0,
-              fontSize: 12,
-            },
-            spellCheck: false,
-          }}
-          value={selectedItem.position.value.x}
-          onChange={(event) => {
-            const { value } = event.target
-            selectedItem.position.setValue([value, selectedItem.position.value.y])
-          }}
-        />
-        <InputBase
-          id="input-position-y"
-          sx={(theme) => ({
-            width: `calc(${(INPUT_WIDTH / 2)}px - ${theme.spacing(0.5)})`,
-            bgcolor: 'action.hover',
-            borderRadius: 1,
-            px: 1,
-            py: 0.5,
-            '&:hover': { backgroundColor: 'action.selected' },
-            '&:focus-within': { outline: `1px solid ${theme.palette.primary.main}` },
-          })}
-          inputProps={{
-            sx: {
-              p: 0,
-              fontSize: 12,
-            },
-            spellCheck: false,
-          }}
-          value={selectedItem.position.value.y}
-          onChange={(event) => {
-            const { value } = event.target
-            selectedItem.position.setValue([selectedItem.position.value.x, value])
-          }}
-        />
-      </Box>
+      {selectedItem.editables.map((propertyName) => {
+        const property = selectedItem[propertyName]
+        const name = propertyName.startsWith('_') ? propertyName.slice(1) : propertyName
+        if (property.typeName === 'Vector2') {
+          return (
+            <Vector2Input
+              key={`${selectedItem.id}-${propertyName}`}
+              width={INPUT_WIDTH}
+              name={name}
+              targetProperty={property}
+            />
+          )
+        }
+        return null
+      })}
     </Box>
   )
 })
