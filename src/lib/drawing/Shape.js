@@ -24,9 +24,12 @@ class Shape extends Drawable {
     super(x, y)
     this.name.setValue(`${shapeType}-${this.name}`)
 
+    // TODO: uhhh, maybe I want these properties to be standalone, idk
     this._size = new Property({
       type: Size,
       value: [width, height],
+      isEditable: true,
+      isKeyframable: true,
     })
     this._alignment = new Property({ type: Alignment })
 

@@ -4,7 +4,7 @@ import Keyframe from '../animation/Keyframe'
 
 class Property {
   static get PRIMITIVES() {
-    return { STRING: 'String', FLOAT: 'Float', INTEGER: 'integer', BOOLEAN: 'Boolean' }
+    return { STRING: 'String', FLOAT: 'Float', INTEGER: 'Integer', BOOLEAN: 'Boolean' }
   }
 
   constructor({

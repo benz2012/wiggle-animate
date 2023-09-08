@@ -66,11 +66,6 @@ const PropertyEditor = observer(({ store }) => {
     window.addEventListener('pointerup', stopDrag)
   }
 
-  const setter = action((event) => {
-    const { value } = event.target
-    selectedItem.name.setValue(value)
-  })
-
   return (
     <Portal>
       <Paper
@@ -124,7 +119,6 @@ const PropertyEditor = observer(({ store }) => {
               <Contents
                 numSelected={selectedIds.length}
                 selectedItem={selectedItem}
-                setter={setter}
               />
             </Box>
           </Paper>

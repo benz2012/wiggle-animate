@@ -15,16 +15,13 @@ class Path extends Shape {
 
   constructor(...args) {
     super('path', ...args)
-
-    // TODO: add Property instances throughout this class
-
     // overwrite defaults
     this.fill.color.alpha = 0
     this.stroke.color = new Color(this.fill.color.spec)
     this.stroke.width = 3
     this.controllerType = 'Path'
 
-    this.points = []
+    this.points = [] // TODO: (maybe) make each point a Property, iterate over them customly within PropEditor
     this.closed = false
     this.hoveringOverStart = false
     this.pointsVisible = true
@@ -36,6 +33,7 @@ class Path extends Shape {
 
     // ignore alignment since drawing is done from points instead of relation to this.position
     this.alignment.isEditable = false
+    this.size.isEditable = false
 
     observeListOfProperties(this, ['points', 'closed', 'hoveringOverStart'])
     makeObservable(this, {
