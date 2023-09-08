@@ -14,12 +14,10 @@ const IntegerInput = observer(({ width, name, targetProperty }) => {
     const { value } = event.target
 
     const potentialInt = parseInt(value, 10)
-    if (Number.isNaN(potentialInt)) {
-      setInternalValue(value)
-      return
-    }
-
-    if (`${potentialInt}`.length !== value.length) {
+    if (
+      Number.isNaN(potentialInt)
+      || `${potentialInt}`.length !== value.length
+    ) {
       setInternalValue(value)
       return
     }

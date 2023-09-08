@@ -17,12 +17,11 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty }) => {
     const { value } = event.target
 
     const potentialFloat = parseFloat(value)
-    if (Number.isNaN(potentialFloat)) {
-      setInternalValue({ ...internalValue, [subProp]: value })
-      return
-    }
-
-    if (value.endsWith('.')) {
+    if (
+      Number.isNaN(potentialFloat)
+      || value.endsWith('.')
+      || `${potentialFloat}`.length !== value.length
+    ) {
       setInternalValue({ ...internalValue, [subProp]: value })
       return
     }
@@ -68,6 +67,7 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty }) => {
           sx: {
             p: 0,
             fontSize: 12,
+            fontFamily: 'monospace',
           },
           spellCheck: false,
         }}
@@ -91,6 +91,7 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty }) => {
           sx: {
             p: 0,
             fontSize: 12,
+            fontFamily: 'monospace',
           },
           spellCheck: false,
         }}

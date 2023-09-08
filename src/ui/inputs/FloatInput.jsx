@@ -14,12 +14,11 @@ const FloatInput = observer(({ width, name, targetProperty }) => {
     const { value } = event.target
 
     const potentialFloat = parseFloat(value)
-    if (Number.isNaN(potentialFloat)) {
-      setInternalValue(value)
-      return
-    }
-
-    if (value.endsWith('.')) {
+    if (
+      Number.isNaN(potentialFloat)
+      || value.endsWith('.')
+      || `${potentialFloat}`.length !== value.length
+    ) {
       setInternalValue(value)
       return
     }
@@ -60,6 +59,7 @@ const FloatInput = observer(({ width, name, targetProperty }) => {
           sx: {
             p: 0,
             fontSize: 12,
+            fontFamily: 'monospace',
           },
           spellCheck: false,
         }}
