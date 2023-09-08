@@ -5,7 +5,6 @@ import Shape from '../drawing/Shape'
 import Item from '../structure/Item'
 import Vector2 from '../structure/Vector2'
 import Point from '../structure/Point'
-import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
 import { observeListOfProperties } from '../../utility/state'
 import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
@@ -16,6 +15,8 @@ class Path extends Shape {
 
   constructor(...args) {
     super('path', ...args)
+
+    // TODO: add Property instances throughout this class
 
     // overwrite defaults
     this.fill.color.alpha = 0
@@ -34,17 +35,9 @@ class Path extends Shape {
     //               any changes here only affect the position of each point, and nothing else
 
     // ignore alignment since drawing is done from points instead of relation to this.position
-    this.alignment = {
-      observables: [],
-      get x() { return Alignment.CENTER },
-      set x(value) {}, // eslint-disable-line
-      get y() { return Alignment.CENTER },
-      set y(value) {}, // eslint-disable-line
-    }
+    this.alignment.isEditable = false
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'points', 'closed', 'hoveringOverStart']
-    observeListOfProperties(this, this.observables, inheritedObservables)
+    observeListOfProperties(this, ['points', 'closed', 'hoveringOverStart'])
     makeObservable(this, {
       processBounds: action,
       addPoint: action,
@@ -98,7 +91,7 @@ class Path extends Shape {
   calculateOrigin() {
     const polygonSpec = this.points.map((point) => (point.values))
     const poleOfInaccessibility = polylabel([polygonSpec])
-    this.origin = poleOfInaccessibility
+    this.setOrigin(poleOfInaccessibility)
   }
 
   commitPath() {

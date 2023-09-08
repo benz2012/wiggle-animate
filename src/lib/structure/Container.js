@@ -1,25 +1,21 @@
-import { makeObservable, action } from 'mobx'
+import { makeObservable, action, observable } from 'mobx'
 
 import Item from './Item'
 import Drawable from '../drawing/Drawable'
 import { insert } from '../../utility/array'
-import { observeListOfProperties } from '../../utility/state'
 import { drawContainerController, ContainerControllerSizes } from '../../utility/drawing'
 
 class Container extends Drawable {
-  static get IGNORE_WHEN_PEEKING() { return ['_children', '_sortOrder', 'showChildren'] }
-
   constructor(...args) {
     super(...args)
     this._children = {}
     this._sortOrder = []
-    this.name = `container-${this.name}`
+    this.name.setValue(`container-${this.name}`)
     this.showChildren = true
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, '_children', '_sortOrder', 'showChildren']
-    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, {
+      _sortOrder: observable,
+      showChildren: observable,
       add: action,
       remove: action,
       sortChild: action,
@@ -135,7 +131,7 @@ class Container extends Drawable {
       && selectedIds.includes(this.id)
     ) {
       this.ctx.setTransform(this.currentTransform)
-      this.ctx.translate(...this.origin.values)
+      this.ctx.translate(...this.origin.value.values)
       const isPositionHovered = hoveredId === this.id && hoveredControl === 'position'
       const isOriginHovered = hoveredId === this.id && hoveredControl === 'origin'
       drawContainerController(this.ctx, isPositionHovered, isOriginHovered)
@@ -155,7 +151,7 @@ class Container extends Drawable {
 
   checkSelectedContainerPointerIntersections(pointerVector) {
     this.ctx.setTransform(this.currentTransform)
-    this.ctx.translate(...this.origin.values)
+    this.ctx.translate(...this.origin.value.values)
     this.ctx.beginPath()
     this.createIntersectionsPath()
     if (this.ctx.isPointInPath(...pointerVector.values)) {

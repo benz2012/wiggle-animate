@@ -65,7 +65,7 @@ const PropertyEditor = observer(({ store }) => {
 
   const setter = action((event) => {
     const { value } = event.target
-    selectedItem.name = value
+    selectedItem.name.setValue(value)
   })
 
   return (

@@ -1,6 +1,4 @@
-import { makeObservable, computed } from 'mobx'
-
-import { observeListOfProperties } from '../../utility/state'
+import { makeObservable, observable, computed } from 'mobx'
 
 class Angle {
   static deg2Rad(degrees) {
@@ -14,14 +12,19 @@ class Angle {
   constructor(degrees = 0) {
     this.degrees = degrees
 
-    this.observables = ['degrees']
-    observeListOfProperties(this, this.observables)
-    makeObservable(this, { radians: computed })
+    makeObservable(this, {
+      degrees: observable,
+      radians: computed,
+    })
   }
 
   get radians() { return Angle.deg2Rad(this.degrees) }
   set radians(value) {
     this.degrees = Angle.rad2Deg(value)
+  }
+
+  toString() {
+    return `${this.degrees}`
   }
 }
 

@@ -7,10 +7,11 @@ class Point extends Vector2 {
     this.controlOut = new Vector2()
     this.controlIn = new Vector2()
 
-    const inheritedObservables = [...this.observables]
-    this.observables = [...inheritedObservables, 'controlOut', 'controlIn']
-    this.nestedObservables = ['controlOut', 'controlIn']
-    observeListOfProperties(this, this.observables, inheritedObservables)
+    observeListOfProperties(this, ['controlOut', 'controlIn'])
+  }
+
+  toString() {
+    return `Point(${super.toString()}, ${this.controlIn}, ${this.controlOut})`
   }
 }
 

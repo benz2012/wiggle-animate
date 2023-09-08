@@ -5,8 +5,7 @@ class Size {
     this.width = width
     this.height = height
 
-    this.observables = ['width', 'height']
-    observeListOfProperties(this, this.observables)
+    observeListOfProperties(this, ['width', 'height'])
   }
 
   get values() { return [this.width, this.height] }
@@ -15,6 +14,10 @@ class Size {
     return (
       Math.abs(this.width) * Math.abs(this.height)
     )
+  }
+
+  toString() {
+    return `Size(${this.width}, ${this.height})`
   }
 }
 

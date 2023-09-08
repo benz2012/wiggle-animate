@@ -21,10 +21,7 @@ class Shadow extends Colorable {
     this.blur = blur
     this.offset = new Vector2(offsetX, offsetY)
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'blur', 'offset']
-    this._nestedObservables = [...super.nestedObservables, 'offset']
-    observeListOfProperties(this, this.observables, inheritedObservables)
+    observeListOfProperties(this, ['_color', 'blur', 'offset'])
   }
 
   prepare(ctx) {

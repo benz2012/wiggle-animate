@@ -11,11 +11,14 @@ class Alignment {
     this.x = x
     this.y = y
 
-    this.observables = ['x', 'y']
-    observeListOfProperties(this, this.observables)
+    observeListOfProperties(this, ['x', 'y'])
   }
 
   get values() { return [this.x, this.y] }
+
+  toString() {
+    return `${this.constructor.name}(${this.x}, ${this.y})`
+  }
 }
 
 export default Alignment

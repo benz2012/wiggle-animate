@@ -1,16 +1,34 @@
-import { makeObservable, action, observable } from 'mobx'
+import { makeObservable, action } from 'mobx'
 
 import Shape from '../drawing/Shape'
-import { observeListOfProperties } from '../../utility/state'
+import Property from '../structure/Property'
 
 class Text extends Shape {
   constructor(...args) {
     super('text', ...args)
 
-    this.text = this.name
-    this.fontSize = 100
-    this.font = 'sans-serif'
-    this.direction = 'ltr'
+    this._text = new Property({
+      type: Property.PRIMITIVES.STRING,
+      value: this.name.value,
+      isEditable: true,
+      isKeyframable: true,
+    })
+    this._fontSize = new Property({
+      type: Property.PRIMITIVES.INTEGER,
+      value: 100,
+      isEditable: true,
+      isKeyframable: true,
+    })
+    this._font = new Property({
+      type: Property.PRIMITIVES.STRING,
+      value: 'sans-serif',
+      isEditable: true,
+    })
+    this._direction = new Property({
+      type: Property.PRIMITIVES.STRING,
+      value: 'ltr',
+      isEditable: true,
+    })
 
     // These mess with drawing operations too much, lock these in but allow normal
     // rectangular/shape alignment to contribute
@@ -19,36 +37,26 @@ class Text extends Shape {
 
     this.middleToTop = 0
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'text', 'fontSize', 'font', 'direction']
-    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { measureAndSetSize: action })
-
-    this.keyframes = {
-      ...this.keyframes,
-      text: observable([]),
-      fontSize: observable([]),
-    }
   }
 
-  updatePropertiesForFrame(frame) {
-    super.updatePropertiesForFrame(frame)
-    this.text = this.valueForFrame(frame, 'text')
-    this.fontSize = this.valueForFrame(frame, 'fontSize')
-  }
+  get text() { return this._text }
+  get fontSize() { return this._fontSize }
+  get font() { return this._font }
+  get direction() { return this._direction }
 
   measureAndSetSize() {
-    const metrics = this.ctx.measureText(this.text)
+    const metrics = this.ctx.measureText(this.text.value)
     this.width = metrics.width
     this.height = metrics.fontBoundingBoxDescent + metrics.fontBoundingBoxAscent
     this.middleToTop = metrics.fontBoundingBoxAscent
   }
 
   drawShape() {
-    this.ctx.font = `${this.fontSize}px ${this.font}`
+    this.ctx.font = `${this.fontSize.value}px ${this.font.value}`
     this.ctx.textAlign = this.align
     this.ctx.textBaseline = this.baseline
-    this.ctx.direction = this.direction
+    this.ctx.direction = this.direction.value
     this.measureAndSetSize()
 
     // Since the browser doesn't draw "middle" in the true middle, offset the drawing
@@ -63,9 +71,9 @@ class Text extends Shape {
     this.ctx.beginPath()
     this.shadow.prepare(this.ctx)
     this.stroke.prepare(this.ctx)
-    this.ctx.strokeText(this.text, 0, 0)
+    this.ctx.strokeText(this.text.value, 0, 0)
     this.fill.prepare(this.ctx)
-    this.ctx.fillText(this.text, 0, 0)
+    this.ctx.fillText(this.text.value, 0, 0)
   }
 }
 

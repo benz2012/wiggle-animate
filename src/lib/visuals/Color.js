@@ -61,8 +61,7 @@ class Color {
       }
     }
 
-    this.observables = ['colorString', 'red', 'green', 'blue', 'alpha']
-    observeListOfProperties(this, this.observables)
+    observeListOfProperties(this, ['colorString', 'red', 'green', 'blue', 'alpha'])
   }
 
   get spec() {

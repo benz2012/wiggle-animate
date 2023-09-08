@@ -1,6 +1,7 @@
-import { makeObservable, action, observable } from 'mobx'
+import { makeObservable, action } from 'mobx'
 
 import Drawable from './Drawable'
+import Property from '../structure/Property'
 import Size from '../structure/Size'
 import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
@@ -8,7 +9,6 @@ import Fill from '../visuals/Fill'
 import Stroke from '../visuals/Stroke'
 import Shadow from '../visuals/Shadow'
 import { drawHoveredIndicator, drawControllerBox } from '../../utility/drawing'
-import { observeListOfProperties } from '../../utility/state'
 
 class Shape extends Drawable {
   static doRectsOverlap(a, b) {
@@ -22,39 +22,34 @@ class Shape extends Drawable {
 
   constructor(shapeType = '', x = 0, y = 0, width = 100, height = 100) {
     super(x, y)
-    this.name = `${shapeType}-${this.name}`
-    this.size = new Size(width, height)
+    this.name.setValue(`${shapeType}-${this.name}`)
+
+    this._size = new Property({
+      type: Size,
+      value: [width, height],
+    })
+    this._alignment = new Property({ type: Alignment })
+
+    // TODO: these are not yet fully fleshed out with the new Property system
+    //       maybe observing things wrong, and also can't keyframe on sub-property
+    //       like fill.opacity
+    // Would like unique keyframes for the following:
+    // width, height, fill.color, fill.opacity, stroke.color, stroke.opacity,
+    // stroke.width, shadow.color, shadow.opacity, shadow.blur, shadow.offset
     this.fill = new Fill(Color.randomPastel())
     this.stroke = new Stroke()
     this.shadow = new Shadow()
-    this.alignment = new Alignment()
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'size', 'fill', 'stroke', 'shadow', 'alignment']
-    this._nestedObservables = [...super.nestedObservables, 'size', 'fill', 'stroke', 'shadow', 'alignment']
-    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { checkPointerIntersections: action })
-
-    this.keyframes = {
-      ...this.keyframes,
-      width: observable([]),
-      height: observable([]),
-      'fill.color': observable([]),
-      'fill.opacity': observable([]),
-      'stroke.color': observable([]),
-      'stroke.opacity': observable([]),
-      'stroke.width': observable([]),
-      'shadow.color': observable([]),
-      'shadow.opacity': observable([]),
-      'shadow.blur': observable([]),
-      'shadow.offset': observable([]),
-    }
   }
 
-  get width() { return this.size.width }
-  set width(value) { this.size.width = value }
-  get height() { return this.size.height }
-  set height(value) { this.size.height = value }
+  get size() { return this._size }
+  get alignment() { return this._alignment }
+
+  get width() { return this.size.value.width }
+  set width(value) { this.size.value.width = value }
+  get height() { return this.size.value.height }
+  set height(value) { this.size.value.height = value }
 
   get rectSpec() {
     // Defaults are for [CENTER, CENTER]
@@ -78,21 +73,6 @@ class Shape extends Drawable {
   drawShape() {
     // overwrite this method in your subclass
     return this
-  }
-
-  updatePropertiesForFrame(frame) {
-    super.updatePropertiesForFrame(frame)
-    this.width = this.valueForFrame(frame, 'width')
-    this.height = this.valueForFrame(frame, 'height')
-    this.fill.color = this.valueForFrame(frame, 'fill.color')
-    this.fill.opacity = this.valueForFrame(frame, 'fill.opacity')
-    this.stroke.color = this.valueForFrame(frame, 'stroke.color')
-    this.stroke.opacity = this.valueForFrame(frame, 'stroke.opacity')
-    this.stroke.width = this.valueForFrame(frame, 'stroke.width')
-    this.shadow.color = this.valueForFrame(frame, 'shadow.color')
-    this.shadow.opacity = this.valueForFrame(frame, 'shadow.opacity')
-    this.shadow.blur = this.valueForFrame(frame, 'shadow.blur')
-    this.shadow.offset = this.valueForFrame(frame, 'shadow.offset')
   }
 
   draw(parentTransform, isHovered, isSelected) {

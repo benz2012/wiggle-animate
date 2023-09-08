@@ -27,6 +27,12 @@ class RootContainer extends Container {
     this.canvasFill = new Fill({ r: 0, g: 0, b: 0 })
     this.setCanvasToBestFit()
 
+    // adjust inherited properties
+    this.position.isKeyframable = false
+    this.origin.isKeyframable = false
+    this.rotation.isKeyframable = false
+    this.scale.isKeyframable = false
+
     makeObservable(this, {
       canvasSize: observable,
       canvasPosition: observable,
@@ -229,9 +235,13 @@ class RootContainer extends Container {
       )
       const selectedItem = this.findItem(selectedId)
       if (this.store.build.hoveredControl === 'position' || fromArrowKey) {
-        selectedItem.position.add(relativeMovementScaledToCanvas)
+        selectedItem.position.setValue(
+          Vector2.add(selectedItem.position.value, relativeMovementScaledToCanvas)
+        )
       } else if (this.store.build.hoveredControl === 'origin') {
-        selectedItem.origin.add(relativeMovementScaledToCanvas)
+        selectedItem.setOrigin(
+          Vector2.add(selectedItem.origin.value, relativeMovementScaledToCanvas)
+        )
       }
     })
   }

@@ -13,12 +13,11 @@ class Keyframe {
   constructor(frame, value) {
     this.frame = frame
     this.value = value
-    this.handleIn = new Handle('IN')
-    this.handleOut = new Handle('OUT')
+    this.handleIn = new Handle(Handle.TYPES.IN)
+    this.handleOut = new Handle(Handle.TYPES.OUT)
 
-    this.observables = ['frame', 'value', 'handleIn', 'handleOut']
-    this.nestedObservables = ['handleIn', 'handleOut']
-    observeListOfProperties(this, this.observables)
+    // TODO: not quite sure if we need to observe value or not
+    observeListOfProperties(this, ['frame'])
   }
 
   static sort = (a, b) => (a.frame - b.frame)
@@ -87,6 +86,10 @@ class Keyframe {
     }
 
     return interpolated
+  }
+
+  toString() {
+    return `${this.constructor.name}(${this.frame}, ${this.value}, ${this.handleIn}, ${this.handleOut})`
   }
 }
 

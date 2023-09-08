@@ -1,28 +1,47 @@
-import { makeObservable, computed } from 'mobx'
-
 import Shape from '../drawing/Shape'
+import Property from '../structure/Property'
 import Alignment from '../structure/Alignment'
+import Size from '../structure/Size'
 
 class Line extends Shape {
   constructor(...args) {
     super('line', ...args)
 
     this.alignment.x = Alignment.LEFT
+    this._thickness = new Property({
+      type: Property.PRIMITIVES.FLOAT,
+      isEditable: true,
+      isKeyframable: true,
+    })
+    this._length = new Property({
+      type: Property.PRIMITIVES.FLOAT,
+      isEditable: true,
+      isKeyframable: true,
+    })
+
+    // instantiate these values outside of the Property input
+    // so that it will trigger their custom setter logic
     this.thickness = 10
     this.length = 400
 
-    this.controllerType = 'Line'
+    // adjust inherited properties
+    this.size.isEditable = false
+    // this.stroke.isEditable = false // this is not yet a property
 
-    makeObservable(this, {
-      length: computed,
-      thickness: computed,
-    })
+    this.controllerType = 'Line'
   }
 
-  get length() { return this.size.width }
-  set length(value) { this.size.width = value }
-  get thickness() { return this.size.height }
-  set thickness(value) { this.size.height = value }
+  get length() { return this._length }
+  set length(value) {
+    this.length.setValue(value)
+    this.width = value
+  }
+
+  get thickness() { return this._thickness }
+  set thickness(value) {
+    this.thickness.setValue(value)
+    this.height = value
+  }
 
   drawShape() {
     this.ctx.beginPath()

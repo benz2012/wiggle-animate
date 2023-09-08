@@ -1,4 +1,3 @@
-import { observeListOfProperties } from '../../utility/state'
 import Color from './Color'
 
 class Colorable {
@@ -11,14 +10,7 @@ class Colorable {
 
   constructor(color) {
     this._color = Colorable.takeColorOrMakeColor(color)
-
-    this._observables = ['_color']
-    this._nestedObservables = ['_color']
-    observeListOfProperties(this, this.observables)
   }
-
-  get observables() { return this._observables }
-  get nestedObservables() { return this._nestedObservables }
 
   get color() { return this._color }
   set color(value) {

@@ -15,9 +15,7 @@ class Stroke extends Colorable {
     //       - outside = draw width*2, cut subtraction within shape
     this.flow = 'outside' // one of: inside | outside | middle
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'width', 'join']
-    observeListOfProperties(this, this.observables, inheritedObservables)
+    observeListOfProperties(this, ['_color', 'width', 'join'])
   }
 
   prepare(ctx) {

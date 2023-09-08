@@ -1,36 +1,18 @@
-import { makeObservable, action } from 'mobx'
-
 import Item from '../structure/Item'
 import Keyframe from '../animation/Keyframe'
 
 class Animatable extends Item {
-  constructor() {
-    super()
-    // All keyframable properties should be statically defined within the constructor
-    // within each inherited child
-    this.keyframes = {}
-
-    makeObservable(this, { addKey: action })
-  }
-
-  addKey(property, frame, value) {
-    const k = new Keyframe(frame, value)
-    this.keyframes[property].push(k)
-    this.keyframes[property].sort(Keyframe.sort)
-    return k
+  get keyframables() {
+    return this.properties.filter((propertyName) => this[propertyName].isKeyframable)
   }
 
   valueForFrame(frame, property) {
-    // TODO: sort keys on add instead of
-    const keyframes = [...this.keyframes[property]].sort(Keyframe.sort)
+    // Keyframes should be sorted here since their order in the array won't always
+    // represent what frame they fall on. E.g. When you slide a keyframe in the timeline
+    const keyframes = [...this[property].keyframes].sort(Keyframe.sort)
+
     if (keyframes.length === 0) {
-      // We support unnested & singly-nested properties
-      // If we want deeper path support, we should make this function more robust
-      if (property.includes('.')) {
-        const [parentProp, childProp] = property.split('.')
-        return this[parentProp][childProp]
-      }
-      return this[property]
+      return this[property].value
     }
 
     const frames = keyframes.map((key) => (key.frame))
@@ -54,6 +36,13 @@ class Animatable extends Item {
     const before = keyframes[where - 1]
     const after = keyframes[where]
     return Keyframe.interpolate(before, after, frame)
+  }
+
+  updatePropertiesForFrame(frame) {
+    this.keyframables.forEach((propertyName) => {
+      const newValue = this.valueForFrame(frame, propertyName)
+      this[propertyName]._setObservableValue(newValue)
+    })
   }
 }
 

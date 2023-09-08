@@ -11,6 +11,10 @@ class Fill extends Colorable {
     if (this.color === 'transparent') return
     ctx.fill()
   }
+
+  toString() {
+    return `Fill(${this.color})`
+  }
 }
 
 export default Fill

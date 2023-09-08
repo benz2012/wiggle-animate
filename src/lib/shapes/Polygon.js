@@ -1,17 +1,19 @@
 import { makeObservable, computed } from 'mobx'
 
 import Shape from '../drawing/Shape'
-import { observeListOfProperties } from '../../utility/state'
+import Property from '../structure/Property'
 
 class Polygon extends Shape {
   constructor(...args) {
     super('polygon', ...args)
 
-    this.sides = 3
+    this._sides = new Property({
+      type: Property.PRIMITIVES.INTEGER,
+      value: 3,
+      isEditable: true,
+    })
+    // TODO: Add property for radius?
 
-    const inheritedObservables = [...super.observables]
-    this._observables = [...inheritedObservables, 'sides']
-    observeListOfProperties(this, this.observables, inheritedObservables)
     makeObservable(this, { radius: computed })
 
     // TODO: Bounding box is a bit big for 3-sides & 5-sides, however the origin is
@@ -20,11 +22,12 @@ class Polygon extends Shape {
     //       for a triangle which would be nice
   }
 
+  get sides() { return this._sides }
   // ignore height, lean on width as the polygon's "radius"
-  get height() { return this.size.width }
+  get height() { return this.width }
   set height(value) {} // eslint-disable-line
-  get radius() { return this.size.width / 2 }
-  set radius(value) { this.size.width = value * 2 }
+  get radius() { return this.width / 2 }
+  set radius(value) { this.width = value * 2 }
 
   /*
     TODO: add a custom findRectIntersections() implementation that checks
@@ -40,9 +43,9 @@ class Polygon extends Shape {
 
     this.ctx.beginPath()
 
-    const anglePerSegment = (Math.PI * 2) / this.sides
+    const anglePerSegment = (Math.PI * 2) / this.sides.value
     this.ctx.moveTo(0, this.radius * -1)
-    Array.from(Array(this.sides)).forEach((_, index) => {
+    Array.from(Array(this.sides.value)).forEach((_, index) => {
       if (index === 0) return
       this.ctx.rotate(anglePerSegment)
       this.ctx.lineTo(0, this.radius * -1)

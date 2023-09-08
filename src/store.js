@@ -184,10 +184,10 @@ class RootStore {
 
   addContainer() {
     const newContainer = new Container()
-    newContainer.origin = [
+    newContainer.setOrigin([
       this.rootContainer.canvasSize.width / 2,
       this.rootContainer.canvasSize.height / 2,
-    ]
+    ])
     return this.addNewItem(newContainer)
   }
 

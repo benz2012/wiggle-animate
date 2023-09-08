@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 
+import Property from './Property'
 import names from '../../assets/names.json'
-import { observeListOfProperties } from '../../utility/state'
 import { randomChoice } from '../../utility/array'
 
 class Item {
@@ -10,17 +10,40 @@ class Item {
 
   constructor() {
     this._id = uuidv4()
-    this.name = randomChoice(names)
-    this.DPR = window.devicePixelRatio || 1
+    this._name = new Property({
+      type: Property.PRIMITIVES.STRING,
+      value: randomChoice(names),
+      isEditable: true,
+    })
 
-    this._observables = ['name']
-    this._nestedObservables = []
-    observeListOfProperties(this, this.observables)
+    // TODO: Is this a problem because this.DPR can change during the life of the app??!?
+    this.DPR = window.devicePixelRatio || 1
   }
 
   get id() { return this._id }
-  get observables() { return this._observables }
-  get nestedObservables() { return this._nestedObservables }
+  get name() { return this._name }
+
+  get properties() {
+    /* eslint-disable no-restricted-syntax */
+    const properties = []
+    for (const propertyName in this) {
+      if (Object.hasOwn(this, propertyName)) {
+        const propertyValue = this[propertyName]
+        if (propertyValue instanceof Property) {
+          properties.push(propertyName)
+        }
+      }
+    }
+    return properties
+  }
+
+  get observables() {
+    return this.properties
+  }
+
+  get editables() {
+    return this.properties.filter((propertyName) => this[propertyName].isEditable)
+  }
 
   delete() {
     Item.rootContainer.findAndDelete(this._id)
