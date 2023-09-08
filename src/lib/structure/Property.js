@@ -16,21 +16,13 @@ class Property {
     if (Type == null) throw new Error('Property.type must not be undefined')
 
     this.isPrimitive = Object.values(Property.PRIMITIVES).includes(Type)
-    this.type = this.isPrimitive ? Type : Type.name
+    this.typeName = this.isPrimitive ? Type : Type.name
+    this.type = Type // when primitive, this will be a string, so don't use it in that case
 
     // Set initial value plainly or instantiate with null, arg, or ...args
-    if (this.isPrimitive) {
-      this._value = value
-    } else if (Array.isArray(value)) {
-      this._value = new Type(...value)
-    } else if (value != null) {
-      this._value = new Type(value)
-    } else {
-      this._value = new Type()
-    }
-    // if (!this.isPrimitive && !('observables' in this._value)) {
-    //   throw new Error(`Property value of type ${this.type} must have an observables array`)
-    // }
+    const castedValue = this.castValue(value)
+    this._setObservableValue(castedValue)
+
     makeObservable(this, {
       _value: observable,
       setValue: action,
@@ -46,22 +38,37 @@ class Property {
     }
   }
 
+  castValue(value) {
+    if (this.isPrimitive) { return value }
+    if (value instanceof this.type) { return value }
+
+    const Type = this.type
+    if (Array.isArray(value)) {
+      return new Type(...value)
+    }
+    if (value != null) {
+      return new Type(value)
+    }
+    return new Type()
+  }
+
   get value() { return this._value }
 
   // We don't use a setter for this because it complicates the observation chain
   // when complex property types are used. This also allows for additional logic
   // within the setter without makeing JS "assignment" confusing (aka using `=`)
   setValue(newValue, when = 1) {
+    const castedValue = this.castValue(newValue)
     const hasAnyKeyframes = this.keyframes?.length > 0
 
     if (!hasAnyKeyframes) {
-      this._setObservableValue(newValue)
+      this._setObservableValue(castedValue)
     } else {
       const existingKeyframe = this.keyframes.find((keyframe) => (keyframe.frame === when))
       if (existingKeyframe) {
-        existingKeyframe.value = newValue
+        existingKeyframe.value = castedValue
       } else {
-        this.addKey(when, newValue)
+        this.addKey(when, castedValue)
       }
     }
   }
