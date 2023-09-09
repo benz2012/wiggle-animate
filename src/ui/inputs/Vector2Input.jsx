@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const Vector2Input = observer(({ width, name, targetProperty }) => {
+const Vector2Input = observer(({ width, name, targetProperty, setProperty }) => {
   // The internal value allows us to track invalid strings in the input
   // box, without corrupting the value of the targetProperty.
   // When one is set, it indicates that the inputbox is in an error state
@@ -27,9 +27,9 @@ const Vector2Input = observer(({ width, name, targetProperty }) => {
     }
 
     if (subProp === 'x') {
-      targetProperty.setValue([potentialFloat, targetProperty.value.y])
+      setProperty([potentialFloat, targetProperty.value.y])
     } else if (subProp === 'y') {
-      targetProperty.setValue([targetProperty.value.x, potentialFloat])
+      setProperty([targetProperty.value.x, potentialFloat])
     }
     setInternalValue({ ...internalValue, [subProp]: null })
   }

@@ -22,7 +22,7 @@ const inputClasses = {
   Angle: AngleInput,
 }
 
-const Contents = observer(({ numSelected, selectedItem }) => {
+const Contents = observer(({ store, numSelected, selectedItem }) => {
   const [contentOpacity, setContentOpacity] = useState(1)
   const prevNumSelected = usePrevious(numSelected)
   useEffect(() => {
@@ -52,6 +52,10 @@ const Contents = observer(({ numSelected, selectedItem }) => {
     )
   }
 
+  const genericSetter = (property) => (newValue) => {
+    property.setValue(newValue, store.animation.now)
+  }
+
   return (
     <Box
       sx={{
@@ -74,6 +78,7 @@ const Contents = observer(({ numSelected, selectedItem }) => {
           width: INPUT_WIDTH,
           name,
           targetProperty: property,
+          setProperty: genericSetter(property),
         }
         return <ComponentClass {...componentProps} />
       })}

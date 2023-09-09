@@ -3,10 +3,10 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const StringInput = observer(({ width, name, targetProperty }) => {
+const StringInput = observer(({ width, name, targetProperty, setProperty }) => {
   const setter = (event) => {
     const { value } = event.target
-    targetProperty.setValue(value)
+    setProperty(value)
   }
 
   return (

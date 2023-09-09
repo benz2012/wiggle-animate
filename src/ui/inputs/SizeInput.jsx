@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const SizeInput = observer(({ width: inputWidth, name, targetProperty }) => {
+const SizeInput = observer(({ width: inputWidth, name, targetProperty, setProperty }) => {
   // The internal value allows us to track invalid strings in the input
   // box, without corrupting the value of the targetProperty.
   // When one is set, it indicates that the inputbox is in an error state
@@ -27,9 +27,9 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty }) => {
     }
 
     if (subProp === 'width') {
-      targetProperty.setValue([potentialFloat, targetProperty.value.height])
+      setProperty([potentialFloat, targetProperty.value.height])
     } else if (subProp === 'height') {
-      targetProperty.setValue([targetProperty.value.width, potentialFloat])
+      setProperty([targetProperty.value.width, potentialFloat])
     }
     setInternalValue({ ...internalValue, [subProp]: null })
   }

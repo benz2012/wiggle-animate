@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const AngleInput = observer(({ width, name, targetProperty }) => {
+const AngleInput = observer(({ width, name, targetProperty, setProperty }) => {
   // The internal value allows us to track invalid strings in the input
   // box, without corrupting the value of the targetProperty.
   // When one is set, it indicates that the inputbox is in an error state
@@ -23,7 +23,7 @@ const AngleInput = observer(({ width, name, targetProperty }) => {
       return
     }
 
-    targetProperty.setValue(potentialFloat)
+    setProperty(potentialFloat)
     setInternalValue(null)
   }
 

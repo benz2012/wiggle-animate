@@ -127,6 +127,7 @@ const PropertyEditor = observer(({ store }) => {
               }}
             >
               <Contents
+                store={store}
                 numSelected={selectedIds.length}
                 selectedItem={selectedItem}
               />
