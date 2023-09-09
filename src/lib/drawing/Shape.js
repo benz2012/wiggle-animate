@@ -2,7 +2,6 @@ import { makeObservable, action } from 'mobx'
 
 import Drawable from './Drawable'
 import Property from '../structure/Property'
-import Size from '../structure/Size'
 import Alignment from '../structure/Alignment'
 import Color from '../visuals/Color'
 import Fill from '../visuals/Fill'
@@ -24,20 +23,30 @@ class Shape extends Drawable {
     super(x, y)
     this.name.setValue(`${shapeType}-${this.name}`)
 
-    // TODO: uhhh, maybe I want these properties to be standalone, idk
-    this._size = new Property({
-      type: Size,
-      value: [width, height],
+    this._width = new Property({
+      type: Property.PRIMITIVES.FLOAT,
+      value: width,
+      group: 'size',
       isEditable: true,
       isKeyframable: true,
     })
-    this._alignment = new Property({ type: Alignment })
+    this._height = new Property({
+      type: Property.PRIMITIVES.FLOAT,
+      value: height,
+      group: 'size',
+      isEditable: true,
+      isKeyframable: true,
+    })
+    this._alignment = new Property({
+      type: Alignment,
+      isEditable: true,
+    })
 
     // TODO: these are not yet fully fleshed out with the new Property system
     //       maybe observing things wrong, and also can't keyframe on sub-property
     //       like fill.opacity
     // Would like unique keyframes for the following:
-    // width, height, fill.color, fill.opacity, stroke.color, stroke.opacity,
+    // fill.color, fill.opacity, stroke.color, stroke.opacity,
     // stroke.width, shadow.color, shadow.opacity, shadow.blur, shadow.offset
     this.fill = new Fill(Color.randomPastel())
     this.stroke = new Stroke()
@@ -46,13 +55,13 @@ class Shape extends Drawable {
     makeObservable(this, { checkPointerIntersections: action })
   }
 
-  get size() { return this._size }
-  get alignment() { return this._alignment }
-
-  get width() { return this.size.value.width }
-  set width(value) { this.size.value.width = value }
-  get height() { return this.size.value.height }
-  set height(value) { this.size.value.height = value }
+  // Here I return the property-values and not the properties themselves
+  // this will cause less ripples with changing from size.w/h to w/h
+  // but I also think I want to do this for every class in the chain because
+  // I don't see a reason why you need an alias to access the property itself
+  get width() { return this._width.value }
+  get height() { return this._height.value }
+  get alignment() { return this._alignment.value }
 
   get rectSpec() {
     // Defaults are for [CENTER, CENTER]

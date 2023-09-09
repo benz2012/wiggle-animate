@@ -24,17 +24,18 @@ class Text extends Shape {
       value: 'sans-serif',
       isEditable: true,
     })
-    this._direction = new Property({
-      type: Property.PRIMITIVES.STRING,
-      value: 'ltr',
-      isEditable: true,
-    })
 
     // These mess with drawing operations too much, lock these in but allow normal
     // rectangular/shape alignment to contribute
+    this._width.isEditable = false
+    this._width.isKeyframable = false
+    this._height.isEditable = false
+    this._height.isKeyframable = false
     this.baseline = 'middle'
     this.align = 'center'
 
+    // other non-editible features
+    this.direction = 'ltr'
     this.middleToTop = 0
 
     makeObservable(this, { measureAndSetSize: action })
@@ -43,12 +44,11 @@ class Text extends Shape {
   get text() { return this._text }
   get fontSize() { return this._fontSize }
   get font() { return this._font }
-  get direction() { return this._direction }
 
   measureAndSetSize() {
     const metrics = this.ctx.measureText(this.text.value)
-    this.width = metrics.width
-    this.height = metrics.fontBoundingBoxDescent + metrics.fontBoundingBoxAscent
+    this._width.setValue(metrics.width)
+    this._height.setValue(metrics.fontBoundingBoxDescent + metrics.fontBoundingBoxAscent)
     this.middleToTop = metrics.fontBoundingBoxAscent
   }
 
@@ -56,7 +56,7 @@ class Text extends Shape {
     this.ctx.font = `${this.fontSize.value}px ${this.font.value}`
     this.ctx.textAlign = this.align
     this.ctx.textBaseline = this.baseline
-    this.ctx.direction = this.direction.value
+    this.ctx.direction = this.direction
     this.measureAndSetSize()
 
     // Since the browser doesn't draw "middle" in the true middle, offset the drawing

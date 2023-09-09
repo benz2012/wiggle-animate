@@ -26,6 +26,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
   const [contentOpacity, setContentOpacity] = useState(1)
   const prevNumSelected = usePrevious(numSelected)
   useEffect(() => {
+    /* eslint-disable react-hooks/exhaustive-deps */
     if (prevNumSelected !== 1 && numSelected === 1) {
       setContentOpacity(0)
       setTimeout(() => { setContentOpacity(1) })
@@ -68,7 +69,13 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     >
       {selectedItem.editables.map((propertyName) => {
         const property = selectedItem[propertyName]
-        const name = propertyName.startsWith('_') ? propertyName.slice(1) : propertyName
+
+        let name = propertyName
+        if (property.label) {
+          name = property.label
+        } else if (propertyName.startsWith('_')) {
+          name = propertyName.slice(1)
+        }
 
         const ComponentClass = inputClasses[property.typeName]
         if (ComponentClass == null) return null

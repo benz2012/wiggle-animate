@@ -31,9 +31,12 @@ class Path extends Shape {
     // Point mode -- move each point individually, or move/scale/rotate mutliple points at once
     //               any changes here only affect the position of each point, and nothing else
 
-    // ignore alignment since drawing is done from points instead of relation to this.position
-    this.alignment.isEditable = false
-    this.size.isEditable = false
+    // ignore these since drawing is done from points instead of relation to this.position
+    this._alignment.isEditable = false
+    this._width.isEditable = false
+    this._width.isKeyframable = false
+    this._height.isEditable = false
+    this._height.isKeyframable = false
 
     observeListOfProperties(this, ['points', 'closed', 'hoveringOverStart'])
     makeObservable(this, {
@@ -132,8 +135,8 @@ class Path extends Shape {
     // TODO: this only needs to run when this.points changes, not during draw
 
     if (this.points.length === 0) {
-      this.width = 0
-      this.height = 0
+      this._width.setValue(0)
+      this._height.setValue(0)
       return [0, 0]
     }
 
@@ -157,8 +160,8 @@ class Path extends Shape {
       }
     })
 
-    this.width = maxX - minX
-    this.height = maxY - minY
+    this._width.setValue(maxX - minX)
+    this._height.setValue(maxY - minY)
     return [minX, minY]
   }
 

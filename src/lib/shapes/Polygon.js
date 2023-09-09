@@ -7,12 +7,13 @@ class Polygon extends Shape {
   constructor(...args) {
     super('polygon', ...args)
 
+    this._height.isEditable = false
+    this._width.label = 'diameter'
     this._sides = new Property({
       type: Property.PRIMITIVES.INTEGER,
       value: 3,
       isEditable: true,
     })
-    // TODO: Add property for radius?
 
     makeObservable(this, { radius: computed })
 
@@ -22,12 +23,9 @@ class Polygon extends Shape {
     //       for a triangle which would be nice
   }
 
-  get sides() { return this._sides }
-  // ignore height, lean on width as the polygon's "radius"
   get height() { return this.width }
-  set height(value) {} // eslint-disable-line
+  get sides() { return this._sides.value }
   get radius() { return this.width / 2 }
-  set radius(value) { this.width = value * 2 }
 
   /*
     TODO: add a custom findRectIntersections() implementation that checks
@@ -43,9 +41,9 @@ class Polygon extends Shape {
 
     this.ctx.beginPath()
 
-    const anglePerSegment = (Math.PI * 2) / this.sides.value
+    const anglePerSegment = (Math.PI * 2) / this.sides
     this.ctx.moveTo(0, this.radius * -1)
-    Array.from(Array(this.sides.value)).forEach((_, index) => {
+    Array.from(Array(this.sides)).forEach((_, index) => {
       if (index === 0) return
       this.ctx.rotate(anglePerSegment)
       this.ctx.lineTo(0, this.radius * -1)

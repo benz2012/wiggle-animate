@@ -10,6 +10,9 @@ class Property {
   constructor({
     type: Type,
     value = null,
+    label = null,
+    group = null,
+    order = 0,
     isEditable = false,
     isKeyframable = false,
   } = {}) {
@@ -18,6 +21,9 @@ class Property {
     this.isPrimitive = Object.values(Property.PRIMITIVES).includes(Type)
     this.typeName = this.isPrimitive ? Type : Type.name
     this.type = Type // when primitive, this will be a string, so don't use it in that case
+    this.label = label
+    this.group = group
+    this.order = order
 
     // Set initial value plainly or instantiate with null, arg, or ...args
     const castedValue = this.castValue(value)
