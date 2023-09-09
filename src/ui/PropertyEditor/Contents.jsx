@@ -24,9 +24,9 @@ const inputClasses = {
 
 const Contents = observer(({ numSelected, selectedItem }) => {
   const [contentOpacity, setContentOpacity] = useState(1)
-  const previousNumSelected = usePrevious(numSelected)
+  const prevNumSelected = usePrevious(numSelected)
   useEffect(() => {
-    if (previousNumSelected !== 1 && numSelected === 1) {
+    if (prevNumSelected !== 1 && numSelected === 1) {
       setContentOpacity(0)
       setTimeout(() => { setContentOpacity(1) })
     } else {

@@ -233,14 +233,25 @@ class RootContainer extends Container {
         relativeMovement.x / this.canvasScale,
         relativeMovement.y / this.canvasScale,
       )
+
       const selectedItem = this.findItem(selectedId)
+      const { now } = this.store.animation
+
       if (this.store.build.hoveredControl === 'position' || fromArrowKey) {
         selectedItem.position.setValue(
-          Vector2.add(selectedItem.position.value, relativeMovementScaledToCanvas)
+          Vector2.add(
+            selectedItem.valueForFrame(now, 'position'),
+            relativeMovementScaledToCanvas
+          ),
+          now
         )
       } else if (this.store.build.hoveredControl === 'origin') {
         selectedItem.setOrigin(
-          Vector2.add(selectedItem.origin.value, relativeMovementScaledToCanvas)
+          Vector2.add(
+            selectedItem.valueForFrame(now, 'origin'),
+            relativeMovementScaledToCanvas
+          ),
+          now
         )
       }
     })

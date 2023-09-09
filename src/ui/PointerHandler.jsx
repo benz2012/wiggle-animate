@@ -45,10 +45,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         )
         store.rootContainer.canvasPosition = newCanvasPosition
       } else if (selectedIds.length > 0) {
-        // TODO: movement vectors need to be converted into a childs space before being applied
-        // otherwise if a parent is scaled/rotated the vector will be incorrect
-        // aka, your mouse only moves in 1:1-scale and 0 rotation world, but the children of
-        // parents are not garunteed to be in that space
+        // TODO: When a child is inside a container that has been rotated/scaled,
+        // but you're trying to move just the child, not the parent container, the
+        // movement vectors need to be converted into the childs space before being applied
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
         store.selector.rect.width += relativeMovement.x

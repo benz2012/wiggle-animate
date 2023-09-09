@@ -89,6 +89,8 @@ class Path extends Shape {
   calculateOrigin() {
     const polygonSpec = this.points.map((point) => (point.values))
     const poleOfInaccessibility = polylabel([polygonSpec])
+    // NOTE: if you ever allow this method to run after keyframes exist,
+    // make sure to pass store.animation.now to setOrigin
     this.setOrigin(poleOfInaccessibility)
   }
 

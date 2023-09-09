@@ -32,16 +32,17 @@ class Line extends Shape {
   }
 
   get length() { return this._length }
-  set length(value) {
-    this.length.setValue(value)
-    this.width = value
-  }
+  // These are flawed setters
+  // set length(value, when) {
+  //   this.length.setValue(value, when)
+  //   this.width = value
+  // }
 
   get thickness() { return this._thickness }
-  set thickness(value) {
-    this.thickness.setValue(value)
-    this.height = value
-  }
+  // set thickness(value, when) {
+  //   this.thickness.setValue(value, when)
+  //   this.height = value
+  // }
 
   drawShape() {
     this.ctx.beginPath()

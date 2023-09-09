@@ -16,8 +16,7 @@ class Keyframe {
     this.handleIn = new Handle(Handle.TYPES.IN)
     this.handleOut = new Handle(Handle.TYPES.OUT)
 
-    // TODO: not quite sure if we need to observe value or not
-    observeListOfProperties(this, ['frame'])
+    observeListOfProperties(this, ['frame', 'value'])
   }
 
   static sort = (a, b) => (a.frame - b.frame)

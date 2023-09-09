@@ -17,6 +17,9 @@ const PropertyEditor = observer(({ store }) => {
   //  - reset the position of the editor
   //  - Live Update |or| Update on Enter
   //  - ClickAway Updates Value |or| Ignores Value
+  //  - Dock Panel on right side, fill page vertically
+  //  - hide when playing animation
+  //  - - hide forever, show again after animation stopped
 
   const { build, rootContainer } = store
   const { selectedIds } = build
