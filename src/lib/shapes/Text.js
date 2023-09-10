@@ -13,16 +13,22 @@ class Text extends Shape {
       isEditable: true,
       isKeyframable: true,
     })
-    this._fontSize = new Property({
-      type: Property.PRIMITIVES.INTEGER,
-      value: 100,
-      isEditable: true,
-      isKeyframable: true,
-    })
     this._font = new Property({
       type: Property.PRIMITIVES.STRING,
       value: 'sans-serif',
       isEditable: true,
+      group: 'font',
+      label: 'typeface',
+    })
+    this._fontSize = new Property({
+      type: Property.PRIMITIVES.INTEGER,
+      value: 100,
+      isEditable: true,
+      group: 'font',
+      label: 'size',
+      minValue: 0,
+      maxValue: 10000,
+      isKeyframable: true,
     })
 
     // These mess with drawing operations too much, lock these in but allow normal

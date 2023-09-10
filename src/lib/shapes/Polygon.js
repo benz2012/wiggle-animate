@@ -9,6 +9,7 @@ class Polygon extends Shape {
 
     this._height.isEditable = false
     this._width.label = 'diameter'
+    this._width.group = null
     this._sides = new Property({
       type: Property.PRIMITIVES.INTEGER,
       value: 3,
