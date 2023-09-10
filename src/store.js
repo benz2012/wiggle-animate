@@ -80,7 +80,10 @@ class RootStore {
       MiddleMouse: false,
     }
 
-    this.propertyEditor = { position: new Vector2(16, 42 + 16 + 8) }
+    this.propertyEditor = {
+      position: new Vector2(16, 42 + 16 + 8),
+      hiddenGroups: {},
+    }
 
     this.animation = new Animation()
     // TODO: removing this after debugging
@@ -125,6 +128,8 @@ class RootStore {
       setKeyHeld: action,
 
       setPropertyEditorPosition: action,
+      hidePropertyGroup: action,
+      showPropertyGroup: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -302,6 +307,14 @@ class RootStore {
   setPropertyEditorPosition(value) {
     this.propertyEditor.position.x = value.x
     this.propertyEditor.position.y = value.y
+  }
+
+  hidePropertyGroup(groupName) {
+    this.propertyEditor.hiddenGroups[groupName] = true
+  }
+
+  showPropertyGroup(groupName) {
+    this.propertyEditor.hiddenGroups[groupName] = false
   }
 
   /* Output Actions */

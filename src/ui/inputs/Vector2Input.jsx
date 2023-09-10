@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const Vector2Input = observer(({ width, name, targetProperty, setProperty }) => {
+const Vector2Input = observer(({ width, label, targetProperty, setProperty }) => {
   // The internal value allows us to track invalid strings in the input
   // box, without corrupting the value of the targetProperty.
   // When one is set, it indicates that the inputbox is in an error state
@@ -38,7 +38,7 @@ const Vector2Input = observer(({ width, name, targetProperty, setProperty }) => 
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Typography
         component="label"
-        htmlFor={`input-${name}-x`}
+        htmlFor={`input-${label}-x`}
         sx={{
           fontFamily: 'monospace',
           fontSize: 12,
@@ -47,11 +47,11 @@ const Vector2Input = observer(({ width, name, targetProperty, setProperty }) => 
           '&:hover': { color: 'text.secondary' },
         }}
       >
-        {name}
+        {label}
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
       <InputBase
-        id={`input-${name}-x`}
+        id={`input-${label}-x`}
         sx={(theme) => ({
           width: `calc(${(width / 2)}px - ${theme.spacing(0.25)})`,
           bgcolor: 'action.hover',
@@ -77,7 +77,7 @@ const Vector2Input = observer(({ width, name, targetProperty, setProperty }) => 
         error={internalValue.x !== null}
       />
       <InputBase
-        id={`input-${name}-y`}
+        id={`input-${label}-y`}
         sx={(theme) => ({
           width: `calc(${(width / 2)}px - ${theme.spacing(0.25)})`,
           bgcolor: 'action.hover',

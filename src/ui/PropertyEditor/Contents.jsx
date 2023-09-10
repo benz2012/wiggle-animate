@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
+import GroupHeading from './GroupHeading'
 import usePrevious from '../hooks/usePrevious'
 import StringInput from '../inputs/StringInput'
 import Vector2Input from '../inputs/Vector2Input'
@@ -57,6 +58,61 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     property.setValue(newValue, store.animation.now)
   }
 
+  const makePropertyComponent = (property) => {
+    const ComponentClass = inputClasses[property.typeName]
+    if (ComponentClass == null) return null
+
+    const componentProps = {
+      key: `${selectedItem.id}-${property.label}`,
+      width: INPUT_WIDTH,
+      label: property.label,
+      targetProperty: property,
+      setProperty: genericSetter(property),
+    }
+    return <ComponentClass {...componentProps} />
+  }
+
+  const makePropertyGroup = (propertyGroup) => {
+    const { groupName, contents } = propertyGroup
+    const thisItemGroup = `${selectedItem.id}-${groupName}`
+
+    const show = !store.propertyEditor.hiddenGroups[thisItemGroup]
+    const toggleGroup = (shouldShow) => {
+      if (shouldShow) {
+        store.showPropertyGroup(thisItemGroup)
+      } else {
+        store.hidePropertyGroup(thisItemGroup)
+      }
+    }
+
+    return (
+      <GroupHeading key={`group-${groupName}`} name={groupName} show={show} toggleGroup={toggleGroup}>
+        {contents.map(makePropertyComponent)}
+      </GroupHeading>
+    )
+  }
+
+  const editableProperties = selectedItem.editables.map((propertyName) => selectedItem[propertyName])
+  const orderedGroupedProperties = editableProperties.reduce((finalList, property) => {
+    const { group } = property
+    if (group != null) {
+      let existingGroupIndex = finalList.findIndex((element) => (
+        element.isGroup && element.groupName === group
+      ))
+      if (existingGroupIndex === -1) {
+        const newLength = finalList.push({ isGroup: true, groupName: group, contents: [] })
+        existingGroupIndex = newLength - 1
+      }
+      finalList[existingGroupIndex].contents.push(property)
+    } else {
+      finalList.push(property)
+    }
+    return finalList
+  }, [])
+  const listOfComponents = orderedGroupedProperties.map((property) => (
+    property.isGroup ? makePropertyGroup(property) : makePropertyComponent(property)
+  ))
+
   return (
     <Box
       sx={{
@@ -67,28 +123,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
         opacity: contentOpacity,
       }}
     >
-      {selectedItem.editables.map((propertyName) => {
-        const property = selectedItem[propertyName]
-
-        let name = propertyName
-        if (property.label) {
-          name = property.label
-        } else if (propertyName.startsWith('_')) {
-          name = propertyName.slice(1)
-        }
-
-        const ComponentClass = inputClasses[property.typeName]
-        if (ComponentClass == null) return null
-
-        const componentProps = {
-          key: `${selectedItem.id}-${propertyName}`,
-          width: INPUT_WIDTH,
-          name,
-          targetProperty: property,
-          setProperty: genericSetter(property),
-        }
-        return <ComponentClass {...componentProps} />
-      })}
+      {listOfComponents}
     </Box>
   )
 })

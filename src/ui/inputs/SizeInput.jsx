@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const SizeInput = observer(({ width: inputWidth, name, targetProperty, setProperty }) => {
+const SizeInput = observer(({ width: inputWidth, label, targetProperty, setProperty }) => {
   // The internal value allows us to track invalid strings in the input
   // box, without corrupting the value of the targetProperty.
   // When one is set, it indicates that the inputbox is in an error state
@@ -38,7 +38,7 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty, setProper
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Typography
         component="label"
-        htmlFor={`input-${name}-width`}
+        htmlFor={`input-${label}-width`}
         sx={{
           fontFamily: 'monospace',
           fontSize: 12,
@@ -47,11 +47,11 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty, setProper
           '&:hover': { color: 'text.secondary' },
         }}
       >
-        {name}
+        {label}
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
       <InputBase
-        id={`input-${name}-width`}
+        id={`input-${label}-width`}
         sx={(theme) => ({
           width: `calc(${(inputWidth / 2)}px - ${theme.spacing(0.25)})`,
           bgcolor: 'action.hover',
@@ -77,7 +77,7 @@ const SizeInput = observer(({ width: inputWidth, name, targetProperty, setProper
         error={internalValue.width !== null}
       />
       <InputBase
-        id={`input-${name}-height`}
+        id={`input-${label}-height`}
         sx={(theme) => ({
           width: `calc(${(inputWidth / 2)}px - ${theme.spacing(0.25)})`,
           bgcolor: 'action.hover',

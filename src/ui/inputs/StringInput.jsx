@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const StringInput = observer(({ width, name, targetProperty, setProperty }) => {
+const StringInput = observer(({ width, label, targetProperty, setProperty }) => {
   const setter = (event) => {
     const { value } = event.target
     setProperty(value)
@@ -13,7 +13,7 @@ const StringInput = observer(({ width, name, targetProperty, setProperty }) => {
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Typography
         component="label"
-        htmlFor={`input-${name}`}
+        htmlFor={`input-${label}`}
         sx={{
           fontFamily: 'monospace',
           fontSize: 12,
@@ -22,11 +22,11 @@ const StringInput = observer(({ width, name, targetProperty, setProperty }) => {
           '&:hover': { color: 'text.secondary' },
         }}
       >
-        {name}
+        {label}
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
       <InputBase
-        id={`input-${name}`}
+        id={`input-${label}`}
         sx={(theme) => ({
           width,
           bgcolor: 'action.hover',

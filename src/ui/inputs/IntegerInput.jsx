@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 import Typography from '@mui/material/Typography'
 
-const IntegerInput = observer(({ width, name, targetProperty, setProperty }) => {
+const IntegerInput = observer(({ width, label, targetProperty, setProperty }) => {
   // The internal value allows us to track invalid strings in the input
   // box, without corrupting the value of the targetProperty.
   // When one is set, it indicates that the inputbox is in an error state
@@ -30,7 +30,7 @@ const IntegerInput = observer(({ width, name, targetProperty, setProperty }) => 
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Typography
         component="label"
-        htmlFor={`input-${name}`}
+        htmlFor={`input-${label}`}
         sx={{
           fontFamily: 'monospace',
           fontSize: 12,
@@ -39,11 +39,11 @@ const IntegerInput = observer(({ width, name, targetProperty, setProperty }) => 
           '&:hover': { color: 'text.secondary' },
         }}
       >
-        {name}
+        {label}
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
       <InputBase
-        id={`input-${name}`}
+        id={`input-${label}`}
         sx={(theme) => ({
           width: `calc(${(width / 2)}px - ${theme.spacing(0.25)})`,
           bgcolor: 'action.hover',

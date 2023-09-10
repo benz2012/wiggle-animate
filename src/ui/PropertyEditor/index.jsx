@@ -71,10 +71,11 @@ const PropertyEditor = observer(({ store }) => {
   }
 
   const [contentHeight, setContentHeight] = useState(0)
+  const groupToggles = JSON.stringify(store.propertyEditor.hiddenGroups)
   useEffect(() => {
     if (expanded && !expansionAnimationDone) return
     setContentHeight(contentsMeasurerRef.current?.clientHeight)
-  }, [selectedItem.id, expanded, expansionAnimationDone])
+  }, [selectedItem.id, expanded, expansionAnimationDone, groupToggles])
 
   return (
     <Portal>

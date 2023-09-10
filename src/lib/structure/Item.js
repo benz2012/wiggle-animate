@@ -31,6 +31,15 @@ class Item {
         const propertyValue = this[propertyName]
         if (propertyValue instanceof Property) {
           properties.push(propertyName)
+
+          // Since Property has no way of know it's own name, we will cache it's name
+          // inside of itself on the `label` attribute. This is somewhat hacky since
+          // it's imperitive, and lives outside of the Property class, but prevents
+          // us from having to declare a label unnecessarily. Property.label will then
+          // never be null/undefined after this point
+          if (propertyValue.label == null) {
+            propertyValue.label = propertyName.startsWith('_') ? propertyName.slice(1) : propertyName
+          }
         }
       }
     }
