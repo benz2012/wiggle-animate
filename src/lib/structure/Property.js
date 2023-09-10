@@ -11,10 +11,16 @@ class Property {
   constructor({
     type: Type,
     value = null,
+
+    // Editor Attributes
+    isEditable = false,
     label = null,
     group = null,
     order = 0,
-    isEditable = false,
+    minValue = null, // only applies to primitive float and int
+    maxValue = null, // only applies to primitive float and int
+
+    // Keyframe Attributes
     isKeyframable = false,
   } = {}) {
     if (Type == null) throw new Error('Property.type must not be undefined')
@@ -25,9 +31,11 @@ class Property {
     this.label = label
     this.group = group
     this.order = order
+    this.minValue = minValue
+    this.maxValue = maxValue
 
     // Set initial value plainly or instantiate with null, arg, or ...args
-    const castedValue = this.castValue(value)
+    const castedValue = this.castAndCoerceValue(value)
     this._setObservableValue(castedValue)
 
     makeObservable(this, {
@@ -45,13 +53,26 @@ class Property {
     }
   }
 
-  castValue(value) {
+  /* This method casts the incoming value to the type that it should
+   * have as declarted during Property Instantiation. It also coerces
+   * values to be slightly different based on system design and
+   * validation rules.
+   */
+  castAndCoerceValue(value) {
     if (this.isPrimitive) {
-      if (this.typeName === Property.PRIMITIVES.FLOAT) {
-        return truncateFloatLeaveInt(value)
+      if ([Property.PRIMITIVES.FLOAT, Property.PRIMITIVES.INTEGER].includes(this.typeName)) {
+        const truncatedValue = truncateFloatLeaveInt(value)
+        if (this.maxValue != null && truncatedValue > this.maxValue) {
+          return this.maxValue
+        }
+        if (this.minValue != null && truncatedValue < this.minValue) {
+          return this.minValue
+        }
+        return truncatedValue
       }
       return value
     }
+
     if (value instanceof this.type) { return value }
 
     const Type = this.type
@@ -70,7 +91,7 @@ class Property {
   // when complex property types are used. This also allows for additional logic
   // within the setter without makeing JS "assignment" confusing (aka using `=`)
   setValue(newValue, when = 1) {
-    const castedValue = this.castValue(newValue)
+    const castedValue = this.castAndCoerceValue(newValue)
     const hasAnyKeyframes = this.keyframes?.length > 0
 
     if (!hasAnyKeyframes) {

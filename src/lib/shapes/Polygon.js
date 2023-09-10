@@ -13,6 +13,7 @@ class Polygon extends Shape {
       type: Property.PRIMITIVES.INTEGER,
       value: 3,
       isEditable: true,
+      maxValue: 100,
     })
 
     makeObservable(this, { radius: computed })
