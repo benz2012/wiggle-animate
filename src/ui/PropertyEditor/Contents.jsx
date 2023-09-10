@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
-import GroupHeading from './GroupHeading'
+import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 import StringInput from '../inputs/StringInput'
 import Vector2Input from '../inputs/Vector2Input'
@@ -86,9 +86,9 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     }
 
     return (
-      <GroupHeading key={`group-${groupName}`} name={groupName} show={show} toggleGroup={toggleGroup}>
+      <PropertyGroup key={`group-${groupName}`} name={groupName} show={show} toggleGroup={toggleGroup}>
         {contents.map(makePropertyComponent)}
-      </GroupHeading>
+      </PropertyGroup>
     )
   }
 

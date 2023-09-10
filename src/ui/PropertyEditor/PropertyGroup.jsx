@@ -4,7 +4,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
-const GroupHeading = observer(({ name, show, toggleGroup, children }) => (
+const PropertyGroup = observer(({ name, show, toggleGroup, children }) => (
   <Box>
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box
@@ -42,4 +42,4 @@ const GroupHeading = observer(({ name, show, toggleGroup, children }) => (
   </Box>
 ))
 
-export default GroupHeading
+export default PropertyGroup
