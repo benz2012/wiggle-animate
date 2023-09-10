@@ -1,9 +1,10 @@
 import { observeListOfProperties } from '../../utility/state'
+import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Size {
   constructor(width = 100, height = 100) {
-    this.width = width
-    this.height = height
+    this.width = truncateFloatLeaveInt(width)
+    this.height = truncateFloatLeaveInt(height)
 
     observeListOfProperties(this, ['width', 'height'])
   }

@@ -1,4 +1,5 @@
 import { observeListOfProperties } from '../../utility/state'
+import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Vector2 {
   static add(vectorA, vectorB) {
@@ -22,8 +23,8 @@ class Vector2 {
   }
 
   constructor(x = 0, y = 0) {
-    this.x = x
-    this.y = y
+    this.x = truncateFloatLeaveInt(x)
+    this.y = truncateFloatLeaveInt(y)
 
     observeListOfProperties(this, ['x', 'y'])
   }

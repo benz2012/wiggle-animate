@@ -1,10 +1,11 @@
 import Colorable from './Colorable'
 import { observeListOfProperties } from '../../utility/state'
+import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Stroke extends Colorable {
   constructor(color = 'transparent', width = 0, join = 'miter') {
     super(color)
-    this.width = width
+    this.width = truncateFloatLeaveInt(width)
     this.join = join
     // TODO: make this observable
     // TODO: tweak the drawing stack so that these 3 options are possible

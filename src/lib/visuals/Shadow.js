@@ -14,6 +14,7 @@ class Shadow extends Colorable {
     ctx.shadowBlur = 0
     ctx.shadowOffsetX = 0
     ctx.shadowOffsetY = 0
+    // REMINDER: truncate those floats after you've restructured this
   }
 
   constructor(color = 'transparent', blur = 0, offsetX = 0, offsetY = 0) {

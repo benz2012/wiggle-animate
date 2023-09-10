@@ -1,6 +1,7 @@
 import { makeObservable, observable, action } from 'mobx'
 
 import Keyframe from '../animation/Keyframe'
+import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Property {
   static get PRIMITIVES() {
@@ -45,7 +46,12 @@ class Property {
   }
 
   castValue(value) {
-    if (this.isPrimitive) { return value }
+    if (this.isPrimitive) {
+      if (this.typeName === Property.PRIMITIVES.FLOAT) {
+        return truncateFloatLeaveInt(value)
+      }
+      return value
+    }
     if (value instanceof this.type) { return value }
 
     const Type = this.type

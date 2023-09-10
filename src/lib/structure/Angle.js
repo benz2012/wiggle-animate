@@ -1,16 +1,17 @@
 import { makeObservable, observable, computed } from 'mobx'
+import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Angle {
   static deg2Rad(degrees) {
-    return degrees * (Math.PI / 180)
+    return truncateFloatLeaveInt(degrees * (Math.PI / 180))
   }
 
   static rad2Deg(radians) {
-    return radians * (180 / Math.PI)
+    return truncateFloatLeaveInt(radians * (180 / Math.PI))
   }
 
   constructor(degrees = 0) {
-    this.degrees = degrees
+    this.degrees = truncateFloatLeaveInt(degrees)
 
     makeObservable(this, {
       degrees: observable,
