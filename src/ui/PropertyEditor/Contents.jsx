@@ -93,7 +93,8 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
   }
 
   const editableProperties = selectedItem.editables.map((propertyName) => selectedItem[propertyName])
-  const orderedGroupedProperties = editableProperties.reduce((finalList, property) => {
+  const sortedProperties = editableProperties.sort((a, b) => (a.order - b.order))
+  const groupedProperties = sortedProperties.reduce((finalList, property) => {
     const { group } = property
     if (group != null) {
       let existingGroupIndex = finalList.findIndex((element) => (
@@ -109,7 +110,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     }
     return finalList
   }, [])
-  const listOfComponents = orderedGroupedProperties.map((property) => (
+  const listOfComponents = groupedProperties.map((property) => (
     property.isGroup ? makePropertyGroup(property) : makePropertyComponent(property)
   ))
 

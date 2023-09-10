@@ -7,15 +7,18 @@ class Polygon extends Shape {
   constructor(...args) {
     super('polygon', ...args)
 
-    this._height.isEditable = false
-    this._width.label = 'diameter'
-    this._width.group = null
     this._sides = new Property({
       type: Property.PRIMITIVES.INTEGER,
       value: 3,
       isEditable: true,
       maxValue: 100,
+      order: 1,
     })
+
+    this._height.isEditable = false
+    this._width.label = 'diameter'
+    this._width.group = null
+    this._width.order = 2
 
     makeObservable(this, { radius: computed })
 
