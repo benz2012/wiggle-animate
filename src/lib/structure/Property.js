@@ -31,7 +31,8 @@ class Property {
     this.type = Type // when primitive, this will be a string, so don't use it in that case
 
     this.isEditable = isEditable
-    this.label = label
+    this.name = null // this will be set when first accessed
+    this.label = label // this will be set when first accessed, if not defined already
     this.group = group
     this.order = order
     this.minValue = minValue

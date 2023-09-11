@@ -6,21 +6,24 @@ import Typography from '@mui/material/Typography'
 import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
-import StringInput from '../inputs/StringInput'
-import Vector2Input from '../inputs/Vector2Input'
-import SizeInput from '../inputs/SizeInput'
+
+import AngleInput from '../inputs/AngleInput'
+import ColorInput from '../inputs/ColorInput'
 import FloatInput from '../inputs/FloatInput'
 import IntegerInput from '../inputs/IntegerInput'
-import AngleInput from '../inputs/AngleInput'
+import SizeInput from '../inputs/SizeInput'
+import StringInput from '../inputs/StringInput'
+import Vector2Input from '../inputs/Vector2Input'
 
 const INPUT_WIDTH = PANEL_WIDTH - 100
 const inputClasses = {
-  String: StringInput,
-  Vector2: Vector2Input,
-  Size: SizeInput,
+  Angle: AngleInput,
+  Color: ColorInput,
   Float: FloatInput,
   Integer: IntegerInput,
-  Angle: AngleInput,
+  Size: SizeInput,
+  String: StringInput,
+  Vector2: Vector2Input,
 }
 
 const Contents = observer(({ store, numSelected, selectedItem }) => {
@@ -62,12 +65,23 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     const ComponentClass = inputClasses[property.typeName]
     if (ComponentClass == null) return null
 
+    // Enable Color to also edit Opacity
+    // This requires all `Color` properties to have a matching `Opacity`
+    // For example: `_fillColor` --> `_fillOpacity`
+    let secondaryProperty = null
+    if (property.name.toLowerCase().includes('color')) {
+      const opacityRelatedToThisColor = property.name.replace('Color', 'Opacity')
+      secondaryProperty = selectedItem[opacityRelatedToThisColor]
+    }
+
     const componentProps = {
       key: `${selectedItem.id}-${property.label}`,
       availableWidth: INPUT_WIDTH,
       label: property.label,
       targetProperty: property,
       setPropertyValue: genericSetter(property),
+      secondaryProperty,
+      setSecondaryPropertyValue: genericSetter(secondaryProperty),
     }
     return <ComponentClass {...componentProps} />
   }

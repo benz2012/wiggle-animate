@@ -38,7 +38,11 @@ class Item {
           // inside of itself on the `label` attribute. This is somewhat hacky since
           // it's imperitive, and lives outside of the Property class, but prevents
           // us from having to declare a label unnecessarily. Property.label will then
-          // never be null/undefined after this point
+          // never be null/undefined after this point. We also cache the raw name
+          // to enable us to know things about sibling properties.
+          if (propertyValue.name == null) {
+            propertyValue.name = propertyName
+          }
           if (propertyValue.label == null) {
             propertyValue.label = propertyName.startsWith('_') ? propertyName.slice(1) : propertyName
           }

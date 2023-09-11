@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 
 import InputLabel from './InputLabel'
 import InputBox from './InputBox'
+import { ColorBox, ColorPicker } from './ColorSelection'
 import { isNumber } from '../../utility/numbers'
 
 const GenericInputWithInternalValue = observer(({
@@ -12,6 +13,9 @@ const GenericInputWithInternalValue = observer(({
   subProperties, // if this exists, treat it as having multiple sub-properties
   parseAndValidateNewValue,
   setPropertyValue,
+  secondaryValue, // this is NOT for sub-props, it's for sibling props
+  setSecondaryPropertyValue,
+  isColor = false,
   ...rest
 }) => {
   const isMulti = Array.isArray(subProperties)
@@ -75,6 +79,13 @@ const GenericInputWithInternalValue = observer(({
     setValue({ target: { value: `${propertyValue[subProp]}` } }, subProp, changeBy)
   )
 
+  const [showColorPicker, toggleColorPicker] = useState(false)
+  const setColorPickerValue = (newColorSpec) => {
+    const { a: alpha, r, g, b } = newColorSpec
+    setPropertyValue({ r, g, b })
+    setSecondaryPropertyValue(alpha * 100)
+  }
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <InputLabel
@@ -83,6 +94,20 @@ const GenericInputWithInternalValue = observer(({
       />
 
       <Box sx={{ flexGrow: 1 }} />
+
+      {isColor && (
+        <ColorBox
+          color={propertyValue.toString()}
+          onClick={() => toggleColorPicker(!showColorPicker)}
+        />
+      )}
+      {showColorPicker && (
+        <ColorPicker
+          color={{ ...propertyValue.spec, a: secondaryValue / 100 }}
+          setColor={setColorPickerValue}
+          close={() => toggleColorPicker(false)}
+        />
+      )}
 
       {!isMulti ? (
         <InputBox

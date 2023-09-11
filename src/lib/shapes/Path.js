@@ -18,7 +18,7 @@ class Path extends VisibleShape {
     // overwrite defaults
     this._fillOpacity.setValue(0)
     this._strokeColor.setValue(this.fillColor)
-    this._strokeOpacity.setValue(1)
+    this._strokeOpacity.setValue(100)
     this._strokeWidth.setValue(3)
     this.controllerType = 'Path'
 

@@ -17,9 +17,7 @@ class Rectangle extends VisibleShape {
     this.drawStroke()
     this.drawFill()
 
-    // NOTE: The below comment no longer applies with stroke.flow being 'outside' by default,
-    //       but it will apply for 'middle' and 'inside'
-    // TODO: Stroke's shadow draws out of order
+    // TODO: Stroke and Shadow have all sorts of messed up interactions that need fixing
     // not sure there is a solution actually unless we draw the stroke twice, since I can't draw the shadow manually
     // Would need to be: Stroke+Shadow -> Fill+Shadow -> Stroke w/no shadow
     // This will get even more complicated when we change the stroke drawing order to account for stroke.flow

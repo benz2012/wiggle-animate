@@ -29,18 +29,30 @@ class Color {
     new Color(lchToRgb(lchSpec))
   )
 
-  constructor(inputSpec) {
+  constructor(inputSpec, ...rest) {
     this.colorString = null
     this.red = 0
     this.green = 0
     this.blue = 0
     this.alpha = 1
 
+    if (rest.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      inputSpec = [inputSpec, ...rest]
+    }
+
     if (typeof inputSpec === 'string') {
       // this assumes it's a named css color, eg. red or transparent
       this.colorString = inputSpec
       if (inputSpec === 'transparent') {
         this.alpha = 0
+      }
+    } else if (Array.isArray(inputSpec)) {
+      this.red = inputSpec[0]
+      this.green = inputSpec[1]
+      this.blue = inputSpec[2]
+      if (inputSpec.length === 4) {
+        this.alpha = inputSpec[3]
       }
     } else if (['r', 'g', 'b'].every((prop) => (prop in inputSpec))) {
       this.colorString = null
@@ -62,6 +74,14 @@ class Color {
         this.alpha = a
       }
     }
+
+    ['red', 'green', 'blue'].forEach((propName) => {
+      if (this[propName] > 255) {
+        this[propName] = 255
+      } else if (this[propName] < 0) {
+        this[propName] = 0
+      }
+    })
 
     observeListOfProperties(this, ['colorString', 'red', 'green', 'blue', 'alpha'])
   }
