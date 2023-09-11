@@ -107,7 +107,7 @@ const GenericInputWithInternalValue = observer(({
                 incrementValue={subPropIncrementValue(subProp)}
                 onBlur={() => setInternalValue({ ...internalValue, [subProp]: null })}
                 error={internalValue[subProp] !== null}
-                halfWidth
+                totalBoxes={subProperties.length}
                 {...rest}
               />
             )

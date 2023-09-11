@@ -3,7 +3,8 @@ import InputBase from '@mui/material/InputBase'
 
 const InputBox = observer(({
   availableWidth,
-  halfWidth = false,
+  totalBoxes = 1,
+  halfWidth = false, // this allows overwriting the totalBoxes value
   label,
   value,
   setValue,
@@ -36,10 +37,16 @@ const InputBox = observer(({
     <InputBase
       id={`input-${label}`}
       sx={(theme) => {
-        let width = availableWidth
+        const gapSizeGeneric = 0.5
+        const gapSizeStr = theme.spacing(gapSizeGeneric)
+        const gapSize = parseFloat(gapSizeStr.substring(0, gapSizeStr.length - 2))
+
+        const numGaps = totalBoxes - 1
+        let width = (availableWidth - (gapSize * numGaps)) / totalBoxes
         if (halfWidth) {
-          width = `calc(${(availableWidth / 2)}px - ${theme.spacing(0.25)})`
+          width = (availableWidth - (gapSize * 1)) / 2
         }
+
         return ({
           width,
           bgcolor: 'action.hover',
