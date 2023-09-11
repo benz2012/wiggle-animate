@@ -14,13 +14,12 @@ class Polygon extends VisibleShape {
       value: 3,
       isEditable: true,
       maxValue: 100,
-      order: 1,
     })
 
     this._height.isEditable = false
     this._width.label = 'diameter'
     this._width.group = null
-    this._width.order = 2
+    this._width.order = 0.5
 
     makeObservable(this, { radius: computed })
 

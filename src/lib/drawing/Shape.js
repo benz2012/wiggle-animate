@@ -23,20 +23,24 @@ class Shape extends Drawable {
     this._width = new Property({
       type: Property.PRIMITIVES.FLOAT,
       value: width,
-      group: 'size',
       isEditable: true,
+      group: 'size',
+      order: 2,
       isKeyframable: true,
     })
     this._height = new Property({
       type: Property.PRIMITIVES.FLOAT,
       value: height,
-      group: 'size',
       isEditable: true,
+      group: 'size',
+      order: 2,
       isKeyframable: true,
     })
     this._alignment = new Property({
       type: Alignment,
       isEditable: true,
+      group: 'transform',
+      order: 1,
     })
 
     makeObservable(this, { checkPointerIntersections: action })

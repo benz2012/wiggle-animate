@@ -39,7 +39,6 @@ const PropertyGroup = observer(({ name, show, toggleGroup, children }) => (
         {children}
       </Box>
     )}
-    {show && <Divider sx={{ mt: 0.5, mb: 0.5 }} />}
   </Box>
 ))
 

@@ -16,22 +16,30 @@ class Drawable extends Animatable {
       type: Vector2,
       value: [x, y],
       isEditable: true,
+      group: 'transform',
+      order: 1,
       isKeyframable: true,
     })
     this._origin = new Property({
       type: Vector2,
       isEditable: true,
+      group: 'transform',
+      order: 1,
       isKeyframable: true,
     })
     this._rotation = new Property({
       type: Angle,
       isEditable: true,
+      group: 'transform',
+      order: 1,
       isKeyframable: true,
     })
     this._scale = new Property({
       type: Vector2,
       value: [1, 1],
       isEditable: true,
+      group: 'transform',
+      order: 1,
       isKeyframable: true,
     })
   }

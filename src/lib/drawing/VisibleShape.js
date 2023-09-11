@@ -16,6 +16,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'fill',
       label: 'color',
+      order: 3,
       isKeyframable: true,
     })
     this._fillOpacity = new Property({
@@ -24,6 +25,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'fill',
       label: 'opacity',
+      order: 3,
       minValue: 0,
       maxValue: 100,
       isKeyframable: true,
@@ -35,6 +37,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'stroke',
       label: 'color',
+      order: 3,
       isKeyframable: true,
     })
     this._strokeOpacity = new Property({
@@ -43,6 +46,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'stroke',
       label: 'opacity',
+      order: 3,
       minValue: 0,
       maxValue: 100,
       isKeyframable: true,
@@ -53,6 +57,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'stroke',
       label: 'width',
+      order: 3,
       minValue: 0,
       isKeyframable: true,
     })
@@ -62,6 +67,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'stroke',
       label: 'join',
+      order: 3,
     })
     this._strokeFlow = new Property({
       type: Selection,
@@ -69,6 +75,7 @@ class VisibleShape extends Shape {
       isEditable: false, // TODO: implement these drawing modes
       group: 'stroke',
       label: 'flow',
+      order: 3,
     })
 
     this._shadowColor = new Property({
@@ -77,6 +84,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'shadow',
       label: 'color',
+      order: 3,
       isKeyframable: true,
     })
     this._shadowOpacity = new Property({
@@ -85,6 +93,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'shadow',
       label: 'opacity',
+      order: 3,
       minValue: 0,
       maxValue: 100,
       isKeyframable: true,
@@ -95,6 +104,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'shadow',
       label: 'blur',
+      order: 3,
       minValue: 0,
       isKeyframable: true,
     })
@@ -104,6 +114,7 @@ class VisibleShape extends Shape {
       isEditable: true,
       group: 'shadow',
       label: 'offset',
+      order: 3,
       isKeyframable: true,
     })
   }
