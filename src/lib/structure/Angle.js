@@ -2,6 +2,8 @@ import { makeObservable, observable, computed } from 'mobx'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Angle {
+  static get className() { return 'Angle' }
+
   static deg2Rad(degrees) {
     return truncateFloatLeaveInt(degrees * (Math.PI / 180))
   }

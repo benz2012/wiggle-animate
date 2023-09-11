@@ -2,6 +2,8 @@ import Item from '../structure/Item'
 import Keyframe from '../animation/Keyframe'
 
 class Animatable extends Item {
+  static get className() { return 'Animatable' }
+
   get keyframables() {
     return this.properties.filter((propertyName) => this[propertyName].isKeyframable)
   }

@@ -11,6 +11,7 @@ import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
 class Path extends Shape {
+  static get className() { return 'Path' }
   static get NEARITY_THRESHOLD() { return 8 }
 
   constructor(...args) {

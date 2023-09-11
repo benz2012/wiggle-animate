@@ -1,6 +1,8 @@
 import Color from './Color'
 
 class Colorable {
+  static get className() { return 'Colorable' }
+
   static takeColorOrMakeColor(value) {
     if (value instanceof Color) {
       return value

@@ -10,6 +10,7 @@ import Shadow from '../visuals/Shadow'
 import { drawHoveredIndicator, drawControllerBox } from '../../utility/drawing'
 
 class Shape extends Drawable {
+  static get className() { return 'Shape' }
   static doRectsOverlap(a, b) {
     /* Check if rectangle A overlaps rectangle B, or vise-versa
      * requires top-left corner (x1, y1) & bottom-right corner (x2, y2)

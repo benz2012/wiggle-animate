@@ -4,6 +4,8 @@ import Shape from '../drawing/Shape'
 import Property from '../structure/Property'
 
 class Text extends Shape {
+  static get className() { return 'Text' }
+
   constructor(...args) {
     super('text', ...args)
 

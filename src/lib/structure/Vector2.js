@@ -2,6 +2,8 @@ import { observeListOfProperties } from '../../utility/state'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Vector2 {
+  static get className() { return 'Vector2' }
+
   static add(vectorA, vectorB) {
     return new Vector2(
       vectorA.x + vectorB.x,

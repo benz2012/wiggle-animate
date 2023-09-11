@@ -1,6 +1,8 @@
 import Shape from '../drawing/Shape'
 
 class Ellipse extends Shape {
+  static get className() { return 'Ellipse' }
+
   constructor(...args) {
     super('ellipse', ...args)
   }

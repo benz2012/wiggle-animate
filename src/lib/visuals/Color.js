@@ -2,6 +2,8 @@ import { observeListOfProperties } from '../../utility/state'
 import { rgbToLch, lchToRgb } from '../../utility/color'
 
 class Color {
+  static get className() { return 'Color' }
+
   static randomPastel() {
     return new Color({
       h: Math.floor(Math.random() * 361),

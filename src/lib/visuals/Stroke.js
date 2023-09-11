@@ -3,6 +3,8 @@ import { observeListOfProperties } from '../../utility/state'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Stroke extends Colorable {
+  static get className() { return 'Stroke' }
+
   constructor(color = 'transparent', width = 0, join = 'miter') {
     super(color)
     this.width = truncateFloatLeaveInt(width)

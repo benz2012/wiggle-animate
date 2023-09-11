@@ -5,6 +5,8 @@ import names from '../../assets/names.json'
 import { randomChoice } from '../../utility/array'
 
 class Item {
+  static get className() { return 'Item' }
+
   // This will be populated by the first instiated Container which will extend Item
   static rootContainer = null
 

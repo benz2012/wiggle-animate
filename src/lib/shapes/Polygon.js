@@ -4,6 +4,8 @@ import Shape from '../drawing/Shape'
 import Property from '../structure/Property'
 
 class Polygon extends Shape {
+  static get className() { return 'Polygon' }
+
   constructor(...args) {
     super('polygon', ...args)
 

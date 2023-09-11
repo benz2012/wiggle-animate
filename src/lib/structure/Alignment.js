@@ -1,6 +1,8 @@
 import { observeListOfProperties } from '../../utility/state'
 
 class Alignment {
+  static get className() { return 'Alignment' }
+
   static get CENTER() { return 'center' }
   static get LEFT() { return 'left' }
   static get RIGHT() { return 'right' }
@@ -17,7 +19,7 @@ class Alignment {
   get values() { return [this.x, this.y] }
 
   toString() {
-    return `${this.constructor.name}(${this.x}, ${this.y})`
+    return `${this.className}(${this.x}, ${this.y})`
   }
 }
 

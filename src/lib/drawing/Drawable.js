@@ -7,6 +7,7 @@ import { identityMatrix } from '../../utility/matrix'
 
 class Drawable extends Animatable {
   /* eslint-disable class-methods-use-this */
+  static get className() { return 'Drawable' }
   static _ctx
 
   constructor(x, y) {

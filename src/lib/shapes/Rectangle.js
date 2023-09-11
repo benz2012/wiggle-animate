@@ -1,6 +1,7 @@
 import Shape from '../drawing/Shape'
 
 class Rectangle extends Shape {
+  static get className() { return 'Rectangle' }
   // TODO: add corner radius property
   // this will get complicated with stroke. maybe rounded rect as separarate object?
 

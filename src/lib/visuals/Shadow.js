@@ -3,6 +3,8 @@ import Vector2 from '../structure/Vector2'
 import { observeListOfProperties } from '../../utility/state'
 
 class Shadow extends Colorable {
+  static get className() { return 'Shadow' }
+
   static clear(ctx) {
     // This class needs a clear() where Fill and Stroke do not because
     // each of those methods have a drawing operation where you would be

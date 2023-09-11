@@ -6,6 +6,8 @@ import { insert } from '../../utility/array'
 import { drawContainerController, ContainerControllerSizes } from '../../utility/drawing'
 
 class Container extends Drawable {
+  static get className() { return 'Container' }
+
   constructor(...args) {
     super(...args)
     this._children = {}

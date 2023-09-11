@@ -2,6 +2,8 @@ import Shape from '../drawing/Shape'
 import Alignment from '../structure/Alignment'
 
 class Line extends Shape {
+  static get className() { return 'Line' }
+
   constructor(x = 0, y = 0, length = 400, thickness = 10) {
     super('line', x, y, length, thickness)
 

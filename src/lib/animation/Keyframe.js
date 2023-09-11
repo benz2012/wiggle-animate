@@ -8,6 +8,7 @@ import { isObject } from '../../utility/object'
 import { isString, START_OF_NORMAL_CHARS, END_OF_NORMAL_CHARS } from '../../utility/string'
 
 class Keyframe {
+  static get className() { return 'Keyframe' }
   static curveCache = {}
 
   constructor(frame, value) {

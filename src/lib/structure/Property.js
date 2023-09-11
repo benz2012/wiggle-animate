@@ -4,6 +4,7 @@ import Keyframe from '../animation/Keyframe'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
 
 class Property {
+  static get className() { return 'Property' }
   static get PRIMITIVES() {
     return { STRING: 'String', FLOAT: 'Float', INTEGER: 'Integer', BOOLEAN: 'Boolean' }
   }
@@ -26,7 +27,7 @@ class Property {
     if (Type == null) throw new Error('Property.type must not be undefined')
 
     this.isPrimitive = Object.values(Property.PRIMITIVES).includes(Type)
-    this.typeName = this.isPrimitive ? Type : Type.name
+    this.typeName = this.isPrimitive ? Type : Type.className
     this.type = Type // when primitive, this will be a string, so don't use it in that case
     this.label = label
     this.group = group

@@ -1,6 +1,7 @@
 import { computed, makeObservable, observable } from 'mobx'
 
 class Handle {
+  static get className() { return 'Handle' }
   static get TYPES() { return { IN: 'IN', OUT: 'OUT' } }
   static get MAX() { return 100 }
   static get STEP() { return 10 }
@@ -42,7 +43,7 @@ class Handle {
   }
 
   toString() {
-    return `${this.constructor.name}(${this.influence}, ${this.distance})`
+    return `${this.className}(${this.influence}, ${this.distance})`
   }
 }
 

@@ -1,6 +1,8 @@
 import Colorable from './Colorable'
 
 class Fill extends Colorable {
+  static get className() { return 'Fill' }
+
   prepare(ctx) {
     ctx.fillStyle = this.color.toString()
   }
