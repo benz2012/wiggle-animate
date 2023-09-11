@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 
 import InputLabel from './InputLabel'
 import InputBox from './InputBox'
+import { isNumber } from '../../utility/numbers'
 
 const GenericInputWithInternalValue = observer(({
   label,
@@ -28,7 +29,7 @@ const GenericInputWithInternalValue = observer(({
     )
   )
 
-  const setValue = (event, subProp) => {
+  const setValue = (event, subProp, changeNumberBy = 0) => {
     const { value: newValue } = event.target
 
     const { isValid, parsedValue } = parseAndValidateNewValue(newValue)
@@ -41,14 +42,20 @@ const GenericInputWithInternalValue = observer(({
       return
     }
 
+    const newParsedValue = isNumber(parsedValue) && changeNumberBy ? (
+      parsedValue + changeNumberBy
+    ) : (
+      parsedValue
+    )
+
     if (subProp) {
       // NOTE: this array needs to be ordered to match the order of arguments in the constructor
       const nextMultiValue = subProperties.map((_subProp) => (
-        _subProp === subProp ? parsedValue : propertyValue[_subProp]
+        _subProp === subProp ? newParsedValue : propertyValue[_subProp]
       ))
       setPropertyValue(nextMultiValue)
     } else {
-      setPropertyValue(parsedValue)
+      setPropertyValue(newParsedValue)
     }
 
     if (subProp) {
@@ -59,6 +66,14 @@ const GenericInputWithInternalValue = observer(({
   }
 
   const subPropSetter = (subProp) => (event) => setValue(event, subProp)
+
+  const incrementValue = (changeBy) => (
+    setValue({ target: { value: `${propertyValue}` } }, undefined, changeBy)
+  )
+
+  const subPropIncrementValue = (subProp) => (changeBy) => (
+    setValue({ target: { value: `${propertyValue[subProp]}` } }, subProp, changeBy)
+  )
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -74,6 +89,7 @@ const GenericInputWithInternalValue = observer(({
           label={label}
           value={internalValue ?? propertyValue}
           setValue={setValue}
+          incrementValue={incrementValue}
           onBlur={() => setInternalValue(null)}
           error={internalValue !== null}
           {...rest}
@@ -88,6 +104,7 @@ const GenericInputWithInternalValue = observer(({
                 label={`${label}-${subProp}`}
                 value={internalValue[subProp] ?? subPropValue}
                 setValue={subPropSetter(subProp)}
+                incrementValue={subPropIncrementValue(subProp)}
                 onBlur={() => setInternalValue({ ...internalValue, [subProp]: null })}
                 error={internalValue[subProp] !== null}
                 halfWidth

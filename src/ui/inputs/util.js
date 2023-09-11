@@ -1,8 +1,10 @@
+import { isNumber } from '../../utility/numbers'
+
 const parseAndValidateFloat = (newValue) => {
   const potentialFloat = parseFloat(newValue)
   return ({
     isValid: (
-      Number.isNaN(potentialFloat) === false
+      isNumber(potentialFloat)
       && newValue.endsWith('.') === false
       && `${potentialFloat}`.length === newValue.length
     ),

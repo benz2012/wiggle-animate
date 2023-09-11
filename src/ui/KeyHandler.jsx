@@ -16,6 +16,8 @@ const doesBottomMenuHaveFocus = () => [
   'play-mode-button',
 ].includes(document.activeElement.id)
 
+const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('input-')
+
 const KeyHandler = ({ store }) => {
   const ONE_UP = new Vector2(0, -1)
   const ONE_DOWN = new Vector2(0, 1)
@@ -31,6 +33,7 @@ const KeyHandler = ({ store }) => {
   const handleKeyDownEvent = action((event) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
     const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
+    const INPUT_HAS_FOCUS = doesAnInputFieldHaveFocus()
 
     switch (event.key) {
       case ' ':
@@ -88,7 +91,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowLeft':
-        if (event.metaKey || event.ctrlKey) {
+        if ((event.metaKey || event.ctrlKey) && !INPUT_HAS_FOCUS) {
           // Prevents accidental page navigation
           event.preventDefault()
         }
@@ -107,7 +110,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowRight':
-        if (event.metaKey || event.ctrlKey) {
+        if ((event.metaKey || event.ctrlKey) && !INPUT_HAS_FOCUS) {
           // Prevents accidental page navigation
           event.preventDefault()
         }

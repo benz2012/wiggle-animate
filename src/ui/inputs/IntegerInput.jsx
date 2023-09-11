@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 
 import GenericInputWithInternalValue from './GenericInputWithInternalValue'
+import { isNumber } from '../../utility/numbers'
 
 const IntegerInput = observer(({ targetProperty, ...rest }) => (
   <GenericInputWithInternalValue
@@ -9,7 +10,7 @@ const IntegerInput = observer(({ targetProperty, ...rest }) => (
       const potentialInt = parseInt(newValue, 10)
       return ({
         isValid: (
-          Number.isNaN(potentialInt) === false
+          isNumber(potentialInt)
           && `${potentialInt}`.length === newValue.length
         ),
         parsedValue: potentialInt,

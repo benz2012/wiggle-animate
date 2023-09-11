@@ -2,6 +2,10 @@ import { isString } from './string'
 
 const FLOAT_PRECISION = 6
 
+const isNumber = (value) => (
+  typeof value === 'number' && !Number.isNaN(value)
+)
+
 const _stringToTruncatedFloat = (str) => {
   const [leftHand, rightHand] = str.split('.')
   const truncatedDecimal = rightHand.substring(0, FLOAT_PRECISION)
@@ -14,7 +18,7 @@ const truncateFloatLeaveInt = (value) => {
     return _stringToTruncatedFloat(value)
   }
 
-  if (Number.isNaN(value)) {
+  if (!isNumber(value)) {
     throw TypeError('truncateFloat must recive a string or number as input')
   }
 
@@ -26,6 +30,6 @@ const truncateFloatLeaveInt = (value) => {
 }
 
 export {
-  // eslint-disable-next-line import/prefer-default-export
+  isNumber,
   truncateFloatLeaveInt,
 }
