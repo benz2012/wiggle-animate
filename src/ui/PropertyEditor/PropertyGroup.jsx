@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
 const PropertyGroup = observer(({ name, show, toggleGroup, children }) => (
-  <Box sx={{display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box
         sx={{
