@@ -3,11 +3,7 @@ import { makeObservable, action } from 'mobx'
 import Drawable from './Drawable'
 import Property from '../structure/Property'
 import Alignment from '../structure/Alignment'
-import Color from '../visuals/Color'
-import Fill from '../visuals/Fill'
-import Stroke from '../visuals/Stroke'
-import Shadow from '../visuals/Shadow'
-import { drawHoveredIndicator, drawControllerBox } from '../../utility/drawing'
+import { drawHoveredIndicator, drawControllerBox, clearShadowContext } from '../../utility/drawing'
 
 class Shape extends Drawable {
   static get className() { return 'Shape' }
@@ -42,16 +38,6 @@ class Shape extends Drawable {
       type: Alignment,
       isEditable: true,
     })
-
-    // TODO: these are not yet fully fleshed out with the new Property system
-    //       maybe observing things wrong, and also can't keyframe on sub-property
-    //       like fill.opacity
-    // Would like unique keyframes for the following:
-    // fill.color, fill.opacity, stroke.color, stroke.opacity,
-    // stroke.width, shadow.color, shadow.opacity, shadow.blur, shadow.offset
-    this.fill = new Fill(Color.randomPastel())
-    this.stroke = new Stroke()
-    this.shadow = new Shadow()
 
     makeObservable(this, { checkPointerIntersections: action })
   }
@@ -92,7 +78,7 @@ class Shape extends Drawable {
     super.draw(parentTransform)
 
     this.drawShape(isHovered, isSelected)
-    Shadow.clear(this.ctx)
+    clearShadowContext(this.ctx)
 
     if (isSelected) {
       this.drawControllerBox()
@@ -114,10 +100,10 @@ class Shape extends Drawable {
   createIntersectionsPath() {
     // overwrite this if your shape doesn't use a rectangle for intersections
     const rectSpec = [
-      this.rectSpec[0] - (this.stroke.width / 2),
-      this.rectSpec[1] - (this.stroke.width / 2),
-      this.rectSpec[2] + this.stroke.width,
-      this.rectSpec[3] + this.stroke.width,
+      this.rectSpec[0] - (this.strokeWidth / 2),
+      this.rectSpec[1] - (this.strokeWidth / 2),
+      this.rectSpec[2] + this.strokeWidth,
+      this.rectSpec[3] + this.strokeWidth,
     ]
     this.ctx.rect(...rectSpec)
   }
@@ -133,15 +119,15 @@ class Shape extends Drawable {
   findRectIntersections(rectSpecTLBR) {
     // TODO: this doesn't work properly when items are rotated or scaled
     this.ctx.setTransform(this.currentTransform)
-    const strokeProtrusion = this.stroke.width / 2
+    const strokeProtrusion = this.strokeWidth / 2
     this.ctx.translate(
       this.rectSpec[0] - strokeProtrusion,
       this.rectSpec[1] - strokeProtrusion,
     )
     const finalTransform = this.ctx.getTransform()
     this.ctx.translate(
-      this.rectSpec[2] + this.stroke.width,
-      this.rectSpec[3] + this.stroke.width
+      this.rectSpec[2] + this.strokeWidth,
+      this.rectSpec[3] + this.strokeWidth
     )
     const bottomLeftTransform = this.ctx.getTransform()
 

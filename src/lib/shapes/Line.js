@@ -1,7 +1,7 @@
-import Shape from '../drawing/Shape'
+import VisibleShape from '../drawing/VisibleShape'
 import Alignment from '../structure/Alignment'
 
-class Line extends Shape {
+class Line extends VisibleShape {
   static get className() { return 'Line' }
 
   constructor(x = 0, y = 0, length = 400, thickness = 10) {
@@ -11,8 +11,10 @@ class Line extends Shape {
     this._width.label = 'length'
     this._height.label = 'thickness'
     this.alignment.x = Alignment.LEFT
-    // this.stroke.isEditable = false // this is not yet a property
-    // this.stroke.isKeyframable = false // this is not yet a property
+    // dissalow stroke on line, as conceptually it ~is~ a stroke in and of itself
+    this.removeStrokeProperties()
+    this._fillColor.group = 'stroke'
+    this._fillOpacity.group = 'stroke'
 
     this.controllerType = 'Line'
   }
@@ -21,10 +23,8 @@ class Line extends Shape {
     this.ctx.beginPath()
     this.ctx.rect(...this.rectSpec)
 
-    // dissalow stroke on line, as conceptually it ~is~ a stroke in and of itself
-    // notice that we skip drawing it, regardless if its there
-    this.shadow.prepare(this.ctx)
-    this.fill.draw(this.ctx)
+    this.prepareShadow()
+    this.drawFill()
   }
 }
 

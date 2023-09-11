@@ -1,6 +1,6 @@
-import Shape from '../drawing/Shape'
+import VisibleShape from '../drawing/VisibleShape'
 
-class Ellipse extends Shape {
+class Ellipse extends VisibleShape {
   static get className() { return 'Ellipse' }
 
   constructor(...args) {
@@ -25,9 +25,9 @@ class Ellipse extends Shape {
       Math.PI * 2
     )
 
-    this.shadow.prepare(this.ctx)
-    this.stroke.draw(this.ctx)
-    this.fill.draw(this.ctx)
+    this.prepareShadow()
+    this.drawStroke()
+    this.drawFill()
   }
 }
 

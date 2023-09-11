@@ -1,9 +1,9 @@
 import { makeObservable, action } from 'mobx'
 
-import Shape from '../drawing/Shape'
+import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
 
-class Text extends Shape {
+class Text extends VisibleShape {
   static get className() { return 'Text' }
 
   constructor(...args) {
@@ -77,10 +77,10 @@ class Text extends Shape {
     this.ctx.translate(rectX + rectW / 2, rectY + rectH / 2)
 
     this.ctx.beginPath()
-    this.shadow.prepare(this.ctx)
-    this.stroke.prepare(this.ctx)
+    this.prepareShadow()
+    this.prepareStroke()
     this.ctx.strokeText(this.text.value, 0, 0)
-    this.fill.prepare(this.ctx)
+    this.prepareFill()
     this.ctx.fillText(this.text.value, 0, 0)
   }
 }

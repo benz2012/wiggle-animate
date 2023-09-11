@@ -1,25 +1,25 @@
 import { makeObservable, action } from 'mobx'
 import polylabel from '../_external/polylabel'
 
-import Shape from '../drawing/Shape'
+import VisibleShape from '../drawing/VisibleShape'
 import Item from '../structure/Item'
 import Vector2 from '../structure/Vector2'
 import Point from '../structure/Point'
-import Color from '../visuals/Color'
 import { observeListOfProperties } from '../../utility/state'
 import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
-class Path extends Shape {
+class Path extends VisibleShape {
   static get className() { return 'Path' }
   static get NEARITY_THRESHOLD() { return 8 }
 
   constructor(...args) {
     super('path', ...args)
     // overwrite defaults
-    this.fill.color.alpha = 0
-    this.stroke.color = new Color(this.fill.color.spec)
-    this.stroke.width = 3
+    this._fillOpacity.setValue(0)
+    this._strokeColor.setValue(this.fillColor)
+    this._strokeOpacity.setValue(1)
+    this._strokeWidth.setValue(3)
     this.controllerType = 'Path'
 
     this.points = [] // TODO: (maybe) make each point a Property, iterate over them customly within PropEditor
@@ -197,9 +197,9 @@ class Path extends Shape {
     // Draw the Path Itself
     this.ctx.beginPath()
     this.drawThePath()
-    this.shadow.prepare(this.ctx)
-    this.stroke.draw(this.ctx)
-    this.fill.draw(this.ctx)
+    this.prepareShadow()
+    this.drawStroke()
+    this.drawFill()
 
     // Draw Point Handles on top of it
     if (!this.pointsVisible && !isSelected) return

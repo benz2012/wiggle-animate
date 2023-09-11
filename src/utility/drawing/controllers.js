@@ -8,9 +8,9 @@ import theme from '../../ui/theme'
 //         the item(s) above it
 const drawControllerBox = (instance) => {
   /* instance: type Shape */
-  const { controllerType, ctx, origin, scale, stroke, rectSpec } = instance
+  const { controllerType, ctx, origin, scale, strokeWidth, rectSpec } = instance
   const [rectX, rectY, rectW, rectH] = rectSpec
-  const strokeProtrusion = stroke.width / 2
+  const strokeProtrusion = strokeWidth / 2
 
   ctx.setTransform(instance.currentTransform)
 
@@ -24,8 +24,8 @@ const drawControllerBox = (instance) => {
     ctx.rect(
       rectX - strokeProtrusion - (3 / scale.value.x),
       rectY - strokeProtrusion - (3 / scale.value.y),
-      rectW + stroke.width + (6 / scale.value.x),
-      rectH + stroke.width + (6 / scale.value.y),
+      rectW + strokeWidth + (6 / scale.value.x),
+      rectH + strokeWidth + (6 / scale.value.y),
     )
     ctx.lineWidth = 6
   }

@@ -1,6 +1,6 @@
-import Shape from '../drawing/Shape'
+import VisibleShape from '../drawing/VisibleShape'
 
-class Rectangle extends Shape {
+class Rectangle extends VisibleShape {
   static get className() { return 'Rectangle' }
   // TODO: add corner radius property
   // this will get complicated with stroke. maybe rounded rect as separarate object?
@@ -13,9 +13,9 @@ class Rectangle extends Shape {
     this.ctx.beginPath()
     this.ctx.rect(...this.rectSpec)
 
-    this.shadow.prepare(this.ctx)
-    this.stroke.draw(this.ctx)
-    this.fill.draw(this.ctx)
+    this.prepareShadow()
+    this.drawStroke()
+    this.drawFill()
 
     // NOTE: The below comment no longer applies with stroke.flow being 'outside' by default,
     //       but it will apply for 'middle' and 'inside'

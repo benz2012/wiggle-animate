@@ -1,9 +1,9 @@
 import { makeObservable, computed } from 'mobx'
 
-import Shape from '../drawing/Shape'
+import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
 
-class Polygon extends Shape {
+class Polygon extends VisibleShape {
   static get className() { return 'Polygon' }
 
   constructor(...args) {
@@ -58,9 +58,9 @@ class Polygon extends Shape {
     this.ctx.rotate(anglePerSegment)
     this.ctx.closePath()
 
-    this.shadow.prepare(this.ctx)
-    this.stroke.draw(this.ctx)
-    this.fill.draw(this.ctx)
+    this.prepareShadow()
+    this.drawStroke()
+    this.drawFill()
   }
 }
 

@@ -29,11 +29,19 @@ class Property {
     this.isPrimitive = Object.values(Property.PRIMITIVES).includes(Type)
     this.typeName = this.isPrimitive ? Type : Type.className
     this.type = Type // when primitive, this will be a string, so don't use it in that case
+
+    this.isEditable = isEditable
     this.label = label
     this.group = group
     this.order = order
     this.minValue = minValue
     this.maxValue = maxValue
+
+    this.isKeyframable = isKeyframable
+    this.keyframes = null
+    if (isKeyframable) {
+      this.keyframes = observable([])
+    }
 
     // Set initial value plainly or instantiate with null, arg, or ...args
     const castedValue = this.castAndCoerceValue(value)
@@ -41,17 +49,11 @@ class Property {
 
     makeObservable(this, {
       _value: observable,
+      isEditable: observable,
+      isKeyframable: observable,
       setValue: action,
       addKey: action,
     })
-
-    this.isEditable = isEditable
-
-    this.isKeyframable = isKeyframable
-    this.keyframes = null
-    if (isKeyframable) {
-      this.keyframes = observable([])
-    }
   }
 
   /* This method casts the incoming value to the type that it should

@@ -80,6 +80,10 @@ class Color {
     }
     return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`
   }
+
+  toStringExternalAlpha(alpha) {
+    return `rgba(${this.red}, ${this.green}, ${this.blue}, ${alpha})`
+  }
 }
 
 // TODO: remove this after debugging
