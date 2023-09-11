@@ -12,7 +12,7 @@ class Container extends Drawable {
     super(...args)
     this._children = {}
     this._sortOrder = []
-    this.name.setValue(`container-${this.name}`)
+    this._name.setValue(`container-${this.name}`)
     this.showChildren = true
 
     makeObservable(this, {
@@ -133,7 +133,7 @@ class Container extends Drawable {
       && selectedIds.includes(this.id)
     ) {
       this.ctx.setTransform(this.currentTransform)
-      this.ctx.translate(...this.origin.value.values)
+      this.ctx.translate(...this.origin.values)
       const isPositionHovered = hoveredId === this.id && hoveredControl === 'position'
       const isOriginHovered = hoveredId === this.id && hoveredControl === 'origin'
       drawContainerController(this.ctx, isPositionHovered, isOriginHovered)
@@ -153,7 +153,7 @@ class Container extends Drawable {
 
   checkSelectedContainerPointerIntersections(pointerVector) {
     this.ctx.setTransform(this.currentTransform)
-    this.ctx.translate(...this.origin.value.values)
+    this.ctx.translate(...this.origin.values)
     this.ctx.beginPath()
     this.createIntersectionsPath()
     if (this.ctx.isPointInPath(...pointerVector.values)) {

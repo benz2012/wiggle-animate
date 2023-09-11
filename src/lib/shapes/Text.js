@@ -11,7 +11,7 @@ class Text extends VisibleShape {
 
     this._text = new Property({
       type: Property.PRIMITIVES.STRING,
-      value: this.name.value,
+      value: this.name,
       isEditable: true,
       isKeyframable: true,
     })
@@ -49,19 +49,19 @@ class Text extends VisibleShape {
     makeObservable(this, { measureAndSetSize: action })
   }
 
-  get text() { return this._text }
-  get fontSize() { return this._fontSize }
-  get font() { return this._font }
+  get text() { return this._text.value }
+  get fontSize() { return this._fontSize.value }
+  get font() { return this._font.value }
 
   measureAndSetSize() {
-    const metrics = this.ctx.measureText(this.text.value)
+    const metrics = this.ctx.measureText(this.text)
     this._width.setValue(metrics.width)
     this._height.setValue(metrics.fontBoundingBoxDescent + metrics.fontBoundingBoxAscent)
     this.middleToTop = metrics.fontBoundingBoxAscent
   }
 
   drawShape() {
-    this.ctx.font = `${this.fontSize.value}px ${this.font.value}`
+    this.ctx.font = `${this.fontSize}px ${this.font}`
     this.ctx.textAlign = this.align
     this.ctx.textBaseline = this.baseline
     this.ctx.direction = this.direction
@@ -79,9 +79,9 @@ class Text extends VisibleShape {
     this.ctx.beginPath()
     this.prepareShadow()
     this.prepareStroke()
-    this.ctx.strokeText(this.text.value, 0, 0)
+    this.ctx.strokeText(this.text, 0, 0)
     this.prepareFill()
-    this.ctx.fillText(this.text.value, 0, 0)
+    this.ctx.fillText(this.text, 0, 0)
   }
 }
 

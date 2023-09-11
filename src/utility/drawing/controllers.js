@@ -22,10 +22,10 @@ const drawControllerBox = (instance) => {
     ctx.lineWidth = 2
   } else {
     ctx.rect(
-      rectX - strokeProtrusion - (3 / scale.value.x),
-      rectY - strokeProtrusion - (3 / scale.value.y),
-      rectW + strokeWidth + (6 / scale.value.x),
-      rectH + strokeWidth + (6 / scale.value.y),
+      rectX - strokeProtrusion - (3 / scale.x),
+      rectY - strokeProtrusion - (3 / scale.y),
+      rectW + strokeWidth + (6 / scale.x),
+      rectH + strokeWidth + (6 / scale.y),
     )
     ctx.lineWidth = 6
   }
@@ -38,41 +38,41 @@ const drawControllerBox = (instance) => {
   ctx.beginPath()
   if (controllerType === 'Line') {
     ctx.rect(
-      rectX - (8 / scale.value.x),
-      rectY + rectH / 2 - (8 / scale.value.y),
-      16 / scale.value.x,
-      16 / scale.value.y,
+      rectX - (8 / scale.x),
+      rectY + rectH / 2 - (8 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
     )
     ctx.rect(
-      (rectX + rectW) - (8 / scale.value.x),
-      rectY + rectH / 2 - (8 / scale.value.y),
-      16 / scale.value.x,
-      16 / scale.value.y,
+      (rectX + rectW) - (8 / scale.x),
+      rectY + rectH / 2 - (8 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
     )
   } else {
     ctx.rect(
-      rectX - strokeProtrusion - (11 / scale.value.x),
-      rectY - strokeProtrusion - (11 / scale.value.y),
-      16 / scale.value.x,
-      16 / scale.value.y,
+      rectX - strokeProtrusion - (11 / scale.x),
+      rectY - strokeProtrusion - (11 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
     )
     ctx.rect(
-      (rectX + rectW) + strokeProtrusion - (5 / scale.value.x),
-      rectY - strokeProtrusion - (11 / scale.value.y),
-      16 / scale.value.x,
-      16 / scale.value.y,
+      (rectX + rectW) + strokeProtrusion - (5 / scale.x),
+      rectY - strokeProtrusion - (11 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
     )
     ctx.rect(
-      (rectX + rectW) + strokeProtrusion - (5 / scale.value.x),
-      (rectY + rectH) + strokeProtrusion - (5 / scale.value.y),
-      16 / scale.value.x,
-      16 / scale.value.y,
+      (rectX + rectW) + strokeProtrusion - (5 / scale.x),
+      (rectY + rectH) + strokeProtrusion - (5 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
     )
     ctx.rect(
-      rectX - strokeProtrusion - (11 / scale.value.x),
-      (rectY + rectH) + strokeProtrusion - (5 / scale.value.y),
-      16 / scale.value.x,
-      16 / scale.value.y,
+      rectX - strokeProtrusion - (11 / scale.x),
+      (rectY + rectH) + strokeProtrusion - (5 / scale.y),
+      16 / scale.x,
+      16 / scale.y,
     )
   }
   ctx.fillStyle = `${theme.palette.WHITE}`
@@ -84,24 +84,24 @@ const drawControllerBox = (instance) => {
 
   // origin
   ctx.setTransform(instance.currentTransform)
-  ctx.translate(origin.value.x, origin.value.y)
+  ctx.translate(origin.x, origin.y)
   ctx.beginPath()
-  ctx.moveTo(0 / scale.value.x, -10 / scale.value.y)
-  ctx.lineTo(0 / scale.value.x, 10 / scale.value.y)
-  ctx.moveTo(-10 / scale.value.x, 0 / scale.value.y)
-  ctx.lineTo(10 / scale.value.x, 0 / scale.value.y)
+  ctx.moveTo(0 / scale.x, -10 / scale.y)
+  ctx.lineTo(0 / scale.x, 10 / scale.y)
+  ctx.moveTo(-10 / scale.x, 0 / scale.y)
+  ctx.lineTo(10 / scale.x, 0 / scale.y)
   ctx.lineWidth = 8
   ctx.strokeStyle = `${theme.palette.WHITE}`
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
   // -- more
   ctx.setTransform(instance.currentTransform)
-  ctx.translate(origin.value.x, origin.value.y)
+  ctx.translate(origin.x, origin.y)
   ctx.beginPath()
-  ctx.moveTo(0 / scale.value.x, -8 / scale.value.y)
-  ctx.lineTo(0 / scale.value.x, 8 / scale.value.y)
-  ctx.moveTo(-8 / scale.value.x, 0 / scale.value.y)
-  ctx.lineTo(8 / scale.value.x, 0 / scale.value.y)
+  ctx.moveTo(0 / scale.x, -8 / scale.y)
+  ctx.lineTo(0 / scale.x, 8 / scale.y)
+  ctx.moveTo(-8 / scale.x, 0 / scale.y)
+  ctx.lineTo(8 / scale.x, 0 / scale.y)
   ctx.lineWidth = 4
   ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.setTransform(instance.currentTransformWithoutScale)
@@ -110,13 +110,13 @@ const drawControllerBox = (instance) => {
   // rotation handle
   ctx.setTransform(instance.currentTransform)
   if (controllerType === 'Line' || controllerType === 'Path') {
-    ctx.translate(origin.value.x, origin.value.y)
+    ctx.translate(origin.x, origin.y)
   } else {
     ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
   }
   ctx.beginPath()
   ctx.moveTo(0, 0)
-  ctx.lineTo(0 / scale.value.x, -75 / scale.value.y)
+  ctx.lineTo(0 / scale.x, -75 / scale.y)
   ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
   ctx.setTransform(instance.currentTransformWithoutScale)
@@ -124,16 +124,16 @@ const drawControllerBox = (instance) => {
   // -- rotation circle
   ctx.setTransform(instance.currentTransform)
   if (controllerType === 'Line' || controllerType === 'Path') {
-    ctx.translate(origin.value.x, origin.value.y)
+    ctx.translate(origin.x, origin.y)
   } else {
     ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
   }
   ctx.beginPath()
   ctx.ellipse(
     0,
-    -75 / scale.value.y,
-    8 / scale.value.x,
-    8 / scale.value.y,
+    -75 / scale.y,
+    8 / scale.x,
+    8 / scale.y,
     0,
     0,
     Math.PI * 2

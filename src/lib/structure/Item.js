@@ -23,7 +23,7 @@ class Item {
   }
 
   get id() { return this._id }
-  get name() { return this._name }
+  get name() { return this._name.value }
 
   get properties() {
     /* eslint-disable no-restricted-syntax */

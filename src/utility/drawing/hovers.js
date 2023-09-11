@@ -10,10 +10,10 @@ const drawHoveredIndicator = (instance) => {
   ctx.beginPath()
   const strokeProtrusion = strokeWidth / 2
   ctx.rect(
-    rectSpec[0] - strokeProtrusion - ((lineWidth / 2) / scale.value.x),
-    rectSpec[1] - strokeProtrusion - ((lineWidth / 2) / scale.value.y),
-    rectSpec[2] + strokeWidth + (lineWidth / scale.value.x),
-    rectSpec[3] + strokeWidth + (lineWidth / scale.value.y),
+    rectSpec[0] - strokeProtrusion - ((lineWidth / 2) / scale.x),
+    rectSpec[1] - strokeProtrusion - ((lineWidth / 2) / scale.y),
+    rectSpec[2] + strokeWidth + (lineWidth / scale.x),
+    rectSpec[3] + strokeWidth + (lineWidth / scale.y),
   )
   ctx.strokeStyle = `${theme.palette.primary[75]}`
   ctx.lineWidth = lineWidth

@@ -36,16 +36,16 @@ class Drawable extends Animatable {
     })
   }
 
-  get position() { return this._position }
-  get origin() { return this._origin }
-  get rotation() { return this._rotation }
-  get scale() { return this._scale }
+  get position() { return this._position.value }
+  get origin() { return this._origin.value }
+  get rotation() { return this._rotation.value }
+  get scale() { return this._scale.value }
 
   get ctx() { return Drawable._ctx }
   set ctx(value) { Drawable._ctx = value }
 
-  get x() { return this.position.value.x }
-  get y() { return this.position.value.y }
+  get x() { return this.position.x }
+  get y() { return this.position.y }
 
   setOrigin(newValue, when = 1) {
     let nextOriginVector
@@ -58,37 +58,37 @@ class Drawable extends Animatable {
     }
     if (!nextOriginVector) return
 
-    const changeInOrigin = Vector2.subtract(this.origin.value, nextOriginVector)
+    const changeInOrigin = Vector2.subtract(this.origin, nextOriginVector)
 
     const positionalInverse = identityMatrix()
       .translateSelf(...changeInOrigin.values)
-      .rotateSelf(this.rotation.value.degrees)
-      .scaleSelf(this.scale.value.x, this.scale.value.y)
+      .rotateSelf(this.rotation.degrees)
+      .scaleSelf(this.scale.x, this.scale.y)
       .translateSelf(-1 * changeInOrigin.x, -1 * changeInOrigin.y)
     const toTranslate = new Vector2(positionalInverse.e, positionalInverse.f)
 
-    this.origin.setValue(nextOriginVector, when)
-    this.position.setValue(Vector2.add(this.position.value, toTranslate), when)
+    this._origin.setValue(nextOriginVector, when)
+    this._position.setValue(Vector2.add(this.position, toTranslate), when)
   }
 
   get currentTranslation() {
     return new DOMMatrix(this.parentTransform)
       .translateSelf(this.x, this.y)
-      .translateSelf(this.origin.value.x, this.origin.value.y)
+      .translateSelf(this.origin.x, this.origin.y)
   }
 
   get currentTranslationRotation() {
     return this.currentTranslation
-      .rotateSelf(this.rotation.value.degrees)
+      .rotateSelf(this.rotation.degrees)
   }
 
   get currentOriginInverseTranslation() {
-    return [-1 * this.origin.value.x, -1 * this.origin.value.y]
+    return [-1 * this.origin.x, -1 * this.origin.y]
   }
 
   get currentTransform() {
     return this.currentTranslationRotation
-      .scaleSelf(this.scale.value.x, this.scale.value.y)
+      .scaleSelf(this.scale.x, this.scale.y)
       .translateSelf(...this.currentOriginInverseTranslation)
   }
 

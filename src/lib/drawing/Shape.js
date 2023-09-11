@@ -18,7 +18,7 @@ class Shape extends Drawable {
 
   constructor(shapeType = '', x = 0, y = 0, width = 100, height = 100) {
     super(x, y)
-    this.name.setValue(`${shapeType}-${this.name}`)
+    this._name.setValue(`${shapeType}-${this.name}`)
 
     this._width = new Property({
       type: Property.PRIMITIVES.FLOAT,
@@ -42,10 +42,6 @@ class Shape extends Drawable {
     makeObservable(this, { checkPointerIntersections: action })
   }
 
-  // Here I return the property-values and not the properties themselves
-  // this will cause less ripples with changing from size.w/h to w/h
-  // but I also think I want to do this for every class in the chain because
-  // I don't see a reason why you need an alias to access the property itself
   get width() { return this._width.value }
   get height() { return this._height.value }
   get alignment() { return this._alignment.value }

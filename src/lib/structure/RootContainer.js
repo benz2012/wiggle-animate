@@ -238,9 +238,9 @@ class RootContainer extends Container {
       const { now } = this.store.animation
 
       if (this.store.build.hoveredControl === 'position' || fromArrowKey) {
-        selectedItem.position.setValue(
+        selectedItem._position.setValue(
           Vector2.add(
-            selectedItem.valueForFrame(now, 'position'),
+            selectedItem.valueForFrame(now, '_position'),
             relativeMovementScaledToCanvas
           ),
           now
@@ -248,7 +248,7 @@ class RootContainer extends Container {
       } else if (this.store.build.hoveredControl === 'origin') {
         selectedItem.setOrigin(
           Vector2.add(
-            selectedItem.valueForFrame(now, 'origin'),
+            selectedItem.valueForFrame(now, '_origin'),
             relativeMovementScaledToCanvas
           ),
           now
