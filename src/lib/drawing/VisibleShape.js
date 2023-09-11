@@ -21,7 +21,7 @@ class VisibleShape extends Shape {
     })
     this._fillOpacity = new Property({
       type: Property.PRIMITIVES.FLOAT,
-      value: 1,
+      value: 100,
       isEditable: true,
       group: 'fill',
       label: 'opacity',
@@ -143,7 +143,7 @@ class VisibleShape extends Shape {
   }
 
   prepareFill() {
-    this.ctx.fillStyle = this.fillColor.toStringExternalAlpha(this.fillOpacity)
+    this.ctx.fillStyle = this.fillColor.toStringExternalAlpha(this.fillOpacity / 100)
   }
 
   drawFill() {
@@ -152,7 +152,7 @@ class VisibleShape extends Shape {
   }
 
   prepareStroke() {
-    this.ctx.strokeStyle = this.strokeColor.toStringExternalAlpha(this.strokeOpacity)
+    this.ctx.strokeStyle = this.strokeColor.toStringExternalAlpha(this.strokeOpacity / 100)
     this.ctx.lineWidth = this.strokeWidth
     this.ctx.lineJoin = this.strokeJoin
   }
@@ -167,7 +167,7 @@ class VisibleShape extends Shape {
     // Apparently the DOM Renderer doesn't scale the offset params by the existing ctx transform
     // so we do it ourselves
     const currentTransform = this.ctx.getTransform()
-    this.ctx.shadowColor = this.shadowColor.toStringExternalAlpha(this.shadowOpacity)
+    this.ctx.shadowColor = this.shadowColor.toStringExternalAlpha(this.shadowOpacity / 100)
     this.ctx.shadowBlur = this.shadowBlur
     // TODO: This gets rotation wrong, we should likely take the transform and apply the offset as a
     //       translation, then get the output translation and apply it as the offsetx&y

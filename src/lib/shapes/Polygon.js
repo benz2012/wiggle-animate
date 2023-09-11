@@ -13,6 +13,7 @@ class Polygon extends VisibleShape {
       type: Property.PRIMITIVES.INTEGER,
       value: 3,
       isEditable: true,
+      minValue: 3,
       maxValue: 100,
     })
 
