@@ -17,15 +17,15 @@ const doesBottomMenuHaveFocus = () => [
 ].includes(document.activeElement.id)
 
 const KeyHandler = ({ store }) => {
-  const ONE_UP = new Vector2(0, -1 * store.DPR)
-  const ONE_DOWN = new Vector2(0, 1 * store.DPR)
-  const ONE_LEFT = new Vector2(-1 * store.DPR, 0)
-  const ONE_RIGHT = new Vector2(1 * store.DPR, 0)
+  const ONE_UP = new Vector2(0, -1)
+  const ONE_DOWN = new Vector2(0, 1)
+  const ONE_LEFT = new Vector2(-1, 0)
+  const ONE_RIGHT = new Vector2(1, 0)
 
-  const TEN_UP = new Vector2(0, -10 * store.DPR)
-  const TEN_DOWN = new Vector2(0, 10 * store.DPR)
-  const TEN_LEFT = new Vector2(-10 * store.DPR, 0)
-  const TEN_RIGHT = new Vector2(10 * store.DPR, 0)
+  const TEN_UP = new Vector2(0, -10)
+  const TEN_DOWN = new Vector2(0, 10)
+  const TEN_LEFT = new Vector2(-10, 0)
+  const TEN_RIGHT = new Vector2(10, 0)
 
   /* -- KEY DOWN -- */
   const handleKeyDownEvent = action((event) => {

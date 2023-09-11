@@ -237,20 +237,19 @@ class RootContainer extends Container {
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
 
-      if (this.store.build.hoveredControl === 'position' || fromArrowKey) {
+      if (fromArrowKey) {
         selectedItem._position.setValue(
-          Vector2.add(
-            selectedItem.valueForFrame(now, '_position'),
-            relativeMovementScaledToCanvas
-          ),
+          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovement),
+          now
+        )
+      } else if (this.store.build.hoveredControl === 'position') {
+        selectedItem._position.setValue(
+          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToCanvas),
           now
         )
       } else if (this.store.build.hoveredControl === 'origin') {
         selectedItem.setOrigin(
-          Vector2.add(
-            selectedItem.valueForFrame(now, '_origin'),
-            relativeMovementScaledToCanvas
-          ),
+          Vector2.add(selectedItem.valueForFrame(now, '_origin'), relativeMovementScaledToCanvas),
           now
         )
       }
