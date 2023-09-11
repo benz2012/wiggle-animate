@@ -64,10 +64,10 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
 
     const componentProps = {
       key: `${selectedItem.id}-${property.label}`,
-      width: INPUT_WIDTH,
+      availableWidth: INPUT_WIDTH,
       label: property.label,
       targetProperty: property,
-      setProperty: genericSetter(property),
+      setPropertyValue: genericSetter(property),
     }
     return <ComponentClass {...componentProps} />
   }
