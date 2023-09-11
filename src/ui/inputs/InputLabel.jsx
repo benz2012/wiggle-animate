@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography'
 
 const InputLabel = observer(({ label, hasSubProp }) => (
   <Typography
+    className="noselect"
     component="label"
     htmlFor={`input-${label}`}
     sx={{

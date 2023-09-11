@@ -36,6 +36,7 @@ const InputBox = observer(({
   return (
     <InputBase
       id={`input-${label}`}
+      className="noselect"
       sx={(theme) => {
         const gapSizeGeneric = 0.5
         const gapSizeStr = theme.spacing(gapSizeGeneric)
@@ -59,10 +60,13 @@ const InputBox = observer(({
         })
       }}
       inputProps={{
+        className: 'noselect',
         sx: {
           p: 0,
           fontSize: 12,
           fontFamily: 'monospace',
+          '&::selection': { backgroundColor: 'action.disabled' },
+          '&:focus::selection': { backgroundColor: 'rgb(111, 141, 176)' },
         },
         spellCheck: false,
       }}

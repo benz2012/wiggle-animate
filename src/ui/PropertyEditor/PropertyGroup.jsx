@@ -26,6 +26,7 @@ const PropertyGroup = observer(({ name, show, toggleGroup, children }) => (
           })}
         />
         <Typography
+          className="noselect"
           variant="caption"
           sx={{ fontFamily: 'monospace' }}
         >
