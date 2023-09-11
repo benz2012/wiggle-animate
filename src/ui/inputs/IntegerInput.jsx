@@ -1,21 +1,12 @@
 import { observer } from 'mobx-react-lite'
 
 import GenericInputWithInternalValue from './GenericInputWithInternalValue'
-import { isNumber } from '../../utility/numbers'
+import { parseAndValidateInteger } from './util'
 
 const IntegerInput = observer(({ targetProperty, ...rest }) => (
   <GenericInputWithInternalValue
     propertyValue={targetProperty.value}
-    parseAndValidateNewValue={(newValue) => {
-      const potentialInt = parseInt(newValue, 10)
-      return ({
-        isValid: (
-          isNumber(potentialInt)
-          && `${potentialInt}`.length === newValue.length
-        ),
-        parsedValue: potentialInt,
-      })
-    }}
+    parseAndValidateNewValue={parseAndValidateInteger}
     halfWidth
     {...rest}
   />
