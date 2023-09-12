@@ -59,7 +59,7 @@ const AlignmentInput = observer(({
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', mr: 0.5 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <InputLabel label={label} />
 
       <Box sx={{ flexGrow: 1 }} />

@@ -5,6 +5,7 @@ const InputBox = observer(({
   availableWidth,
   totalBoxes = 1,
   halfWidth = false, // this allows overwriting the totalBoxes value
+  iconInTheGap = false,
   label,
   value,
   setValue,
@@ -41,9 +42,14 @@ const InputBox = observer(({
         const gapSizeGeneric = 0.5
         const gapSizeStr = theme.spacing(gapSizeGeneric)
         const gapSize = parseFloat(gapSizeStr.substring(0, gapSizeStr.length - 2))
+        let numGaps = totalBoxes - 1
+        let iconWidth = 0
+        if (iconInTheGap) {
+          numGaps += 1
+          iconWidth = 24
+        }
 
-        const numGaps = totalBoxes - 1
-        let width = (availableWidth - (gapSize * numGaps)) / totalBoxes
+        let width = (availableWidth - (gapSize * numGaps) - (iconWidth)) / totalBoxes
         if (halfWidth) {
           width = (availableWidth - (gapSize * 1)) / 2
         }
