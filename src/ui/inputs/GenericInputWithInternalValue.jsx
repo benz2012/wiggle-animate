@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import LockIcon from '@mui/icons-material/Lock'
+import LockOpenIcon from '@mui/icons-material/LockOpen'
 
+import { PAIRED_VECTOR_TYPES } from '../PropertyEditor/config'
 import InputLabel from './InputLabel'
 import InputBox from './InputBox'
 import { ColorBox, ColorPicker } from './ColorSelection'
@@ -15,6 +19,8 @@ const GenericInputWithInternalValue = observer(({
   setPropertyValue,
   secondaryValue, // this is NOT for sub-props, it's for sibling props
   setSecondaryPropertyValue,
+  pairVector = false,
+  togglePairing,
   isColor = false,
   ...rest
 }) => {
@@ -54,9 +60,12 @@ const GenericInputWithInternalValue = observer(({
 
     if (subProp) {
       // NOTE: this array needs to be ordered to match the order of arguments in the constructor
-      const nextMultiValue = subProperties.map((_subProp) => (
+      let nextMultiValue = subProperties.map((_subProp) => (
         _subProp === subProp ? newParsedValue : propertyValue[_subProp]
       ))
+      if (pairVector) {
+        nextMultiValue = subProperties.map(() => newParsedValue)
+      }
       setPropertyValue(nextMultiValue)
     } else {
       setPropertyValue(newParsedValue)
@@ -106,6 +115,31 @@ const GenericInputWithInternalValue = observer(({
           color={{ ...propertyValue.spec, a: secondaryValue / 100 }}
           setColor={setColorPickerValue}
           close={() => toggleColorPicker(false)}
+        />
+      )}
+
+      {PAIRED_VECTOR_TYPES.includes(label) && (
+        <Checkbox
+          icon={<LockOpenIcon />}
+          checkedIcon={<LockIcon />}
+          size="4px"
+          sx={(theme) => ({
+            color: 'action.disabled',
+            '&.MuiCheckbox-root': {
+              padding: theme.spacing(0.5),
+              margin: `0px ${theme.spacing(0.5)}`,
+            },
+          })}
+          checked={pairVector}
+          onChange={() => {
+            const nextPairValue = !pairVector
+            togglePairing(nextPairValue)
+            if (nextPairValue === true) {
+              // Force set both props to `x` when re-enabling pairing on the prop
+              const nextMultiValue = subProperties.map(() => propertyValue.x)
+              setPropertyValue(nextMultiValue)
+            }
+          }}
         />
       )}
 

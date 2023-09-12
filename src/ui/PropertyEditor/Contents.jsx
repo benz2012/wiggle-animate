@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { PANEL_WIDTH, EXPANSION_DURATION, INITIALLY_COLLAPSED_GROUPS } from './config'
+import { PANEL_WIDTH, EXPANSION_DURATION, INITIALLY_COLLAPSED_GROUPS, PAIRED_VECTOR_TYPES } from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 
@@ -76,14 +76,26 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       secondaryProperty = selectedItem[opacityRelatedToThisColor]
     }
 
+    const propertyKey = `${selectedItem.id}-${property.label}`
+    let pairVector = false
+    if (PAIRED_VECTOR_TYPES.includes(property.label)) {
+      const valueInStore = store.propertyEditor.pairedVectors[propertyKey]
+      pairVector = valueInStore == null || valueInStore === true
+    }
+    const togglePairing = (shouldPair) => {
+      store.setPairedVector(propertyKey, shouldPair)
+    }
+
     const componentProps = {
-      key: `${selectedItem.id}-${property.label}`,
+      key: propertyKey,
       availableWidth: INPUT_WIDTH,
       label: property.label,
       targetProperty: property,
       setPropertyValue: genericSetter(property),
       secondaryProperty,
       setSecondaryPropertyValue: genericSetter(secondaryProperty),
+      pairVector,
+      togglePairing,
     }
     return <ComponentClass {...componentProps} />
   }

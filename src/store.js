@@ -83,6 +83,7 @@ class RootStore {
     this.propertyEditor = {
       position: new Vector2(16, 42 + 16 + 8),
       hiddenGroups: {},
+      pairedVectors: {},
     }
 
     this.animation = new Animation()
@@ -130,6 +131,7 @@ class RootStore {
       setPropertyEditorPosition: action,
       hidePropertyGroup: action,
       showPropertyGroup: action,
+      setPairedVector: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -315,6 +317,10 @@ class RootStore {
 
   showPropertyGroup(groupName) {
     this.propertyEditor.hiddenGroups[groupName] = false
+  }
+
+  setPairedVector(propertyKey, shouldPair) {
+    this.propertyEditor.pairedVectors[propertyKey] = shouldPair
   }
 
   /* Output Actions */

@@ -9,3 +9,7 @@ export const INITIALLY_COLLAPSED_GROUPS = [
   'shadow',
   'points',
 ]
+
+export const PAIRED_VECTOR_TYPES = [
+  'scale',
+]
