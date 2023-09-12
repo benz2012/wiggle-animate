@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
+import { PANEL_WIDTH, EXPANSION_DURATION, INITIALLY_COLLAPSED_GROUPS } from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 
@@ -88,11 +88,24 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     return <ComponentClass {...componentProps} />
   }
 
+  const makeGroupConfig = (groupName) => ({
+    isGroup: true,
+    groupName,
+    contents: [],
+    initiallyCollapsed: INITIALLY_COLLAPSED_GROUPS.includes(groupName),
+  })
+
   const makePropertyGroup = (propertyGroup) => {
-    const { groupName, contents } = propertyGroup
+    const { groupName, contents, initiallyCollapsed } = propertyGroup
     const thisItemGroup = `${selectedItem.id}-${groupName}`
 
-    const show = !store.propertyEditor.hiddenGroups[thisItemGroup]
+    let show = true
+    if (thisItemGroup in store.propertyEditor.hiddenGroups) {
+      show = store.propertyEditor.hiddenGroups[thisItemGroup]
+    } else if (initiallyCollapsed) {
+      show = false
+    }
+
     const toggleGroup = (shouldShow) => {
       if (shouldShow) {
         store.showPropertyGroup(thisItemGroup)
@@ -117,7 +130,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
         element.isGroup && element.groupName === group
       ))
       if (existingGroupIndex === -1) {
-        const newLength = finalList.push({ isGroup: true, groupName: group, contents: [] })
+        const newLength = finalList.push(makeGroupConfig(group))
         existingGroupIndex = newLength - 1
       }
       finalList[existingGroupIndex].contents.push(property)
