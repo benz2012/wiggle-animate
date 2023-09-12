@@ -91,8 +91,8 @@ class Property {
           if (this.minValue != null && element < this.minValue) {
             return this.minValue
           }
-          return element
         }
+        return element
       })
       return new Type(...cappedValue)
     }
