@@ -113,7 +113,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
 
     let show = true
     if (thisItemGroup in store.propertyEditor.hiddenGroups) {
-      show = store.propertyEditor.hiddenGroups[thisItemGroup]
+      show = store.propertyEditor.hiddenGroups[thisItemGroup] === false
     } else if (initiallyCollapsed) {
       show = false
     }
