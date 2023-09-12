@@ -2,6 +2,7 @@ import { makeObservable, observable, action } from 'mobx'
 
 import Keyframe from '../animation/Keyframe'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
+import Vector2 from './Vector2'
 
 class Property {
   static get className() { return 'Property' }
@@ -80,12 +81,35 @@ class Property {
     if (value instanceof this.type) { return value }
 
     const Type = this.type
+
     if (Array.isArray(value)) {
-      return new Type(...value)
+      const cappedValue = value.map((element) => {
+        if ([Vector2.className].includes(this.typeName)) {
+          if (this.maxValue != null && element > this.maxValue) {
+            return this.maxValue
+          }
+          if (this.minValue != null && element < this.minValue) {
+            return this.minValue
+          }
+          return element
+        }
+      })
+      return new Type(...cappedValue)
     }
+
     if (value != null) {
-      return new Type(value)
+      let cappedValue = value
+      if ([Vector2.className].includes(this.typeName)) {
+        if (this.maxValue != null && value > this.maxValue) {
+          cappedValue = this.maxValue
+        }
+        if (this.minValue != null && value < this.minValue) {
+          cappedValue = this.minValue
+        }
+      }
+      return new Type(cappedValue)
     }
+
     return new Type()
   }
 

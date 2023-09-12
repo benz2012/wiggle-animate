@@ -38,6 +38,7 @@ class Drawable extends Animatable {
       type: Vector2,
       value: [1, 1],
       isEditable: true,
+      minValue: 0,
       group: 'transform',
       order: 1,
       isKeyframable: true,
