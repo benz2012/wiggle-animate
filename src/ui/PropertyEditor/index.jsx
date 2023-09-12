@@ -85,6 +85,7 @@ const PropertyEditor = observer(({ store }) => {
           position: 'absolute',
           width: PANEL_WIDTH,
           minHeight: 32,
+          // maxHeight: '80vh',
           zIndex: 1000,
           top: store.propertyEditor.position.y,
           right: store.propertyEditor.position.x,
@@ -115,6 +116,8 @@ const PropertyEditor = observer(({ store }) => {
               borderRadius: 2,
               transition: `height ${EXPANSION_DURATION}ms`,
               height: expanded ? contentHeight : 0,
+              maxHeight: '75vh',
+              overflow: 'auto',
             }}
           >
             <Box
