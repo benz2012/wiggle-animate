@@ -7,6 +7,7 @@ import { PANEL_WIDTH, EXPANSION_DURATION } from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 
+import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
 import ColorInput from '../inputs/ColorInput'
 import FloatInput from '../inputs/FloatInput'
@@ -17,6 +18,7 @@ import Vector2Input from '../inputs/Vector2Input'
 
 const INPUT_WIDTH = PANEL_WIDTH - 100
 const inputClasses = {
+  Alignment: AlignmentInput,
   Angle: AngleInput,
   Color: ColorInput,
   Float: FloatInput,
