@@ -3,7 +3,13 @@ import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { PANEL_WIDTH, EXPANSION_DURATION, INITIALLY_COLLAPSED_GROUPS, PAIRED_VECTOR_TYPES } from './config'
+import {
+  PANEL_WIDTH,
+  EXPANSION_DURATION,
+  INITIALLY_COLLAPSED_GROUPS,
+  PAIRED_VECTOR_TYPES,
+  NO_DRAG_BOX_TYPES,
+} from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 
@@ -98,6 +104,8 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       setSecondaryPropertyValue: genericSetter(secondaryProperty),
       pairVector,
       togglePairing,
+      addDragBox: !NO_DRAG_BOX_TYPES.includes(property.typeName),
+      valueDragRatio: property.valueDragRatio,
     }
     return <ComponentClass {...componentProps} />
   }

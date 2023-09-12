@@ -4,6 +4,8 @@ import Vector2 from '../structure/Vector2'
 import Selection from '../structure/Selection'
 import Color from '../visuals/Color'
 
+const OPACITY_DRAG_RATIO = 3
+
 class VisibleShape extends Shape {
   static get className() { return 'VisibleShape' }
 
@@ -28,6 +30,7 @@ class VisibleShape extends Shape {
       order: 3,
       minValue: 0,
       maxValue: 100,
+      valueDragRatio: OPACITY_DRAG_RATIO,
       isKeyframable: true,
     })
 
@@ -49,6 +52,7 @@ class VisibleShape extends Shape {
       order: 3,
       minValue: 0,
       maxValue: 100,
+      valueDragRatio: OPACITY_DRAG_RATIO,
       isKeyframable: true,
     })
     this._strokeWidth = new Property({
@@ -96,6 +100,7 @@ class VisibleShape extends Shape {
       order: 3,
       minValue: 0,
       maxValue: 100,
+      valueDragRatio: OPACITY_DRAG_RATIO,
       isKeyframable: true,
     })
     this._shadowBlur = new Property({
@@ -106,6 +111,7 @@ class VisibleShape extends Shape {
       label: 'blur',
       order: 3,
       minValue: 0,
+      valueDragRatio: 10,
       isKeyframable: true,
     })
     this._shadowOffset = new Property({
@@ -115,6 +121,7 @@ class VisibleShape extends Shape {
       group: 'shadow',
       label: 'offset',
       order: 3,
+      valueDragRatio: 5,
       isKeyframable: true,
     })
   }

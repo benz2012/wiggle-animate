@@ -41,6 +41,7 @@ class Drawable extends Animatable {
       minValue: 0,
       group: 'transform',
       order: 1,
+      valueDragRatio: 100,
       isKeyframable: true,
     })
   }

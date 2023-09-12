@@ -1,4 +1,6 @@
+import { useState, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
+import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
 
 const InputBox = observer(({
@@ -10,6 +12,8 @@ const InputBox = observer(({
   value,
   setValue,
   incrementValue,
+  addDragBox,
+  valueDragRatio = 1, // the higher the ratio, the slower a value will change during drag-updates
   onBlur,
   error,
 }) => {
@@ -34,6 +38,49 @@ const InputBox = observer(({
     }
   }
 
+  let dragButtonLabel = label.charAt(0)
+  if (label === 'opacity') {
+    dragButtonLabel = '%'
+  } else if (totalBoxes > 1) {
+    const subPropLabelParts = label.split('-')
+    const subPropLabelLastBit = subPropLabelParts[subPropLabelParts.length - 1]
+    dragButtonLabel = subPropLabelLastBit.charAt(0)
+  }
+
+  const [isDragging, setIsDragging] = useState(false)
+  const valueAtDragStart = useRef(0)
+  const dragStartX = useRef(0)
+
+  const handlePointerMove = (moveEvent) => {
+    const relativeOffsetX = moveEvent.clientX - dragStartX.current
+
+    const potentialFloat = parseFloat(valueAtDragStart.current)
+    if (!Number.isNaN(potentialFloat)) {
+      const sigFigsNeeded = `${valueDragRatio}`.length - 1
+      const relativeOffsetScaled = parseInt(relativeOffsetX, 10) / valueDragRatio
+
+      const newValue = potentialFloat + relativeOffsetScaled
+      const newValueSimplified = newValue.toFixed(sigFigsNeeded)
+
+      const simulatedEvent = { target: { value: newValueSimplified } }
+      setValue(simulatedEvent)
+    }
+  }
+
+  const startDrag = (event) => {
+    valueAtDragStart.current = value
+    dragStartX.current = event.clientX
+    setIsDragging(true)
+
+    window.addEventListener('pointermove', handlePointerMove)
+    const handleStopDrag = () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handleStopDrag)
+      setIsDragging(false)
+    }
+    window.addEventListener('pointerup', handleStopDrag)
+  }
+
   return (
     <InputBase
       id={`input-${label}`}
@@ -54,14 +101,18 @@ const InputBox = observer(({
           width = (availableWidth - (gapSize * 1)) / 2
         }
 
+        const focusedOutline = `1px solid ${theme.palette.primary.main}`
         return ({
           width,
           bgcolor: 'action.hover',
           borderRadius: 1,
-          px: 1,
-          py: 0.5,
+          padding: 0,
+          pr: 0.5,
+          pl: addDragBox ? 0 : 0.5,
+          py: addDragBox ? 0 : 0.5,
+          outline: isDragging ? focusedOutline : 'inherit',
           '&:hover': { backgroundColor: 'action.selected' },
-          '&:focus-within': { outline: `1px solid ${theme.palette.primary.main}` },
+          '&:focus-within': { outline: focusedOutline },
           '&.Mui-error': { outline: `1px solid ${theme.palette.error.main}` },
         })
       }}
@@ -69,13 +120,37 @@ const InputBox = observer(({
         className: 'noselect',
         sx: {
           p: 0,
+          textIndent: addDragBox ? '4px' : 0,
           fontSize: 12,
+          height: 16,
           fontFamily: 'monospace',
           '&::selection': { backgroundColor: 'action.disabled' },
           '&:focus::selection': { backgroundColor: 'rgb(111, 141, 176)' },
         },
         spellCheck: false,
       }}
+      startAdornment={addDragBox && (
+        <Box
+          onPointerDown={startDrag}
+          sx={(theme) => ({
+            px: 0.5,
+            pb: '1px',
+            borderRadius: `${theme.spacing(0.5)} 0 0 ${theme.spacing(0.5)}`,
+
+            fontSize: '10px',
+            lineHeight: '23px',
+            fontFamily: dragButtonLabel === '%' ? 'inherit' : 'monospace',
+            color: isDragging ? theme.palette.primary.main : theme.palette.action.disabled,
+            backgroundColor: theme.palette.mode === 'dark'
+              ? ('rgb(20, 20, 20)') : (theme.palette.action.disabledBackground),
+
+            cursor: 'ew-resize',
+            '&:hover': { color: theme.palette.action.active },
+          })}
+        >
+          {dragButtonLabel}
+        </Box>
+      )}
       value={value}
       onChange={setValue}
       onKeyDown={handleKeyDown}

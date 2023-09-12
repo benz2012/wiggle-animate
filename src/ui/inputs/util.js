@@ -12,12 +12,26 @@ const parseAndValidateInteger = (value) => {
 }
 
 const parseAndValidateFloat = (value) => {
+  let trimmedOriginal = value.replace(/^0+/g, '')
+  if (trimmedOriginal.includes('.')) {
+    trimmedOriginal = trimmedOriginal.replace(/0+$/g, '')
+  }
+
+  let expectedFloatString = trimmedOriginal
+  if (trimmedOriginal === '.' || value === '0') {
+    expectedFloatString = '0'
+  } else if (trimmedOriginal.startsWith('.')) {
+    expectedFloatString = `0${trimmedOriginal}`
+  } else if (trimmedOriginal.endsWith('.')) {
+    expectedFloatString = trimmedOriginal.substring(0, trimmedOriginal.length - 1)
+  }
+
   const potentialFloat = parseFloat(value)
   return ({
     isValid: (
       isNumber(potentialFloat)
       && value.endsWith('.') === false
-      && `${potentialFloat}`.length === value.length
+      && `${potentialFloat}`.length === expectedFloatString.length
     ),
     parsedValue: potentialFloat,
   })

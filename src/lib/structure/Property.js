@@ -22,6 +22,7 @@ class Property {
     order = 0,
     minValue = null, // only applies to primitive float and int
     maxValue = null, // only applies to primitive float and int
+    valueDragRatio = 1,
 
     // Keyframe Attributes
     isKeyframable = false,
@@ -39,6 +40,7 @@ class Property {
     this.order = order
     this.minValue = minValue
     this.maxValue = maxValue
+    this.valueDragRatio = valueDragRatio
 
     this.isKeyframable = isKeyframable
     this.keyframes = null
