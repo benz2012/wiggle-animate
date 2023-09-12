@@ -79,7 +79,10 @@ class Text extends VisibleShape {
     this.ctx.beginPath()
     this.prepareShadow()
     this.prepareStroke()
-    this.ctx.strokeText(this.text, 0, 0)
+    if (this.strokeWidth > 0) {
+      // Apparently strokeWidth of 0 actually uses like 5, so we block it
+      this.ctx.strokeText(this.text, 0, 0)
+    }
     this.prepareFill()
     this.ctx.fillText(this.text, 0, 0)
   }
