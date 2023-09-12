@@ -3,6 +3,7 @@ import theme from '../../ui/theme'
 const drawPlayheadHoverLine = (ctx) => {
   ctx.strokeStyle = `${theme.palette.primary_dark[50]}`
   ctx.lineWidth = 2
+  ctx.lineJoin = 'miter'
   ctx.beginPath()
   ctx.moveTo(0, -30)
   ctx.lineTo(0, 23)
@@ -14,6 +15,7 @@ const drawPlayhead = (ctx, playheadWidth, isHovered) => {
   ctx.fillStyle = `${theme.palette.primary_dark[100]}`
   ctx.strokeStyle = isHovered ? `${theme.palette.primary[100]}` : `${theme.palette.primary_dark_dark[100]}`
   ctx.lineWidth = 4
+  ctx.lineJoin = 'miter'
   const upperWidth = playheadWidth
   const playheadLeft = 2
   ctx.moveTo(playheadLeft, 6)
@@ -27,6 +29,7 @@ const drawPlayhead = (ctx, playheadWidth, isHovered) => {
 
   ctx.beginPath()
   ctx.lineWidth = 2
+  ctx.lineJoin = 'miter'
   ctx.strokeStyle = isHovered ? `${theme.palette.primary[50]}` : `${theme.palette.primary_dark_dark[50]}`
   ctx.moveTo(playheadLeft + upperWidth / 4, 0)
   ctx.lineTo(playheadLeft + upperWidth / 4, -14)

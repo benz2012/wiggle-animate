@@ -30,6 +30,7 @@ const drawControllerBox = (instance) => {
     ctx.lineWidth = 6
   }
   ctx.strokeStyle = `${theme.palette.primary[100]}`
+  ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
 
@@ -78,6 +79,7 @@ const drawControllerBox = (instance) => {
   ctx.fillStyle = `${theme.palette.WHITE}`
   ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
+  ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.fill()
   ctx.stroke()
@@ -91,6 +93,7 @@ const drawControllerBox = (instance) => {
   ctx.moveTo(-10 / scale.x, 0 / scale.y)
   ctx.lineTo(10 / scale.x, 0 / scale.y)
   ctx.lineWidth = 8
+  ctx.lineJoin = 'miter'
   ctx.strokeStyle = `${theme.palette.WHITE}`
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
@@ -103,6 +106,7 @@ const drawControllerBox = (instance) => {
   ctx.moveTo(-8 / scale.x, 0 / scale.y)
   ctx.lineTo(8 / scale.x, 0 / scale.y)
   ctx.lineWidth = 4
+  ctx.lineJoin = 'miter'
   ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
@@ -119,6 +123,7 @@ const drawControllerBox = (instance) => {
   ctx.lineTo(0 / scale.x, -75 / scale.y)
   ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
+  ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
   // -- rotation circle
@@ -141,6 +146,7 @@ const drawControllerBox = (instance) => {
   ctx.fillStyle = `${theme.palette.WHITE}`
   ctx.strokeStyle = `${theme.palette.primary[100]}`
   ctx.lineWidth = 6
+  ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.fill()
   ctx.stroke()
@@ -156,6 +162,7 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
 
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
   ctx.lineWidth = 2
+  ctx.lineJoin = 'miter'
 
   ctx.beginPath()
   ctx.rect(originBox / -2, originBox / -2, originBox, originBox)

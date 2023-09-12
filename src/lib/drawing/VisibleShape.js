@@ -154,7 +154,7 @@ class VisibleShape extends Shape {
   prepareStroke() {
     this.ctx.strokeStyle = this.strokeColor.toStringExternalAlpha(this.strokeOpacity / 100)
     this.ctx.lineWidth = this.strokeWidth
-    this.ctx.lineJoin = this.strokeJoin
+    this.ctx.lineJoin = this.strokeJoin.selected
   }
 
   drawStroke() {
