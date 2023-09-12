@@ -12,6 +12,7 @@ import AngleInput from '../inputs/AngleInput'
 import ColorInput from '../inputs/ColorInput'
 import FloatInput from '../inputs/FloatInput'
 import IntegerInput from '../inputs/IntegerInput'
+import SelectionInput from '../inputs/SelectionInput'
 import SizeInput from '../inputs/SizeInput'
 import StringInput from '../inputs/StringInput'
 import Vector2Input from '../inputs/Vector2Input'
@@ -23,6 +24,7 @@ const inputClasses = {
   Color: ColorInput,
   Float: FloatInput,
   Integer: IntegerInput,
+  Selection: SelectionInput,
   Size: SizeInput,
   String: StringInput,
   Vector2: Vector2Input,

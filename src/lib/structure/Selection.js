@@ -3,7 +3,7 @@ import { observeListOfProperties } from '../../utility/state'
 class Selection {
   static get className() { return 'Selection' }
 
-  constructor(values = []) {
+  constructor(...values) {
     this.values = values
     this.selected = values[0]
 

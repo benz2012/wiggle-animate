@@ -3,6 +3,7 @@ import { makeObservable, observable, action } from 'mobx'
 import Keyframe from '../animation/Keyframe'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
 import Vector2 from './Vector2'
+import Selection from './Selection'
 
 class Property {
   static get className() { return 'Property' }
@@ -58,6 +59,8 @@ class Property {
     })
   }
 
+  get value() { return this._value }
+
   /* This method casts the incoming value to the type that it should
    * have as declarted during Property Instantiation. It also coerces
    * values to be slightly different based on system design and
@@ -99,6 +102,7 @@ class Property {
 
     if (value != null) {
       let cappedValue = value
+
       if ([Vector2.className].includes(this.typeName)) {
         if (this.maxValue != null && value > this.maxValue) {
           cappedValue = this.maxValue
@@ -107,13 +111,17 @@ class Property {
           cappedValue = this.minValue
         }
       }
+
+      if ([Selection.className].includes(this.typeName)) {
+        this.value.selected = value
+        return this.value
+      }
+
       return new Type(cappedValue)
     }
 
     return new Type()
   }
-
-  get value() { return this._value }
 
   // We don't use a setter for this because it complicates the observation chain
   // when complex property types are used. This also allows for additional logic
