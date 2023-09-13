@@ -11,6 +11,7 @@ import { isNumber } from '../../utility/numbers'
 
 const GenericInputWithInternalValue = observer(({
   label,
+  labelGroup,
   propertyValue,
   subProperties, // if this exists, treat it as having multiple sub-properties
   parseAndValidateNewValue,
@@ -109,6 +110,7 @@ const GenericInputWithInternalValue = observer(({
       return (
         <InputBox
           label={label}
+          labelGroup={labelGroup}
           value={internalValue ?? propertyValue}
           setValue={setValue}
           incrementValue={incrementValue}
@@ -129,6 +131,7 @@ const GenericInputWithInternalValue = observer(({
           <InputBox
             key={`${label}-${subProp1}`}
             label={`${label}-${subProp1}`}
+            labelGroup={labelGroup}
             value={internalValue[subProp1] ?? subPropValue1}
             setValue={subPropSetter(subProp1)}
             incrementValue={subPropIncrementValue(subProp1)}
@@ -142,6 +145,7 @@ const GenericInputWithInternalValue = observer(({
           <InputBox
             key={`${label}-${subProp2}`}
             label={`${label}-${subProp2}`}
+            labelGroup={labelGroup}
             value={internalValue[subProp2] ?? subPropValue2}
             setValue={subPropSetter(subProp2)}
             incrementValue={subPropIncrementValue(subProp2)}
@@ -164,6 +168,7 @@ const GenericInputWithInternalValue = observer(({
             <InputBox
               key={`${label}-${subProp}`}
               label={`${label}-${subProp}`}
+              labelGroup={labelGroup}
               value={internalValue[subProp] ?? subPropValue}
               setValue={subPropSetter(subProp)}
               incrementValue={subPropIncrementValue(subProp)}
@@ -182,6 +187,7 @@ const GenericInputWithInternalValue = observer(({
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <InputLabel
         label={!isMulti ? label : `${label}-${subProperties[0]}`}
+        labelGroup={labelGroup}
         hasSubProp={isMulti}
       />
 

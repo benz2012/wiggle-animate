@@ -9,6 +9,7 @@ const InputBox = observer(({
   halfWidth = false, // this allows overwriting the totalBoxes value
   iconInTheGap = false,
   label,
+  labelGroup,
   value,
   setValue,
   incrementValue,
@@ -83,7 +84,7 @@ const InputBox = observer(({
 
   return (
     <InputBase
-      id={`input-${label}`}
+      id={`input-${labelGroup ? `${labelGroup}-` : ''}${label}`}
       className="noselect"
       sx={(theme) => {
         const gapSizeGeneric = 0.5

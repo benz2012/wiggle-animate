@@ -19,11 +19,12 @@ const SelectionInput = observer(({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <InputLabel label={label} />
+      <InputLabel label={label} labelGroup={group} idInsteadOfFor />
 
       <Box sx={{ flexGrow: 1 }} />
 
       <Select
+        labelId={`input-${group ? `${group}-` : ''}${label}`}
         value={selectionObj.selected}
         onChange={handleChange}
         sx={(theme) => ({

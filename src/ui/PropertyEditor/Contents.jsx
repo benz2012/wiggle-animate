@@ -98,6 +98,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       key: propertyKey,
       availableWidth: INPUT_WIDTH,
       label: property.label,
+      labelGroup: property.group,
       targetProperty: property,
       setPropertyValue: genericSetter(property),
       secondaryProperty,
