@@ -68,8 +68,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
     const pointerVectorRatioOne = new Vector2(event.clientX, event.clientY)
 
+    // Note: This is NOT drag handling, see above
     if (event.type === 'pointermove') {
-      // Note: This is not drag handling, see above
+      store.setPointerPosition(pointerVector) // keep track of this for all potential needs
+
       const { dragStart } = store.build
       const { playheadDragStart } = store.view
 
@@ -131,14 +133,6 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setSelectorHovers(intersectedIds)
       }
     } else if (event.type === 'pointerdown') {
-      if (event.target.getAttribute('data-capture-click-id') === 'insert-menu-start-path-tool') {
-        // allows the PotentialPointerPoint to render when someone launches the tool from the menu
-        // this will also happen as soon as they move the mouse, but since we are rendering the mouse
-        // as "none" once the tool is active, we want the PPP to be rendered immediatley to prevent
-        // a jarring UX
-        store.setPointerPosition(pointerVector)
-      }
-
       if (event.target === stageRef.current) {
         if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
 

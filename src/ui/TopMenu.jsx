@@ -5,11 +5,11 @@ import { useState } from 'react'
 import './TopMenu.css'
 import bCurveIcon from '../assets/b-curve-icon.png'
 
-const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick, captureClickId }) => (
-  <div className="insert-menu-list-item" onClick={onClick} data-capture-click-id={captureClickId}>
-    <div className="insert-menu-list-item-icon" data-capture-click-id={captureClickId}>{icon}</div>
-    <div className="insert-menu-list-item-label" data-capture-click-id={captureClickId}>{label}</div>
-    <div className="insert-menu-list-item-hotkey" data-capture-click-id={captureClickId}>{hotkeyIndicator}</div>
+const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
+  <div className="insert-menu-list-item" onClick={onClick}>
+    <div className="insert-menu-list-item-icon">{icon}</div>
+    <div className="insert-menu-list-item-label">{label}</div>
+    <div className="insert-menu-list-item-hotkey">{hotkeyIndicator}</div>
   </div>
 )
 
@@ -108,7 +108,6 @@ const TopMenu = ({ store }) => {
                     alt="bezier-curve-icon"
                     src={bCurveIcon}
                     className="list-item-icon-path"
-                    data-capture-click-id="insert-menu-start-path-tool"
                   />
                 )}
                 label="Path"
