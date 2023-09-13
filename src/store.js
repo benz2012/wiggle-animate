@@ -52,6 +52,7 @@ class RootStore {
       hoveredId: null,
       hoveredControl: null,
       dragStart: null,
+      preDrag: false,
     }
     this.tools = {
       PATH: 'path',
@@ -112,6 +113,7 @@ class RootStore {
       addToSelection: action,
       removeFromSelection: action,
 
+      indicatePreDrag: action,
       startDrag: action,
       stopDrag: action,
 
@@ -145,7 +147,7 @@ class RootStore {
     }
 
     if (this.keyHeld.Space || this.keyHeld.MiddleMouse) {
-      if (this.build.dragStart) {
+      if (this.build.preDrag || this.build.dragStart) {
         return 'dragging'
       }
       return 'readyToMoveView'
@@ -153,7 +155,7 @@ class RootStore {
 
     if (this.build.hoveredId) {
       if (this.build.selectedIds.length > 0) {
-        if (this.build.dragStart) {
+        if (this.build.preDrag || this.build.dragStart) {
           return 'dragging'
         }
         if (this.keyHeld.Meta || this.keyHeld.Shift) {
@@ -262,8 +264,14 @@ class RootStore {
   setPointerPosition(value) { this.build.pointerPosition = value }
   setHovered(value) { this.build.hoveredId = value }
   setHoveredControl(value) { this.build.hoveredControl = value }
+
+  indicatePreDrag(indication) { this.build.preDrag = indication }
   startDrag(vector) { this.build.dragStart = vector }
-  stopDrag() { this.build.dragStart = null }
+  stopDrag() {
+    this.build.preDrag = false
+    this.build.dragStart = null
+  }
+
   setSelected(values) {
     this.build.selectedIds = values
   }

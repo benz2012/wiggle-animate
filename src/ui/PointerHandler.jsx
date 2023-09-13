@@ -1,11 +1,12 @@
 /* eslint-disable no-param-reassign */
-import { forwardRef, useCallback, useEffect } from 'react'
+import { forwardRef, useCallback, useEffect, useRef } from 'react'
 import { action } from 'mobx'
 
 import Vector2 from '../lib/structure/Vector2'
 
 const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref
+  const startDragInitialWaitTimeoutId = useRef(null)
 
   /* Convienience Methods */
   const getFrameWithPointerX = (pointerX) => {
@@ -165,9 +166,16 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.setSelected([])
         }
 
+        // Only do a shape drag or selector drag if no tool is active
         if (!store.build.tool) {
-          // Don't activate a shape drag or selector drag if a tool is active
-          store.startDrag(pointerVector)
+          // Wait 50ms before starting a drag in case user has already let up on mouse
+          // this prevents "micro movements" in an Item's position from just trying to
+          // select it, but indicate the 'grab' hand immediatley for smoother UX
+          store.indicatePreDrag(true)
+          startDragInitialWaitTimeoutId.current = setTimeout(
+            () => store.startDrag(pointerVector),
+            50
+          )
           store.setSelectorPosition(pointerVector)
         }
       } else if (event.target.id === 'playhead-canvas') {
@@ -179,6 +187,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     } else if (event.type === 'pointerup') {
       if (event.button === 1) { store.setKeyHeld('MiddleMouse', false) }
 
+      clearTimeout(startDragInitialWaitTimeoutId.current)
       store.stopDrag()
       store.setSelectorRect(0, 0)
       store.stopPlayheadDrag()
