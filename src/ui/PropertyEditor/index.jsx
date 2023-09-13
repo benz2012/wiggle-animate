@@ -20,6 +20,7 @@ const PropertyEditor = observer(({ store }) => {
   //  - Dock Panel on right side, fill page vertically
   //  - hide when playing animation
   //  - - hide forever, show again after animation stopped
+  //  - First Item Auto-Open
 
   const { build, rootContainer } = store
   const { selectedIds } = build

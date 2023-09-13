@@ -242,14 +242,15 @@ class RootContainer extends Container {
           Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovement),
           now
         )
-      } else if (this.store.build.hoveredControl === 'position') {
-        selectedItem._position.setValue(
-          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToCanvas),
-          now
-        )
       } else if (this.store.build.hoveredControl === 'origin') {
         selectedItem.setOrigin(
           Vector2.add(selectedItem.valueForFrame(now, '_origin'), relativeMovementScaledToCanvas),
+          now
+        )
+      } else {
+        // assume that this.store.build.hoveredControl === 'position', or something similar
+        selectedItem._position.setValue(
+          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToCanvas),
           now
         )
       }
