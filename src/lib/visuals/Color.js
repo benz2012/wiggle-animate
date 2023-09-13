@@ -4,9 +4,32 @@ import { rgbToLch, lchToRgb } from '../../utility/color'
 class Color {
   static get className() { return 'Color' }
 
+  static recentPastelHues = []
   static randomPastel() {
+    const nearbyThreshold = 15
+    const newRandomHue = Math.floor(Math.random() * 361)
+    let isNewHueNearAnyRecentHues = Color.recentPastelHues.some((recentHue) => (
+      Math.abs(newRandomHue - recentHue) < nearbyThreshold
+    ))
+    if (
+      !isNewHueNearAnyRecentHues
+      && (newRandomHue < nearbyThreshold || newRandomHue > 360 - nearbyThreshold)
+      && Color.recentPastelHues.some((recentHue) => (
+        recentHue < nearbyThreshold || recentHue > 360 - nearbyThreshold
+      ))
+    ) {
+      isNewHueNearAnyRecentHues = true
+    }
+    if (isNewHueNearAnyRecentHues) {
+      return Color.randomPastel()
+    }
+
+    Color.recentPastelHues.push(newRandomHue)
+    if (Color.recentPastelHues.length > 3) {
+      Color.recentPastelHues.shift()
+    }
     return new Color({
-      h: Math.floor(Math.random() * 361),
+      h: newRandomHue,
       s: 70,
       l: 70,
     })
@@ -75,11 +98,14 @@ class Color {
       }
     }
 
+    // Capp values between 0 & 255, or force it to be an int
     ['red', 'green', 'blue'].forEach((propName) => {
       if (this[propName] > 255) {
         this[propName] = 255
       } else if (this[propName] < 0) {
         this[propName] = 0
+      } else {
+        this[propName] = parseInt(this[propName], 10)
       }
     })
 
