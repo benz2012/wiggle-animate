@@ -117,7 +117,8 @@ class Shape extends Drawable {
   }
 
   findRectIntersections(rectSpecTLBR) {
-    // TODO: this doesn't work properly when items are rotated or scaled
+    // TODO: this doesn't work properly when items are rotated or scaled.
+    //       currently only used for the Rectangle-Selector-Box-Action
     this.ctx.setTransform(this.currentTransform)
     const strokeProtrusion = this.strokeWidth / 2
     this.ctx.translate(

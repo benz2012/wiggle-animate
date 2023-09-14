@@ -24,6 +24,12 @@ class Vector2 {
     return Math.sqrt(xDistanceSquared + yDistanceSquared)
   }
 
+  static multiply(vectorA, vectorB) {
+    const xScaled = vectorA.x * vectorB.x
+    const yScaled = vectorA.y * vectorB.y
+    return new Vector2(xScaled, yScaled)
+  }
+
   constructor(x = 0, y = 0) {
     this.x = truncateFloatLeaveInt(x)
     this.y = truncateFloatLeaveInt(y)
@@ -62,11 +68,7 @@ class Vector2 {
   }
 
   scale(factorX, factorY) {
-    const x2 = this.x * factorX
-    const y2 = this.y * factorY
-    this.x = x2
-    this.y = y2
-    return this
+    return Vector2.multiply(this, new Vector2(factorX, factorY))
   }
 
   toString() {

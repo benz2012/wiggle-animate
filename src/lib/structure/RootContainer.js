@@ -229,9 +229,9 @@ class RootContainer extends Container {
 
   moveAllSelectedByIncrement(relativeMovement, fromArrowKey = false) {
     this.store.build.selectedIds.forEach((selectedId) => {
-      const relativeMovementScaledToCanvas = new Vector2(
-        relativeMovement.x / this.canvasScale,
-        relativeMovement.y / this.canvasScale,
+      const relativeMovementScaledToCanvas = Vector2.multiply(
+        relativeMovement,
+        new Vector2(1 / this.canvasScale, 1 / this.canvasScale)
       )
 
       const selectedItem = this.findItem(selectedId)
@@ -251,11 +251,17 @@ class RootContainer extends Container {
           now
         )
       } else {
-        // assume that this.store.build.hoveredControl === 'position', or something similar
-        // basically, if we're calling this function, we've already decided that something should
-        // be moved, so make sure that happens if it hasn't already
+        // Move the selected item(s)
+        // But apply the vector in the space of the item's parent so that it can be within
+        // a container that's been rotated/scaled, but still move as if the mouse is
+        // dragging it
+        const { parentTransform } = selectedItem
+        const parentTransformInverse = DOMMatrix.fromMatrix(parentTransform).invertSelf()
+        const { a, b, c, d } = parentTransformInverse
+        const { x, y } = relativeMovement
+        const relativeMovementScaledToItemsParent = new Vector2(x * a + y * c, x * b + y * d)
         selectedItem._position.setValue(
-          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToCanvas),
+          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToItemsParent),
           now
         )
       }
