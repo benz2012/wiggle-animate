@@ -249,6 +249,8 @@ class RootContainer extends Container {
         )
       } else {
         // assume that this.store.build.hoveredControl === 'position', or something similar
+        // basically, if we're calling this function, we've already decided that something should
+        // be moved, so make sure that happens if it hasn't already
         selectedItem._position.setValue(
           Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToCanvas),
           now

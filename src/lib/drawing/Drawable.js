@@ -58,18 +58,9 @@ class Drawable extends Animatable {
   get y() { return this.position.y }
 
   setOrigin(newValue, when = 1) {
-    let nextOriginVector
-    if (Array.isArray(newValue) && newValue.length === 2) {
-      nextOriginVector = new Vector2(...newValue)
-    } else if (isObject(newValue) && 'x' in newValue && 'y' in newValue) {
-      nextOriginVector = new Vector2(newValue.x, newValue.y)
-    } else if (newValue instanceof Vector2) {
-      nextOriginVector = newValue
-    }
-    if (!nextOriginVector) return
+    if (!newValue || !(newValue instanceof Vector2)) return
 
-    const changeInOrigin = Vector2.subtract(this.origin, nextOriginVector)
-
+    const changeInOrigin = Vector2.subtract(this.origin, newValue)
     const positionalInverse = identityMatrix()
       .translateSelf(...changeInOrigin.values)
       .rotateSelf(this.rotation.degrees)
@@ -77,7 +68,7 @@ class Drawable extends Animatable {
       .translateSelf(-1 * changeInOrigin.x, -1 * changeInOrigin.y)
     const toTranslate = new Vector2(positionalInverse.e, positionalInverse.f)
 
-    this._origin.setValue(nextOriginVector, when)
+    this._origin.setValue(newValue, when)
     this._position.setValue(Vector2.add(this.position, toTranslate), when)
   }
 

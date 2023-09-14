@@ -95,7 +95,7 @@ class Path extends VisibleShape {
     const poleOfInaccessibility = polylabel([polygonSpec])
     // NOTE: if you ever allow this method to run after keyframes exist,
     // make sure to pass store.animation.now to setOrigin
-    this.setOrigin(poleOfInaccessibility)
+    this.setOrigin(new Vector2(...poleOfInaccessibility))
   }
 
   commitPath() {
