@@ -68,7 +68,12 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
   }
 
   const genericSetter = (property) => (newValue) => {
-    property.setValue(newValue, store.animation.now)
+    if (property.name === '_origin') {
+      const newValueVector = property.castAndCoerceValue(newValue)
+      selectedItem.setOrigin(newValueVector, store.animation.now)
+    } else {
+      property.setValue(newValue, store.animation.now)
+    }
   }
 
   const makePropertyComponent = (property) => {
