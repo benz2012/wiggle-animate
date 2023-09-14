@@ -243,8 +243,11 @@ class RootContainer extends Container {
           now
         )
       } else if (this.store.build.hoveredControl === 'origin') {
+        const transformationalInverse = relativeMovementScaledToCanvas
+          .rotate(-1 * selectedItem.rotation.radians)
+          .scale(1 / selectedItem.scale.x, 1 / selectedItem.scale.y)
         selectedItem.setOrigin(
-          Vector2.add(selectedItem.valueForFrame(now, '_origin'), relativeMovementScaledToCanvas),
+          Vector2.add(selectedItem.valueForFrame(now, '_origin'), transformationalInverse),
           now
         )
       } else {

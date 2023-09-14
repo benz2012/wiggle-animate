@@ -37,15 +37,36 @@ class Vector2 {
   add(anotherVector) {
     this.x += anotherVector.x
     this.y += anotherVector.y
+    return this
   }
 
   subtract(anotherVector) {
     this.x -= anotherVector.x
     this.y -= anotherVector.y
+    return this
   }
 
   distance(anotherVector) {
     return Vector2.distance(this, anotherVector)
+  }
+
+  rotate(angle) {
+    // Takes angle as Radians
+    const sineOfAngle = Math.sin(angle)
+    const cosineOfAngle = Math.cos(angle)
+    const x2 = this.x * cosineOfAngle - this.y * sineOfAngle
+    const y2 = this.x * sineOfAngle + this.y * cosineOfAngle
+    this.x = x2
+    this.y = y2
+    return this
+  }
+
+  scale(factorX, factorY) {
+    const x2 = this.x * factorX
+    const y2 = this.y * factorY
+    this.x = x2
+    this.y = y2
+    return this
   }
 
   toString() {
