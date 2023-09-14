@@ -2,7 +2,6 @@ import Animatable from './Animatable'
 import Property from '../structure/Property'
 import Vector2 from '../structure/Vector2'
 import Angle from '../structure/Angle'
-import { isObject } from '../../utility/object'
 import { identityMatrix } from '../../utility/matrix'
 
 class Drawable extends Animatable {
