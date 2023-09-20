@@ -141,16 +141,15 @@ class RootStore {
   }
 
   get determineCurrentAction() {
-    if (this.build.tool === this.tools.PATH) {
-      // TODO: make it possible to move the canvas, while building a path, without adding a point
-      return 'addingPathPoints'
-    }
-
     if (this.keyHeld.Space || this.keyHeld.MiddleMouse) {
       if (this.build.preDrag || this.build.dragStart) {
         return 'dragging'
       }
       return 'readyToMoveView'
+    }
+
+    if (this.build.tool === this.tools.PATH) {
+      return 'addingPathPoints'
     }
 
     if (this.build.hoveredId) {

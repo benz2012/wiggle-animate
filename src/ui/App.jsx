@@ -87,6 +87,8 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasScale,
     store.rootContainer.canvasFill.color,
     store.project.isExporting,
+    store.keyHeld.Space,
+    store.keyHeld.MiddleMouse,
     store.build.tool,
     store.build.activePath,
     store.build.pointerPosition,

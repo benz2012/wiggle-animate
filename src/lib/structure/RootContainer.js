@@ -198,6 +198,7 @@ class RootContainer extends Container {
   drawPotentialPathPoint() {
     if (this.store.build.tool !== this.store.tools.PATH) return
     if (!this.store.build.pointerPosition) return
+    if (this.store.keyHeld.Space || this.store.keyHeld.MiddleMouse) return
 
     const pointerInCanvasSpace = DOMMatrix
       .fromMatrix(this.currentTransform)

@@ -28,7 +28,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
   /* DRAG HANDLER */
   const handleDrag = action((event) => {
-    const { selectedIds, dragStart } = store.build
+    const { selectedIds, dragStart, tool } = store.build
     const { playheadDragStart } = store.view
 
     if (dragStart) {
@@ -45,10 +45,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           relativeMovementScaledToCanvasInverse,
         )
         store.rootContainer.canvasPosition = newCanvasPosition
+      } else if (tool === store.tools.PATH) {
+        // PASS in this scenario
       } else if (selectedIds.length > 0) {
-        // TODO: When a child is inside a container that has been rotated/scaled,
-        // but you're trying to move just the child, not the parent container, the
-        // movement vectors need to be converted into the childs space before being applied
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
         store.selector.rect.width += relativeMovement.x
@@ -134,10 +133,16 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setSelectorHovers(intersectedIds)
       }
     } else if (event.type === 'pointerdown') {
+      /* POINTER DOWN / CLICK */
       if (event.target === stageRef.current) {
         if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
 
-        if (store.build.tool === store.tools.PATH) {
+        if (
+          store.build.tool === store.tools.PATH
+          && !(store.keyHeld.Space || store.keyHeld.MiddleMouse)
+        ) {
+          // IF Space/MiddleMouse, User must be moving the canvas, so skip path tool interactions
+
           if (!store.build.activePath) {
             store.addNewPath()
           }
@@ -148,7 +153,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
             return
           }
         } else {
-          // Don't check for pointer intersections with other shapes if a tool is active
+          // Only check pointer intersections if no tools are active
           store.rootContainer.checkPointerIntersections(pointerVector)
         }
 
@@ -166,8 +171,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.setSelected([])
         }
 
-        // Only do a shape drag or selector drag if no tool is active
-        if (!store.build.tool) {
+        /* START DRAG LOGIC */
           // Wait 50ms before starting a drag in case user has already let up on mouse
           // this prevents "micro movements" in an Item's position from just trying to
           // select it, but indicate the 'grab' hand immediatley for smoother UX
@@ -177,7 +181,6 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
             50
           )
           store.setSelectorPosition(pointerVector)
-        }
       } else if (event.target.id === 'playhead-canvas') {
         store.startPlayheadDrag(pointerVectorRatioOne)
         store.setPlayheadHovered(true)
@@ -185,6 +188,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         goToFrameWithPointerX(pointerVectorRatioOne.x)
       }
     } else if (event.type === 'pointerup') {
+      /* POINTER UP / END-OF-DRAG */
       if (event.button === 1) { store.setKeyHeld('MiddleMouse', false) }
 
       clearTimeout(startDragInitialWaitTimeoutId.current)
