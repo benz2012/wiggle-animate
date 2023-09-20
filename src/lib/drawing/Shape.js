@@ -3,7 +3,15 @@ import { makeObservable, action } from 'mobx'
 import Drawable from './Drawable'
 import Property from '../structure/Property'
 import Alignment from '../structure/Alignment'
-import { drawHoveredIndicator, drawControllerBox, clearShadowContext } from '../../utility/drawing'
+import Vector2 from '../structure/Vector2'
+import Angle from '../structure/Angle'
+import {
+  drawHoveredIndicator,
+  drawControllerBox,
+  clearShadowContext,
+  setControllerHandleRectOnCtx,
+  octantCursorMap,
+} from '../../utility/drawing'
 
 class Shape extends Drawable {
   static get className() { return 'Shape' }
@@ -74,14 +82,14 @@ class Shape extends Drawable {
     return this
   }
 
-  draw(parentTransform, isHovered, isSelected) {
+  draw(parentTransform, isHovered, isSelected, handleIdxHovered) {
     super.draw(parentTransform)
 
     this.drawShape(isHovered, isSelected)
     clearShadowContext(this.ctx)
 
     if (isSelected) {
-      this.drawControllerBox()
+      this.drawControllerBox(handleIdxHovered)
     } else if (isHovered) {
       this.drawHoveredIndicator()
     }
@@ -92,9 +100,9 @@ class Shape extends Drawable {
     drawHoveredIndicator(this)
   }
 
-  drawControllerBox() {
+  drawControllerBox(handleIdxHovered) {
     // Allows being overwritten by subclass
-    drawControllerBox(this)
+    drawControllerBox(this, handleIdxHovered)
   }
 
   createIntersectionsPath() {
@@ -114,6 +122,35 @@ class Shape extends Drawable {
     this.createIntersectionsPath()
     if (this.ctx.isPointInPath(...pointerVector.values)) return true
     return false
+  }
+
+  checkSelectedItemHandleIntersections(pointerVector) {
+    const nullReturn = [false, null, null]
+
+    let handleRectSpec = null
+    const handleIntersected = [0, 1, 2, 3].find((handleIdx) => {
+      if (this.controllerType === 'Line' && handleIdx > 1) return false
+
+      this.ctx.setTransform(this.currentTransform)
+      this.ctx.beginPath()
+      handleRectSpec = setControllerHandleRectOnCtx(this, handleIdx, true)
+      if (this.ctx.isPointInPath(...pointerVector.values)) return true
+
+      return false
+    })
+
+    if (handleIntersected != null) {
+      const [handleX, handleY, handleW, handleH] = handleRectSpec
+      const handleCenterPoint = new Vector2(handleX + handleW / 2, handleY + handleH / 2)
+      const handlePointInGlobalSpace = this.currentTransform.translateSelf(...handleCenterPoint.values)
+      const offsetX = handlePointInGlobalSpace.e - this.currentTransform.e
+      const offsetY = this.currentTransform.f - handlePointInGlobalSpace.f
+      const octant = Angle.vectorOctant(offsetX, offsetY)
+      const cursor = octantCursorMap[octant]
+      return [true, handleIntersected, cursor]
+    }
+
+    return nullReturn
   }
 
   findRectIntersections(rectSpecTLBR) {

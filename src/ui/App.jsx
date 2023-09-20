@@ -44,6 +44,10 @@ const App = observer(({ store }) => {
         stageRef.current.style.cursor = 'crosshair'
         break
     }
+
+    if (store.determineCurrentAction && store.determineCurrentAction.endsWith('-resize')) {
+      stageRef.current.style.cursor = store.determineCurrentAction
+    }
   }, [store.determineCurrentAction])
 
   /* Main observations */

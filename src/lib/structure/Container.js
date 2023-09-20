@@ -120,11 +120,12 @@ class Container extends Drawable {
     const drawOrder = [...this.sortOrder].reverse()
     drawOrder.forEach((childId) => {
       const anyHovers = (hoveredId === childId) || selectorHovers.includes(childId)
+      const handleIdxHovered = (hoveredId && hoveredId.includes(childId)) ? hoveredId.split('-handle-')[1] : null
       const child = this.children[childId]
       if (child instanceof Container) {
         child.draw(this.currentTransform, hoveredId, hoveredControl, selectedIds, selectorHovers)
       } else {
-        child.draw(this.currentTransform, anyHovers, selectedIds.includes(childId))
+        child.draw(this.currentTransform, anyHovers, selectedIds.includes(childId), parseInt(handleIdxHovered, 10))
       }
     })
 
@@ -173,12 +174,16 @@ class Container extends Drawable {
     // Array.some() will cause the iteration to short circuit on the first child
     // that has an intersection, like event bubble cancellation in the DOM
     let hasIntersection = false
+    const { selectedIds } = Item.rootContainer.store.build
+
     this.sortOrder.some((childId) => {
       const child = this.children[childId]
 
+      // This checks for intersections btwn the mouse and the Yellow Controler Box used to
+      // move a container. Only checked when the container itself is selected beforehand
       if (
         child instanceof Container
-        && Item.rootContainer.store.build.selectedIds.includes(childId)
+        && selectedIds.includes(childId)
       ) {
         hasIntersection = child.checkSelectedContainerPointerIntersections(pointerVector)
         if (hasIntersection) {
@@ -187,10 +192,27 @@ class Container extends Drawable {
         }
       }
 
+      // This checks for intersections btwn the mouse and the Controller Handles
+      // on the selected Shape Item, like Resize or Rotate on the Rectangle
+      // TODO: Make this work for multiple items at once
+      //       this would just be: check for each selected element, and then
+      //       add methods like moveAllSelectedByIncrement but for Size & Rotation
+      const numSelected = selectedIds.length
+      if (!(child instanceof Container) && numSelected === 1) {
+        const [hasHandleIntersection, handleIdx, cursor] = child.checkSelectedItemHandleIntersections(pointerVector)
+        hasIntersection = hasHandleIntersection
+        if (hasIntersection) {
+          Item.rootContainer.store.setHovered(`${childId}-handle-${handleIdx}`)
+          Item.rootContainer.store.setHoveredControl(`handle-size-${handleIdx}--${cursor}`)
+          return hasIntersection
+        }
+      }
+
+      // This checks for intersections btwn the mouse and all children that are not
+      // Containers, recursivley (it recurses into Containers, lol).
       hasIntersection = child.checkPointerIntersections(pointerVector)
       if (!(child instanceof Container) && hasIntersection) {
         Item.rootContainer.store.setHovered(childId)
-        Item.rootContainer.store.setHoveredControl('position')
       }
       return hasIntersection
     })

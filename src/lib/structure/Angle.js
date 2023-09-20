@@ -12,6 +12,32 @@ class Angle {
     return truncateFloatLeaveInt(radians * (180 / Math.PI))
   }
 
+  static vectorOctant = (vectorX, vectorY) => {
+    let radians = 0
+    if (vectorX || vectorY) {
+      radians = Math.atan2(vectorY, vectorX)
+      if (radians < 0) {
+        radians += 2 * Math.PI
+      }
+    }
+
+    const angle = new Angle()
+    angle.radians = radians
+    const { degrees } = angle
+
+    const eighth = 360 / 8
+    const sixteenth = 360 / 16
+    if (degrees > eighth * 0 - sixteenth && degrees <= eighth * 0 + sixteenth) return 0
+    if (degrees > eighth * 1 - sixteenth && degrees <= eighth * 1 + sixteenth) return 1
+    if (degrees > eighth * 2 - sixteenth && degrees <= eighth * 2 + sixteenth) return 2
+    if (degrees > eighth * 3 - sixteenth && degrees <= eighth * 3 + sixteenth) return 3
+    if (degrees > eighth * 4 - sixteenth && degrees <= eighth * 4 + sixteenth) return 4
+    if (degrees > eighth * 5 - sixteenth && degrees <= eighth * 5 + sixteenth) return 5
+    if (degrees > eighth * 6 - sixteenth && degrees <= eighth * 6 + sixteenth) return 6
+    if (degrees > eighth * 7 - sixteenth && degrees <= eighth * 7 + sixteenth) return 7
+    return 0
+  }
+
   constructor(degrees = 0) {
     this.degrees = truncateFloatLeaveInt(degrees)
 

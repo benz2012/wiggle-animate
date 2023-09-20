@@ -236,20 +236,18 @@ class RootContainer extends Container {
 
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
+      const currentPosition = selectedItem.valueForFrame(now, '_position')
 
       if (fromArrowKey) {
-        selectedItem._position.setValue(
-          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovement),
-          now
-        )
+        // Plain and Simple 1-for-1 movement from Arrow Keys
+        selectedItem._position.setValue(Vector2.add(currentPosition, relativeMovement), now)
       } else if (this.store.build.hoveredControl === 'origin') {
+        // Move origin of Selected item(s) (currently only for Containers)
+        const currentOrigin = selectedItem.valueForFrame(now, '_origin')
         const transformationalInverse = relativeMovementScaledToCanvas
           .rotate(-1 * selectedItem.rotation.radians)
           .scale(1 / selectedItem.scale.x, 1 / selectedItem.scale.y)
-        selectedItem.setOrigin(
-          Vector2.add(selectedItem.valueForFrame(now, '_origin'), transformationalInverse),
-          now
-        )
+        selectedItem.setOrigin(Vector2.add(currentOrigin, transformationalInverse), now)
       } else {
         // Move the selected item(s)
         // But apply the vector in the space of the item's parent so that it can be within
@@ -260,10 +258,7 @@ class RootContainer extends Container {
         const { a, b, c, d } = parentTransformInverse
         const { x, y } = relativeMovement
         const relativeMovementScaledToItemsParent = new Vector2(x * a + y * c, x * b + y * d)
-        selectedItem._position.setValue(
-          Vector2.add(selectedItem.valueForFrame(now, '_position'), relativeMovementScaledToItemsParent),
-          now
-        )
+        selectedItem._position.setValue(Vector2.add(currentPosition, relativeMovementScaledToItemsParent), now)
       }
     })
   }

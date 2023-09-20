@@ -152,7 +152,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.rootContainer.checkPointerIntersections(pointerVector)
         }
 
-        if (store.build.hoveredId) {
+        if (store.build.hoveredId && !store.build.hoveredId.includes('-handle-')) {
           if (store.build.selectedIds.length === 0) {
             store.setSelected([store.build.hoveredId])
           } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {

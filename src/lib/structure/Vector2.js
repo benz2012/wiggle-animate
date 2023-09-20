@@ -25,8 +25,8 @@ class Vector2 {
   }
 
   static multiply(vectorA, vectorB) {
-    const xScaled = vectorA.x * vectorB.x
-    const yScaled = vectorA.y * vectorB.y
+    const xScaled = truncateFloatLeaveInt(vectorA.x * vectorB.x)
+    const yScaled = truncateFloatLeaveInt(vectorA.y * vectorB.y)
     return new Vector2(xScaled, yScaled)
   }
 
@@ -62,8 +62,8 @@ class Vector2 {
     const cosineOfAngle = Math.cos(angle)
     const x2 = this.x * cosineOfAngle - this.y * sineOfAngle
     const y2 = this.x * sineOfAngle + this.y * cosineOfAngle
-    this.x = x2
-    this.y = y2
+    this.x = truncateFloatLeaveInt(x2)
+    this.y = truncateFloatLeaveInt(y2)
     return this
   }
 

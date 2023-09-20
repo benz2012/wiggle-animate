@@ -2,11 +2,74 @@
 
 import theme from '../../ui/theme'
 
+const HANDLE_STROKE_WIDTH = 6
+
+const setControllerHandleRectOnCtx = (instance, whichHandle, forHoverCheck = false) => {
+  const { controllerType, ctx, scale, strokeWidth, rectSpec } = instance
+  const [rectX, rectY, rectW, rectH] = rectSpec
+  const strokeProtrusion = strokeWidth / 2
+
+  const handleStrokeWidth = forHoverCheck ? HANDLE_STROKE_WIDTH : 0
+  const handleHalfStroke = handleStrokeWidth / 2
+
+  let handleRectSpec = [0, 0, 0, 0]
+  if (whichHandle === 0) {
+    if (controllerType === 'Line') {
+      handleRectSpec = [
+        rectX - (8 / scale.x) - (handleHalfStroke / scale.x),
+        rectY + rectH / 2 - (8 / scale.y) - (handleHalfStroke / scale.y),
+        (16 + handleStrokeWidth) / scale.x,
+        (16 + handleStrokeWidth) / scale.y,
+      ]
+    } else {
+      handleRectSpec = [
+        rectX - strokeProtrusion - (11 / scale.x) - (handleHalfStroke / scale.x),
+        rectY - strokeProtrusion - (11 / scale.y) - (handleHalfStroke / scale.y),
+        (16 + handleStrokeWidth) / scale.x,
+        (16 + handleStrokeWidth) / scale.y,
+      ]
+    }
+  } else if (whichHandle === 1) {
+    if (controllerType === 'Line') {
+      handleRectSpec = [
+        (rectX + rectW) - (8 / scale.x) - (handleHalfStroke / scale.x),
+        rectY + rectH / 2 - (8 / scale.y) - (handleHalfStroke / scale.y),
+        (16 + handleStrokeWidth) / scale.x,
+        (16 + handleStrokeWidth) / scale.y,
+      ]
+    } else {
+      handleRectSpec = [
+        (rectX + rectW) + strokeProtrusion - (5 / scale.x) - (handleHalfStroke / scale.x),
+        rectY - strokeProtrusion - (11 / scale.y) - (handleHalfStroke / scale.y),
+        (16 + handleStrokeWidth) / scale.x,
+        (16 + handleStrokeWidth) / scale.y,
+      ]
+    }
+  } else if (whichHandle === 2) {
+    handleRectSpec = [
+      (rectX + rectW) + strokeProtrusion - (5 / scale.x) - (handleHalfStroke / scale.x),
+      (rectY + rectH) + strokeProtrusion - (5 / scale.y) - (handleHalfStroke / scale.y),
+      (16 + handleStrokeWidth) / scale.x,
+      (16 + handleStrokeWidth) / scale.y,
+    ]
+  } else if (whichHandle === 3) {
+    handleRectSpec = [
+      rectX - strokeProtrusion - (11 / scale.x) - (handleHalfStroke / scale.x),
+      (rectY + rectH) + strokeProtrusion - (5 / scale.y) - (handleHalfStroke / scale.y),
+      (16 + handleStrokeWidth) / scale.x,
+      (16 + handleStrokeWidth) / scale.y,
+    ]
+  }
+
+  ctx.rect(...handleRectSpec)
+  return handleRectSpec
+}
+
 // TODO: draw this on top of all other items
 // TODO: ^ with that, potentially also draw an invisible box where the shape exists
 //         so that layers underneath can be moved without accidentaly selecting
 //         the item(s) above it
-const drawControllerBox = (instance) => {
+const drawControllerBox = (instance, handleIdxHovered) => {
   /* instance: type Shape */
   const { controllerType, ctx, origin, scale, strokeWidth, rectSpec } = instance
   const [rectX, rectY, rectW, rectH] = rectSpec
@@ -38,51 +101,37 @@ const drawControllerBox = (instance) => {
   ctx.setTransform(instance.currentTransform)
   ctx.beginPath()
   if (controllerType === 'Line') {
-    ctx.rect(
-      rectX - (8 / scale.x),
-      rectY + rectH / 2 - (8 / scale.y),
-      16 / scale.x,
-      16 / scale.y,
-    )
-    ctx.rect(
-      (rectX + rectW) - (8 / scale.x),
-      rectY + rectH / 2 - (8 / scale.y),
-      16 / scale.x,
-      16 / scale.y,
-    )
+    // This controller will be a 2-pointed line
+    if (handleIdxHovered !== 0) { setControllerHandleRectOnCtx(instance, 0) }
+    if (handleIdxHovered !== 1) { setControllerHandleRectOnCtx(instance, 1) }
   } else {
-    ctx.rect(
-      rectX - strokeProtrusion - (11 / scale.x),
-      rectY - strokeProtrusion - (11 / scale.y),
-      16 / scale.x,
-      16 / scale.y,
-    )
-    ctx.rect(
-      (rectX + rectW) + strokeProtrusion - (5 / scale.x),
-      rectY - strokeProtrusion - (11 / scale.y),
-      16 / scale.x,
-      16 / scale.y,
-    )
-    ctx.rect(
-      (rectX + rectW) + strokeProtrusion - (5 / scale.x),
-      (rectY + rectH) + strokeProtrusion - (5 / scale.y),
-      16 / scale.x,
-      16 / scale.y,
-    )
-    ctx.rect(
-      rectX - strokeProtrusion - (11 / scale.x),
-      (rectY + rectH) + strokeProtrusion - (5 / scale.y),
-      16 / scale.x,
-      16 / scale.y,
-    )
+    // This controller will be a 4-pointed rectangle
+    if (handleIdxHovered !== 0) { setControllerHandleRectOnCtx(instance, 0) }
+    if (handleIdxHovered !== 1) { setControllerHandleRectOnCtx(instance, 1) }
+    if (handleIdxHovered !== 2) { setControllerHandleRectOnCtx(instance, 2) }
+    if (handleIdxHovered !== 3) { setControllerHandleRectOnCtx(instance, 3) }
   }
   ctx.fillStyle = `${theme.palette.WHITE}`
   ctx.strokeStyle = `${theme.palette.primary[100]}`
-  ctx.lineWidth = 6
+  ctx.lineWidth = HANDLE_STROKE_WIDTH
   ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.fill()
   ctx.stroke()
+
+  // hovered handle ?
+  if (handleIdxHovered != null) {
+    ctx.setTransform(instance.currentTransform)
+    ctx.beginPath()
+    setControllerHandleRectOnCtx(instance, handleIdxHovered)
+    ctx.fillStyle = `${theme.palette.WHITE}`
+    ctx.strokeStyle = `${theme.palette.tertiary[100]}`
+    ctx.lineWidth = HANDLE_STROKE_WIDTH
+    ctx.lineJoin = 'miter'
+    ctx.setTransform(instance.currentTransformWithoutScale)
+    ctx.fill()
+    ctx.stroke()
+  }
 
   // origin
   ctx.setTransform(instance.currentTransform)
@@ -122,7 +171,7 @@ const drawControllerBox = (instance) => {
   ctx.moveTo(0, 0)
   ctx.lineTo(0 / scale.x, -75 / scale.y)
   ctx.strokeStyle = `${theme.palette.primary[100]}`
-  ctx.lineWidth = 6
+  ctx.lineWidth = HANDLE_STROKE_WIDTH
   ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
@@ -145,7 +194,7 @@ const drawControllerBox = (instance) => {
   )
   ctx.fillStyle = `${theme.palette.WHITE}`
   ctx.strokeStyle = `${theme.palette.primary[100]}`
-  ctx.lineWidth = 6
+  ctx.lineWidth = HANDLE_STROKE_WIDTH
   ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.fill()
@@ -194,6 +243,7 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
 }
 
 export {
+  setControllerHandleRectOnCtx,
   drawControllerBox,
   ContainerControllerSizes,
   drawContainerController,

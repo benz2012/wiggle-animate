@@ -162,6 +162,11 @@ class RootStore {
           return 'adding'
         }
       }
+
+      if (this.build.hoveredControl && this.build.hoveredControl.startsWith('handle')) {
+        return this.build.hoveredControl.split('--')[1]
+      }
+
       return 'hovering'
     }
 

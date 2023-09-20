@@ -35,7 +35,22 @@ const drawHoveredIndicatorPath = (instance) => {
   ctx.stroke()
 }
 
+const octantCursorMap = {
+  0: 'ew-resize',
+  4: 'ew-resize',
+
+  1: 'nesw-resize',
+  5: 'nesw-resize',
+
+  2: 'ns-resize',
+  6: 'ns-resize',
+
+  3: 'nwse-resize',
+  7: 'nwse-resize',
+}
+
 export {
   drawHoveredIndicator,
   drawHoveredIndicatorPath,
+  octantCursorMap,
 }

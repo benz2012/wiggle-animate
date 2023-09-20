@@ -44,7 +44,6 @@ const KeyHandler = ({ store }) => {
         if (!STAGE_HAS_FOCUS) break
         event.preventDefault()
         store.setKeyHeld('Space', true)
-        // store.setSelected([])
         break
 
       case '-':
