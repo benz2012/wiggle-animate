@@ -266,6 +266,9 @@ class RootContainer extends Container {
   }
 
   resizeAllSelectedByIncrement(relativeMovement) {
+    // TODO: allow resizing to follow strict corner rules such that it will change the position
+    // of an object (etc) in order to treat the opposite corner as the resize anchor.
+    // This should likely be triggered by a hotkey such as Option+Drag
     const { activeControl } = this.store.build
     if (!activeControl) return
     const activeHandleIdx = parseInt(activeControl.split('-').pop(), 10)

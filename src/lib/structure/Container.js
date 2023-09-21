@@ -194,11 +194,7 @@ class Container extends Drawable {
 
       // This checks for intersections btwn the mouse and the Controller Handles
       // on the selected Shape Item, like Resize or Rotate on the Rectangle
-      // TODO: Make this work for multiple items at once
-      //       this would just be: check for each selected element, and then
-      //       add methods like moveAllSelectedByIncrement but for Size & Rotation
-      const numSelected = selectedIds.length
-      if (!(child instanceof Container) && numSelected === 1) {
+      if (!(child instanceof Container)) {
         const [hasHandleIntersection, handleIdx, cursor] = child.checkSelectedItemHandleIntersections(pointerVector)
         hasIntersection = hasHandleIntersection
         if (hasIntersection) {
