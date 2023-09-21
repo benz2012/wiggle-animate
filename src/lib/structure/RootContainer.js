@@ -155,6 +155,7 @@ class RootContainer extends Container {
       this.parentTransform,
       this.store.build.hoveredId,
       this.store.build.hoveredControl,
+      this.store.build.activeControl,
       this.store.build.selectedIds,
       this.store.selector.hovers,
     )
@@ -176,7 +177,7 @@ class RootContainer extends Container {
     this.parentTransform = identityMatrix()
 
     this.drawCanvas()
-    super.draw(this.parentTransform, null, null, [], [])
+    super.draw(this.parentTransform, null, null, null, [], [])
   }
 
   drawStageDots(rootWidth, rootHeight) {

@@ -69,10 +69,11 @@ const setControllerHandleRectOnCtx = (instance, whichHandle, forHoverCheck = fal
 // TODO: ^ with that, potentially also draw an invisible box where the shape exists
 //         so that layers underneath can be moved without accidentaly selecting
 //         the item(s) above it
-const drawControllerBox = (instance, handleIdxHovered) => {
+const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
   /* instance: type Shape */
   const { controllerType, ctx, origin, scale, strokeWidth, rectSpec } = instance
   const [rectX, rectY, rectW, rectH] = rectSpec
+  const handleIdxActiveOrHovered = handleIdxActive != null ? handleIdxActive : handleIdxHovered
   const strokeProtrusion = strokeWidth / 2
 
   ctx.setTransform(instance.currentTransform)
@@ -102,14 +103,18 @@ const drawControllerBox = (instance, handleIdxHovered) => {
   ctx.beginPath()
   if (controllerType === 'Line') {
     // This controller will be a 2-pointed line
-    if (handleIdxHovered !== 0) { setControllerHandleRectOnCtx(instance, 0) }
-    if (handleIdxHovered !== 1) { setControllerHandleRectOnCtx(instance, 1) }
+    [0, 1].forEach((idx) => {
+      if (handleIdxActiveOrHovered !== idx) {
+        setControllerHandleRectOnCtx(instance, idx)
+      }
+    })
   } else {
     // This controller will be a 4-pointed rectangle
-    if (handleIdxHovered !== 0) { setControllerHandleRectOnCtx(instance, 0) }
-    if (handleIdxHovered !== 1) { setControllerHandleRectOnCtx(instance, 1) }
-    if (handleIdxHovered !== 2) { setControllerHandleRectOnCtx(instance, 2) }
-    if (handleIdxHovered !== 3) { setControllerHandleRectOnCtx(instance, 3) }
+    [0, 1, 2, 3].forEach((idx) => {
+      if (handleIdxActiveOrHovered !== idx) {
+        setControllerHandleRectOnCtx(instance, idx)
+      }
+    })
   }
   ctx.fillStyle = `${theme.palette.WHITE}`
   ctx.strokeStyle = `${theme.palette.primary[100]}`
@@ -120,12 +125,12 @@ const drawControllerBox = (instance, handleIdxHovered) => {
   ctx.stroke()
 
   // hovered handle ?
-  if (handleIdxHovered != null) {
+  if (handleIdxActiveOrHovered != null) {
     ctx.setTransform(instance.currentTransform)
     ctx.beginPath()
-    setControllerHandleRectOnCtx(instance, handleIdxHovered)
+    setControllerHandleRectOnCtx(instance, handleIdxActiveOrHovered)
     ctx.fillStyle = `${theme.palette.WHITE}`
-    ctx.strokeStyle = `${theme.palette.tertiary[100]}`
+    ctx.strokeStyle = handleIdxActive != null ? `${theme.palette.secondary[100]}` : `${theme.palette.tertiary[100]}`
     ctx.lineWidth = HANDLE_STROKE_WIDTH
     ctx.lineJoin = 'miter'
     ctx.setTransform(instance.currentTransformWithoutScale)

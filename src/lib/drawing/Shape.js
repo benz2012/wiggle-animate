@@ -84,14 +84,14 @@ class Shape extends Drawable {
     return this
   }
 
-  draw(parentTransform, isHovered, isSelected, handleIdxHovered) {
+  draw(parentTransform, isHovered, isSelected, handleIdxHovered, handleIdxActive) {
     super.draw(parentTransform)
 
     this.drawShape(isHovered, isSelected)
     clearShadowContext(this.ctx)
 
     if (isSelected) {
-      this.drawControllerBox(handleIdxHovered)
+      this.drawControllerBox(handleIdxHovered, handleIdxActive)
     } else if (isHovered) {
       this.drawHoveredIndicator()
     }
@@ -102,9 +102,9 @@ class Shape extends Drawable {
     drawHoveredIndicator(this)
   }
 
-  drawControllerBox(handleIdxHovered) {
+  drawControllerBox(handleIdxHovered, handleIdxActive) {
     // Allows being overwritten by subclass
-    drawControllerBox(this, handleIdxHovered)
+    drawControllerBox(this, handleIdxHovered, handleIdxActive)
   }
 
   createIntersectionsPath() {
