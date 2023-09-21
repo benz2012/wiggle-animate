@@ -48,6 +48,7 @@ class RootStore {
       tool: '',
       pointerPosition: null,
       activePath: null,
+      activeControl: null,
       selectedIds: [],
       hoveredId: null,
       hoveredControl: null,
@@ -110,6 +111,7 @@ class RootStore {
       setPointerPosition: action,
       setHovered: action,
       setHoveredControl: action,
+      setActiveControl: action,
       setSelected: action,
       addToSelection: action,
       removeFromSelection: action,
@@ -269,6 +271,7 @@ class RootStore {
   setPointerPosition(value) { this.build.pointerPosition = value }
   setHovered(value) { this.build.hoveredId = value }
   setHoveredControl(value) { this.build.hoveredControl = value }
+  setActiveControl(value) { this.build.activeControl = value }
 
   indicatePreDrag(indication) { this.build.preDrag = indication }
   startDrag(vector) { this.build.dragStart = vector }

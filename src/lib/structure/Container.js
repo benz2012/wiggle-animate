@@ -203,7 +203,7 @@ class Container extends Drawable {
         hasIntersection = hasHandleIntersection
         if (hasIntersection) {
           Item.rootContainer.store.setHovered(`${childId}-handle-${handleIdx}`)
-          Item.rootContainer.store.setHoveredControl(`handle-size-${handleIdx}--${cursor}`)
+          Item.rootContainer.store.setHoveredControl(`handle-size--${cursor}`)
           return hasIntersection
         }
         Item.rootContainer.store.setHoveredControl(null)

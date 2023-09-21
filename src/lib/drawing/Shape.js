@@ -34,6 +34,7 @@ class Shape extends Drawable {
       isEditable: true,
       group: 'size',
       order: 2,
+      minValue: 0,
       isKeyframable: true,
     })
     this._height = new Property({
@@ -42,6 +43,7 @@ class Shape extends Drawable {
       isEditable: true,
       group: 'size',
       order: 2,
+      minValue: 0,
       isKeyframable: true,
     })
     this._alignment = new Property({

@@ -3,6 +3,7 @@ import { makeObservable, action, observable } from 'mobx'
 import Container from './Container'
 import Item from './Item'
 import Size from './Size'
+import Alignment from './Alignment'
 import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
 import { identityMatrix } from '../../utility/matrix'
@@ -261,6 +262,58 @@ class RootContainer extends Container {
         const relativeMovementScaledToItemsParent = new Vector2(x * a + y * c, x * b + y * d)
         selectedItem._position.setValue(Vector2.add(currentPosition, relativeMovementScaledToItemsParent), now)
       }
+    })
+  }
+
+  resizeAllSelectedByIncrement(relativeMovement) {
+    const { activeControl } = this.store.build
+    if (!activeControl) return
+    const activeHandleIdx = parseInt(activeControl.split('-').pop(), 10)
+
+    this.store.build.selectedIds.forEach((selectedId) => {
+      const selectedItem = this.findItem(selectedId)
+      const { now } = this.store.animation
+      const currentWidth = selectedItem.valueForFrame(now, '_width')
+      const currentHeight = selectedItem.valueForFrame(now, '_height')
+
+      const { parentTransform, rotation, scale, alignment } = selectedItem
+      const parentTransformInverse = DOMMatrix.fromMatrix(parentTransform).invertSelf()
+      const { a, b, c, d } = parentTransformInverse
+      const { x, y } = relativeMovement
+      const relativeMovementScaledToItem = new Vector2(x * a + y * c, x * b + y * d)
+        .rotate(-1 * rotation.radians)
+        .scale(1 / scale.x, 1 / scale.y)
+
+      let { x: deltaWidth, y: deltaHeight } = relativeMovementScaledToItem
+      if (activeHandleIdx === 0) {
+        deltaWidth *= -1
+        deltaHeight *= -1
+      } else if (activeHandleIdx === 1) {
+        deltaHeight *= -1
+      } else if (activeHandleIdx === 3) {
+        deltaWidth *= -1
+      }
+      if (alignment.x === Alignment.CENTER) {
+        deltaWidth *= 2
+      }
+      if (alignment.y === Alignment.CENTER) {
+        deltaHeight *= 2
+      }
+      if (
+        (alignment.x === Alignment.LEFT && [0, 3].includes(activeHandleIdx))
+        || (alignment.x === Alignment.RIGHT && [1, 2].includes(activeHandleIdx))
+      ) {
+        deltaWidth = 0
+      }
+      if (
+        (alignment.y === Alignment.TOP && [0, 1].includes(activeHandleIdx))
+        || (alignment.y === Alignment.BOTTOM && [2, 3].includes(activeHandleIdx))
+      ) {
+        deltaHeight = 0
+      }
+
+      selectedItem._width.setValue(currentWidth + deltaWidth, now)
+      selectedItem._height.setValue(currentHeight + deltaHeight, now)
     })
   }
 }

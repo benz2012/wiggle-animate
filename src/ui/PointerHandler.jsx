@@ -49,6 +49,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         // PASS in this scenario
       } else if (tool === store.tools.RESIZE) {
         // PASS in this scenario
+        store.rootContainer.resizeAllSelectedByIncrement(relativeMovement)
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
@@ -164,9 +165,13 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.rootContainer.checkPointerIntersections(pointerVector)
         }
 
-        const { hoveredId } = store.build
+        const { hoveredId, hoveredControl } = store.build
         if (hoveredId && hoveredId.includes('-handle-')) {
-          store.setTool(store.tools.RESIZE)
+          store.setActiveControl(hoveredId)
+          const handleControlType = hoveredControl && hoveredControl.replace('handle-', '').split('-')[0]
+          if (handleControlType === 'size') {
+            store.setTool(store.tools.RESIZE)
+          }
         } else if (hoveredId) {
           if (store.build.selectedIds.length === 0) {
             store.setSelected([hoveredId])
@@ -210,13 +215,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setSelected(store.selector.hovers)
       }
 
-      const { hoveredId } = store.build
-      if (
-        !(hoveredId && hoveredId.includes('-handle-'))
-        && store.build.tool === store.tools.RESIZE
-      ) {
+      if (store.build.tool === store.tools.RESIZE) {
         store.setTool(store.tools.NONE)
       }
+      store.setActiveControl(null)
 
       store.setSelectorHovers([])
     }
