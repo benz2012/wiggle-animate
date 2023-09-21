@@ -40,13 +40,21 @@ const App = observer(({ store }) => {
       case 'addingPathPoints':
         stageRef.current.style.cursor = 'none'
         break
+      case 'ew-resize':
+        stageRef.current.style.cursor = 'ew-resize'
+        break
+      case 'ns-resize':
+        stageRef.current.style.cursor = 'ns-resize'
+        break
+      case 'nesw-resize':
+        stageRef.current.style.cursor = 'nesw-resize'
+        break
+      case 'nwse-resize':
+        stageRef.current.style.cursor = 'nwse-resize'
+        break
       default:
         stageRef.current.style.cursor = 'crosshair'
         break
-    }
-
-    if (store.determineCurrentAction && store.determineCurrentAction.endsWith('-resize')) {
-      stageRef.current.style.cursor = store.determineCurrentAction
     }
   }, [store.determineCurrentAction])
 

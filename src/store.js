@@ -55,8 +55,9 @@ class RootStore {
       preDrag: false,
     }
     this.tools = {
+      NONE: '',
       PATH: 'path',
-      // what else?
+      RESIZE: 'resize',
     }
 
     this.selector = {
@@ -252,7 +253,7 @@ class RootStore {
       pathId = this.build.activePath.id
       this.build.activePath.commitPath()
     }
-    this.build.tool = ''
+    this.build.tool = this.tools.NONE
     this.build.activePath = null
     this.build.pointerPosition = null
     if (pathId) {

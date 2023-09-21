@@ -47,6 +47,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.rootContainer.canvasPosition = newCanvasPosition
       } else if (tool === store.tools.PATH) {
         // PASS in this scenario
+      } else if (tool === store.tools.RESIZE) {
+        // PASS in this scenario
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
@@ -72,56 +74,61 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     if (event.type === 'pointermove') {
       store.setPointerPosition(pointerVector) // keep track of this for all potential needs
 
-      const { dragStart } = store.build
+      const { dragStart, tool, selectedIds } = store.build
       const { playheadDragStart } = store.view
 
-      if (!dragStart) {
-        if (!store.build.tool) {
-          // Don't check for pointer intersections with other shapes if a tool is active
-          store.rootContainer.checkPointerIntersections(pointerVector)
-        }
+      // Specific scenarios when we should check for intersections like hovers/etc
+      const draggingAnItem = (dragStart && selectedIds.length > 0)
+      if (tool === store.tools.RESIZE) {
+        store.rootContainer.checkPointerIntersections(pointerVector)
+      } else if (tool === store.tools.PATH) {
+        // PASS in this scenario
+      } else if (!draggingAnItem) {
+        store.rootContainer.checkPointerIntersections(pointerVector)
+      }
 
-        // Tool operations within the stage, when not dragging
-        if (event.target.id === 'stage') {
-          // Path Builder Tool
-          if (store.build.tool === store.tools.PATH) {
-            let hoveringNearStartPoint = false
-            // you can't close a path with less than 3 points, so don't show the hoverNearStart interaction
-            if (store.build.activePath && store.build.activePath.points.length > 2) {
-              hoveringNearStartPoint = store.build.activePath.pointerNearStart(pointerVector)
-            }
-
-            if (hoveringNearStartPoint) {
-              store.setPointerPosition(null)
-            } else {
-              store.setPointerPosition(pointerVector)
-            }
+      // Tool operations within the stage, when not dragging
+      if (event.target.id === 'stage') {
+        // Path Builder Tool
+        if (store.build.tool === store.tools.PATH) {
+          let hoveringNearStartPoint = false
+          // you can't close a path with less than 3 points, so don't show the hoverNearStart interaction
+          if (store.build.activePath && store.build.activePath.points.length > 2) {
+            hoveringNearStartPoint = store.build.activePath.pointerNearStart(pointerVector)
           }
-        }
 
-        if (!playheadDragStart && event.target.id === 'playhead-canvas') {
-          // check for playhead hover
-          const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
-            + ((store.animation.now - 1) * store.view.playheadPixelsPerFrame)
-          const pointerX = pointerVectorRatioOne.x
-          // TODO: this should be in the store
-          const playheadCSSTrueHalf = 7
-          if (
-            pointerX >= playheadBucketToCheck
-            && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf * 2
-          ) {
-            store.setPlayheadHovered(true)
-            store.setPlayheadHoverLineFrame(null)
+          if (hoveringNearStartPoint) {
+            store.setPointerPosition(null)
           } else {
-            store.setPlayheadHovered(false)
-            const lineFrame = getFrameWithPointerX(pointerX)
-            store.setPlayheadHoverLineFrame(lineFrame)
+            store.setPointerPosition(pointerVector)
           }
-        } else if (!playheadDragStart) {
-          store.setPlayheadHovered(false)
-          store.setPlayheadHoverLineFrame(null)
         }
-      } else if (dragStart && store.selector.rect.area > 0) {
+      }
+
+      if (!playheadDragStart && event.target.id === 'playhead-canvas') {
+        // check for playhead hover
+        const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
+          + ((store.animation.now - 1) * store.view.playheadPixelsPerFrame)
+        const pointerX = pointerVectorRatioOne.x
+        // TODO: this should be in the store
+        const playheadCSSTrueHalf = 7
+        if (
+          pointerX >= playheadBucketToCheck
+          && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf * 2
+        ) {
+          store.setPlayheadHovered(true)
+          store.setPlayheadHoverLineFrame(null)
+        } else {
+          store.setPlayheadHovered(false)
+          const lineFrame = getFrameWithPointerX(pointerX)
+          store.setPlayheadHoverLineFrame(lineFrame)
+        }
+      } else if (!playheadDragStart) {
+        store.setPlayheadHovered(false)
+        store.setPlayheadHoverLineFrame(null)
+      }
+
+      if (dragStart && store.selector.rect.area > 0) {
         const x2 = store.selector.position.x + store.selector.rect.width
         const y2 = store.selector.position.y + store.selector.rect.height
         const intersectedIds = store.rootContainer.findRectIntersections([
@@ -157,14 +164,17 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.rootContainer.checkPointerIntersections(pointerVector)
         }
 
-        if (store.build.hoveredId && !store.build.hoveredId.includes('-handle-')) {
+        const { hoveredId } = store.build
+        if (hoveredId && hoveredId.includes('-handle-')) {
+          store.setTool(store.tools.RESIZE)
+        } else if (hoveredId) {
           if (store.build.selectedIds.length === 0) {
-            store.setSelected([store.build.hoveredId])
-          } else if (store.build.selectedIds.includes(store.build.hoveredId) === false) {
+            store.setSelected([hoveredId])
+          } else if (store.build.selectedIds.includes(hoveredId) === false) {
             if (store.keyHeld.Meta || store.keyHeld.Shift) {
-              store.addToSelection(store.build.hoveredId)
+              store.addToSelection(hoveredId)
             } else {
-              store.setSelected([store.build.hoveredId])
+              store.setSelected([hoveredId])
             }
           }
         } else {
@@ -172,15 +182,15 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         }
 
         /* START DRAG LOGIC */
-          // Wait 50ms before starting a drag in case user has already let up on mouse
-          // this prevents "micro movements" in an Item's position from just trying to
-          // select it, but indicate the 'grab' hand immediatley for smoother UX
-          store.indicatePreDrag(true)
-          startDragInitialWaitTimeoutId.current = setTimeout(
-            () => store.startDrag(pointerVector),
-            50
-          )
-          store.setSelectorPosition(pointerVector)
+        // Wait 50ms before starting a drag in case user has already let up on mouse
+        // this prevents "micro movements" in an Item's position from just trying to
+        // select it, but indicate the 'grab' hand immediatley for smoother UX
+        store.indicatePreDrag(true)
+        startDragInitialWaitTimeoutId.current = setTimeout(
+          () => store.startDrag(pointerVector),
+          50
+        )
+        store.setSelectorPosition(pointerVector)
       } else if (event.target.id === 'playhead-canvas') {
         store.startPlayheadDrag(pointerVectorRatioOne)
         store.setPlayheadHovered(true)
@@ -198,6 +208,14 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
       if (store.selector.hovers.length > 0) {
         store.setSelected(store.selector.hovers)
+      }
+
+      const { hoveredId } = store.build
+      if (
+        !(hoveredId && hoveredId.includes('-handle-'))
+        && store.build.tool === store.tools.RESIZE
+      ) {
+        store.setTool(store.tools.NONE)
       }
 
       store.setSelectorHovers([])

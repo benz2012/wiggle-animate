@@ -206,6 +206,7 @@ class Container extends Drawable {
           Item.rootContainer.store.setHoveredControl(`handle-size-${handleIdx}--${cursor}`)
           return hasIntersection
         }
+        Item.rootContainer.store.setHoveredControl(null)
       }
 
       // This checks for intersections btwn the mouse and all children that are not
