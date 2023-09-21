@@ -76,6 +76,10 @@ const ContainerListOfChildren = (props) => {
 
   // TODO: When hovering over item in left menu, show hover outline on canvas as well
 
+  // TODO: Replace name prop field with double-click-to-edit in left menu
+  //       item name can be a whitespace character. eliminate this
+  //       and also trim whitespace on head and tail during naming /[^\s]/
+
   return (
     container.sortOrder.map((childId) => {
       const child = container.children[childId]
