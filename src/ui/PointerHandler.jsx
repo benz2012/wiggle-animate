@@ -48,8 +48,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else if (tool === store.tools.PATH) {
         // PASS in this scenario
       } else if (tool === store.tools.RESIZE) {
-        // PASS in this scenario
         store.rootContainer.resizeAllSelectedByIncrement(relativeMovement)
+      } else if (tool === store.tools.ROTATE) {
+        store.rootContainer.rotateAllSelectedToPoint(pointerVector)
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
@@ -166,12 +167,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         }
 
         const { hoveredId, hoveredControl } = store.build
-        if (hoveredId && hoveredId.includes('-handle-')) {
+        if (hoveredId && hoveredId.includes('--handle--')) {
           store.setActiveControl(hoveredId)
-          const handleControlType = hoveredControl && hoveredControl.replace('handle-', '').split('-')[0]
-          if (handleControlType === 'size') {
-            store.setTool(store.tools.RESIZE)
-          }
+          const handleControlTool = hoveredControl && hoveredControl.replace('handle--', '').split('--')[0]
+          store.setTool(handleControlTool)
         } else if (hoveredId) {
           if (store.build.selectedIds.length === 0) {
             store.setSelected([hoveredId])
@@ -215,7 +214,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setSelected(store.selector.hovers)
       }
 
-      if (store.build.tool === store.tools.RESIZE) {
+      if ([store.tools.RESIZE, store.tools.ROTATE].includes(store.build.tool)) {
         store.setTool(store.tools.NONE)
       }
       store.setActiveControl(null)

@@ -12,7 +12,7 @@ class Angle {
     return truncateFloatLeaveInt(radians * (180 / Math.PI))
   }
 
-  static vectorOctant = (vectorX, vectorY) => {
+  static vectorUnitCircleAngle = (vectorX, vectorY) => {
     let radians = 0
     if (vectorX || vectorY) {
       radians = Math.atan2(vectorY, vectorX)
@@ -23,7 +23,11 @@ class Angle {
 
     const angle = new Angle()
     angle.radians = radians
-    const { degrees } = angle
+    return angle
+  }
+
+  static vectorOctant = (vectorX, vectorY) => {
+    const { degrees } = Angle.vectorUnitCircleAngle(vectorX, vectorY)
 
     const eighth = 360 / 8
     const sixteenth = 360 / 16

@@ -59,6 +59,7 @@ class RootStore {
       NONE: '',
       PATH: 'path',
       RESIZE: 'resize',
+      ROTATE: 'rotate',
     }
 
     this.selector = {
@@ -144,20 +145,28 @@ class RootStore {
   }
 
   get determineCurrentAction() {
+    const { preDrag, dragStart, hoveredId, hoveredControl, tool, selectedIds } = this.build
+
     if (this.keyHeld.Space || this.keyHeld.MiddleMouse) {
-      if (this.build.preDrag || this.build.dragStart) {
+      if (preDrag || dragStart) {
         return 'dragging'
       }
       return 'readyToMoveView'
     }
 
-    if (this.build.tool === this.tools.PATH) {
+    if (tool === this.tools.PATH) {
       return 'addingPathPoints'
     }
 
-    if (this.build.hoveredId) {
-      if (this.build.selectedIds.length > 0) {
-        if (this.build.preDrag || this.build.dragStart) {
+    if (hoveredId) {
+      let controlAction = null
+      if (hoveredControl && hoveredControl.startsWith('handle')) {
+        controlAction = hoveredControl.split('--').pop()
+      }
+
+      if (selectedIds.length > 0) {
+        if (preDrag || dragStart) {
+          if (controlAction) return controlAction
           return 'dragging'
         }
         if (this.keyHeld.Meta || this.keyHeld.Shift) {
@@ -165,15 +174,13 @@ class RootStore {
         }
       }
 
-      if (this.build.hoveredControl && this.build.hoveredControl.startsWith('handle')) {
-        return this.build.hoveredControl.split('--')[1]
-      }
+      if (controlAction) return controlAction
 
       return 'hovering'
     }
 
     if (this.keyHeld.Meta || this.keyHeld.Shift) {
-      if (this.build.selectedIds.length > 0) {
+      if (selectedIds.length > 0) {
         return 'adding'
       }
     }

@@ -10,6 +10,7 @@ import {
   drawControllerBox,
   clearShadowContext,
   setControllerHandleRectOnCtx,
+  setControllerHandleEllipseOnCtx,
   octantCursorMap,
 } from '../../utility/drawing'
 
@@ -103,6 +104,7 @@ class Shape extends Drawable {
   }
 
   drawControllerBox(handleIdxHovered, handleIdxActive) {
+    // TODO: add a setting to allow controller handles to be hidden
     // Allows being overwritten by subclass
     drawControllerBox(this, handleIdxHovered, handleIdxActive)
   }
@@ -128,20 +130,40 @@ class Shape extends Drawable {
 
   checkSelectedItemHandleIntersections(pointerVector) {
     const nullReturn = [false, null, null]
-
+    let handleIdxIntersected = null
     let handleRectSpec = null
-    const handleIntersected = [0, 1, 2, 3].find((handleIdx) => {
+    const rectHandleIndicies = [0, 1, 2, 3]
+
+    rectHandleIndicies.some((handleIdx) => {
       if (this.controllerType === 'Line' && handleIdx > 1) return false
 
       this.ctx.setTransform(this.currentTransform)
       this.ctx.beginPath()
       handleRectSpec = setControllerHandleRectOnCtx(this, handleIdx, true)
-      if (this.ctx.isPointInPath(...pointerVector.values)) return true
+      if (this.ctx.isPointInPath(...pointerVector.values)) {
+        handleIdxIntersected = handleIdx
+        return true
+      }
 
       return false
     })
 
-    if (handleIntersected != null) {
+    // Now check the rotation handle if needed
+    if (handleIdxIntersected === null) {
+      this.ctx.setTransform(this.currentTransform)
+      this.ctx.beginPath()
+      setControllerHandleEllipseOnCtx(this, 100, true)
+      if (this.ctx.isPointInPath(...pointerVector.values)) {
+        handleIdxIntersected = 100
+      }
+    }
+
+    if (handleIdxIntersected == null) {
+      return nullReturn
+    }
+    if (rectHandleIndicies.includes(handleIdxIntersected)) {
+      // TODO: don't base octet on item position, instead use the angle between the two conjoining edges
+      //       however you will need to backtrack for special alignment cases
       const [handleX, handleY, handleW, handleH] = handleRectSpec
       const handleCenterPoint = new Vector2(handleX + handleW / 2, handleY + handleH / 2)
       const handlePointInGlobalSpace = this.currentTransform.translateSelf(...handleCenterPoint.values)
@@ -149,7 +171,10 @@ class Shape extends Drawable {
       const offsetY = this.currentTransform.f - handlePointInGlobalSpace.f
       const octant = Angle.vectorOctant(offsetX, offsetY)
       const cursor = octantCursorMap[octant]
-      return [true, handleIntersected, cursor]
+      return [true, handleIdxIntersected, cursor]
+    }
+    if (handleIdxIntersected === 100) {
+      return [true, handleIdxIntersected, 'rotate']
     }
 
     return nullReturn

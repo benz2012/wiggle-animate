@@ -3,6 +3,7 @@
 import theme from '../../ui/theme'
 
 const HANDLE_STROKE_WIDTH = 6
+const ROTATION_LINE_DISTANCE = 50
 
 const setControllerHandleRectOnCtx = (instance, whichHandle, forHoverCheck = false) => {
   const { controllerType, ctx, scale, strokeWidth, rectSpec } = instance
@@ -63,6 +64,29 @@ const setControllerHandleRectOnCtx = (instance, whichHandle, forHoverCheck = fal
 
   ctx.rect(...handleRectSpec)
   return handleRectSpec
+}
+
+const setControllerHandleEllipseOnCtx = (instance, whichHandle, forHoverCheck = false) => {
+  const { ctx, origin, scale } = instance
+  const handleStrokeWidth = forHoverCheck ? HANDLE_STROKE_WIDTH : 0
+
+  ctx.translate(origin.x, origin.y)
+
+  let handleEllipseSpec = [0, 0, 0, 0, 0, 0, 0]
+  if (whichHandle === 100) {
+    handleEllipseSpec = [
+      0,
+      -ROTATION_LINE_DISTANCE / scale.y,
+      (8 + handleStrokeWidth) / scale.x,
+      (8 + handleStrokeWidth) / scale.y,
+      0,
+      0,
+      Math.PI * 2,
+    ]
+  }
+
+  ctx.ellipse(...handleEllipseSpec)
+  return handleEllipseSpec
 }
 
 // TODO: draw this on top of all other items
@@ -126,6 +150,7 @@ const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
 
   // hovered handle ?
   if (handleIdxActiveOrHovered != null) {
+    // This may seem redundant but that's because I stroke and fill all the others at once time
     ctx.setTransform(instance.currentTransform)
     ctx.beginPath()
     setControllerHandleRectOnCtx(instance, handleIdxActiveOrHovered)
@@ -137,6 +162,18 @@ const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
     ctx.fill()
     ctx.stroke()
   }
+
+  // rotation handle
+  ctx.setTransform(instance.currentTransform)
+  ctx.translate(origin.x, origin.y)
+  ctx.beginPath()
+  ctx.moveTo(0, 0)
+  ctx.lineTo(0 / scale.x, -ROTATION_LINE_DISTANCE / scale.y)
+  ctx.strokeStyle = `${theme.palette.primary[100]}`
+  ctx.lineWidth = HANDLE_STROKE_WIDTH
+  ctx.lineJoin = 'miter'
+  ctx.setTransform(instance.currentTransformWithoutScale)
+  ctx.stroke()
 
   // origin
   ctx.setTransform(instance.currentTransform)
@@ -165,40 +202,21 @@ const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
   ctx.setTransform(instance.currentTransformWithoutScale)
   ctx.stroke()
 
-  // rotation handle
+  // rotation circle
+  // TODO: Rotation controls obscure the item too much, take a different approach
+  //       Maybe create an invisible circle around the origin at a certain radius that is adjustable
+  //       Or check for the pointer to be a bit outside one of the control handles
   ctx.setTransform(instance.currentTransform)
-  if (controllerType === 'Line' || controllerType === 'Path') {
-    ctx.translate(origin.x, origin.y)
-  } else {
-    ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
-  }
   ctx.beginPath()
-  ctx.moveTo(0, 0)
-  ctx.lineTo(0 / scale.x, -75 / scale.y)
-  ctx.strokeStyle = `${theme.palette.primary[100]}`
-  ctx.lineWidth = HANDLE_STROKE_WIDTH
-  ctx.lineJoin = 'miter'
-  ctx.setTransform(instance.currentTransformWithoutScale)
-  ctx.stroke()
-  // -- rotation circle
-  ctx.setTransform(instance.currentTransform)
-  if (controllerType === 'Line' || controllerType === 'Path') {
-    ctx.translate(origin.x, origin.y)
-  } else {
-    ctx.translate(rectX + rectW / 2, rectY - strokeProtrusion)
-  }
-  ctx.beginPath()
-  ctx.ellipse(
-    0,
-    -75 / scale.y,
-    8 / scale.x,
-    8 / scale.y,
-    0,
-    0,
-    Math.PI * 2
-  )
+  setControllerHandleEllipseOnCtx(instance, 100)
   ctx.fillStyle = `${theme.palette.WHITE}`
-  ctx.strokeStyle = `${theme.palette.primary[100]}`
+  let rotationCircleStrokeStyle = `${theme.palette.primary[100]}`
+  if (handleIdxActive === 100) {
+    rotationCircleStrokeStyle = `${theme.palette.secondary[100]}`
+  } else if (handleIdxHovered === 100) {
+    rotationCircleStrokeStyle = `${theme.palette.tertiary[100]}`
+  }
+  ctx.strokeStyle = rotationCircleStrokeStyle
   ctx.lineWidth = HANDLE_STROKE_WIDTH
   ctx.lineJoin = 'miter'
   ctx.setTransform(instance.currentTransformWithoutScale)
@@ -239,16 +257,25 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
 
   ctx.beginPath()
   ctx.moveTo(0, -originBox)
-  ctx.lineTo(0, -originBox - 75)
+  ctx.lineTo(0, -originBox - ROTATION_LINE_DISTANCE)
   ctx.stroke()
 
   ctx.beginPath()
-  ctx.ellipse(0, -originBox - 75 - rotationCircle, rotationCircle, rotationCircle, Math.PI * 2, 0, Math.PI * 2)
+  ctx.ellipse(
+    0,
+    -originBox - ROTATION_LINE_DISTANCE - rotationCircle,
+    rotationCircle,
+    rotationCircle,
+    Math.PI * 2,
+    0,
+    Math.PI * 2,
+  )
   ctx.stroke()
 }
 
 export {
   setControllerHandleRectOnCtx,
+  setControllerHandleEllipseOnCtx,
   drawControllerBox,
   ContainerControllerSizes,
   drawContainerController,

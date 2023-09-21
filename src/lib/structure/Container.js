@@ -5,6 +5,10 @@ import Drawable from '../drawing/Drawable'
 import { insert } from '../../utility/array'
 import { drawContainerController, ContainerControllerSizes } from '../../utility/drawing'
 
+// TODO: if an item is inside of a container, draw a dim version of the container controller to
+//       indicate this to the user, when the child item is selected
+//       Then, add an option to disable that feature
+
 class Container extends Drawable {
   static get className() { return 'Container' }
 
@@ -121,10 +125,10 @@ class Container extends Drawable {
     drawOrder.forEach((childId) => {
       const anyHovers = (hoveredId === childId) || selectorHovers.includes(childId)
       const handleIdxHovered = (hoveredId && hoveredId.includes(childId))
-        ? parseInt(hoveredId.split('-handle-')[1], 10)
+        ? parseInt(hoveredId.split('--handle--')[1], 10)
         : null
       const handleIdxActive = (activeControl && activeControl.includes(childId))
-        ? parseInt(activeControl.split('-handle-')[1], 10)
+        ? parseInt(activeControl.split('--handle--')[1], 10)
         : null
 
       const child = this.children[childId]
@@ -194,6 +198,7 @@ class Container extends Drawable {
     // that has an intersection, like event bubble cancellation in the DOM
     let hasIntersection = false
     const { selectedIds } = Item.rootContainer.store.build
+    const { tools } = Item.rootContainer.store
 
     this.sortOrder.some((childId) => {
       const child = this.children[childId]
@@ -217,8 +222,12 @@ class Container extends Drawable {
         const [hasHandleIntersection, handleIdx, cursor] = child.checkSelectedItemHandleIntersections(pointerVector)
         hasIntersection = hasHandleIntersection
         if (hasIntersection) {
-          Item.rootContainer.store.setHovered(`${childId}-handle-${handleIdx}`)
-          Item.rootContainer.store.setHoveredControl(`handle-size--${cursor}`)
+          let interactionType = tools.RESIZE
+          if (handleIdx === 100) {
+            interactionType = tools.ROTATE
+          }
+          Item.rootContainer.store.setHovered(`${childId}--handle--${handleIdx}`)
+          Item.rootContainer.store.setHoveredControl(`handle--${interactionType}--${cursor}`)
           return hasIntersection
         }
         Item.rootContainer.store.setHoveredControl(null)

@@ -18,6 +18,10 @@ const doesBottomMenuHaveFocus = () => [
 
 const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('input-')
 
+// TODO: periodically check the keys in case someone scrolled away and came back and is no longer holding down
+//       a meta key (or others). maybe this could be checked when window gets focused?
+//       basically there is a bug now where it's stuck on the "add item to selection" cursor
+
 const KeyHandler = ({ store }) => {
   const ONE_UP = new Vector2(0, -1)
   const ONE_DOWN = new Vector2(0, 1)

@@ -4,6 +4,7 @@ import Container from './Container'
 import Item from './Item'
 import Size from './Size'
 import Alignment from './Alignment'
+import Angle from './Angle'
 import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
 import { identityMatrix } from '../../utility/matrix'
@@ -272,7 +273,9 @@ class RootContainer extends Container {
     // This should likely be triggered by a hotkey such as Option+Drag
     const { activeControl } = this.store.build
     if (!activeControl) return
-    const activeHandleIdx = parseInt(activeControl.split('-').pop(), 10)
+    const activeHandleIdx = parseInt(activeControl.split('--').pop(), 10)
+    const resizeHandleIndicies = [0, 1, 2, 3]
+    if (!resizeHandleIndicies.includes(activeHandleIdx)) return
 
     this.store.build.selectedIds.forEach((selectedId) => {
       const selectedItem = this.findItem(selectedId)
@@ -318,6 +321,50 @@ class RootContainer extends Container {
 
       selectedItem._width.setValue(currentWidth + deltaWidth, now)
       selectedItem._height.setValue(currentHeight + deltaHeight, now)
+    })
+  }
+
+  rotateAllSelectedToPoint(toPoint) {
+    const itemIdBeingTargeted = this.store.build.activeControl.split('--')[0]
+    const itemBeingTargeted = this.findItem(itemIdBeingTargeted)
+    const itemBeingTargetedRotationCenter = new DOMMatrix(itemBeingTargeted.parentTransform)
+      .translateSelf(...itemBeingTargeted.position.values)
+      .translateSelf(...itemBeingTargeted.origin.values)
+    const fromPoint = new Vector2(itemBeingTargetedRotationCenter.e, itemBeingTargetedRotationCenter.f)
+    const fromRotationSimple = ((itemBeingTargeted.rotation.degrees % 360) + 360) % 360
+
+    this.store.build.selectedIds.forEach((selectedId) => {
+      const { now } = this.store.animation
+      const selectedItem = this.findItem(selectedId)
+      const { parentTransform, rotation } = selectedItem
+      const parentRotation = Angle.vectorUnitCircleAngle(parentTransform.a, parentTransform.b)
+
+      const rotationVector = Vector2.subtract(toPoint, fromPoint)
+      const rotationVectorOnUnitCircle = rotationVector.scale(1, -1)
+      const rotationAngle = Angle.vectorUnitCircleAngle(...rotationVectorOnUnitCircle.values)
+
+      let setDegreesTo = ((360 - rotationAngle.degrees) + 90) // convert from unit circle to clockwise-up-0
+      setDegreesTo -= parentRotation.degrees // discount any parent rotations
+      setDegreesTo += (360 * 10) // eliminate negatives for now
+      setDegreesTo %= 360
+
+      /* Allows angle spinning beyond +360 & -360 */
+      const previousSpinCount = Math.floor(rotation.degrees / 360)
+      let nextSpinCount = previousSpinCount
+      nextSpinCount = nextSpinCount === 0 ? 0 : nextSpinCount // get rid of -0
+      const rvrtp = rotationVector.rotate(-1 * parentRotation.radians) // rvrtp: Rotation Vector Rotated To Parent
+      const previousRightOfAxis = fromRotationSimple >= 0 && fromRotationSimple <= 90
+      const previousLeftOfAxis = fromRotationSimple >= 270 && fromRotationSimple < 360
+      if (rvrtp.y <= 0) {
+        if (previousRightOfAxis && rvrtp.x < 0) {
+          nextSpinCount -= 1
+        } else if (previousLeftOfAxis && rvrtp.x >= 0) {
+          nextSpinCount += 1
+        }
+      }
+      setDegreesTo += (nextSpinCount * 360)
+
+      selectedItem._rotation.setValue(setDegreesTo, now)
     })
   }
 }
