@@ -119,7 +119,7 @@ class Animation {
     const interval = 1000 / this.fps
     let then = Date.now()
 
-    // NOTE: wait a second, this doesn't do anything with the interval, is it even written properly
+    // TODO [1]: wait a second, this doesn't do anything with the interval, is it even written properly
     //       am I going insane? did I lose the code?!
 
     const loop = action(() => {
@@ -129,7 +129,7 @@ class Animation {
       const delta = now - then
       if (delta >= interval) {
         then = now - (delta % interval)
-        // TODO: this math seems wrong lol
+        // TODO [1]: this math seems wrong lol
         // Also it should be more of an average over the last second
         this.sync = Math.round(delta - interval - (delta % interval))
         func()

@@ -104,7 +104,7 @@ class Shape extends Drawable {
   }
 
   drawControllerBox(handleIdxHovered, handleIdxActive) {
-    // TODO: add a setting to allow controller handles to be hidden
+    // TODO [3]: add a setting to allow controller handles to be hidden
     // Allows being overwritten by subclass
     drawControllerBox(this, handleIdxHovered, handleIdxActive)
   }
@@ -162,7 +162,7 @@ class Shape extends Drawable {
       return nullReturn
     }
     if (rectHandleIndicies.includes(handleIdxIntersected)) {
-      // TODO: don't base octet on item position, instead use the angle between the two conjoining edges
+      // TODO [3]: don't base octet on item position, instead use the angle between the two conjoining edges
       //       however you will need to backtrack for special alignment cases
       const [handleX, handleY, handleW, handleH] = handleRectSpec
       const handleCenterPoint = new Vector2(handleX + handleW / 2, handleY + handleH / 2)
@@ -181,7 +181,7 @@ class Shape extends Drawable {
   }
 
   findRectIntersections(rectSpecTLBR) {
-    // TODO: this doesn't work properly when items are rotated or scaled.
+    // TODO [2]: this doesn't work properly when items are rotated or scaled.
     //       currently only used for the Rectangle-Selector-Box-Action
     this.ctx.setTransform(this.currentTransform)
     const strokeProtrusion = this.strokeWidth / 2

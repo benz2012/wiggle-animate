@@ -30,7 +30,7 @@ const AlignmentInput = observer(({
   targetProperty,
   setPropertyValue,
 }) => {
-  // TODO: Add a question mark that when clicked opens a modal and explains the
+  // TODO [4]: Add a question mark that when clicked opens a modal and explains the
   //       differences between alignment and origin with a little Gif animating the difference
 
   const { x, y } = targetProperty.value

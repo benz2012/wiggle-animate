@@ -53,7 +53,7 @@ const App = observer(({ store }) => {
         stageRef.current.style.cursor = 'nwse-resize'
         break
       case 'rotate':
-        // TODO: change this to a custom draw rotation arrow
+        // TODO [2]: change this to a custom draw rotation arrow
         stageRef.current.style.cursor = 'alias'
         break
       default:

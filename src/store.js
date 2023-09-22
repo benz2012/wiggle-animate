@@ -68,7 +68,7 @@ class RootStore {
       hovers: [],
     }
 
-    // TODO: make a playhead store obj
+    // TODO [3]: make a playhead store obj
     this.view = {
       playheadHovered: false,
       playheadHoverLineFrame: null,
@@ -91,7 +91,7 @@ class RootStore {
     }
 
     this.animation = new Animation()
-    // TODO: removing this after debugging
+    // TODO [-]: remove this after debugging
     window._animation = this.animation
 
     makeObservable(this, {
@@ -200,7 +200,7 @@ class RootStore {
     } else {
       this.rootContainer.add(newItem)
     }
-    // TODO: removing this after debugging
+    // TODO [-]: remove this after debugging
     window._item = newItem
     return newItem
   }
@@ -348,11 +348,11 @@ class RootStore {
 
   /* Output Actions */
   export = async () => {
-    // TODO: Have this open a modal with settings & confirmation
-    // TODO: Add a no-click handler to the screen since interacting with the stage
+    // TODO [2]: Have this open a modal with settings & confirmation
+    // TODO [2]: Add a no-click handler to the screen since interacting with the stage
     //       will not cause a re-draw, and will actually be misleading/error-prone
-    // TODO: Have progress output displayed Prepare-boolean, Frames-progress, video progress
-    // TODO: wrap this whole thing in a giant error handler
+    // TODO [3]: Have progress output displayed Prepare-boolean, Frames-progress, video progress
+    // TODO [3]: wrap this whole thing in a giant error handler
 
     this.animation.pause()
     this.animation.goToFirst()
@@ -368,7 +368,7 @@ class RootStore {
       const videoAsBlob = await exportVideo()
       downloadBlob(videoAsBlob, 'webm')
     } else {
-      // TODO: tell the user that we can't export using their browser
+      // TODO [2]: tell the user that we can't export using their browser
       console.warn('This browser is not preparred/capable of exporting video in the way the developer wants')
     }
 

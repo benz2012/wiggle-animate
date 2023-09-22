@@ -2,9 +2,9 @@
 
 import { Muxer, ArrayBufferTarget } from 'webm-muxer'
 
-// TODO: make this a class
+// TODO [2]: make this a class
 
-// TODO: make these configurable along with other export options
+// TODO [2]: make these configurable along with other export options
 const MUXER_CODEC = 'V_VP9'
 const OUTPUT_CONTAINER = 'webm'
 

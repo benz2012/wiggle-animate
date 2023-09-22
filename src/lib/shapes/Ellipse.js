@@ -8,7 +8,7 @@ class Ellipse extends VisibleShape {
   }
 
   /*
-    TODO: add a custom findRectIntersections() implementation that checks
+    TODO [4]: add a custom findRectIntersections() implementation that checks
     against an elipse path, instead of the existing hover/controller rectSpec
   */
 

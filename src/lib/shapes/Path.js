@@ -22,12 +22,12 @@ class Path extends VisibleShape {
     this._strokeWidth.setValue(3)
     this.controllerType = 'Path'
 
-    this.points = [] // TODO: (maybe) make each point a Property, iterate over them customly within PropEditor
+    this.points = [] // TODO [3]: (maybe) make each point a Property, iterate over them customly within PropEditor
     this.closed = false
     this.hoveringOverStart = false
     this.pointsVisible = true
 
-    // TODO: Allow Path to be edited in Object mode or Point mode
+    // TODO [3]: Allow Path to be edited in Object mode or Point mode
     // Object mode -- similar to shapes now (move, scale, rotate the object as a whole)
     // Point mode -- move each point individually, or move/scale/rotate mutliple points at once
     //               any changes here only affect the position of each point, and nothing else
@@ -61,8 +61,8 @@ class Path extends VisibleShape {
       .invertSelf()
       .translateSelf(...pointerVector.values)
 
-    // TODO: implement bezier control point adjustments
-    // just using random cps for now for proof of drawing
+    // TODO [2]: implement proper bezier control point drawing, & adjustments
+    //           just using random cps for now for proof of drawing
     const thisPoint = new Point(pointInCanvasSpace.e, pointInCanvasSpace.f)
     thisPoint.controlOut.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
     thisPoint.controlOut.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
@@ -133,7 +133,7 @@ class Path extends VisibleShape {
   }
 
   processBounds() {
-    // TODO: this only needs to run when this.points changes, not during draw
+    // TODO [3]: this only needs to run when this.points changes, not during draw
 
     if (this.points.length === 0) {
       this._width.setValue(0)
@@ -186,7 +186,7 @@ class Path extends VisibleShape {
   }
 
   /*
-    TODO: add a custom findRectIntersections() implementation that works
+    TODO [4]: add a custom findRectIntersections() implementation that works
     more similarly to checkPointerIntersections. Currently it checks against
     the rectSpec which doesn't account for concave path paths and/or holes
   */

@@ -8,7 +8,6 @@ class Fill extends Colorable {
   }
 
   draw(ctx) {
-    // TODO: gradients
     this.prepare(ctx)
     if (this.color === 'transparent') return
     ctx.fill()

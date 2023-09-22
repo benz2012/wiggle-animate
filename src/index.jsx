@@ -15,7 +15,7 @@ import RootStore from './store'
 import './ui/Last.css' // Leave this at bottom of import stack
 
 const store = new RootStore()
-// TODO: remove after debugging
+// TODO [-]: remove this after debugging
 window._store = store
 const root = ReactDOM.createRoot(document.getElementById('root'))
 

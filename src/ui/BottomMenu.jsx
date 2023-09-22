@@ -15,7 +15,7 @@ const FRAME_TICK_MIN_WIDTH = 10
 
 const BottomMenu = observer(({ store, windowWidth }) => {
   const playheadRef = useRef()
-  // TODO: move all these units to the store for easier access & reuse
+  // TODO [3]: move all these units to the store for easier access & reuse
   // defined at DPR 1 aka CSS units
   const playheadCanvasWidth = windowWidth - 184
   const playheadCanvasHeight = 33

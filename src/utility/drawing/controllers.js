@@ -89,8 +89,8 @@ const setControllerHandleEllipseOnCtx = (instance, whichHandle, forHoverCheck = 
   return handleEllipseSpec
 }
 
-// TODO: draw this on top of all other items
-// TODO: ^ with that, potentially also draw an invisible box where the shape exists
+// TODO [3]: draw this on top of all other items
+// TODO [3]: ^ with that, potentially also draw an invisible box where the shape exists
 //         so that layers underneath can be moved without accidentaly selecting
 //         the item(s) above it
 const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
@@ -203,7 +203,7 @@ const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
   ctx.stroke()
 
   // rotation circle
-  // TODO: Rotation controls obscure the item too much, take a different approach
+  // TODO [4]: Rotation controls obscure the item too much, take a different approach
   //       Maybe create an invisible circle around the origin at a certain radius that is adjustable
   //       Or check for the pointer to be a bit outside one of the control handles
   ctx.setTransform(instance.currentTransform)

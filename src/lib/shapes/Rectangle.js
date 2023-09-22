@@ -2,7 +2,7 @@ import VisibleShape from '../drawing/VisibleShape'
 
 class Rectangle extends VisibleShape {
   static get className() { return 'Rectangle' }
-  // TODO: add corner radius property
+  // TODO [4]: add corner radius property
   // this will get complicated with stroke. maybe rounded rect as separarate object?
 
   constructor(...args) {
@@ -17,7 +17,7 @@ class Rectangle extends VisibleShape {
     this.drawStroke()
     this.drawFill()
 
-    // TODO: Stroke and Shadow have all sorts of messed up interactions that need fixing
+    // TODO [2]: Stroke and Shadow have all sorts of messed up interactions that need fixing
     // not sure there is a solution actually unless we draw the stroke twice, since I can't draw the shadow manually
     // Would need to be: Stroke+Shadow -> Fill+Shadow -> Stroke w/no shadow
     // This will get even more complicated when we change the stroke drawing order to account for stroke.flow

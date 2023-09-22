@@ -74,9 +74,9 @@ const ContainerListOfChildren = (props) => {
     child.showChildren = !child.showChildren
   })
 
-  // TODO: When hovering over item in left menu, show hover outline on canvas as well
+  // TODO [3]: When hovering over item in left menu, show hover outline on canvas as well
 
-  // TODO: Replace name prop field with double-click-to-edit in left menu
+  // TODO [4]: Replace name prop field with double-click-to-edit in left menu
   //       item name can be a whitespace character. eliminate this
   //       and also trim whitespace on head and tail during naming /[^\s]/
 

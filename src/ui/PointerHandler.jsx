@@ -10,7 +10,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
   /* Convienience Methods */
   const getFrameWithPointerX = (pointerX) => {
-    // TODO: playheadCSSTrueHalf should be in the store
+    // TODO [3]: playheadCSSTrueHalf should be in the store
     const playheadCSSTrueHalf = 7
     const distanceFromPlayheadOne = (
       pointerX
@@ -112,7 +112,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
           + ((store.animation.now - 1) * store.view.playheadPixelsPerFrame)
         const pointerX = pointerVectorRatioOne.x
-        // TODO: this should be in the store
+        // TODO [3]: this should be in the store
         const playheadCSSTrueHalf = 7
         if (
           pointerX >= playheadBucketToCheck

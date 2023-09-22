@@ -93,7 +93,7 @@ class Keyframe {
   }
 }
 
-// TODO: remove this after debugging
+// TODO [-]: remove this after debugging
 window.Keyframe = Keyframe
 
 export default Keyframe

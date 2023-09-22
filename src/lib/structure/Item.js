@@ -18,7 +18,7 @@ class Item {
       isEditable: true,
     })
 
-    // TODO: Is this a problem because this.DPR can change during the life of the app??!?
+    // TODO [4]: Is this a problem because this.DPR can change during the life of the app??!?
     this.DPR = window.devicePixelRatio || 1
   }
 

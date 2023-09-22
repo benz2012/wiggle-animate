@@ -11,11 +11,11 @@ import Contents from './Contents'
 import usePrevious from '../hooks/usePrevious'
 
 const PropertyEditor = observer(({ store }) => {
-  // TODO: Support multi-selected property edit case
+  // TODO [4]: Support multi-selected property edit case
   //       Add a box to the top for "Set To | Change By"
   //       Add question mark that explains the difference with a GIF
 
-  // SETTINGS MENU TODO:
+  // SETTINGS MENU TODO [3]:
   //  - reset the position of the editor
   //  - Live Update |or| Update on Enter
   //  - ClickAway Updates Value |or| Ignores Value

@@ -76,7 +76,7 @@ class VisibleShape extends Shape {
     this._strokeFlow = new Property({
       type: Selection,
       value: ['outside', 'middle', 'inside'],
-      isEditable: false, // TODO: implement these drawing modes
+      isEditable: false, // TODO [4]: implement these drawing modes
       group: 'stroke',
       label: 'flow',
       order: 3,
@@ -154,14 +154,22 @@ class VisibleShape extends Shape {
   }
 
   drawFill() {
+    // TODO [4]: gradients
     this.prepareFill()
     this.ctx.fill()
   }
 
   prepareStroke() {
+    // TODO [4]: gradients
     this.ctx.strokeStyle = this.strokeColor.toStringExternalAlpha(this.strokeOpacity / 100)
     this.ctx.lineWidth = this.strokeWidth
     this.ctx.lineJoin = this.strokeJoin.selected
+    // TODO [4]: tweak the drawing stack so that these 3 options are possible
+    //       this could get complicted depending on shape, we'll see
+    //       might need to draw/cut 1 less pixel otherwise there could be a subpixel/gpu gap line
+    //       - middle = default
+    //       - inside = draw width*2, cut mask around shape
+    //       - outside = draw width*2, cut subtraction within shape
   }
 
   drawStroke() {
@@ -176,7 +184,7 @@ class VisibleShape extends Shape {
     const currentTransform = this.ctx.getTransform()
     this.ctx.shadowColor = this.shadowColor.toStringExternalAlpha(this.shadowOpacity / 100)
     this.ctx.shadowBlur = this.shadowBlur
-    // TODO: This gets rotation wrong, we should likely take the transform and apply the offset as a
+    // TODO [2]: This gets rotation wrong, we should likely take the transform and apply the offset as a
     //       translation, then get the output translation and apply it as the offsetx&y
     this.ctx.shadowOffsetX = this.shadowOffset.x * currentTransform.a
     this.ctx.shadowOffsetY = this.shadowOffset.y * currentTransform.d

@@ -24,7 +24,7 @@ class RootContainer extends Container {
 
     this.canvasPosition = new Vector2(0, 0)
     this._canvasScale = 1
-    // TODO: make these customizable
+    // TODO [4]: make these customizable
     this.canvasSize = new Size(1920, 1080)
     this.canvasFill = new Fill({ r: 0, g: 0, b: 0 })
     this.setCanvasToBestFit()
@@ -64,10 +64,10 @@ class RootContainer extends Container {
     this._canvasScale = finalValue
 
     // this keeps the canvas "centered" when scaling
-    // TODO: the center actually needs to align with the offset from BestFit
+    // TODO [4]: the center actually needs to align with the offset from BestFit
     //       this is complicated because it begs the question, will the user be working
     //       in the center of the screen or in the center of the "screen minus left menu"
-    // TODO: if scaling with mousewheel, we should reposition towards the mouse, not the "center"
+    // TODO [4]: if scaling with mousewheel, we should reposition towards the mouse, not the "center"
     this.canvasPosition.x *= (ratioBetweenScales ** 2)
     this.canvasPosition.y *= (ratioBetweenScales ** 2)
   }
@@ -268,7 +268,7 @@ class RootContainer extends Container {
   }
 
   resizeAllSelectedByIncrement(relativeMovement) {
-    // TODO: allow resizing to follow strict corner rules such that it will change the position
+    // TODO [4]: allow resizing to follow strict corner rules such that it will change the position
     // of an object (etc) in order to treat the opposite corner as the resize anchor.
     // This should likely be triggered by a hotkey such as Option+Drag
     const { activeControl } = this.store.build

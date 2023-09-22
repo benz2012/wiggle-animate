@@ -24,7 +24,7 @@ class Polygon extends VisibleShape {
 
     makeObservable(this, { radius: computed })
 
-    // TODO: Bounding box is a bit big for 3-sides & 5-sides, however the origin is
+    // TODO [4]: Bounding box is a bit big for 3-sides & 5-sides, however the origin is
     //       elegantly right in the gravitational center of the shape
     //       not sure what I want to do, however a dynamic box would enable corner alignment
     //       for a triangle which would be nice
@@ -35,7 +35,7 @@ class Polygon extends VisibleShape {
   get radius() { return this.width / 2 }
 
   /*
-    TODO: add a custom findRectIntersections() implementation that checks
+    TODO [4]: add a custom findRectIntersections() implementation that checks
     against a polygon path, instead of the existing hover/controller rectSpec
     this will only partially be resolved by changing the rectSpec implementation, as will still be
     a rectangle Spec, the there are gaps between a polygon and it's rect bounds (most notable on 3 & 5 sides)
