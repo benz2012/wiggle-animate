@@ -1,5 +1,7 @@
 import { action, makeAutoObservable } from 'mobx'
 
+import { timeStampMicro } from '../../utility/time'
+
 class Animation {
   static get FIRST() { return 1 }
   static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }
@@ -14,7 +16,7 @@ class Animation {
     this.fps = 30
     this.now = this.firstFrame
     this.playing = false
-    this.sync = 0
+    this.sync = []
     this.requestId = null
     this.mode = 'LOOP'
 
@@ -82,12 +84,13 @@ class Animation {
       this.now = nextFrame
     })
 
-    this.animateAtRate(oneCycle)
+    this.animateAtFrameRate(oneCycle)
   }
 
   pause() {
     this.playing = false
     if (this.requestId) cancelAnimationFrame(this.requestId)
+    this.sync = []
   }
 
   goToFrame(frame) {
@@ -115,27 +118,41 @@ class Animation {
     this.goToFrame(prevFrame)
   }
 
-  animateAtRate(func) {
-    const interval = 1000 / this.fps
-    let then = Date.now()
+  animateAtFrameRate(animationFunction) {
+    const targetDelta = 1000 / this.fps
+    let previousTimeStamp
 
-    // TODO [1]: wait a second, this doesn't do anything with the interval, is it even written properly
-    //       am I going insane? did I lose the code?!
-
-    const loop = action(() => {
+    const step = action(() => {
       if (this.playing === false) return
-      this.requestId = requestAnimationFrame(loop)
-      const now = Date.now()
-      const delta = now - then
-      if (delta >= interval) {
-        then = now - (delta % interval)
-        // TODO [1]: this math seems wrong lol
-        // Also it should be more of an average over the last second
-        this.sync = Math.round(delta - interval - (delta % interval))
-        func()
+
+      const currentTimeStamp = timeStampMicro()
+      if (previousTimeStamp === undefined) {
+        previousTimeStamp = currentTimeStamp
       }
+      const timeDelta = currentTimeStamp - previousTimeStamp
+
+      // Calculate the FPS of this one Frame, push it on the sync array, but cap the sync array length to the number
+      // of values that would theoretically exist in 1 second if the past N-values all shared the same actualFPS.
+      // This will then allow taking an average of actualFPS over "allegedly" 1 second.
+      let actualFPS = this.fps
+      if (timeDelta > targetDelta) {
+        actualFPS = 1000 / timeDelta
+      }
+      this.sync.push(actualFPS)
+      this.sync = this.sync.slice(0, parseInt(actualFPS, 10))
+
+      // Wait until we've gotten as close as possible to Expected FPS before drawing & continuing
+      const waitBeforeStepping = Math.max(targetDelta - timeDelta, 0)
+      const browserIntroducedLoopDelay = 0.6667 // found via trial and error
+      const timeStampToWaitUntil = (timeStampMicro() + waitBeforeStepping) - browserIntroducedLoopDelay
+      while (timeStampMicro() < timeStampToWaitUntil) { /* PASS */ }
+
+      previousTimeStamp = timeStampMicro()
+      animationFunction()
+      this.requestId = requestAnimationFrame(step)
     })
-    loop()
+
+    this.requestId = requestAnimationFrame(step)
   }
 
   animateForExport(exportOneFrameAsync) {
