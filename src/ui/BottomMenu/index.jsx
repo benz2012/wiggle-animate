@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { action } from 'mobx'
@@ -7,11 +6,11 @@ import ButtonBase from '@mui/material/ButtonBase'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 import './BottomMenu.css'
-import theme from './theme'
-import Animation from '../lib/animation/Animation'
-import { identityMatrix } from '../utility/matrix'
-import { drawPlayheadHoverLine, drawPlayhead } from '../utility/drawing'
-import { doesBottomMenuHaveFocus } from './KeyHandler'
+import theme from '../theme'
+import Animation from '../../lib/animation/Animation'
+import { identityMatrix } from '../../utility/matrix'
+import { drawPlayheadHoverLine, drawPlayhead } from '../../utility/drawing'
+import { doesBottomMenuHaveFocus } from '../KeyHandler'
 
 const FRAME_TICK_MIN_WIDTH = 10
 
@@ -126,6 +125,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   })
 
   const handlePlayModeClick = action(() => {
+    /* eslint-disable no-param-reassign */
     if (store.animation.mode === Animation.PLAYBACK_MODES[0]) {
       store.animation.mode = Animation.PLAYBACK_MODES[1]
     } else if (store.animation.mode === Animation.PLAYBACK_MODES[1]) {
