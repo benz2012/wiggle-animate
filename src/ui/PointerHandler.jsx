@@ -14,11 +14,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     const playheadCSSTrueHalf = 7
     const distanceFromPlayheadOne = (
       pointerX
-      - store.view.playheadCSSFrameOneStart
-      + (store.view.playheadPixelsPerFrame * 1)
+      - store.playhead.cssFrameOneStart
+      + (store.playhead.pixelsPerFrame * 1)
       - playheadCSSTrueHalf
     )
-    const frameToGoToFloat = distanceFromPlayheadOne / store.view.playheadPixelsPerFrame
+    const frameToGoToFloat = distanceFromPlayheadOne / store.playhead.pixelsPerFrame
     const frameToGoTo = Math.round(frameToGoToFloat)
     return frameToGoTo
   }
@@ -29,7 +29,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   /* DRAG HANDLER */
   const handleDrag = action((event) => {
     const { selectedIds, dragStart, tool } = store.build
-    const { playheadDragStart } = store.view
+    const { dragStart: playheadDragStart } = store.playhead
 
     if (dragStart) {
       const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
@@ -77,7 +77,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       store.setPointerPosition(pointerVector) // keep track of this for all potential needs
 
       const { dragStart, tool, selectedIds } = store.build
-      const { playheadDragStart } = store.view
+      const { dragStart: playheadDragStart } = store.playhead
 
       // Specific scenarios when we should check for intersections like hovers/etc
       const draggingAnItem = (dragStart && selectedIds.length > 0)
@@ -109,8 +109,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
       if (!playheadDragStart && event.target.id === 'playhead-canvas') {
         // check for playhead hover
-        const playheadBucketToCheck = store.view.playheadCSSFrameOneStart
-          + ((store.animation.now - 1) * store.view.playheadPixelsPerFrame)
+        const playheadBucketToCheck = store.playhead.cssFrameOneStart
+          + ((store.animation.now - 1) * store.playhead.pixelsPerFrame)
         const pointerX = pointerVectorRatioOne.x
         // TODO [3]: this should be in the store
         const playheadCSSTrueHalf = 7

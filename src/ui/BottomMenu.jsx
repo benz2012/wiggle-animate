@@ -37,16 +37,16 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   const playModeText = store.animation.mode
 
   useEffect(() => {
-    if (store.view.playheadHovered) {
+    if (store.playhead.hovered) {
       playheadRef.current.style.cursor = 'ew-resize'
     } else {
       playheadRef.current.style.cursor = 'inherit'
     }
-  }, [store.view.playheadHovered])
+  }, [store.playhead.hovered])
 
   const drawPlayheadMemo = useCallback((ctx) => (
-    drawPlayhead(ctx, playheadWidth, store.view.playheadHovered)
-  ), [store.view.playheadHovered])
+    drawPlayhead(ctx, playheadWidth, store.playhead.hovered)
+  ), [store.playhead.hovered])
 
   useEffect(() => {
     // playheadWidth is defined in DPR ratio units, whereas playheadCanvasWidth is in CSS units
@@ -72,7 +72,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     // umm Not DPR But I Must Have Defined Something As Half, not sure what, for now
     // designed a lot of this when DPR was 2
     const ummDoubleIt = 2
-    const pixelsPerFrame = store.view.playheadPixelsPerFrame * ummDoubleIt
+    const pixelsPerFrame = store.playhead.pixelsPerFrame * ummDoubleIt
 
     // draw the playback in/out regions
     ctx.fillStyle = theme.palette.primary_dark[30].toString()
@@ -99,9 +99,9 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     ctx.translate(thinLineOffset, 0)
     const preDrawTransform = ctx.getTransform()
 
-    const drawLineAt = (store.view.playheadHoverLineFrame - 1) * pixelsPerFrame + (playheadCSSTrueHalf * ummDoubleIt)
+    const drawLineAt = (store.playhead.hoverLineFrame - 1) * pixelsPerFrame + (playheadCSSTrueHalf * ummDoubleIt)
     ctx.translate(drawLineAt, 0)
-    if (store.view.playheadHoverLineFrame > 0 && store.view.playheadHoverLineFrame <= store.animation.frames) {
+    if (store.playhead.hoverLineFrame > 0 && store.playhead.hoverLineFrame <= store.animation.frames) {
       drawPlayheadHoverLine(ctx)
     }
 
@@ -117,8 +117,8 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     store.animation.frames,
     store.animation.firstFrame,
     store.animation.lastFrame,
-    store.view.playheadPixelsPerFrame,
-    store.view.playheadHoverLineFrame,
+    store.playhead.pixelsPerFrame,
+    store.playhead.hoverLineFrame,
   ])
 
   const handlePlayPauseClick = action(() => {
@@ -139,11 +139,11 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
   let numTicks = 0
   let framesLeftWithNoTick = 0
-  if (store.view.playheadPixelsPerFrame > 0) {
+  if (store.playhead.pixelsPerFrame > 0) {
     let tickIntervalToDisplay = 1
 
-    if (store.view.playheadPixelsPerFrame < FRAME_TICK_MIN_WIDTH) {
-      tickIntervalToDisplay = Math.ceil(FRAME_TICK_MIN_WIDTH / store.view.playheadPixelsPerFrame)
+    if (store.playhead.pixelsPerFrame < FRAME_TICK_MIN_WIDTH) {
+      tickIntervalToDisplay = Math.ceil(FRAME_TICK_MIN_WIDTH / store.playhead.pixelsPerFrame)
     }
 
     const numTicksFloat = (store.animation.frames - 1) / tickIntervalToDisplay
@@ -224,7 +224,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
           {Boolean(framesLeftWithNoTick) && (
             <div
               className="timeline-tick timeline-tick-leftover"
-              style={{ width: framesLeftWithNoTick * store.view.playheadPixelsPerFrame }}
+              style={{ width: framesLeftWithNoTick * store.playhead.pixelsPerFrame }}
             />
           )}
         </div>

@@ -68,13 +68,14 @@ class RootStore {
       hovers: [],
     }
 
-    // TODO [3]: make a playhead store obj
-    this.view = {
-      playheadHovered: false,
-      playheadHoverLineFrame: null,
-      playheadDragStart: null,
-      playheadPixelsPerFrame: null,
-      playheadCSSFrameOneStart: 100,
+    this.view = {}
+
+    this.playhead = {
+      hovered: false,
+      hoverLineFrame: null,
+      dragStart: null,
+      pixelsPerFrame: null,
+      cssFrameOneStart: 100,
     }
 
     this.keyHeld = {
@@ -100,6 +101,7 @@ class RootStore {
       build: observable,
       selector: observable,
       view: observable,
+      playhead: observable,
       keyHeld: observable,
       propertyEditor: observable,
       // animation: Never changes, no need for observable, observable within
@@ -125,12 +127,13 @@ class RootStore {
       setSelectorRect: action,
       setSelectorHovers: action,
 
+      resetView: action,
+
       setPlayheadHovered: action,
       setPlayheadHoverLineFrame: action,
       startPlayheadDrag: action,
       stopPlayheadDrag: action,
       setPlayheadPixelsPerFrame: action,
-      resetView: action,
 
       setKeyHeld: action,
 
@@ -314,14 +317,16 @@ class RootStore {
   setSelectorHovers(values) { this.selector.hovers = values }
 
   /* View Actions */
-  setPlayheadHovered(value) { this.view.playheadHovered = value }
-  setPlayheadHoverLineFrame(value) { this.view.playheadHoverLineFrame = value }
-  startPlayheadDrag(vector) { this.view.playheadDragStart = vector }
-  stopPlayheadDrag() { this.view.playheadDragStart = null }
-  setPlayheadPixelsPerFrame(value) { this.view.playheadPixelsPerFrame = value }
   resetView() {
     this.rootContainer.setCanvasToBestFit()
   }
+
+  /* Playhead Actions */
+  setPlayheadHovered(value) { this.playhead.hovered = value }
+  setPlayheadHoverLineFrame(value) { this.playhead.hoverLineFrame = value }
+  startPlayheadDrag(vector) { this.playhead.dragStart = vector }
+  stopPlayheadDrag() { this.playhead.dragStart = null }
+  setPlayheadPixelsPerFrame(value) { this.playhead.pixelsPerFrame = value }
 
   /* Key Hold Actions */
   setKeyHeld(key, state) {
