@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
+import ButtonBase from '@mui/material/ButtonBase'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 import './BottomMenu.css'
 import theme from './theme'
@@ -14,6 +16,9 @@ import { doesBottomMenuHaveFocus } from './KeyHandler'
 const FRAME_TICK_MIN_WIDTH = 10
 
 const BottomMenu = observer(({ store, windowWidth }) => {
+  // Show/Hide keyframe editing panel
+  const [bottomOpen, setBottomOpen] = useState(false)
+
   const playheadRef = useRef()
   // TODO [3]: move all these units to the store for easier access & reuse
   // defined at DPR 1 aka CSS units
@@ -164,7 +169,19 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
   return (
     <div id="bottom-menu" tabIndex="0">
-      <button type="button" id="bottom-menu-tab" className="noselect">▲</button>
+      <ButtonBase
+        id="bottom-menu-tab"
+        onClick={() => setBottomOpen(!bottomOpen)}
+        focusRipple
+      >
+        <KeyboardArrowUpIcon
+          sx={(muiTheme) => ({
+            transition: `transform ${muiTheme.transitions.duration.shorter}ms`,
+            transform: bottomOpen && 'rotate(180deg)',
+          })}
+        />
+      </ButtonBase>
+
       <div id="play-controls">
         <button
           type="button"

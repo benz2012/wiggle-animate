@@ -88,7 +88,6 @@ const PropertyEditor = observer(({ store }) => {
           position: 'absolute',
           width: PANEL_WIDTH,
           minHeight: 32,
-          // maxHeight: '80vh',
           zIndex: 1000,
           top: store.propertyEditor.position.y,
           right: store.propertyEditor.position.x,

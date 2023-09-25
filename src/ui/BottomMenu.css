@@ -57,6 +57,9 @@
   background-color: var(--palette-primary_dark-30);
   color: var(--palette-text-main);
 }
+#bottom-menu-tab:focus {
+  outline: 1px solid var(--palette-primary_dark-75);
+}
 
 #play-controls {
   width: 84px;
