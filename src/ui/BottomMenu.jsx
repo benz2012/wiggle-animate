@@ -20,20 +20,10 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   const [bottomOpen, setBottomOpen] = useState(false)
 
   const playheadRef = useRef()
-  // TODO [3]: move all these units to the store for easier access & reuse
-  // defined at DPR 1 aka CSS units
-  const playheadCanvasWidth = windowWidth - 184
-  const playheadCanvasHeight = 33
-  // defined at DPR 2
-  const playheadWidth = 24
-  const playheadTotalStroke = 4
-  // divide out the DPR-2 that was used to define the unit values above
-  const playheadCSSTrueHalf = ((playheadWidth + playheadTotalStroke) / 2) / 2
-  const playbackRegionHeight = 16
+  const playheadCanvasWidth = windowWidth - store.playhead.canvasWidthLessThanWindow
+  const playheadCSSTrueHalf = store.playhead.cssTrueHalf
 
   const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
-
-  // const playModeText = store.animation.mode === 'LOOP' ? '∞' : '⇒'
   const playModeText = store.animation.mode
 
   useEffect(() => {
@@ -45,12 +35,18 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   }, [store.playhead.hovered])
 
   const drawPlayheadMemo = useCallback((ctx) => (
-    drawPlayhead(ctx, playheadWidth, store.playhead.hovered)
-  ), [store.playhead.hovered])
+    drawPlayhead(
+      ctx,
+      store.DPR,
+      store.playhead.cssWidth,
+      store.playhead.hovered,
+      store.playhead.cssStrokeProtrusion,
+    )
+  ), [store.playhead.hovered]) // eslint-disable-line
 
   useEffect(() => {
-    // playheadWidth is defined in DPR ratio units, whereas playheadCanvasWidth is in CSS units
-    const pixelsPerFrame = (playheadCanvasWidth - playheadCSSTrueHalf * 2) / (store.animation.frames - 1)
+    const playheadCSSTrueFullWidth = playheadCSSTrueHalf * 2
+    const pixelsPerFrame = (playheadCanvasWidth - playheadCSSTrueFullWidth) / (store.animation.frames - 1)
     store.setPlayheadPixelsPerFrame(pixelsPerFrame)
   }, [
     playheadCanvasWidth,
@@ -83,7 +79,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         regionLeftStart,
         regionTopStart,
         pixelsPerFrame * (store.animation.firstFrame - 1),
-        playbackRegionHeight,
+        store.playhead.boundRegionHeight * store.DPR,
       )
     }
     if (store.animation.lastFrame !== store.animation.frames) {
@@ -91,7 +87,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         regionLeftStart + (pixelsPerFrame * (store.animation.lastFrame - 1)),
         regionTopStart,
         pixelsPerFrame * (store.animation.frames - store.animation.lastFrame),
-        playbackRegionHeight,
+        store.playhead.boundRegionHeight * store.DPR,
       )
     }
 
@@ -102,7 +98,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     const drawLineAt = (store.playhead.hoverLineFrame - 1) * pixelsPerFrame + (playheadCSSTrueHalf * ummDoubleIt)
     ctx.translate(drawLineAt, 0)
     if (store.playhead.hoverLineFrame > 0 && store.playhead.hoverLineFrame <= store.animation.frames) {
-      drawPlayheadHoverLine(ctx)
+      drawPlayheadHoverLine(ctx, store.DPR)
     }
 
     ctx.setTransform(preDrawTransform)
@@ -232,8 +228,8 @@ const BottomMenu = observer(({ store, windowWidth }) => {
           ref={playheadRef}
           id="playhead-canvas"
           width={playheadCanvasWidth * store.DPR}
-          height={playheadCanvasHeight * store.DPR}
-          style={{ width: playheadCanvasWidth, height: playheadCanvasHeight }}
+          height={store.playhead.canvasHeight * store.DPR}
+          style={{ width: playheadCanvasWidth, height: store.playhead.canvasHeight }}
         />
       </div>
 

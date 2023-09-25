@@ -1,8 +1,8 @@
 import theme from '../../ui/theme'
 
-const drawPlayheadHoverLine = (ctx) => {
+const drawPlayheadHoverLine = (ctx, dpr) => {
   ctx.strokeStyle = `${theme.palette.primary_dark[50]}`
-  ctx.lineWidth = 2
+  ctx.lineWidth = dpr
   ctx.lineJoin = 'miter'
   ctx.beginPath()
   ctx.moveTo(0, -30)
@@ -10,13 +10,13 @@ const drawPlayheadHoverLine = (ctx) => {
   ctx.stroke()
 }
 
-const drawPlayhead = (ctx, playheadWidth, isHovered) => {
+const drawPlayhead = (ctx, dpr, playheadWidth, isHovered, strokeProtrusion) => {
   ctx.beginPath()
   ctx.fillStyle = `${theme.palette.primary_dark[100]}`
   ctx.strokeStyle = isHovered ? `${theme.palette.primary[100]}` : `${theme.palette.primary_dark_dark[100]}`
-  ctx.lineWidth = 4
+  ctx.lineWidth = strokeProtrusion * dpr
   ctx.lineJoin = 'miter'
-  const upperWidth = playheadWidth
+  const upperWidth = playheadWidth * dpr
   const playheadLeft = 2
   ctx.moveTo(playheadLeft, 6)
   ctx.lineTo(upperWidth / 2 + playheadLeft, 20)
@@ -28,7 +28,7 @@ const drawPlayhead = (ctx, playheadWidth, isHovered) => {
   ctx.fill()
 
   ctx.beginPath()
-  ctx.lineWidth = 2
+  ctx.lineWidth = dpr
   ctx.lineJoin = 'miter'
   ctx.strokeStyle = isHovered ? `${theme.palette.primary[50]}` : `${theme.palette.primary_dark_dark[50]}`
   ctx.moveTo(playheadLeft + upperWidth / 4, 0)

@@ -10,13 +10,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
   /* Convienience Methods */
   const getFrameWithPointerX = (pointerX) => {
-    // TODO [3]: playheadCSSTrueHalf should be in the store
-    const playheadCSSTrueHalf = 7
     const distanceFromPlayheadOne = (
       pointerX
       - store.playhead.cssFrameOneStart
       + (store.playhead.pixelsPerFrame * 1)
-      - playheadCSSTrueHalf
+      - store.playhead.cssTrueHalf
     )
     const frameToGoToFloat = distanceFromPlayheadOne / store.playhead.pixelsPerFrame
     const frameToGoTo = Math.round(frameToGoToFloat)
@@ -112,11 +110,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         const playheadBucketToCheck = store.playhead.cssFrameOneStart
           + ((store.animation.now - 1) * store.playhead.pixelsPerFrame)
         const pointerX = pointerVectorRatioOne.x
-        // TODO [3]: this should be in the store
-        const playheadCSSTrueHalf = 7
         if (
           pointerX >= playheadBucketToCheck
-          && pointerX <= playheadBucketToCheck + playheadCSSTrueHalf * 2
+          && pointerX <= playheadBucketToCheck + store.playhead.cssTrueHalf * 2
         ) {
           store.setPlayheadHovered(true)
           store.setPlayheadHoverLineFrame(null)

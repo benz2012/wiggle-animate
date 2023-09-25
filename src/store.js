@@ -75,7 +75,17 @@ class RootStore {
       hoverLineFrame: null,
       dragStart: null,
       pixelsPerFrame: null,
+      cssWidth: 12,
+      cssStrokeProtrusion: 2,
       cssFrameOneStart: 100,
+      canvasWidthLessThanWindow: 184,
+      canvasHeight: 33,
+      boundRegionHeight: 8,
+    }
+    this.playhead = {
+      // define computed statics here
+      ...this.playhead,
+      cssTrueHalf: (this.playhead.cssWidth + this.playhead.cssStrokeProtrusion) / 2,
     }
 
     this.keyHeld = {
