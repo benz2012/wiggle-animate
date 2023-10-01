@@ -185,9 +185,9 @@ class RootStore {
         if (this.keyHeld.Meta || this.keyHeld.Shift) {
           return 'adding'
         }
-      }
 
-      if (controlAction) return controlAction
+        if (controlAction) return controlAction
+      }
 
       return 'hovering'
     }
