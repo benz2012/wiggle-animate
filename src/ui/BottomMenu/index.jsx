@@ -102,6 +102,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
           // store={store}
           numSelected={selectedIds.length}
           selectedItem={selectedItem}
+          totalFrames={animation.frames}
         />
       )}
 

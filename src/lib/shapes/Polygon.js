@@ -15,6 +15,7 @@ class Polygon extends VisibleShape {
       isEditable: true,
       minValue: 3,
       maxValue: 100,
+      valueDragRatio: 9,
     })
 
     this._height.isEditable = false

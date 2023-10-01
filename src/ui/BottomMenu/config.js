@@ -1,0 +1,7 @@
+const LABEL_WIDTH = 130
+const KEYFRAME_DIAMETER = 8
+
+export {
+  LABEL_WIDTH,
+  KEYFRAME_DIAMETER,
+}
