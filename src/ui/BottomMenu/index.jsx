@@ -18,24 +18,26 @@ const elevationFourBoxShadowNorth = '0px -3px 3px -2px rgba(0,0,0,0.2),'
   + '0px -3px 4px 0px rgba(0,0,0,0.14),0px -1px 8px 0px rgba(0,0,0,0.12)'
 
 const BottomMenu = observer(({ store, windowWidth }) => {
+  const { build, animation, rootContainer } = store
+
   const [bottomOpen, setBottomOpen] = useState(false)
 
-  const playModeText = store.animation.mode
+  const playModeText = animation.mode
 
   const handlePlayPauseClick = action(() => {
-    if (store.animation.playing) {
-      store.animation.pause()
+    if (animation.playing) {
+      animation.pause()
     } else {
-      store.animation.play()
+      animation.play()
     }
   })
 
   const handlePlayModeClick = action(() => {
     /* eslint-disable no-param-reassign */
-    if (store.animation.mode === Animation.PLAYBACK_MODES[0]) {
-      store.animation.mode = Animation.PLAYBACK_MODES[1]
-    } else if (store.animation.mode === Animation.PLAYBACK_MODES[1]) {
-      store.animation.mode = Animation.PLAYBACK_MODES[0]
+    if (animation.mode === Animation.PLAYBACK_MODES[0]) {
+      animation.mode = Animation.PLAYBACK_MODES[1]
+    } else if (animation.mode === Animation.PLAYBACK_MODES[1]) {
+      animation.mode = Animation.PLAYBACK_MODES[0]
     }
   })
 
@@ -55,6 +57,10 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
   }, [onFocusChange])
 
+  // Keyframe-related logic
+  const { selectedIds } = build
+  const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
+
   return (
     <Box
       id="bottom-menu"
@@ -71,15 +77,15 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         <OpenCloseTabButton open={bottomOpen} setOpen={setBottomOpen} />
 
         <PlayControls
-          isPlaying={store.animation.playing}
+          isPlaying={animation.playing}
           playPauseClick={handlePlayPauseClick}
-          goToFirst={() => { store.animation.goToFirst() }}
-          goToLast={() => { store.animation.goToLast() }}
+          goToFirst={() => { animation.goToFirst() }}
+          goToLast={() => { animation.goToLast() }}
         />
 
         <PlayheadCanvas store={store} windowWidth={windowWidth} />
 
-        <span id="frame-ticker" className="noselect">{store.animation.now}</span>
+        <span id="frame-ticker" className="noselect">{animation.now}</span>
 
         <button
           type="button"
@@ -91,7 +97,13 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         </button>
       </Box>
 
-      {bottomOpen && <KeyframeEditor />}
+      {bottomOpen && (
+        <KeyframeEditor
+          // store={store}
+          numSelected={selectedIds.length}
+          selectedItem={selectedItem}
+        />
+      )}
 
       {hasFocus && (
         <>
