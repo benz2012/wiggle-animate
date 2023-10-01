@@ -3,11 +3,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
-import ButtonBase from '@mui/material/ButtonBase'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 import './BottomMenu.css'
+import OpenCloseTabButton from './OpenCloseTabButton'
+import PlayControls from './PlayControls'
 import PlayheadCanvas from './PlayheadCanvas'
+import KeyframeEditor from './KeyframeEditor'
 import myTheme from '../theme'
 import Animation from '../../lib/animation/Animation'
 import { doesBottomMenuHaveFocus } from '../KeyHandler'
@@ -19,7 +20,6 @@ const elevationFourBoxShadowNorth = '0px -3px 3px -2px rgba(0,0,0,0.2),'
 const BottomMenu = observer(({ store, windowWidth }) => {
   const [bottomOpen, setBottomOpen] = useState(false)
 
-  const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
   const playModeText = store.animation.mode
 
   const handlePlayPauseClick = action(() => {
@@ -67,71 +67,31 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         boxShadow: bottomOpen ? elevationFourBoxShadowNorth : 'none',
       })}
     >
-      <ButtonBase
-        id="bottom-menu-tab"
-        onClick={() => setBottomOpen(!bottomOpen)}
-        focusRipple
-        sx={{
-          backgroundColor: bottomOpen ? `${myTheme.palette.background.main}` : `${myTheme.palette.primary_dark[20]}`,
-          '&:hover': {
-            backgroundColor: bottomOpen
-              ? `${myTheme.palette.background.lighter1}`
-              : `${myTheme.palette.primary_dark[30]}`,
-          },
-          '&:active': {
-            backgroundColor: bottomOpen
-              ? `${myTheme.palette.background.lighter1}`
-              : `${myTheme.palette.primary_dark[30]}`,
-          },
-        }}
-      >
-        <KeyboardArrowUpIcon
-          sx={(theme) => ({
-            transition: `transform ${theme.transitions.duration.shorter}ms`,
-            transform: bottomOpen && 'rotate(180deg)',
-          })}
+      <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+        <OpenCloseTabButton open={bottomOpen} setOpen={setBottomOpen} />
+
+        <PlayControls
+          isPlaying={store.animation.playing}
+          playPauseClick={handlePlayPauseClick}
+          goToFirst={() => { store.animation.goToFirst() }}
+          goToLast={() => { store.animation.goToLast() }}
         />
-      </ButtonBase>
 
-      <div id="play-controls">
+        <PlayheadCanvas store={store} windowWidth={windowWidth} />
+
+        <span id="frame-ticker" className="noselect">{store.animation.now}</span>
+
         <button
           type="button"
-          id="jump-start-button"
+          id="play-mode-button"
           className="jump-button noselect"
-          onClick={action(() => { store.animation.goToFirst() })}
+          onClick={handlePlayModeClick}
         >
-          ⇤
+          {playModeText}
         </button>
-        <button
-          type="button"
-          id="play-pause-button"
-          className="jump-button font-12 noselect"
-          onClick={handlePlayPauseClick}
-        >
-          {playPauseText}
-        </button>
-        <button
-          type="button"
-          id="jump-end-button"
-          className="jump-button noselect"
-          onClick={action(() => { store.animation.goToLast() })}
-        >
-          ⇥
-        </button>
-      </div>
+      </Box>
 
-      <PlayheadCanvas store={store} windowWidth={windowWidth} />
-
-      <span id="frame-ticker" className="noselect">{store.animation.now}</span>
-
-      <button
-        type="button"
-        id="play-mode-button"
-        className="jump-button noselect"
-        onClick={handlePlayModeClick}
-      >
-        {playModeText}
-      </button>
+      {bottomOpen && <KeyframeEditor />}
 
       {hasFocus && (
         <>

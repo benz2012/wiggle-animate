@@ -5,7 +5,7 @@
   padding: 8px;
 
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
 }
 #bottom-menu:focus {
   outline: none;
