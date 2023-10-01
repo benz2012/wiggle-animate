@@ -2,16 +2,21 @@
 import { useCallback, useEffect, useState } from 'react'
 import { action } from 'mobx'
 import { observer } from 'mobx-react-lite'
+import Box from '@mui/material/Box'
 import ButtonBase from '@mui/material/ButtonBase'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 import './BottomMenu.css'
 import PlayheadCanvas from './PlayheadCanvas'
+import myTheme from '../theme'
 import Animation from '../../lib/animation/Animation'
 import { doesBottomMenuHaveFocus } from '../KeyHandler'
 
+const PANEL_OPEN_HEIGHT = 300
+const elevationFourBoxShadowNorth = '0px -3px 3px -2px rgba(0,0,0,0.2),'
+  + '0px -3px 4px 0px rgba(0,0,0,0.14),0px -1px 8px 0px rgba(0,0,0,0.12)'
+
 const BottomMenu = observer(({ store, windowWidth }) => {
-  // Show/Hide keyframe editing panel
   const [bottomOpen, setBottomOpen] = useState(false)
 
   const playPauseText = store.animation.playing ? '❙ ❙' : '▶'
@@ -51,15 +56,38 @@ const BottomMenu = observer(({ store, windowWidth }) => {
   }, [onFocusChange])
 
   return (
-    <div id="bottom-menu" tabIndex="0">
+    <Box
+      id="bottom-menu"
+      tabIndex="0"
+      sx={(theme) => ({
+        height: bottomOpen ? `${PANEL_OPEN_HEIGHT}px` : '24px',
+        backgroundColor: bottomOpen ? `${myTheme.palette.background.main}` : `${myTheme.palette.primary_dark[20]}`,
+        transition: `height ${theme.transitions.duration.short}ms,
+          background-color ${theme.transitions.duration.short}ms`,
+        boxShadow: bottomOpen ? elevationFourBoxShadowNorth : 'none',
+      })}
+    >
       <ButtonBase
         id="bottom-menu-tab"
         onClick={() => setBottomOpen(!bottomOpen)}
         focusRipple
+        sx={{
+          backgroundColor: bottomOpen ? `${myTheme.palette.background.main}` : `${myTheme.palette.primary_dark[20]}`,
+          '&:hover': {
+            backgroundColor: bottomOpen
+              ? `${myTheme.palette.background.lighter1}`
+              : `${myTheme.palette.primary_dark[30]}`,
+          },
+          '&:active': {
+            backgroundColor: bottomOpen
+              ? `${myTheme.palette.background.lighter1}`
+              : `${myTheme.palette.primary_dark[30]}`,
+          },
+        }}
       >
         <KeyboardArrowUpIcon
-          sx={(muiTheme) => ({
-            transition: `transform ${muiTheme.transitions.duration.shorter}ms`,
+          sx={(theme) => ({
+            transition: `transform ${theme.transitions.duration.shorter}ms`,
             transform: bottomOpen && 'rotate(180deg)',
           })}
         />
@@ -112,7 +140,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
           <div id="bottom-menu-outliner-3" />
         </>
       )}
-    </div>
+    </Box>
   )
 })
 

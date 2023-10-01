@@ -71,6 +71,11 @@ const theme = {
 
       background: {
         main: this.base.palette.background,
+        lighter1: new Color({
+          r: this.base.palette.background.red + 10,
+          g: this.base.palette.background.green + 10,
+          b: this.base.palette.background.blue + 10,
+        }),
       },
 
       text: {
