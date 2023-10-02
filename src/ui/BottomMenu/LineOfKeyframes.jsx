@@ -14,22 +14,37 @@ const LineOfKeyframes = observer(({ label, keyframes, totalFrames }) => {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Typography
-        className="noselect"
-        component="label"
-        sx={{
-          width: `${LABEL_WIDTH}px`,
-          fontFamily: 'monospace',
-          fontSize: 12,
-          color: 'text.disabled',
-          cursor: 'pointer',
-          '&:hover': { color: 'text.secondary' },
-        }}
-      >
-        {label}
-      </Typography>
+      <Box sx={{ width: `${LABEL_WIDTH}px`, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <Typography
+          className="noselect"
+          component="label"
+          sx={{
+            display: 'inline-block',
+            width: '100%',
+            textAlign: 'right',
+            mr: 2,
+            fontFamily: 'monospace',
+            fontSize: 12,
+            color: 'text.disabled',
+            cursor: 'pointer',
+            '&:hover': { color: 'text.secondary' },
+          }}
+        >
+          {label}
+        </Typography>
+      </Box>
 
-      <Box ref={lineItemRef} sx={{ position: 'relative', flexGrow: 1 }}>
+      <Box ref={lineItemRef} sx={{ display: 'flex', alignItems: 'center', position: 'relative', flexGrow: 1 }}>
+        <Box
+          sx={{
+            position: 'absolute',
+            left: '0px',
+            right: '0px',
+            height: '1px',
+            backgroundColor: 'action.hover',
+          }}
+        />
+
         {keyframes.map((keyframe) => {
           let keyPositionX = ((keyframe.frame - 1) * pixelsPerFrame).toFixed(2)
           const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
