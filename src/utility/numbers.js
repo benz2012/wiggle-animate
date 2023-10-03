@@ -6,6 +6,10 @@ const isNumber = (value) => (
   typeof value === 'number' && !Number.isNaN(value)
 )
 
+const isOdd = (value) => (
+  (value % 2) === 1
+)
+
 const _stringToTruncatedFloat = (str) => {
   const [leftHand, rightHand] = str.split('.')
   const truncatedDecimal = rightHand.substring(0, FLOAT_PRECISION)
@@ -31,5 +35,6 @@ const truncateFloatLeaveInt = (value) => {
 
 export {
   isNumber,
+  isOdd,
   truncateFloatLeaveInt,
 }

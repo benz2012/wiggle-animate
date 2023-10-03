@@ -38,6 +38,7 @@ class Animation {
 
   setIn(frame) {
     if (frame < Animation.FIRST || frame > this.frames) return
+    if (frame === this.lastFrame) return // prevent 1-frame work region
     this.firstFrame = frame
     if (this.now < frame) {
       this.goToFrame(frame)
@@ -46,6 +47,7 @@ class Animation {
 
   setOut(frame) {
     if (frame < Animation.FIRST || frame > this.frames) return
+    if (frame === this.firstFrame) return // prevent 1-frame work region
     this.lastFrame = frame
     if (this.now > frame) {
       this.goToFrame(frame)

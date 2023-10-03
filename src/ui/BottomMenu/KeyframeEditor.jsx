@@ -5,7 +5,15 @@ import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
 
-const KeyframeEditor = observer(({ numSelected, selectedItem, totalFrames }) => {
+const KeyframeEditor = observer(({ store }) => {
+  const { build, animation, rootContainer } = store
+
+  const { selectedIds } = build
+  const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
+  const numSelected = selectedIds.length
+
+  const totalFrames = animation.frames
+
   // On keyframe-icon hover, show frame num & value
   // On keyframe-icon click/drag, move keyframe.frame (+ / -)
   // On keyframe-icon double-click, jump to that frame so user can edit it via Prop Editor
@@ -27,7 +35,12 @@ const KeyframeEditor = observer(({ numSelected, selectedItem, totalFrames }) => 
           overflow: 'scroll',
         }}
       >
-        <RegionSelection />
+        <RegionSelection
+          frameIn={animation.firstFrame}
+          frameOut={animation.lastFrame}
+          setIn={animation.setIn}
+          setOut={animation.setOut}
+        />
 
         {selectedItem.keyframables.map((propName) => {
           const property = selectedItem[propName]

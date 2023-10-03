@@ -57,10 +57,6 @@ const BottomMenu = observer(({ store, windowWidth }) => {
     }
   }, [onFocusChange])
 
-  // Keyframe-related logic
-  const { selectedIds } = build
-  const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
-
   return (
     <Box
       id="bottom-menu"
@@ -99,10 +95,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
       {bottomOpen && (
         <KeyframeEditor
-          // store={store}
-          numSelected={selectedIds.length}
-          selectedItem={selectedItem}
-          totalFrames={animation.frames}
+          store={store}
         />
       )}
 
