@@ -1,17 +1,17 @@
 /* eslint-disable react/no-array-index-key */
+import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { LABEL_WIDTH } from './config'
 import { isOdd } from '../../utility/numbers'
-
-// TODO: Make first and last tied to animation.in/out
-// TODO: if num frames shown is odd, show one extra tick in middle
-// TODO: if num frames shown is even, show two extra ticks at 3rds
-// TODO: allow user to click on first/last number to set animation.in/out
+import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
+import { parseAndValidateInteger } from '../inputs/util'
 
 const mono12 = { fontFamily: 'monospace', fontSize: 12 }
+const tickLefts = ['calc(33.33% - 6px)', 'calc(66.66% - 6px)', 'calc(50% - 6px)']
+
 const Tick = () => (
   <Box
     sx={(theme) => ({
@@ -47,19 +47,36 @@ const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
     }
   }
 
+  const [editIn, setEditIn] = useState(false)
+  const [editOut, setEditOut] = useState(false)
+  const parseAndValidateFrameIn = (value) => {
+    const validation = parseAndValidateInteger(value)
+    if (validation.isValid && validation.parsedValue >= frameOut) {
+      return { ...validation, isValid: false }
+    }
+    return validation
+  }
+  const parseAndValidateFrameOut = (value) => {
+    const validation = parseAndValidateInteger(value)
+    if (validation.isValid && validation.parsedValue <= frameIn) {
+      return { ...validation, isValid: false }
+    }
+    return validation
+  }
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-      <Box sx={{ width: `${LABEL_WIDTH}px`, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+    <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 1 }}>
+      <Box sx={(theme) => ({ width: `calc(${LABEL_WIDTH}px - ${theme.spacing(2)})`, mr: 2 })}>
         <Typography
           className="noselect"
           component="label"
           sx={{
-            display: 'inline-block',
+            display: 'block',
             width: '100%',
             textAlign: 'right',
-            mr: 2,
             fontFamily: 'monospace',
             fontSize: 12,
+            lineHeight: '8px',
             color: 'text.disabled',
           }}
         >
@@ -68,12 +85,72 @@ const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
       </Box>
 
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography sx={{ ...mono12 }}>{frameIn}</Typography>
-          {interTickNums.map((frameNum) => (
-            <Typography key={frameNum} sx={{ ...mono12 }}>{frameNum}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', minHeight: '30px', position: 'relative' }}>
+          {editIn ? (
+            <GenericInputWithInternalValue
+              availableWidth={40}
+              label="editIn"
+              propertyValue={frameIn}
+              parseAndValidateNewValue={parseAndValidateFrameIn}
+              setPropertyValue={(newValue) => setIn(newValue)}
+              onBlur={() => setEditIn(false)}
+              noLabel
+              autoFocus
+            />
+          ) : (
+            <Typography
+              className="noselect"
+              sx={{
+                ...mono12,
+                cursor: 'pointer',
+                '&:hover': { color: 'primary.main' },
+              }}
+              onClick={() => setEditIn(true)}
+            >
+              {frameIn}
+            </Typography>
+          )}
+
+          {interTickNums.map((frameNum, index) => (
+            <Typography
+              key={frameNum}
+              className="noselect"
+              sx={{
+                ...mono12,
+                position: 'absolute',
+                left: interTickNums.length === 2 ? tickLefts[index] : tickLefts[2],
+              }}
+            >
+              {frameNum}
+            </Typography>
           ))}
-          <Typography sx={{ ...mono12 }}>{frameOut}</Typography>
+
+          <Box sx={{ position: 'absolute', right: 0 }}>
+            {editOut ? (
+              <GenericInputWithInternalValue
+                availableWidth={40}
+                label="editOut"
+                propertyValue={frameOut}
+                parseAndValidateNewValue={parseAndValidateFrameOut}
+                setPropertyValue={(newValue) => setOut(newValue)}
+                onBlur={() => setEditOut(false)}
+                noLabel
+                autoFocus
+              />
+            ) : (
+              <Typography
+                className="noselect"
+                sx={{
+                  ...mono12,
+                  cursor: 'pointer',
+                  '&:hover': { color: 'primary.main' },
+                }}
+                onClick={() => setEditOut(true)}
+              >
+                {frameOut}
+              </Typography>
+            )}
+          </Box>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>

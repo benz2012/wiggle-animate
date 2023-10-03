@@ -17,7 +17,10 @@ const InputBox = observer(({
   valueDragRatio = 1, // the higher the ratio, the slower a value will change during drag-updates
   onBlur,
   error,
+  autoFocus = false,
 }) => {
+  const inputId = `input-${labelGroup ? `${labelGroup}-` : ''}${label}`
+
   const handleKeyDown = (event) => {
     switch (event.key) {
       case 'ArrowUp':
@@ -33,6 +36,9 @@ const InputBox = observer(({
         } else {
           incrementValue(-1)
         }
+        break
+      case 'Enter':
+        document.getElementById(inputId).blur()
         break
       default:
         break
@@ -84,7 +90,7 @@ const InputBox = observer(({
 
   return (
     <InputBase
-      id={`input-${labelGroup ? `${labelGroup}-` : ''}${label}`}
+      id={inputId}
       className="noselect"
       sx={(theme) => {
         const gapSizeGeneric = 0.5
@@ -157,6 +163,7 @@ const InputBox = observer(({
       onKeyDown={handleKeyDown}
       onBlur={onBlur}
       error={error}
+      autoFocus={autoFocus}
     />
   )
 })

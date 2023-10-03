@@ -9,6 +9,8 @@ import CheckboxLock from './CheckboxLock'
 import { PAIRED_VECTOR_TYPES } from '../PropertyEditor/config'
 import { isNumber } from '../../utility/numbers'
 
+const voidFunc = () => null
+
 const GenericInputWithInternalValue = observer(({
   label,
   labelGroup,
@@ -21,6 +23,8 @@ const GenericInputWithInternalValue = observer(({
   pairVector = false,
   togglePairing,
   isColor = false,
+  noLabel = false,
+  onBlur = voidFunc,
   ...rest
 }) => {
   const isMulti = Array.isArray(subProperties)
@@ -56,6 +60,16 @@ const GenericInputWithInternalValue = observer(({
     ) : (
       parsedValue
     )
+    const newParsedValueStr = `${newParsedValue}`
+    const { isValid: isValid2 } = parseAndValidateNewValue(newParsedValueStr)
+    if (!isValid2) {
+      if (subProp) {
+        setInternalValue({ ...internalValue, [subProp]: newParsedValueStr })
+      } else {
+        setInternalValue(newParsedValueStr)
+      }
+      return
+    }
 
     if (subProp) {
       // NOTE: this array needs to be ordered to match the order of arguments in the constructor
@@ -114,7 +128,10 @@ const GenericInputWithInternalValue = observer(({
           value={internalValue ?? propertyValue}
           setValue={setValue}
           incrementValue={incrementValue}
-          onBlur={() => setInternalValue(null)}
+          onBlur={() => {
+            setInternalValue(null)
+            onBlur()
+          }}
           error={internalValue !== null}
           {...rest}
         />
@@ -135,7 +152,10 @@ const GenericInputWithInternalValue = observer(({
             value={internalValue[subProp1] ?? subPropValue1}
             setValue={subPropSetter(subProp1)}
             incrementValue={subPropIncrementValue(subProp1)}
-            onBlur={() => setInternalValue({ ...internalValue, [subProp1]: null })}
+            onBlur={() => {
+              setInternalValue({ ...internalValue, [subProp1]: null })
+              onBlur()
+            }}
             error={internalValue[subProp1] !== null}
             totalBoxes={subProperties.length}
             iconInTheGap
@@ -149,7 +169,10 @@ const GenericInputWithInternalValue = observer(({
             value={internalValue[subProp2] ?? subPropValue2}
             setValue={subPropSetter(subProp2)}
             incrementValue={subPropIncrementValue(subProp2)}
-            onBlur={() => setInternalValue({ ...internalValue, [subProp2]: null })}
+            onBlur={() => {
+              setInternalValue({ ...internalValue, [subProp2]: null })
+              onBlur()
+            }}
             error={internalValue[subProp2] !== null}
             totalBoxes={subProperties.length}
             iconInTheGap
@@ -172,7 +195,10 @@ const GenericInputWithInternalValue = observer(({
               value={internalValue[subProp] ?? subPropValue}
               setValue={subPropSetter(subProp)}
               incrementValue={subPropIncrementValue(subProp)}
-              onBlur={() => setInternalValue({ ...internalValue, [subProp]: null })}
+              onBlur={() => {
+                setInternalValue({ ...internalValue, [subProp]: null })
+                onBlur()
+              }}
               error={internalValue[subProp] !== null}
               totalBoxes={subProperties.length}
               {...rest}
@@ -185,13 +211,16 @@ const GenericInputWithInternalValue = observer(({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <InputLabel
-        label={!isMulti ? label : `${label}-${subProperties[0]}`}
-        labelGroup={labelGroup}
-        hasSubProp={isMulti}
-      />
-
-      <Box sx={{ flexGrow: 1 }} />
+      {noLabel === false && (
+        <>
+          <InputLabel
+            label={!isMulti ? label : `${label}-${subProperties[0]}`}
+            labelGroup={labelGroup}
+            hasSubProp={isMulti}
+          />
+          <Box sx={{ flexGrow: 1 }} />
+        </>
+      )}
 
       {isColor && (
         <ColorBox

@@ -36,18 +36,24 @@ class Animation {
     this.frames = newLength
   }
 
-  setIn(frame) {
+  setIn = (frame) => {
     if (frame < Animation.FIRST || frame > this.frames) return
-    if (frame === this.lastFrame) return // prevent 1-frame work region
+    if (frame >= this.lastFrame) {
+      // prevent 1-frame and negative work region by clearing the "out"
+      this.lastFrame = this.frames
+    }
     this.firstFrame = frame
     if (this.now < frame) {
       this.goToFrame(frame)
     }
   }
 
-  setOut(frame) {
+  setOut = (frame) => {
     if (frame < Animation.FIRST || frame > this.frames) return
-    if (frame === this.firstFrame) return // prevent 1-frame work region
+    if (frame <= this.firstFrame) {
+      // prevent 1-frame and negative work region by clearing the "in"
+      this.firstFrame = 1
+    }
     this.lastFrame = frame
     if (this.now > frame) {
       this.goToFrame(frame)

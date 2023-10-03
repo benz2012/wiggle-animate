@@ -18,7 +18,7 @@ const elevationFourBoxShadowNorth = '0px -3px 3px -2px rgba(0,0,0,0.2),'
   + '0px -3px 4px 0px rgba(0,0,0,0.14),0px -1px 8px 0px rgba(0,0,0,0.12)'
 
 const BottomMenu = observer(({ store, windowWidth }) => {
-  const { build, animation, rootContainer } = store
+  const { animation } = store
 
   const [bottomOpen, setBottomOpen] = useState(false)
 
@@ -93,11 +93,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         </button>
       </Box>
 
-      {bottomOpen && (
-        <KeyframeEditor
-          store={store}
-        />
-      )}
+      {bottomOpen && <KeyframeEditor store={store} />}
 
       {hasFocus && (
         <>
