@@ -10,7 +10,7 @@ import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalVal
 import { parseAndValidateInteger } from '../inputs/util'
 
 const mono12 = { fontFamily: 'monospace', fontSize: 12 }
-const interNumLefts = ['calc(33.33% - 6px)', 'calc(66.66% - 6px)', 'calc(50% - 6px)']
+const interNumLefts = ['calc(33.33% - 6px)', 'calc(66.66% - 7px)', 'calc(50% - 7px)']
 
 const Tick = () => (
   <Box

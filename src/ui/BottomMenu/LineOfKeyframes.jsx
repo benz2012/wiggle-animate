@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 
@@ -49,20 +50,30 @@ const LineOfKeyframes = observer(({ label, keyframes, totalFrames }) => {
           let keyPositionX = ((keyframe.frame - 1) * pixelsPerFrame).toFixed(2)
           const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
           keyPositionX -= cssRotationOffset
+          const valueShort = `${keyframe.value}`.split('(').pop().replace(')', '')
           return (
-            <Box
-              key={`${keyframe.frame}`}
-              sx={{
-                width: `${KEYFRAME_DIAMETER}px`,
-                height: `${KEYFRAME_DIAMETER}px`,
-                backgroundColor: 'primary.main',
-                outline: '1px solid white',
-                borderRadius: '1px',
-                transform: 'rotate(45deg)',
-                position: 'absolute',
-                left: `${keyPositionX}px`,
-              }}
-            />
+            <Tooltip
+              title={`f${keyframe.frame}: ${valueShort}`}
+              componentsProps={{ tooltip: { sx: { backgroundColor: 'rgba(0, 0, 0, 0.7)' } } }}
+            >
+              <Box
+                key={`${keyframe.frame}`}
+                sx={() => ({
+                  width: `${KEYFRAME_DIAMETER}px`,
+                  height: `${KEYFRAME_DIAMETER}px`,
+                  backgroundColor: 'primary.main',
+                  borderRadius: '2px',
+                  transform: 'rotate(45deg)',
+                  position: 'absolute',
+                  left: `${keyPositionX}px`,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    borderRadius: '1px',
+                    outline: '1px solid rgba(255, 255, 255, 0.9)',
+                  },
+                })}
+              />
+            </Tooltip>
           )
         })}
       </Box>
