@@ -65,13 +65,15 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
 
-  /* POINTER MOVEMENT */
+  /* MAIN POINTER EVENTS */
   const handlePointerEvent = (event) => {
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
     const pointerVectorRatioOne = new Vector2(event.clientX, event.clientY)
 
-    // Note: This is NOT drag handling, see above
     if (event.type === 'pointermove') {
+      /* POINTER MOVEMENT */
+      // Note: This is NOT drag handling, see above
+
       store.setPointerPosition(pointerVector) // keep track of this for all potential needs
 
       const { dragStart, tool, selectedIds } = store.build
@@ -124,6 +126,15 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else if (!playheadDragStart) {
         store.setPlayheadHovered(false)
         store.setPlayheadHoverLineFrame(null)
+      }
+
+      if (event.target.id.startsWith('keyframe-line')) {
+        const hoveredKeyframePropLabel = event.target.id.split('--').pop()
+        const mouseLeftRelativeToHoverRegion = event.nativeEvent.offsetX
+        store.setHoveredProperty(hoveredKeyframePropLabel)
+        store.setNewKeyPosition(mouseLeftRelativeToHoverRegion)
+      } else {
+        store.setHoveredProperty(null)
       }
 
       if (dragStart && store.selector.rect.area > 0) {

@@ -12,8 +12,6 @@ const KeyframeEditor = observer(({ store }) => {
   const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
   const numSelected = selectedIds.length
 
-  const totalFrames = animation.frames
-
   // On region-btwn-keyframe click, add new keyframe
   // On keyframe-icon click with no drag (de-jitter), select keyframe, show handle editor
   // On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
@@ -58,7 +56,7 @@ const KeyframeEditor = observer(({ store }) => {
               frameIn={animation.firstFrame}
               frameOut={animation.lastFrame}
               isHovered={keyframeLabel === keyframeEditor.hoveredProperty}
-              setHovered={store.setHoveredProperty}
+              newKeyPosition={keyframeEditor.newKeyPosition}
             />
           )
         })}

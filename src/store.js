@@ -101,7 +101,10 @@ class RootStore {
       pairedVectors: {},
     }
 
-    this.keyframeEditor = { hoveredProperty: null }
+    this.keyframeEditor = {
+      hoveredProperty: null,
+      newKeyPosition: null,
+    }
 
     this.animation = new Animation()
     // TODO [-]: remove this after debugging
@@ -156,6 +159,7 @@ class RootStore {
       setPairedVector: action,
 
       setHoveredProperty: action,
+      setNewKeyPosition: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -367,8 +371,12 @@ class RootStore {
   }
 
   /* Keyframe Editor Actions */
-  setHoveredProperty = (value) => {
+  setHoveredProperty(value) {
     this.keyframeEditor.hoveredProperty = value
+  }
+
+  setNewKeyPosition(value) {
+    this.keyframeEditor.newKeyPosition = value
   }
 
   /* Output Actions */
