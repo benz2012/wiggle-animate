@@ -43,7 +43,7 @@ class Handle {
   }
 
   toString() {
-    return `${this.className}(${this.influence}, ${this.distance})`
+    return `${Handle.className}(${this.influence}, ${this.distance})`
   }
 }
 

@@ -14,10 +14,10 @@ const KeyframeEditor = observer(({ store }) => {
 
   const totalFrames = animation.frames
 
-  // On keyframe-icon hover, show frame num & value
-  // On keyframe-icon click/drag, move keyframe.frame (+ / -)
-  // On keyframe-icon double-click, jump to that frame so user can edit it via Prop Editor
-  // On region-btwn-keyframe click, show handle editor
+  // On region-btwn-keyframe click, add new keyframe
+  // On keyframe-icon click with no drag (de-jitter), select keyframe, show handle editor
+  // On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
+  // On keyframe-icon double-click, jump to that frame so user can edit it via Prop Editor (focus prop field)
   // On property label click, select all keyframes for that property
 
   if (numSelected !== 1) {

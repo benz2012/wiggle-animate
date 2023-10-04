@@ -19,7 +19,7 @@ class Alignment {
   get values() { return [this.x, this.y] }
 
   toString() {
-    return `${this.className}(${this.x}, ${this.y})`
+    return `${Alignment.className}(${this.x}, ${this.y})`
   }
 }
 

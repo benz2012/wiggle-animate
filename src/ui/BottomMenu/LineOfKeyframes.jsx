@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
+import Tooltip from '@mui/material/Tooltip'
 
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 
@@ -53,11 +53,11 @@ const LineOfKeyframes = observer(({ label, keyframes, totalFrames }) => {
           const valueShort = `${keyframe.value}`.split('(').pop().replace(')', '')
           return (
             <Tooltip
+              key={`${keyframe.frame}`}
               title={`f${keyframe.frame}: ${valueShort}`}
               componentsProps={{ tooltip: { sx: { backgroundColor: 'rgba(0, 0, 0, 0.7)' } } }}
             >
               <Box
-                key={`${keyframe.frame}`}
                 sx={() => ({
                   width: `${KEYFRAME_DIAMETER}px`,
                   height: `${KEYFRAME_DIAMETER}px`,

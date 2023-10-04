@@ -89,7 +89,7 @@ class Keyframe {
   }
 
   toString() {
-    return `${this.className}(${this.frame}, ${this.value}, ${this.handleIn}, ${this.handleOut})`
+    return `${Keyframe.className}(${this.frame}, ${this.value}, ${this.handleIn}, ${this.handleOut})`
   }
 }
 

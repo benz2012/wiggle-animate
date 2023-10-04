@@ -20,6 +20,7 @@ class Container extends Drawable {
     this.showChildren = true
 
     makeObservable(this, {
+      _children: observable,
       _sortOrder: observable,
       showChildren: observable,
       add: action,
