@@ -101,6 +101,8 @@ class RootStore {
       pairedVectors: {},
     }
 
+    this.keyframeEditor = { hoveredProperty: null }
+
     this.animation = new Animation()
     // TODO [-]: remove this after debugging
     window._animation = this.animation
@@ -114,6 +116,7 @@ class RootStore {
       playhead: observable,
       keyHeld: observable,
       propertyEditor: observable,
+      keyframeEditor: observable,
       // animation: Never changes, no need for observable, observable within
 
       setExporting: action,
@@ -151,6 +154,8 @@ class RootStore {
       hidePropertyGroup: action,
       showPropertyGroup: action,
       setPairedVector: action,
+
+      setHoveredProperty: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -359,6 +364,11 @@ class RootStore {
 
   setPairedVector(propertyKey, shouldPair) {
     this.propertyEditor.pairedVectors[propertyKey] = shouldPair
+  }
+
+  /* Keyframe Editor Actions */
+  setHoveredProperty = (value) => {
+    this.keyframeEditor.hoveredProperty = value
   }
 
   /* Output Actions */

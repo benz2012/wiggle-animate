@@ -6,7 +6,7 @@ import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
 
 const KeyframeEditor = observer(({ store }) => {
-  const { build, animation, rootContainer } = store
+  const { build, animation, rootContainer, keyframeEditor } = store
 
   const { selectedIds } = build
   const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
@@ -55,7 +55,10 @@ const KeyframeEditor = observer(({ store }) => {
               key={`${selectedItem.id}-${propName}`}
               label={keyframeLabel}
               keyframes={property.keyframes}
-              totalFrames={totalFrames}
+              frameIn={animation.firstFrame}
+              frameOut={animation.lastFrame}
+              isHovered={keyframeLabel === keyframeEditor.hoveredProperty}
+              setHovered={store.setHoveredProperty}
             />
           )
         })}
