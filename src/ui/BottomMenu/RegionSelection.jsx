@@ -10,7 +10,7 @@ import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalVal
 import { parseAndValidateInteger } from '../inputs/util'
 
 const mono12 = { fontFamily: 'monospace', fontSize: 12 }
-const tickLefts = ['calc(33.33% - 6px)', 'calc(66.66% - 6px)', 'calc(50% - 6px)']
+const interNumLefts = ['calc(33.33% - 6px)', 'calc(66.66% - 6px)', 'calc(50% - 6px)']
 
 const Tick = () => (
   <Box
@@ -118,7 +118,7 @@ const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
               sx={{
                 ...mono12,
                 position: 'absolute',
-                left: interTickNums.length === 2 ? tickLefts[index] : tickLefts[2],
+                left: interTickNums.length === 2 ? interNumLefts[index] : interNumLefts[2],
               }}
             >
               {frameNum}

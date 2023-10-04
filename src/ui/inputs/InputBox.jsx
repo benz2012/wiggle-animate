@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import InputBase from '@mui/material/InputBase'
@@ -73,15 +73,16 @@ const InputBox = observer(({
       setValue(simulatedEvent)
     }
   }
+  const handlePointerMoveMemoized = useCallback(handlePointerMove, [handlePointerMove])
 
   const startDrag = (event) => {
     valueAtDragStart.current = value
     dragStartX.current = event.clientX
     setIsDragging(true)
 
-    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointermove', handlePointerMoveMemoized)
     const handleStopDrag = () => {
-      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointermove', handlePointerMoveMemoized)
       window.removeEventListener('pointerup', handleStopDrag)
       setIsDragging(false)
     }

@@ -10,7 +10,7 @@ import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import useWindowSize from './hooks/useWindowSize'
-import { peekAtObservables, peekAtKeyframes } from '../utility/tree'
+import { peekAtObservables } from '../utility/tree'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)
@@ -66,18 +66,6 @@ const App = observer(({ store }) => {
   const allObserverablePropertiesInTheTree = JSON.stringify(
     Object.values(store.rootContainer.children).map(peekAtObservables)
   )
-  const allKeyframedPropertiesInTheTree = JSON.stringify(
-    Object.values(store.rootContainer.children).map(peekAtKeyframes)
-  )
-
-  /* Animation Updater */
-  useEffect(() => {
-    /* eslint-disable react-hooks/exhaustive-deps */
-    store.rootContainer.updatePropertiesForFrame(store.animation.now)
-  }, [
-    store.animation.now,
-    allKeyframedPropertiesInTheTree,
-  ])
 
   /* Main drawing trigger */
   useEffect(() => {
