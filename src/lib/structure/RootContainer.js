@@ -240,14 +240,14 @@ class RootContainer extends Container {
 
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
-      const currentPosition = selectedItem.valueForFrame(now, '_position')
+      const currentPosition = selectedItem._position.getValueAtFrame(now)
 
       if (fromArrowKey) {
         // Plain and Simple 1-for-1 movement from Arrow Keys
         selectedItem._position.setValue(Vector2.add(currentPosition, relativeMovement), now)
       } else if (this.store.build.hoveredControl === 'origin') {
         // Move origin of Selected item(s) (currently only for Containers)
-        const currentOrigin = selectedItem.valueForFrame(now, '_origin')
+        const currentOrigin = selectedItem._origin.getValueAtFrame(now)
         const transformationalInverse = relativeMovementScaledToCanvas
           .rotate(-1 * selectedItem.rotation.radians)
           .scale(1 / selectedItem.scale.x, 1 / selectedItem.scale.y)
@@ -280,8 +280,8 @@ class RootContainer extends Container {
     this.store.build.selectedIds.forEach((selectedId) => {
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
-      const currentWidth = selectedItem.valueForFrame(now, '_width')
-      const currentHeight = selectedItem.valueForFrame(now, '_height')
+      const currentWidth = selectedItem._width.getValueAtFrame(now)
+      const currentHeight = selectedItem._height.getValueAtFrame(now)
 
       const { parentTransform, rotation, scale, alignment } = selectedItem
       const parentTransformInverse = DOMMatrix.fromMatrix(parentTransform).invertSelf()

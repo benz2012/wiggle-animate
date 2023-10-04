@@ -1,10 +1,10 @@
-import Animatable from './Animatable'
+import Item from '../structure/Item'
 import Property from '../structure/Property'
 import Vector2 from '../structure/Vector2'
 import Angle from '../structure/Angle'
 import { identityMatrix } from '../../utility/matrix'
 
-class Drawable extends Animatable {
+class Drawable extends Item {
   /* eslint-disable class-methods-use-this */
   static get className() { return 'Drawable' }
   static _ctx

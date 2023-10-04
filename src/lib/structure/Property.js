@@ -63,6 +63,41 @@ class Property {
 
   get value() { return this._value }
 
+  getValueAtFrame(frame) {
+    // prevent accidental call to non-keyframable property
+    if (this.keyframes == null) return this.value
+
+    // Keyframes should be sorted here since their order in the array won't always
+    // represent what frame they fall on. E.g. When you slide a keyframe in the timeline
+    const keyframes = [...this.keyframes].sort(Keyframe.sort)
+
+    if (keyframes.length === 0) {
+      return this.value
+    }
+
+    const frames = keyframes.map((key) => (key.frame))
+
+    // is frame a keyframe
+    if (frames.includes(frame)) {
+      const where = frames.indexOf(frame)
+      return keyframes[where].value
+    }
+
+    // where is frame with respect to keyframes
+    frames.push(frame)
+    frames.sort((a, b) => a - b)
+    const where = frames.indexOf(frame)
+
+    // is frame before or after last key
+    if (where === 0) return keyframes[0].value
+    if (where === frames.length - 1) return keyframes[keyframes.length - 1].value
+
+    // frame is between two keys
+    const before = keyframes[where - 1]
+    const after = keyframes[where]
+    return Keyframe.interpolate(before, after, frame)
+  }
+
   /* This method casts the incoming value to the type that it should
    * have as declarted during Property Instantiation. It also coerces
    * values to be slightly different based on system design and

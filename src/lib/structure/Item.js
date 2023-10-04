@@ -60,6 +60,17 @@ class Item {
     return this.properties.filter((propertyName) => this[propertyName].isEditable)
   }
 
+  get keyframables() {
+    return this.properties.filter((propertyName) => this[propertyName].isKeyframable)
+  }
+
+  updatePropertiesForFrame(frame) {
+    this.keyframables.forEach((propertyName) => {
+      const newValue = this[propertyName].getValueAtFrame(frame)
+      this[propertyName]._setObservableValue(newValue)
+    })
+  }
+
   delete() {
     Item.rootContainer.findAndDelete(this._id)
   }

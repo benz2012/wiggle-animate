@@ -57,6 +57,9 @@ const KeyframeEditor = observer(({ store }) => {
               frameOut={animation.lastFrame}
               isHovered={keyframeLabel === keyframeEditor.hoveredProperty}
               newKeyPosition={keyframeEditor.newKeyPosition}
+              addKeyframe={(frame) => {
+                property.addKey(frame, property.getValueAtFrame(frame))
+              }}
             />
           )
         })}

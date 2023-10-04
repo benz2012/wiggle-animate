@@ -9,7 +9,15 @@ import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
-const LineOfKeyframes = observer(({ label, keyframes, frameIn, frameOut, isHovered, newKeyPosition }) => {
+const LineOfKeyframes = observer(({
+  label,
+  keyframes,
+  frameIn,
+  frameOut,
+  isHovered,
+  newKeyPosition,
+  addKeyframe,
+}) => {
   const lineItemRef = useRef()
 
   const numFramesShown = frameOut - frameIn + 1
@@ -29,10 +37,18 @@ const LineOfKeyframes = observer(({ label, keyframes, frameIn, frameOut, isHover
   let drawNewKeyAt
   if (isHovered) {
     // Start with a comfortable position in relation to the mouse
-    drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset
+    drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
     // Snapping to Frames
     drawNewKeyAt = Math.floor((drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
-    drawNewKeyAt -= uxFeelingOffset
+    drawNewKeyAt -= cssRotationOffset
+    // drawNewKeyAt += uxFeelingOffset
+  }
+
+  const handleHoverListenerClick = () => {
+    if (!isHovered) return
+    const relativeFrameClickedAt = Math.round((drawNewKeyAt + cssRotationOffset) / pixelsPerFrame)
+    const absoluteFrameClickedAt = frameIn + relativeFrameClickedAt
+    addKeyframe(absoluteFrameClickedAt)
   }
 
   return (
@@ -88,6 +104,7 @@ const LineOfKeyframes = observer(({ label, keyframes, frameIn, frameOut, isHover
         {/* Mouse Hover Listenter */}
         <Box
           id={`keyframe-line--${label}`}
+          onClick={handleHoverListenerClick}
           sx={{
             position: 'absolute',
             left: `-${leftOffsetStr}`,
