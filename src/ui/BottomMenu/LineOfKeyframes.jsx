@@ -107,7 +107,7 @@ const LineOfKeyframes = observer(({
           return (
             <Tooltip
               key={`${keyframe.frame}`}
-              title={`f${keyframe.frame}: ${valueShort}`}
+              title={`${valueShort}`}
               componentsProps={{
                 tooltip: {
                   sx: {

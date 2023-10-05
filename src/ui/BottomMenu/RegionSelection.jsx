@@ -5,19 +5,18 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { LABEL_WIDTH } from './config'
-import { isOdd } from '../../utility/numbers'
 import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
 import { parseAndValidateInteger } from '../inputs/util'
 
 const mono12 = { fontFamily: 'monospace', fontSize: 12 }
-const interNumLefts = ['calc(33.33% - 6px)', 'calc(66.66% - 7px)', 'calc(50% - 7px)']
 
-const Tick = () => (
+const Tick = ({ sx }) => (
   <Box
     sx={(theme) => ({
       width: '0px',
       height: '8px',
       borderRight: `1px solid ${theme.palette.primary.main}`,
+      ...sx,
     })}
   />
 )
@@ -31,20 +30,32 @@ const Dash = () => (
   />
 )
 
-const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
-  const numFramesShown = frameOut - frameIn + 1
-  let interTickNums = []
+// TODO [3]: when work region is smaller than Project total, draw left/right arrow instead of vertical tick mark
 
-  if (numFramesShown >= 3) {
-    if (isOdd(numFramesShown)) {
-      // when number of frames is odd, we can show the true middle tick
-      const interFrame = (numFramesShown - 1) / 2
-      interTickNums = [frameIn + interFrame]
-    } else {
-      // otherwise, show two ticks that are vaugly at the third marks
-      const interFrame = (numFramesShown - 1) / 3
-      interTickNums = [Math.round(frameIn + interFrame), Math.round(frameIn + interFrame * 2)]
-    }
+const RegionSelection = observer(({
+  frameIn,
+  frameOut,
+  setIn,
+  setOut,
+  frameHoveredAt,
+  absoluteFrameHovered,
+}) => {
+  const totalFramesShown = frameOut - frameIn + 1
+  const percentHoveredAt = ((absoluteFrameHovered - frameIn) / (totalFramesShown - 1)) * 100
+  const withinCloseRangeOfIn = percentHoveredAt < 10
+  const withinCloseRangeOfOut = percentHoveredAt > 90
+  const withinCloseRangeOfInOut = (withinCloseRangeOfIn || withinCloseRangeOfOut)
+  const hoveringOverInOrOut = [frameIn, frameOut].includes(absoluteFrameHovered)
+
+  const frameMarkerContainerWidth = 80
+  let frameMarkerLeftAdjustment = -1 * (frameMarkerContainerWidth / 2)
+  let frameMarkerTextAlign = 'center'
+  if (withinCloseRangeOfIn) {
+    frameMarkerLeftAdjustment = 0
+    frameMarkerTextAlign = 'flex-start'
+  } else if (withinCloseRangeOfOut) {
+    frameMarkerLeftAdjustment *= 2
+    frameMarkerTextAlign = 'flex-end'
   }
 
   const [editIn, setEditIn] = useState(false)
@@ -100,30 +111,20 @@ const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
           ) : (
             <Typography
               className="noselect"
-              sx={{
+              sx={(theme) => ({
                 ...mono12,
                 cursor: 'pointer',
-                '&:hover': { color: 'primary.main' },
-              }}
+                borderBottom: `1px dotted ${theme.palette.action.disabled}`,
+                '&:hover': {
+                  color: 'primary.main',
+                  borderBottom: `1px dotted ${theme.palette.primary.main}`,
+                },
+              })}
               onClick={() => setEditIn(true)}
             >
               {frameIn}
             </Typography>
           )}
-
-          {interTickNums.map((frameNum, index) => (
-            <Typography
-              key={frameNum}
-              className="noselect"
-              sx={{
-                ...mono12,
-                position: 'absolute',
-                left: interTickNums.length === 2 ? interNumLefts[index] : interNumLefts[2],
-              }}
-            >
-              {frameNum}
-            </Typography>
-          ))}
 
           <Box sx={{ position: 'absolute', right: 0 }}>
             {editOut ? (
@@ -140,11 +141,15 @@ const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
             ) : (
               <Typography
                 className="noselect"
-                sx={{
+                sx={(theme) => ({
                   ...mono12,
                   cursor: 'pointer',
-                  '&:hover': { color: 'primary.main' },
-                }}
+                  borderBottom: `1px dotted ${theme.palette.action.disabled}`,
+                  '&:hover': {
+                    color: 'primary.main',
+                    borderBottom: `1px dotted ${theme.palette.primary.main}`,
+                  },
+                })}
                 onClick={() => setEditOut(true)}
               >
                 {frameOut}
@@ -153,14 +158,42 @@ const RegionSelection = observer(({ frameIn, frameOut, setIn, setOut }) => {
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
           <Tick />
-          {interTickNums.map((_, index) => [
-            <Dash key={`dash-${index}`} />,
-            <Tick key={`tick-${index}`} />,
-          ])}
           <Dash />
           <Tick />
+          {(absoluteFrameHovered && !editIn && !editOut) && (
+            <Box
+              sx={{
+                position: 'absolute',
+                width: `${frameMarkerContainerWidth}px`,
+                left: `${frameHoveredAt + frameMarkerLeftAdjustment}px`,
+                bottom: '0px',
+
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: frameMarkerTextAlign,
+                justifyContent: 'center',
+              }}
+            >
+              <Box
+                sx={(theme) => ({
+                  pl: 1,
+                  pr: 1,
+                  mb: '6px',
+                  zIndex: 900,
+                  borderRadius: 1,
+                  backgroundColor: withinCloseRangeOfInOut ? 'rgba(0, 0, 0, 0.75)' : '',
+                  transition: `background-color ${theme.transitions.duration.standard}ms`,
+                })}
+              >
+                <Typography className="noselect" sx={{ ...mono12 }}>
+                  {absoluteFrameHovered}
+                </Typography>
+              </Box>
+              <Tick sx={hoveringOverInOrOut ? { borderColor: 'transparent' } : {}} />
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

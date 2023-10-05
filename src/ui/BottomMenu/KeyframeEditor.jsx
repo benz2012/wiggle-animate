@@ -41,10 +41,11 @@ const KeyframeEditor = observer(({ store }) => {
   let drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
   // Snapping to Frames
   drawNewKeyAt = Math.floor((drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
-  drawNewKeyAt -= cssRotationOffset // this can be moved down
   // Convert to Frame Number
-  const relativeFrameHovered = Math.round((drawNewKeyAt + cssRotationOffset) / pixelsPerFrame)
+  const relativeFrameHovered = Math.round(drawNewKeyAt / pixelsPerFrame)
   let absoluteFrameHovered = frameIn + relativeFrameHovered
+  // Final CSS Movement Tweaks
+  drawNewKeyAt -= cssRotationOffset
   // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
   if (absoluteFrameHovered < frameIn || absoluteFrameHovered > frameOut) {
     drawNewKeyAt = null
@@ -76,6 +77,8 @@ const KeyframeEditor = observer(({ store }) => {
           frameOut={frameOut}
           setIn={animation.setIn}
           setOut={animation.setOut}
+          frameHoveredAt={drawNewKeyAt + cssRotationOffset}
+          absoluteFrameHovered={absoluteFrameHovered}
         />
 
         {selectedItem.keyframables.map((propName) => {
