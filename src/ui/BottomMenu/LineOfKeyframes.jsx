@@ -141,7 +141,6 @@ const LineOfKeyframes = observer(({
                   ...selectedIndicator,
 
                   '&:hover': {
-                    borderRadius: '2px',
                     outline: '1px solid rgba(255, 255, 255, 0.9)',
                     ...selectedIndicator,
                   },

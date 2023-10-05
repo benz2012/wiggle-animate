@@ -166,6 +166,7 @@ class RootStore {
       addKeyframesToSelection: action,
       removeKeyframeFromSelection: action,
       removeKeyframesFromSelection: action,
+      selectAllVisibleKeyframes: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -403,6 +404,23 @@ class RootStore {
 
   removeKeyframesFromSelection(values) {
     this.keyframeEditor.selectedIds = this.keyframeEditor.selectedIds.filter((id) => !values.includes(id))
+  }
+
+  selectAllVisibleKeyframes() {
+    const selectedItem = this.build.selectedIds.length === 1 && this.rootContainer.findItem(this.build.selectedIds[0])
+    if (!selectedItem) return
+    const allVisibleKeyframeIdsForSelectedItem = selectedItem.keyframables.reduce((runningList, propName) => {
+      const property = selectedItem[propName]
+      const keyframeIdPrefix = `${selectedItem.id}--${propName}`
+      const visibleKeyframeIds = property.keyframes
+        .filter((keyframe) => (
+          keyframe.frame >= this.animation.firstFrame && keyframe.frame <= this.animation.lastFrame
+        ))
+        .map((keyframe) => `${keyframeIdPrefix}--${keyframe.frame}`)
+      const newRunningList = [...runningList, ...visibleKeyframeIds]
+      return newRunningList
+    }, [])
+    this.setSelectedKeyframes(allVisibleKeyframeIdsForSelectedItem)
   }
 
   /* Output Actions */

@@ -65,6 +65,10 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'a':
+        if (BOTTOM_HAS_FOCUS) {
+          event.preventDefault()
+          store.selectAllVisibleKeyframes()
+        }
         if (!STAGE_HAS_FOCUS) break
         if (event.metaKey || event.ctrlKey) {
           event.preventDefault()
@@ -151,7 +155,7 @@ const KeyHandler = ({ store }) => {
     switch (event.key) {
       case 'Backspace':
       case 'Delete':
-        if (store.keyframeEditor.selectedIds.length > 0) {
+        if (BOTTOM_HAS_FOCUS && store.keyframeEditor.selectedIds.length > 0) {
           store.keyframeEditor.selectedIds.forEach((keyframeId) => {
             const [itemId, propertyName, frameNum] = keyframeId.split('--')
             const item = store.rootContainer.findItem(itemId)

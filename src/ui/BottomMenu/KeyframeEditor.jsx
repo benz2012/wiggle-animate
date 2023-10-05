@@ -13,7 +13,6 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 // TODO [1]: Handle Editor
 // On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
-// On keyframe-icon double-click, jump to that frame so user can edit it via Prop Editor (focus prop field)
 // show working range outside of selected item, and lock it as a header
 // add always-on scroll bar so that the space is dedicated
 // allow panel height to be edited slightly with a click-&-drag
