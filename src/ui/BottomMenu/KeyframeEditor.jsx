@@ -92,7 +92,7 @@ const KeyframeEditor = observer(({ store }) => {
             property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
           )
 
-          const selectedFrames = keyframeEditor.selectedIds
+          const selectedFramesForThisProperty = keyframeEditor.selectedIds
             .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
             .map((keyframeId) => parseInt(keyframeId.split('--').pop(), 10))
 
@@ -101,7 +101,7 @@ const KeyframeEditor = observer(({ store }) => {
               key={keyframeIdPrefix}
               label={keyframeLabel}
               keyframes={property.keyframes}
-              selectedFrames={selectedFrames}
+              selectedFrames={selectedFramesForThisProperty}
               frameIn={frameIn}
               frameOut={frameOut}
               pixelsPerFrame={pixelsPerFrame}
@@ -109,20 +109,35 @@ const KeyframeEditor = observer(({ store }) => {
               addKeyframe={() => {
                 if (!absoluteFrameHovered) return
                 if (hoveringNearExistingKeyframe) return
-                property.addKey(absoluteFrameHovered, property.getValueAtFrame(absoluteFrameHovered))
+                const newKeyframe = property.addKey(
+                  absoluteFrameHovered,
+                  property.getValueAtFrame(absoluteFrameHovered)
+                )
+                store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.frame}`])
               }}
               onKeyframeClick={(frame, setOnlyOneKey) => {
                 const keyframeId = `${keyframeIdPrefix}--${frame}`
                 if (setOnlyOneKey) {
-                  if (selectedFrames.length === 1 && selectedFrames.includes(frame)) {
+                  if (keyframeEditor.selectedIds.length === 1 && keyframeEditor.selectedIds.includes(keyframeId)) {
                     store.setSelectedKeyframes([])
                   } else {
                     store.setSelectedKeyframes([keyframeId])
                   }
-                } else if (selectedFrames.includes(frame)) {
+                } else if (keyframeEditor.selectedIds.includes(keyframeId)) {
                   store.removeKeyframeFromSelection(keyframeId)
                 } else {
                   store.addKeyframeToSelection(keyframeId)
+                }
+              }}
+              onKeyframeDoubleClick={(frame) => {
+                if (keyframeEditor.selectedIds.length > 1) return
+                const keyframeId = `${keyframeIdPrefix}--${frame}`
+                store.setSelectedKeyframes([keyframeId])
+                store.animation.goToFrame(frame)
+                const labelValue = `input-label-${property.group}-${property.label}`
+                const relatedPropertyEditorLabel = document.getElementById(labelValue)
+                if (relatedPropertyEditorLabel) {
+                  relatedPropertyEditorLabel.click()
                 }
               }}
               onLabelClick={(visibleFrames, setOnlyOneLine) => {

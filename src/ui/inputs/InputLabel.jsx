@@ -9,6 +9,7 @@ const InputLabel = observer(({ label, labelGroup, hasSubProp, idInsteadOfFor = f
   if (hasSubProp) {
     name = label.split('-')[0]
   }
+  id = `input-label-${labelGroup}-${name}`
 
   if (labelGroup != null && labelGroup !== '') {
     htmlFor = `input-${labelGroup}-${label}`

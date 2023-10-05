@@ -19,6 +19,7 @@ const LineOfKeyframes = observer(({
   drawNewKeyAt,
   addKeyframe,
   onKeyframeClick,
+  onKeyframeDoubleClick,
   onLabelClick,
 }) => {
   const visibleKeyframes = keyframes.filter((keyframe) => (
@@ -117,7 +118,14 @@ const LineOfKeyframes = observer(({
               }}
             >
               <Box
-                onClick={(event) => onKeyframeClick(keyframe.frame, !event.shiftKey)}
+                onClick={(event) => {
+                  if (event.detail !== 1) return
+                  onKeyframeClick(keyframe.frame, !event.shiftKey)
+                }}
+                onDoubleClick={(event) => {
+                  if (event.detail !== 2) return
+                  onKeyframeDoubleClick(keyframe.frame)
+                }}
                 sx={{
                   cursor: 'pointer',
 
