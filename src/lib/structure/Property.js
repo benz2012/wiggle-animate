@@ -56,6 +56,7 @@ class Property {
       _value: observable,
       isEditable: observable,
       isKeyframable: observable,
+      keyframes: observable,
       setValue: action,
       addKey: action,
     })
@@ -191,6 +192,10 @@ class Property {
     const k = new Keyframe(frame, value)
     this.keyframes.push(k)
     return k
+  }
+
+  deleteKey(frame) {
+    this.keyframes = this.keyframes.filter((keyframe) => keyframe.frame !== frame)
   }
 
   // Casting a property to a string will allow nested observation.

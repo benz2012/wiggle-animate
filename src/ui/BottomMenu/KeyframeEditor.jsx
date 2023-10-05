@@ -78,6 +78,7 @@ const KeyframeEditor = observer(({ store }) => {
 
         {selectedItem.keyframables.map((propName) => {
           const property = selectedItem[propName]
+          const keyframeIdPrefix = `${selectedItem.id}--${propName}`
 
           let keyframeLabel = `${property.group}-${property.label}`
           if (!property.group || ['transform', 'size'].includes(property.group)) {
@@ -88,11 +89,16 @@ const KeyframeEditor = observer(({ store }) => {
             property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
           )
 
+          const selectedFrames = keyframeEditor.selectedIds
+            .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
+            .map((keyframeId) => parseInt(keyframeId.split('--').pop(), 10))
+
           return (
             <LineOfKeyframes
-              key={`${selectedItem.id}-${propName}`}
+              key={keyframeIdPrefix}
               label={keyframeLabel}
               keyframes={property.keyframes}
+              selectedFrames={selectedFrames}
               frameIn={frameIn}
               frameOut={frameOut}
               pixelsPerFrame={pixelsPerFrame}
@@ -101,6 +107,16 @@ const KeyframeEditor = observer(({ store }) => {
                 if (!absoluteFrameHovered) return
                 if (hoveringNearExistingKeyframe) return
                 property.addKey(absoluteFrameHovered, property.getValueAtFrame(absoluteFrameHovered))
+              }}
+              onKeyframeClick={(frame, setOnlyOneKey) => {
+                const keyframeId = `${keyframeIdPrefix}--${frame}`
+                if (setOnlyOneKey) {
+                  store.setSelectedKeyframes([keyframeId])
+                } else if (selectedFrames.includes(frame)) {
+                  store.removeKeyframeFromSelection(keyframeId)
+                } else {
+                  store.addKeyframeToSelection(keyframeId)
+                }
               }}
             />
           )

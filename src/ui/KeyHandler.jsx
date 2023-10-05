@@ -151,6 +151,13 @@ const KeyHandler = ({ store }) => {
     switch (event.key) {
       case 'Backspace':
       case 'Delete':
+        if (store.keyframeEditor.selectedIds.length > 0) {
+          store.keyframeEditor.selectedIds.forEach((keyframeId) => {
+            const [itemId, propertyName, frameNum] = keyframeId.split('--')
+            const item = store.rootContainer.findItem(itemId)
+            item[propertyName].deleteKey(parseInt(frameNum, 10))
+          })
+        }
         if (!STAGE_HAS_FOCUS) break
         if (selectedIds.length > 0) {
           const itemsToDelete = selectedIds.map((selectedId) => (

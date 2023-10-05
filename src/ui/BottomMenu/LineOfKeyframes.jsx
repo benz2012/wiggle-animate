@@ -5,17 +5,20 @@ import Tooltip from '@mui/material/Tooltip'
 
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 import Keyframe from '../../lib/animation/Keyframe'
+import theme from '../theme'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 const LineOfKeyframes = observer(({
   label,
   keyframes,
+  selectedFrames,
   frameIn,
   frameOut,
   pixelsPerFrame,
   drawNewKeyAt,
   addKeyframe,
+  onKeyframeClick,
 }) => {
   const visibleKeyframes = keyframes.filter((keyframe) => (
     keyframe.frame >= frameIn && keyframe.frame <= frameOut
@@ -74,10 +77,10 @@ const LineOfKeyframes = observer(({
         <Box
           id={`keyframe-line--${label}`}
           onClick={addKeyframe}
-          sx={(theme) => ({
+          sx={(muiTheme) => ({
             position: 'absolute',
-            left: `-${theme.spacing(1)}`,
-            right: `-${theme.spacing(1)}`,
+            left: `-${muiTheme.spacing(1)}`,
+            right: `-${muiTheme.spacing(1)}`,
             top: '-4px', // this is for better UX "feeling"
             height: '18px',
             // backgroundColor: 'rgba(255, 0, 0, 0.3)',
@@ -89,6 +92,12 @@ const LineOfKeyframes = observer(({
           let keyPositionX = ((keyframe.frame - frameIn) * pixelsPerFrame).toFixed(2)
           keyPositionX -= cssRotationOffset
           const valueShort = `${keyframe.value}`.split('(').pop().replace(')', '')
+
+          const selectedIndicator = !selectedFrames.includes(keyframe.frame) ? ({}) : ({
+            backgroundColor: `${theme.palette.tertiary[100]}`,
+            outline: '1px solid white',
+          })
+
           return (
             <Tooltip
               key={`${keyframe.frame}`}
@@ -103,19 +112,25 @@ const LineOfKeyframes = observer(({
               }}
             >
               <Box
+                onClick={(event) => onKeyframeClick(keyframe.frame, !event.shiftKey)}
                 sx={{
+                  cursor: 'pointer',
+
                   width: `${KEYFRAME_DIAMETER}px`,
                   height: `${KEYFRAME_DIAMETER}px`,
+                  position: 'absolute',
+                  left: `${keyPositionX}px`,
+                  transform: 'rotate(45deg)',
+
                   backgroundColor: 'primary.main',
                   borderRadius: '2px',
                   outline: '1px solid rgb(13, 71, 161)',
-                  transform: 'rotate(45deg)',
-                  position: 'absolute',
-                  left: `${keyPositionX}px`,
-                  cursor: 'pointer',
+                  ...selectedIndicator,
+
                   '&:hover': {
                     borderRadius: '2px',
                     outline: '1px solid rgba(255, 255, 255, 0.9)',
+                    ...selectedIndicator,
                   },
                 }}
               />

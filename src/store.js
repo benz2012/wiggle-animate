@@ -104,6 +104,7 @@ class RootStore {
     this.keyframeEditor = {
       hoveredProperty: null,
       newKeyPosition: null,
+      selectedIds: [],
     }
 
     this.animation = new Animation()
@@ -160,6 +161,9 @@ class RootStore {
 
       setHoveredProperty: action,
       setNewKeyPosition: action,
+      setSelectedKeyframes: action,
+      addKeyframeToSelection: action,
+      removeKeyframeFromSelection: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -377,6 +381,18 @@ class RootStore {
 
   setNewKeyPosition(value) {
     this.keyframeEditor.newKeyPosition = value
+  }
+
+  setSelectedKeyframes(values) {
+    this.keyframeEditor.selectedIds = values
+  }
+
+  addKeyframeToSelection(value) {
+    this.keyframeEditor.selectedIds = [...this.keyframeEditor.selectedIds, value]
+  }
+
+  removeKeyframeFromSelection(value) {
+    this.keyframeEditor.selectedIds = this.keyframeEditor.selectedIds.filter((id) => id !== value)
   }
 
   /* Output Actions */
