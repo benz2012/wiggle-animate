@@ -1,5 +1,5 @@
 import { observeListOfProperties } from '../../utility/state'
-import { rgbToLch, lchToRgb } from '../../utility/color'
+import { rgbToLch, lchToRgb, rgbToHsl, hslToRgb } from '../../utility/color'
 
 class Color {
   static get className() { return 'Color' }
@@ -28,25 +28,16 @@ class Color {
     if (Color.recentPastelHues.length > 3) {
       Color.recentPastelHues.shift()
     }
-    return new Color({
+    return Color.fromHSL({
       h: newRandomHue,
       s: 70,
       l: 70,
     })
   }
 
-  static convertHSLToRGB = (h, s, l) => {
-    const hue = h
-    const saturation = s / 100
-    const lightness = l / 100
-    const a = saturation * Math.min(lightness, 1 - lightness)
-    const k = (val) => (val + hue / 30) % 12
-    const f = (val) => (
-      lightness - a * Math.max(-1, Math.min(k(val) - 3, Math.min(9 - k(val), 1)))
-    )
-    const rgb = [255 * f(0), 255 * f(8), 255 * f(4)].map((val) => Math.round(val))
-    return rgb
-  }
+  static fromHSL = (hslSpec) => (
+    new Color(hslToRgb(hslSpec))
+  )
 
   static fromLCH = (lchSpec) => (
     new Color(lchToRgb(lchSpec))
@@ -86,16 +77,6 @@ class Color {
       if (a != null) {
         this.alpha = a
       }
-    } else if (['h', 's', 'l'].every((prop) => (prop in inputSpec))) {
-      this.colorString = null
-      const { h, s, l, a } = inputSpec
-      const [r, g, b] = Color.convertHSLToRGB(h, s, l)
-      this.red = r
-      this.green = g
-      this.blue = b
-      if (a != null) {
-        this.alpha = a
-      }
     }
 
     // Capp values between 0 & 255, or force it to be an int
@@ -114,6 +95,10 @@ class Color {
 
   get spec() {
     return ({ r: this.red, g: this.green, b: this.blue })
+  }
+
+  toHSL() {
+    return rgbToHsl(this.spec)
   }
 
   toLCH() {

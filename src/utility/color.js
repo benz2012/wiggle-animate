@@ -38,7 +38,7 @@ const rgbToHsl = (rgb) => {
   s *= 100
   l *= 100
 
-  return { h, s, l }
+  return { h: Math.round(h), s: Math.round(s), l: Math.round(l) }
 }
 
 const hslToRgb = (hsl) => {
@@ -78,7 +78,7 @@ const hslToRgb = (hsl) => {
   g *= 255
   b *= 255
 
-  return { r, g, b }
+  return { r: Math.round(r), g: Math.round(g), b: Math.round(b) }
 }
 
 const rgbToXyz = (rgb) => {

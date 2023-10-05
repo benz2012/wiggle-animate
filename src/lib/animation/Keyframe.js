@@ -54,12 +54,12 @@ class Keyframe {
         ((k2.value.y - k1.value.y) * valueRatio) + k1.value.y,
       )
     } else if (oneValue instanceof Color) {
-      const k1LCH = k1.value.toLCH()
-      const k2LCH = k2.value.toLCH()
-      interpolated = Color.fromLCH({
-        l: ((k2LCH.l - k1LCH.l) * valueRatio) + k1LCH.l,
-        c: ((k2LCH.c - k1LCH.c) * valueRatio) + k1LCH.c,
-        h: ((k2LCH.h - k1LCH.h) * valueRatio) + k1LCH.h,
+      const k1RGB = k1.value.spec
+      const k2RGB = k2.value.spec
+      interpolated = new Color({
+        r: ((k2RGB.r - k1RGB.r) * valueRatio) + k1RGB.r,
+        g: ((k2RGB.g - k1RGB.g) * valueRatio) + k1RGB.g,
+        b: ((k2RGB.b - k1RGB.b) * valueRatio) + k1RGB.b,
       })
     } else if (oneValue instanceof Angle) {
       interpolated = new Angle(
