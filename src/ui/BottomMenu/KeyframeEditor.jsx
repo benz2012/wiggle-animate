@@ -7,13 +7,16 @@ import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
+import { isEqual } from '../../utility/array'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
-// On keyframe-icon click with no drag (de-jitter), select keyframe, show handle editor
+// TODO [1]: Handle Editor
 // On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
 // On keyframe-icon double-click, jump to that frame so user can edit it via Prop Editor (focus prop field)
-// On property label click, select all keyframes for that property
+// show working range outside of selected item, and lock it as a header
+// add always-on scroll bar so that the space is dedicated
+// allow panel height to be edited slightly with a click-&-drag
 
 const KeyframeEditor = observer(({ store }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
@@ -111,11 +114,31 @@ const KeyframeEditor = observer(({ store }) => {
               onKeyframeClick={(frame, setOnlyOneKey) => {
                 const keyframeId = `${keyframeIdPrefix}--${frame}`
                 if (setOnlyOneKey) {
-                  store.setSelectedKeyframes([keyframeId])
+                  if (selectedFrames.length === 1 && selectedFrames.includes(frame)) {
+                    store.setSelectedKeyframes([])
+                  } else {
+                    store.setSelectedKeyframes([keyframeId])
+                  }
                 } else if (selectedFrames.includes(frame)) {
                   store.removeKeyframeFromSelection(keyframeId)
                 } else {
                   store.addKeyframeToSelection(keyframeId)
+                }
+              }}
+              onLabelClick={(visibleFrames, setOnlyOneLine) => {
+                const keyframeIds = visibleFrames.map((frame) => `${keyframeIdPrefix}--${frame}`)
+                if (setOnlyOneLine) {
+                  if (isEqual(keyframeIds, keyframeEditor.selectedIds)) {
+                    store.setSelectedKeyframes([])
+                  } else {
+                    store.setSelectedKeyframes(keyframeIds)
+                  }
+                } else if (keyframeIds.every((kId) => keyframeEditor.selectedIds.includes(kId))) {
+                  const allFrameIdsForLine = property.keyframes
+                    .map((keyframe) => `${keyframeIdPrefix}--${keyframe.frame}`)
+                  store.removeKeyframesFromSelection(allFrameIdsForLine)
+                } else {
+                  store.addKeyframesToSelection(keyframeIds)
                 }
               }}
             />

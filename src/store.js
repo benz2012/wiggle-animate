@@ -163,7 +163,9 @@ class RootStore {
       setNewKeyPosition: action,
       setSelectedKeyframes: action,
       addKeyframeToSelection: action,
+      addKeyframesToSelection: action,
       removeKeyframeFromSelection: action,
+      removeKeyframesFromSelection: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -391,8 +393,16 @@ class RootStore {
     this.keyframeEditor.selectedIds = [...this.keyframeEditor.selectedIds, value]
   }
 
+  addKeyframesToSelection(values) {
+    this.keyframeEditor.selectedIds = [...this.keyframeEditor.selectedIds, ...values]
+  }
+
   removeKeyframeFromSelection(value) {
     this.keyframeEditor.selectedIds = this.keyframeEditor.selectedIds.filter((id) => id !== value)
+  }
+
+  removeKeyframesFromSelection(values) {
+    this.keyframeEditor.selectedIds = this.keyframeEditor.selectedIds.filter((id) => !values.includes(id))
   }
 
   /* Output Actions */

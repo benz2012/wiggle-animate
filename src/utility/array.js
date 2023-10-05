@@ -19,7 +19,11 @@ const randomChoice = (choices) => {
   return choices[index]
 }
 
+/* Simple array comparison. Will likely only work when the elements are primitives */
+const isEqual = (arr1, arr2) => JSON.stringify([...arr1].sort()) === JSON.stringify([...arr2].sort())
+
 export {
   insert,
   randomChoice,
+  isEqual,
 }

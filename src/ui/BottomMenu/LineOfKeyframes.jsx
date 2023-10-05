@@ -19,6 +19,7 @@ const LineOfKeyframes = observer(({
   drawNewKeyAt,
   addKeyframe,
   onKeyframeClick,
+  onLabelClick,
 }) => {
   const visibleKeyframes = keyframes.filter((keyframe) => (
     keyframe.frame >= frameIn && keyframe.frame <= frameOut
@@ -30,6 +31,10 @@ const LineOfKeyframes = observer(({
         <Typography
           className="noselect"
           component="label"
+          onClick={(event) => {
+            const visibleKeyframeFrames = visibleKeyframes.map((k) => k.frame)
+            onLabelClick(visibleKeyframeFrames, !event.shiftKey)
+          }}
           sx={{
             display: 'inline-block',
             width: '100%',
