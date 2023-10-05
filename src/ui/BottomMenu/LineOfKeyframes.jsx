@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
+import Keyframe from '../../lib/animation/Keyframe'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
@@ -28,27 +29,37 @@ const LineOfKeyframes = observer(({
 
   const visibleKeyframes = keyframes.filter((keyframe) => (
     keyframe.frame >= frameIn && keyframe.frame <= frameOut
-  ))
+  )).sort(Keyframe.sort)
 
   const theme = useTheme()
   const leftOffsetStr = theme.spacing(1)
   const leftOffset = parseInt(leftOffsetStr.substring(0, leftOffsetStr.length - 2), 10)
   const uxFeelingOffset = 3
+
   let drawNewKeyAt
+  let absoluteFrameHovered
   if (isHovered) {
     // Start with a comfortable position in relation to the mouse
     drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
     // Snapping to Frames
     drawNewKeyAt = Math.floor((drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
     drawNewKeyAt -= cssRotationOffset
-    // drawNewKeyAt += uxFeelingOffset
+
+    const relativeFrameHovered = Math.round((drawNewKeyAt + cssRotationOffset) / pixelsPerFrame)
+    absoluteFrameHovered = frameIn + relativeFrameHovered
+
+    // Prevent interactions past the frame boundaries (because we allow hovers beyond for better UX)
+    if (absoluteFrameHovered < frameIn || absoluteFrameHovered > frameOut) {
+      drawNewKeyAt = null
+      absoluteFrameHovered = null
+    }
   }
 
   const handleHoverListenerClick = () => {
     if (!isHovered) return
-    const relativeFrameClickedAt = Math.round((drawNewKeyAt + cssRotationOffset) / pixelsPerFrame)
-    const absoluteFrameClickedAt = frameIn + relativeFrameClickedAt
-    addKeyframe(absoluteFrameClickedAt)
+    if (absoluteFrameHovered) {
+      addKeyframe(absoluteFrameHovered)
+    }
   }
 
   return (
@@ -86,7 +97,6 @@ const LineOfKeyframes = observer(({
         />
 
         {/* Dimmed Keyframe-to-Add Dot */}
-        {/* TODO [1]: get this to snap to frame & in/out edges */}
         {(drawNewKeyAt != null) && (
           <Box
             sx={{
@@ -139,12 +149,13 @@ const LineOfKeyframes = observer(({
                   height: `${KEYFRAME_DIAMETER}px`,
                   backgroundColor: 'primary.main',
                   borderRadius: '2px',
+                  outline: '1px solid rgb(13, 71, 161)',
                   transform: 'rotate(45deg)',
                   position: 'absolute',
                   left: `${keyPositionX}px`,
                   cursor: 'pointer',
                   '&:hover': {
-                    borderRadius: '1px',
+                    borderRadius: '2px',
                     outline: '1px solid rgba(255, 255, 255, 0.9)',
                   },
                 }}

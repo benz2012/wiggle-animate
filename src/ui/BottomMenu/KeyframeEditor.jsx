@@ -12,7 +12,6 @@ const KeyframeEditor = observer(({ store }) => {
   const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
   const numSelected = selectedIds.length
 
-  // On region-btwn-keyframe click, add new keyframe
   // On keyframe-icon click with no drag (de-jitter), select keyframe, show handle editor
   // On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
   // On keyframe-icon double-click, jump to that frame so user can edit it via Prop Editor (focus prop field)
