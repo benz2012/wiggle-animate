@@ -1,6 +1,4 @@
-import { useRef } from 'react'
 import { observer } from 'mobx-react-lite'
-import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
@@ -15,52 +13,13 @@ const LineOfKeyframes = observer(({
   keyframes,
   frameIn,
   frameOut,
-  isHovered,
-  newKeyPosition,
+  pixelsPerFrame,
+  drawNewKeyAt,
   addKeyframe,
 }) => {
-  const lineItemRef = useRef()
-
-  const numFramesShown = frameOut - frameIn + 1
-
-  const pixelsPerFrame = lineItemRef.current ? (
-    (lineItemRef.current.clientWidth) / (numFramesShown - 1)
-  ) : 0
-
   const visibleKeyframes = keyframes.filter((keyframe) => (
     keyframe.frame >= frameIn && keyframe.frame <= frameOut
   )).sort(Keyframe.sort)
-
-  const theme = useTheme()
-  const leftOffsetStr = theme.spacing(1)
-  const leftOffset = parseInt(leftOffsetStr.substring(0, leftOffsetStr.length - 2), 10)
-  const uxFeelingOffset = 3
-
-  let drawNewKeyAt
-  let absoluteFrameHovered
-  if (isHovered) {
-    // Start with a comfortable position in relation to the mouse
-    drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
-    // Snapping to Frames
-    drawNewKeyAt = Math.floor((drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
-    drawNewKeyAt -= cssRotationOffset
-
-    const relativeFrameHovered = Math.round((drawNewKeyAt + cssRotationOffset) / pixelsPerFrame)
-    absoluteFrameHovered = frameIn + relativeFrameHovered
-
-    // Prevent interactions past the frame boundaries (because we allow hovers beyond for better UX)
-    if (absoluteFrameHovered < frameIn || absoluteFrameHovered > frameOut) {
-      drawNewKeyAt = null
-      absoluteFrameHovered = null
-    }
-  }
-
-  const handleHoverListenerClick = () => {
-    if (!isHovered) return
-    if (absoluteFrameHovered) {
-      addKeyframe(absoluteFrameHovered)
-    }
-  }
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -84,7 +43,7 @@ const LineOfKeyframes = observer(({
         </Typography>
       </Box>
 
-      <Box ref={lineItemRef} sx={{ display: 'flex', alignItems: 'center', position: 'relative', flexGrow: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', flexGrow: 1 }}>
         {/* Keyframe "Line" */}
         <Box
           sx={{
@@ -114,15 +73,15 @@ const LineOfKeyframes = observer(({
         {/* Mouse Hover Listenter */}
         <Box
           id={`keyframe-line--${label}`}
-          onClick={handleHoverListenerClick}
-          sx={{
+          onClick={addKeyframe}
+          sx={(theme) => ({
             position: 'absolute',
-            left: `-${leftOffsetStr}`,
+            left: `-${theme.spacing(1)}`,
             right: `-${theme.spacing(1)}`,
             top: '-4px', // this is for better UX "feeling"
             height: '18px',
             // backgroundColor: 'rgba(255, 0, 0, 0.3)',
-          }}
+          })}
         />
 
         {/* Existing Keyframe Dots */}
