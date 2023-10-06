@@ -53,10 +53,6 @@ const KeyframeEditor = observer(({ store }) => {
   }
   /* End Calculations */
 
-  if (numSelected !== 1) {
-    return <CenteredMessage numSelected={numSelected} />
-  }
-
   return (
     <Box sx={{ height: 'calc(100% - 32px)', display: 'flex', mt: 1 }}>
       <Box
@@ -78,10 +74,12 @@ const KeyframeEditor = observer(({ store }) => {
           setIn={animation.setIn}
           setOut={animation.setOut}
           frameHoveredAt={drawNewKeyAt + cssRotationOffset}
-          absoluteFrameHovered={absoluteFrameHovered}
+          absoluteFrameHovered={hoveredProperty ? absoluteFrameHovered : null}
         />
 
-        {selectedItem.keyframables.map((propName) => {
+        {numSelected !== 1 && <CenteredMessage numSelected={numSelected} />}
+
+        {numSelected === 1 && selectedItem.keyframables.map((propName) => {
           const property = selectedItem[propName]
           const keyframeIdPrefix = `${selectedItem.id}--${propName}`
 

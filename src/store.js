@@ -16,6 +16,7 @@ import Angle from './lib/structure/Angle'
 import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
 // import { storageEnabled } from './utility/storage'
 import { sleep } from './utility/time'
+import { isEqual } from './utility/array'
 
 class RootStore {
   constructor() {
@@ -317,12 +318,20 @@ class RootStore {
   }
 
   setSelected(values) {
+    if (!isEqual(this.build.selectedIds, values)) {
+      this.setSelectedKeyframes([])
+    }
     this.build.selectedIds = values
   }
 
-  addToSelection(value) { this.build.selectedIds = [...this.build.selectedIds, value] }
+  addToSelection(value) {
+    this.build.selectedIds = [...this.build.selectedIds, value]
+    this.setSelectedKeyframes([])
+  }
+
   removeFromSelection(value) {
     this.build.selectedIds = this.build.selectedIds.filter((id) => id !== value)
+    this.setSelectedKeyframes([])
   }
 
   selectAll() {
