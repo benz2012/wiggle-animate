@@ -59,6 +59,10 @@ class Angle {
   toString() {
     return `Angle(${this.degrees})`
   }
+
+  toShortString() {
+    return `${this.degrees}°`
+  }
 }
 
 // TODO [-]: remove this after debugging

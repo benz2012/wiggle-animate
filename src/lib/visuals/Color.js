@@ -115,6 +115,10 @@ class Color {
   toStringExternalAlpha(alpha) {
     return `rgba(${this.red}, ${this.green}, ${this.blue}, ${alpha})`
   }
+
+  toShortString() {
+    return `${this.red}, ${this.green}, ${this.blue}`
+  }
 }
 
 // TODO [-]: remove this after debugging

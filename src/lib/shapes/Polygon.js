@@ -19,6 +19,7 @@ class Polygon extends VisibleShape {
     })
 
     this._height.isEditable = false
+    this._height.isKeyframable = false
     this._width.label = 'diameter'
     this._width.group = null
     this._width.order = 0.5

@@ -4,8 +4,10 @@ import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
-import Keyframe from '../../lib/animation/Keyframe'
 import theme from '../theme'
+import Keyframe from '../../lib/animation/Keyframe'
+import Angle from '../../lib/structure/Angle'
+import Color from '../../lib/visuals/Color'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
@@ -97,7 +99,22 @@ const LineOfKeyframes = observer(({
         {visibleKeyframes.map((keyframe) => {
           let keyPositionX = ((keyframe.frame - frameIn) * pixelsPerFrame).toFixed(2)
           keyPositionX -= cssRotationOffset
-          const valueShort = `${keyframe.value}`.split('(').pop().replace(')', '')
+
+          let valueShort
+          if (
+            keyframe.value instanceof Angle
+            || keyframe.value instanceof Color
+          ) {
+            valueShort = keyframe.value.toShortString()
+          } else {
+            valueShort = `${keyframe.value}`
+            if (valueShort.includes('(')) {
+              valueShort = valueShort.split('(').pop().replace(')', '')
+            }
+            if (label.includes('opacity')) {
+              valueShort = `${valueShort}%`
+            }
+          }
 
           const selectedIndicator = !selectedFrames.includes(keyframe.frame) ? ({}) : ({
             backgroundColor: `${theme.palette.tertiary[100]}`,
