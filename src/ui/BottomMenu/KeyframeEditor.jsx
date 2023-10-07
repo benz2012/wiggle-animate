@@ -1,10 +1,11 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
 
+import './simplebar-extra-styles.css'
 import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
@@ -14,7 +15,8 @@ import { isEqual } from '../../utility/array'
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 // TODO [1]: Handle Editor
-// On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
+// TODO [1]: Pass in Window Width & redraw
+// TODO [1]: On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
 
 const KeyframeEditor = observer(({ store }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
@@ -51,6 +53,11 @@ const KeyframeEditor = observer(({ store }) => {
     absoluteFrameHovered = null
   }
   /* End Calculations */
+
+  useEffect(() => {
+    const simplebarContentWrapper = document.querySelector('.simplebar-content-wrapper')
+    simplebarContentWrapper.id = 'simplebar-keyframe-editor'
+  }, [])
 
   return (
     <Box sx={{ height: 'calc(100% - 32px)', display: 'flex', mt: 1 }}>
