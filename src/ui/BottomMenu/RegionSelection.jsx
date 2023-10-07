@@ -76,7 +76,21 @@ const RegionSelection = observer(({
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 1 }}>
+    <Box
+      sx={(theme) => ({
+        position: 'sticky',
+        top: 0,
+        pb: 1,
+        pr: 1,
+        mb: 1,
+        mr: -1,
+        zIndex: 900,
+        backgroundColor: 'background.paper',
+        boxShadow: theme.shadows[2],
+        display: 'flex',
+        alignItems: 'flex-end',
+      })}
+    >
       <Box sx={(theme) => ({ width: `calc(${LABEL_WIDTH}px - ${theme.spacing(2)})`, mr: 2 })}>
         <Typography
           className="noselect"
@@ -96,7 +110,15 @@ const RegionSelection = observer(({
       </Box>
 
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', minHeight: '30px', position: 'relative' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            position: 'relative',
+            minHeight: '26px',
+            pb: 0.5,
+          }}
+        >
           {editIn ? (
             <GenericInputWithInternalValue
               availableWidth={40}
@@ -180,8 +202,7 @@ const RegionSelection = observer(({
                 sx={(theme) => ({
                   pl: 1,
                   pr: 1,
-                  mb: '6px',
-                  zIndex: 900,
+                  mb: '8px',
                   borderRadius: 1,
                   backgroundColor: withinCloseRangeOfInOut ? 'rgba(0, 0, 0, 0.75)' : '',
                   transition: `background-color ${theme.transitions.duration.standard}ms`,
@@ -196,6 +217,18 @@ const RegionSelection = observer(({
           )}
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          position: 'absolute',
+          height: '100%',
+          width: '16px',
+          zIndex: 901,
+          top: 0,
+          right: '-12px',
+          backgroundColor: 'background.paper',
+        }}
+      />
     </Box>
   )
 })
