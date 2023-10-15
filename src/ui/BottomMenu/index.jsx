@@ -93,7 +93,7 @@ const BottomMenu = observer(({ store, windowWidth }) => {
         </button>
       </Box>
 
-      {bottomOpen && <KeyframeEditor store={store} />}
+      {bottomOpen && <KeyframeEditor store={store} windowWidth={windowWidth} />}
 
       {hasFocus && (
         <>

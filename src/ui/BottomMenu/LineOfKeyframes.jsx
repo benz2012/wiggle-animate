@@ -135,6 +135,7 @@ const LineOfKeyframes = observer(({
               }}
             >
               <Box
+                id={`keyframe-item--${label}--${keyframe.frame}`}
                 onClick={(event) => {
                   if (event.detail !== 1) return
                   onKeyframeClick(keyframe.frame, !event.shiftKey)

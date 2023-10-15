@@ -106,6 +106,9 @@ class RootStore {
       hoveredProperty: null,
       newKeyPosition: null,
       selectedIds: [],
+      pixelsPerFrame: null,
+      lineWidthLessThanParent: 35,
+      handleEditorWidth: 268,
     }
 
     this.animation = new Animation()
@@ -168,6 +171,7 @@ class RootStore {
       removeKeyframeFromSelection: action,
       removeKeyframesFromSelection: action,
       selectAllVisibleKeyframes: action,
+      setKeyframePixelsPerFrame: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -432,6 +436,8 @@ class RootStore {
     this.setSelectedKeyframes(allVisibleKeyframeIdsForSelectedItem)
   }
 
+  setKeyframePixelsPerFrame(value) { this.keyframeEditor.pixelsPerFrame = value }
+
   /* Output Actions */
   export = async () => {
     // TODO [2]: Have this open a modal with settings & confirmation
@@ -460,29 +466,6 @@ class RootStore {
 
     this.setExporting(false)
     this.animation.goToFirst()
-  }
-
-  /* Temp Functions */
-  populate = () => {
-    const r1 = this.addRectangle()
-    const r2 = this.addRectangle()
-    const r3 = this.addRectangle()
-    const e4 = this.addEllipse()
-    this.addText()
-
-    r1.addKey('position', 1, new Vector2(100, 100))
-    r1.addKey('position', 100, new Vector2(1820, 980))
-
-    r2.addKey('position', 1, new Vector2(1820, 100))
-    r2.addKey('position', 100, new Vector2(100, 980))
-
-    r3.position.y = 300
-    r3.addKey('rotation', 1, new Angle(0))
-    r3.addKey('rotation', 100, new Angle(720))
-
-    e4.position.y = 800
-    e4.addKey('width', 1, 100)
-    e4.addKey('width', 100, 1000)
   }
 }
 

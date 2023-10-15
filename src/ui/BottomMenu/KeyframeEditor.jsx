@@ -1,11 +1,8 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import SimpleBar from 'simplebar-react'
-import 'simplebar-react/dist/simplebar.min.css'
 
-import './simplebar-extra-styles.css'
 import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
@@ -17,8 +14,10 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 // TODO [1]: Handle Editor
 // TODO [1]: Pass in Window Width & redraw
 // TODO [1]: On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
+// TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
+// BUG [1]: when hovering over keyframe the timeline tick stops showing
 
-const KeyframeEditor = observer(({ store }) => {
+const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
 
   const { selectedIds } = build
@@ -26,18 +25,26 @@ const KeyframeEditor = observer(({ store }) => {
   const numSelected = selectedIds.length
 
   const { firstFrame: frameIn, lastFrame: frameOut } = animation
-  const { newKeyPosition, hoveredProperty } = keyframeEditor
+  const {
+    newKeyPosition,
+    hoveredProperty,
+    lineWidthLessThanParent,
+    handleEditorWidth,
+    pixelsPerFrame,
+  } = keyframeEditor
 
   /* Calculations to relate Mouse Position to Frame Number */
-  const widthCheckerRef = useRef()
+  const keyframesLineWidth = windowWidth - handleEditorWidth - LABEL_WIDTH - lineWidthLessThanParent
   const numFramesShown = frameOut - frameIn + 1
-  const pixelsPerFrame = widthCheckerRef.current ? (
-    (widthCheckerRef.current.clientWidth - LABEL_WIDTH) / (numFramesShown - 1)
-  ) : 0
+  useEffect(() => {
+    store.setKeyframePixelsPerFrame(keyframesLineWidth / (numFramesShown - 1))
+  }, [store, keyframesLineWidth, numFramesShown])
+
   const theme = useTheme()
   const leftOffsetStr = theme.spacing(1)
   const leftOffset = parseInt(leftOffsetStr.substring(0, leftOffsetStr.length - 2), 10)
   const uxFeelingOffset = 3
+
   // Start with a comfortable position in relation to the mouse
   let drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
   // Snapping to Frames
@@ -54,11 +61,6 @@ const KeyframeEditor = observer(({ store }) => {
   }
   /* End Calculations */
 
-  useEffect(() => {
-    const simplebarContentWrapper = document.querySelector('.simplebar-content-wrapper')
-    simplebarContentWrapper.id = 'simplebar-keyframe-editor'
-  }, [])
-
   return (
     <Box sx={{ height: 'calc(100% - 32px)', display: 'flex', mt: 1 }}>
       <Box
@@ -71,28 +73,16 @@ const KeyframeEditor = observer(({ store }) => {
           flexDirection: 'column',
         }}
       >
-        <SimpleBar
-          forceVisible="y"
-          autoHide={false}
-          style={{
-            height: '100%',
-            overflowX: 'hidden',
-            paddingRight: '16px',
-          }}
-        >
-          <Box sx={{ display: 'flex' }}>
-            <Box ref={widthCheckerRef} sx={{ flexGrow: 1 }} />
-          </Box>
+        <RegionSelection
+          frameIn={frameIn}
+          frameOut={frameOut}
+          setIn={animation.setIn}
+          setOut={animation.setOut}
+          frameHoveredAt={drawNewKeyAt + cssRotationOffset}
+          absoluteFrameHovered={hoveredProperty ? absoluteFrameHovered : null}
+        />
 
-          <RegionSelection
-            frameIn={frameIn}
-            frameOut={frameOut}
-            setIn={animation.setIn}
-            setOut={animation.setOut}
-            frameHoveredAt={drawNewKeyAt + cssRotationOffset}
-            absoluteFrameHovered={hoveredProperty ? absoluteFrameHovered : null}
-          />
-
+        <Box sx={{ overflowY: 'scroll' }}>
           {numSelected !== 1 && <CenteredMessage numSelected={numSelected} />}
 
           {numSelected === 1 && selectedItem.keyframables.map((propName) => {
@@ -179,10 +169,18 @@ const KeyframeEditor = observer(({ store }) => {
               />
             )
           })}
-        </SimpleBar>
+        </Box>
       </Box>
 
-      <Box sx={{ width: '268px', height: '100%', backgroundColor: 'rgba(33, 150, 243, 0.2)' }}>&nbsp;</Box>
+      <Box
+        sx={{
+          width: `${handleEditorWidth}px`,
+          height: '100%',
+          backgroundColor: 'rgba(33, 150, 243, 0.2)',
+        }}
+      >
+        &nbsp;
+      </Box>
     </Box>
   )
 })

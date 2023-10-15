@@ -14,7 +14,6 @@ const doesBottomMenuHaveFocus = () => [
   'jump-start-button',
   'jump-end-button',
   'play-mode-button',
-  'simplebar-keyframe-editor',
 ].includes(document.activeElement.id)
 
 const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('input-')
@@ -39,7 +38,6 @@ const KeyHandler = ({ store }) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
     const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
     const INPUT_HAS_FOCUS = doesAnInputFieldHaveFocus()
-    console.log(document.activeElement)
 
     switch (event.key) {
       case ' ':
