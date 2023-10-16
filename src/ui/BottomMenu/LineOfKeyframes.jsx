@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 
-import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
+import { LABEL_WIDTH, KEYFRAME_DIAMETER, RIGHT_PADDING_FOR_SCROLLBAR } from './config'
 import theme from '../theme'
 import Keyframe from '../../lib/animation/Keyframe'
 import Angle from '../../lib/structure/Angle'
@@ -60,7 +60,7 @@ const LineOfKeyframes = observer(({
           sx={{
             position: 'absolute',
             left: '0px',
-            right: '0px',
+            right: `${RIGHT_PADDING_FOR_SCROLLBAR}px`,
             height: '1px',
             backgroundColor: 'action.hover',
           }}
@@ -88,7 +88,7 @@ const LineOfKeyframes = observer(({
           sx={(muiTheme) => ({
             position: 'absolute',
             left: `-${muiTheme.spacing(1)}`,
-            right: `-${muiTheme.spacing(1)}`,
+            right: 0,
             top: '-4px', // this is for better UX "feeling"
             height: '18px',
             // backgroundColor: 'rgba(255, 0, 0, 0.3)',

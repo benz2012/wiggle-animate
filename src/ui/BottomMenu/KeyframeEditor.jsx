@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
-import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
+import { LABEL_WIDTH, KEYFRAME_DIAMETER, RIGHT_PADDING_FOR_SCROLLBAR } from './config'
 import { isEqual } from '../../utility/array'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
@@ -34,7 +34,8 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   } = keyframeEditor
 
   /* Calculations to relate Mouse Position to Frame Number */
-  const keyframesLineWidth = windowWidth - handleEditorWidth - LABEL_WIDTH - lineWidthLessThanParent
+  const keyframesLineWidth = windowWidth - handleEditorWidth - LABEL_WIDTH
+    - (lineWidthLessThanParent + RIGHT_PADDING_FOR_SCROLLBAR)
   const numFramesShown = frameOut - frameIn + 1
   useEffect(() => {
     store.setKeyframePixelsPerFrame(keyframesLineWidth / (numFramesShown - 1))
@@ -52,13 +53,16 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   // Convert to Frame Number
   const relativeFrameHovered = Math.round(drawNewKeyAt / pixelsPerFrame)
   let absoluteFrameHovered = frameIn + relativeFrameHovered
+  // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
+  if (absoluteFrameHovered < frameIn) {
+    drawNewKeyAt = 0
+    absoluteFrameHovered = frameIn
+  } else if (absoluteFrameHovered > frameOut) {
+    drawNewKeyAt = ((numFramesShown - 1) * pixelsPerFrame)
+    absoluteFrameHovered = frameOut
+  }
   // Final CSS Movement Tweaks
   drawNewKeyAt -= cssRotationOffset
-  // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
-  if (absoluteFrameHovered < frameIn || absoluteFrameHovered > frameOut) {
-    drawNewKeyAt = null
-    absoluteFrameHovered = null
-  }
   /* End Calculations */
 
   return (
@@ -67,7 +71,6 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
         sx={{
           flexGrow: 1,
           height: '100%',
-          pr: '3px',
 
           display: 'flex',
           flexDirection: 'column',
@@ -82,94 +85,105 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
           absoluteFrameHovered={hoveredProperty ? absoluteFrameHovered : null}
         />
 
-        <Box sx={{ overflowY: 'scroll' }}>
-          {numSelected !== 1 && <CenteredMessage numSelected={numSelected} />}
+        {numSelected !== 1 && <CenteredMessage numSelected={numSelected} />}
 
-          {numSelected === 1 && selectedItem.keyframables.map((propName) => {
-            const property = selectedItem[propName]
-            const keyframeIdPrefix = `${selectedItem.id}--${propName}`
+        {numSelected === 1 && (
+          <Box
+            sx={{
+              // !! Scrollbar Managed Here !!
+              overflowX: 'hidden',
+              overflowY: 'auto',
 
-            let keyframeLabel = `${property.group}-${property.label}`
-            if (!property.group || ['transform', 'size'].includes(property.group)) {
-              keyframeLabel = property.label
-            }
+              pt: 0.5,
+              boxShadow: 'inset 0 6px 6px -8px rgba(0, 0, 0, 0.75)',
+            }}
+          >
+            {selectedItem.keyframables.map((propName) => {
+              const property = selectedItem[propName]
+              const keyframeIdPrefix = `${selectedItem.id}--${propName}`
 
-            const hoveringNearExistingKeyframe = (
-              property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
-            )
+              let keyframeLabel = `${property.group}-${property.label}`
+              if (!property.group || ['transform', 'size'].includes(property.group)) {
+                keyframeLabel = property.label
+              }
 
-            const selectedFramesForThisProperty = keyframeEditor.selectedIds
-              .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
-              .map((keyframeId) => parseInt(keyframeId.split('--').pop(), 10))
+              const hoveringNearExistingKeyframe = (
+                property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
+              )
 
-            return (
-              <LineOfKeyframes
-                key={keyframeIdPrefix}
-                label={keyframeLabel}
-                keyframes={property.keyframes}
-                selectedFrames={selectedFramesForThisProperty}
-                frameIn={frameIn}
-                frameOut={frameOut}
-                pixelsPerFrame={pixelsPerFrame}
-                drawNewKeyAt={
-                  (keyframeLabel === hoveredProperty && !hoveringNearExistingKeyframe)
-                    ? drawNewKeyAt
-                    : null
-                }
-                addKeyframe={() => {
-                  if (!absoluteFrameHovered) return
-                  if (hoveringNearExistingKeyframe) return
-                  const newKeyframe = property.addKey(
-                    absoluteFrameHovered,
-                    property.getValueAtFrame(absoluteFrameHovered)
-                  )
-                  store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.frame}`])
-                }}
-                onKeyframeClick={(frame, setOnlyOneKey) => {
-                  const keyframeId = `${keyframeIdPrefix}--${frame}`
-                  if (setOnlyOneKey) {
-                    if (keyframeEditor.selectedIds.length === 1 && keyframeEditor.selectedIds.includes(keyframeId)) {
-                      store.setSelectedKeyframes([])
+              const selectedFramesForThisProperty = keyframeEditor.selectedIds
+                .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
+                .map((keyframeId) => parseInt(keyframeId.split('--').pop(), 10))
+
+              return (
+                <LineOfKeyframes
+                  key={keyframeIdPrefix}
+                  label={keyframeLabel}
+                  keyframes={property.keyframes}
+                  selectedFrames={selectedFramesForThisProperty}
+                  frameIn={frameIn}
+                  frameOut={frameOut}
+                  pixelsPerFrame={pixelsPerFrame}
+                  drawNewKeyAt={
+                    (keyframeLabel === hoveredProperty && !hoveringNearExistingKeyframe)
+                      ? drawNewKeyAt
+                      : null
+                  }
+                  addKeyframe={() => {
+                    if (!absoluteFrameHovered) return
+                    if (hoveringNearExistingKeyframe) return
+                    const newKeyframe = property.addKey(
+                      absoluteFrameHovered,
+                      property.getValueAtFrame(absoluteFrameHovered)
+                    )
+                    store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.frame}`])
+                  }}
+                  onKeyframeClick={(frame, setOnlyOneKey) => {
+                    const keyframeId = `${keyframeIdPrefix}--${frame}`
+                    if (setOnlyOneKey) {
+                      if (keyframeEditor.selectedIds.length === 1 && keyframeEditor.selectedIds.includes(keyframeId)) {
+                        store.setSelectedKeyframes([])
+                      } else {
+                        store.setSelectedKeyframes([keyframeId])
+                      }
+                    } else if (keyframeEditor.selectedIds.includes(keyframeId)) {
+                      store.removeKeyframeFromSelection(keyframeId)
                     } else {
-                      store.setSelectedKeyframes([keyframeId])
+                      store.addKeyframeToSelection(keyframeId)
                     }
-                  } else if (keyframeEditor.selectedIds.includes(keyframeId)) {
-                    store.removeKeyframeFromSelection(keyframeId)
-                  } else {
-                    store.addKeyframeToSelection(keyframeId)
-                  }
-                }}
-                onKeyframeDoubleClick={(frame) => {
-                  if (keyframeEditor.selectedIds.length > 1) return
-                  const keyframeId = `${keyframeIdPrefix}--${frame}`
-                  store.setSelectedKeyframes([keyframeId])
-                  store.animation.goToFrame(frame)
-                  const labelValue = `input-label-${property.group}-${property.label}`
-                  const relatedPropertyEditorLabel = document.getElementById(labelValue)
-                  if (relatedPropertyEditorLabel) {
-                    relatedPropertyEditorLabel.click()
-                  }
-                }}
-                onLabelClick={(visibleFrames, setOnlyOneLine) => {
-                  const keyframeIds = visibleFrames.map((frame) => `${keyframeIdPrefix}--${frame}`)
-                  if (setOnlyOneLine) {
-                    if (isEqual(keyframeIds, keyframeEditor.selectedIds)) {
-                      store.setSelectedKeyframes([])
+                  }}
+                  onKeyframeDoubleClick={(frame) => {
+                    if (keyframeEditor.selectedIds.length > 1) return
+                    const keyframeId = `${keyframeIdPrefix}--${frame}`
+                    store.setSelectedKeyframes([keyframeId])
+                    store.animation.goToFrame(frame)
+                    const labelValue = `input-label-${property.group}-${property.label}`
+                    const relatedPropertyEditorLabel = document.getElementById(labelValue)
+                    if (relatedPropertyEditorLabel) {
+                      relatedPropertyEditorLabel.click()
+                    }
+                  }}
+                  onLabelClick={(visibleFrames, setOnlyOneLine) => {
+                    const keyframeIds = visibleFrames.map((frame) => `${keyframeIdPrefix}--${frame}`)
+                    if (setOnlyOneLine) {
+                      if (isEqual(keyframeIds, keyframeEditor.selectedIds)) {
+                        store.setSelectedKeyframes([])
+                      } else {
+                        store.setSelectedKeyframes(keyframeIds)
+                      }
+                    } else if (keyframeIds.every((kId) => keyframeEditor.selectedIds.includes(kId))) {
+                      const allFrameIdsForLine = property.keyframes
+                        .map((keyframe) => `${keyframeIdPrefix}--${keyframe.frame}`)
+                      store.removeKeyframesFromSelection(allFrameIdsForLine)
                     } else {
-                      store.setSelectedKeyframes(keyframeIds)
+                      store.addKeyframesToSelection(keyframeIds)
                     }
-                  } else if (keyframeIds.every((kId) => keyframeEditor.selectedIds.includes(kId))) {
-                    const allFrameIdsForLine = property.keyframes
-                      .map((keyframe) => `${keyframeIdPrefix}--${keyframe.frame}`)
-                    store.removeKeyframesFromSelection(allFrameIdsForLine)
-                  } else {
-                    store.addKeyframesToSelection(keyframeIds)
-                  }
-                }}
-              />
-            )
-          })}
-        </Box>
+                  }}
+                />
+              )
+            })}
+          </Box>
+        )}
       </Box>
 
       <Box

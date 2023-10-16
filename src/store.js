@@ -12,7 +12,6 @@ import Polygon from './lib/shapes/Polygon'
 import Line from './lib/shapes/Line'
 import Path from './lib/shapes/Path'
 import Animation from './lib/animation/Animation'
-import Angle from './lib/structure/Angle'
 import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
 // import { storageEnabled } from './utility/storage'
 import { sleep } from './utility/time'
@@ -107,7 +106,7 @@ class RootStore {
       newKeyPosition: null,
       selectedIds: [],
       pixelsPerFrame: null,
-      lineWidthLessThanParent: 35,
+      lineWidthLessThanParent: 32,
       handleEditorWidth: 268,
     }
 

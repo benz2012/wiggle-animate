@@ -3,6 +3,10 @@
   padding: 0;
 }
 
+:root {
+  color-scheme: dark;
+}
+
 html, body {
   /* Prevents the rubber-banding effect when scrolling outside of the 100% document */
   overscroll-behavior: none;
