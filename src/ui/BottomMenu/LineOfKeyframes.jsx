@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 
-import { LABEL_WIDTH, KEYFRAME_DIAMETER, RIGHT_PADDING_FOR_SCROLLBAR } from './config'
+import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 import theme from '../theme'
 import Keyframe from '../../lib/animation/Keyframe'
 import Angle from '../../lib/structure/Angle'
@@ -57,13 +57,13 @@ const LineOfKeyframes = observer(({
       <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', flexGrow: 1 }}>
         {/* Keyframe "Line" */}
         <Box
-          sx={{
+          sx={(muiTheme) => ({
             position: 'absolute',
             left: '0px',
-            right: `${RIGHT_PADDING_FOR_SCROLLBAR}px`,
+            right: muiTheme.spacing(1),
             height: '1px',
             backgroundColor: 'action.hover',
-          }}
+          })}
         />
 
         {/* Dimmed Keyframe-to-Add Dot */}

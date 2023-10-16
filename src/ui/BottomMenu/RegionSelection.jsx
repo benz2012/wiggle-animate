@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { LABEL_WIDTH, RIGHT_PADDING_FOR_SCROLLBAR } from './config'
+import { LABEL_WIDTH } from './config'
 import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
 import { parseAndValidateInteger } from '../inputs/util'
 
@@ -81,7 +81,7 @@ const RegionSelection = observer(({
         position: 'sticky',
         top: 0,
         pb: 1,
-        pr: `calc(${theme.spacing(2)} + ${RIGHT_PADDING_FOR_SCROLLBAR}px)`,
+        pr: theme.spacing(2),
         zIndex: 900,
         backgroundColor: 'background.paper',
         display: 'flex',

@@ -2,17 +2,17 @@ import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
-import { LABEL_WIDTH, KEYFRAME_DIAMETER, RIGHT_PADDING_FOR_SCROLLBAR } from './config'
+import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 import { isEqual } from '../../utility/array'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 // TODO [1]: Handle Editor
-// TODO [1]: Pass in Window Width & redraw
 // TODO [1]: On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
 // BUG [1]: when hovering over keyframe the timeline tick stops showing
@@ -34,8 +34,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   } = keyframeEditor
 
   /* Calculations to relate Mouse Position to Frame Number */
-  const keyframesLineWidth = windowWidth - handleEditorWidth - LABEL_WIDTH
-    - (lineWidthLessThanParent + RIGHT_PADDING_FOR_SCROLLBAR)
+  const keyframesLineWidth = windowWidth - handleEditorWidth - LABEL_WIDTH - lineWidthLessThanParent
   const numFramesShown = frameOut - frameIn + 1
   useEffect(() => {
     store.setKeyframePixelsPerFrame(keyframesLineWidth / (numFramesShown - 1))
@@ -88,14 +87,20 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
         {numSelected !== 1 && <CenteredMessage numSelected={numSelected} />}
 
         {numSelected === 1 && (
-          <Box
-            sx={{
-              // !! Scrollbar Managed Here !!
-              overflowX: 'hidden',
-              overflowY: 'auto',
-
-              pt: 0.5,
-              boxShadow: 'inset 0 6px 6px -8px rgba(0, 0, 0, 0.75)',
+          <OverlayScrollbarsComponent
+            options={{
+              overflow: { x: 'hidden' },
+              scrollbars: { theme: 'ovlyscrl-theme-custom' },
+              visibility: 'visible',
+            }}
+            style={{
+              boxShadow: 'inset 0 6px 6px -8px rgba(0, 0, 0, 1)',
+              paddingTop: '4px',
+              // paddingBottom accounts for the keyframe-line height and hover-line negative Y,
+              // to prevent them from overflowing at the bottom of the container
+              paddingBottom: 'calc(4px + 1px)',
+              // This creates a consistent gap for the scrollbar, whether or not it is rendered
+              paddingRight: '8px',
             }}
           >
             {selectedItem.keyframables.map((propName) => {
@@ -182,7 +187,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                 />
               )
             })}
-          </Box>
+          </OverlayScrollbarsComponent>
         )}
       </Box>
 
