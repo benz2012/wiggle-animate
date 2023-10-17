@@ -128,9 +128,9 @@ const GenericInputWithInternalValue = observer(({
           value={internalValue ?? propertyValue}
           setValue={setValue}
           incrementValue={incrementValue}
-          onBlur={() => {
+          onBlur={(event) => {
             setInternalValue(null)
-            onBlur()
+            onBlur(event)
           }}
           error={internalValue !== null}
           {...rest}
@@ -152,9 +152,9 @@ const GenericInputWithInternalValue = observer(({
             value={internalValue[subProp1] ?? subPropValue1}
             setValue={subPropSetter(subProp1)}
             incrementValue={subPropIncrementValue(subProp1)}
-            onBlur={() => {
+            onBlur={(event) => {
               setInternalValue({ ...internalValue, [subProp1]: null })
-              onBlur()
+              onBlur(event)
             }}
             error={internalValue[subProp1] !== null}
             totalBoxes={subProperties.length}
@@ -169,9 +169,9 @@ const GenericInputWithInternalValue = observer(({
             value={internalValue[subProp2] ?? subPropValue2}
             setValue={subPropSetter(subProp2)}
             incrementValue={subPropIncrementValue(subProp2)}
-            onBlur={() => {
+            onBlur={(event) => {
               setInternalValue({ ...internalValue, [subProp2]: null })
-              onBlur()
+              onBlur(event)
             }}
             error={internalValue[subProp2] !== null}
             totalBoxes={subProperties.length}
@@ -195,9 +195,9 @@ const GenericInputWithInternalValue = observer(({
               value={internalValue[subProp] ?? subPropValue}
               setValue={subPropSetter(subProp)}
               incrementValue={subPropIncrementValue(subProp)}
-              onBlur={() => {
+              onBlur={(event) => {
                 setInternalValue({ ...internalValue, [subProp]: null })
-                onBlur()
+                onBlur(event)
               }}
               error={internalValue[subProp] !== null}
               totalBoxes={subProperties.length}

@@ -18,6 +18,7 @@ const InputBox = observer(({
   onBlur,
   error,
   autoFocus = false,
+  focusIdAfterCommitting = null,
 }) => {
   const inputId = `input-${labelGroup ? `${labelGroup}-` : ''}${label}`
 
@@ -38,7 +39,12 @@ const InputBox = observer(({
         }
         break
       case 'Enter':
+        // We will reference this action as "Commiting" the input
         document.getElementById(inputId).blur()
+        if (focusIdAfterCommitting) {
+          const elementToFocus = document.getElementById(focusIdAfterCommitting)
+          if (elementToFocus) { elementToFocus.focus() }
+        }
         break
       default:
         break
