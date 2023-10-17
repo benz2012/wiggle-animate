@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography'
 import { LABEL_WIDTH } from './config'
 import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
 import { parseAndValidateInteger } from '../inputs/util'
+import usePrevious from '../hooks/usePrevious'
 
 const mono12 = { fontFamily: 'monospace', fontSize: 12 }
 
@@ -59,13 +60,16 @@ const RegionSelection = observer(({
   }
 
   const [editIn, setEditIn] = useState(false)
+  const prevEditIn = usePrevious(editIn)
   const [editOut, setEditOut] = useState(false)
+  const prevEditOut = usePrevious(editOut)
 
   useEffect(() => {
-    if (editIn === true) {
+    /* eslint-disable react-hooks/exhaustive-deps */
+    if (prevEditIn === false && editIn === true) {
       const editInInputBox = document.getElementById('input-editIn')
       if (editInInputBox) { editInInputBox.select() }
-    } else if (editOut === true) {
+    } else if (prevEditOut === false && editOut === true) {
       const editOutInputBox = document.getElementById('input-editOut')
       if (editOutInputBox) { editOutInputBox.select() }
     }
@@ -141,6 +145,7 @@ const RegionSelection = observer(({
           ) : (
             <Typography
               className="noselect"
+              tabIndex="0"
               sx={(theme) => ({
                 ...mono12,
                 cursor: 'pointer',
@@ -151,6 +156,7 @@ const RegionSelection = observer(({
                 },
               })}
               onClick={() => setEditIn(true)}
+              onFocus={() => setEditIn(true)}
             >
               {frameIn}
             </Typography>
@@ -171,6 +177,7 @@ const RegionSelection = observer(({
             ) : (
               <Typography
                 className="noselect"
+                tabIndex="0"
                 sx={(theme) => ({
                   ...mono12,
                   cursor: 'pointer',
@@ -181,6 +188,7 @@ const RegionSelection = observer(({
                   },
                 })}
                 onClick={() => setEditOut(true)}
+                onFocus={() => setEditOut(true)}
               >
                 {frameOut}
               </Typography>
