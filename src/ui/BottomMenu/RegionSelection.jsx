@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -60,6 +60,17 @@ const RegionSelection = observer(({
 
   const [editIn, setEditIn] = useState(false)
   const [editOut, setEditOut] = useState(false)
+
+  useEffect(() => {
+    if (editIn === true) {
+      const editInInputBox = document.getElementById('input-editIn')
+      if (editInInputBox) { editInInputBox.select() }
+    } else if (editOut === true) {
+      const editOutInputBox = document.getElementById('input-editOut')
+      if (editOutInputBox) { editOutInputBox.select() }
+    }
+  }, [editIn, editOut])
+
   const parseAndValidateFrameIn = (value) => {
     const validation = parseAndValidateInteger(value)
     if (validation.isValid && validation.parsedValue >= frameOut) {
