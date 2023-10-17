@@ -61,7 +61,12 @@
           "functions": "ignore"
         }
       ],
-      "no-unused-vars": "warn",
+      "no-unused-vars": [
+        "warn",
+        {
+          "varsIgnorePattern": "^_.*"
+        }
+      ],
       "no-underscore-dangle": "off",
       "lines-between-class-members": [
         "error",

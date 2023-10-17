@@ -143,12 +143,12 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                     )
                     store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.id}`])
                   }}
-                  onKeyframeClick={(keyId, setOnlyOneKey) => {
+                  onKeyframePress={(keyId, setOnlyOneKey) => {
                     const keyframeId = `${keyframeIdPrefix}--${keyId}`
                     if (setOnlyOneKey) {
-                      if (keyframeEditor.selectedIds.length === 1 && keyframeEditor.selectedIds.includes(keyframeId)) {
-                        store.setSelectedKeyframes([])
-                      } else {
+                      if (keyframeEditor.selectedIds.length <= 1) {
+                        store.setSelectedKeyframes([keyframeId])
+                      } else if (!keyframeEditor.selectedIds.includes(keyframeId)) {
                         store.setSelectedKeyframes([keyframeId])
                       }
                     } else if (keyframeEditor.selectedIds.includes(keyframeId)) {
@@ -158,7 +158,6 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                     }
                   }}
                   onKeyframeDoubleClick={(keyId) => {
-                    if (keyframeEditor.selectedIds.length > 1) return
                     const keyframeId = `${keyframeIdPrefix}--${keyId}`
                     store.setSelectedKeyframes([keyframeId])
                     const keyframeClickedOn = property.keyframes.find((k) => k.id === keyId)

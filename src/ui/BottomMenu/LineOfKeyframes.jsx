@@ -20,7 +20,7 @@ const LineOfKeyframes = observer(({
   pixelsPerFrame,
   drawNewKeyAt,
   addKeyframe,
-  onKeyframeClick,
+  onKeyframePress,
   onKeyframeDoubleClick,
   onLabelClick,
 }) => {
@@ -137,9 +137,8 @@ const LineOfKeyframes = observer(({
               <Box
                 id={`keyframe-item--${label}--${keyframe.id}`}
                 className="noselect"
-                onClick={(event) => {
-                  if (event.detail !== 1) return
-                  onKeyframeClick(keyframe.id, !event.shiftKey)
+                onPointerDown={(event) => {
+                  onKeyframePress(keyframe.id, !event.shiftKey)
                 }}
                 onDoubleClick={(event) => {
                   if (event.detail !== 2) return
