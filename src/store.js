@@ -419,7 +419,7 @@ class RootStore {
   }
 
   selectAllVisibleKeyframes() {
-    const selectedItem = this.build.selectedIds.length === 1 && this.rootContainer.findItem(this.build.selectedIds[0])
+    const selectedItem = this.rootContainer.findItem(this.build.selectedIds[0])
     if (!selectedItem) return
     const allVisibleKeyframeIdsForSelectedItem = selectedItem.keyframables.reduce((runningList, propName) => {
       const property = selectedItem[propName]

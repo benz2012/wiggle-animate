@@ -26,7 +26,7 @@ const PropertyEditor = observer(({ store }) => {
 
   const { build, rootContainer } = store
   const { selectedIds } = build
-  const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
+  const selectedItem = rootContainer.findItem(selectedIds[0]) || {}
   const numTopLevelItems = rootContainer.sortOrder.length
   const prevNumTopLevelItems = usePrevious(numTopLevelItems)
 

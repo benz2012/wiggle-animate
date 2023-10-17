@@ -124,6 +124,7 @@ class RootContainer extends Container {
   }
 
   findItem(itemId) {
+    if (!itemId) return null
     const result = this.findItemAndParent(itemId)
     if (result) return result.item
     return null
