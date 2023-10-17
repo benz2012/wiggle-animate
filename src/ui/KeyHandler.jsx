@@ -44,10 +44,10 @@ const KeyHandler = ({ store }) => {
         if (BOTTOM_HAS_FOCUS && document.activeElement.id !== 'play-pause-button') {
           document.getElementById('play-pause-button').focus()
           document.getElementById('play-pause-button').click()
+        } else if (STAGE_HAS_FOCUS) {
+          event.preventDefault()
+          store.setKeyHeld('Space', true)
         }
-        if (!STAGE_HAS_FOCUS) break
-        event.preventDefault()
-        store.setKeyHeld('Space', true)
         break
 
       case '-':
@@ -65,14 +65,26 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'a':
-        if (BOTTOM_HAS_FOCUS) {
-          event.preventDefault()
-          store.selectAllVisibleKeyframes()
-        }
-        if (!STAGE_HAS_FOCUS) break
         if (event.metaKey || event.ctrlKey) {
-          event.preventDefault()
-          store.selectAll()
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            store.selectAllVisibleKeyframes()
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.selectAll()
+          }
+        }
+        break
+
+      case 'd':
+        if (event.metaKey || event.ctrlKey) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            store.setSelectedKeyframes([])
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.setSelected([])
+          }
         }
         break
 
@@ -108,12 +120,12 @@ const KeyHandler = ({ store }) => {
           } else {
             store.animation.goToPrev()
           }
-        }
-        if (!STAGE_HAS_FOCUS) break
-        if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT, true)
-        } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT, true)
+        } else if (STAGE_HAS_FOCUS) {
+          if (store.keyHeld.Shift) {
+            store.rootContainer.moveAllSelectedByIncrement(TEN_LEFT, true)
+          } else {
+            store.rootContainer.moveAllSelectedByIncrement(ONE_LEFT, true)
+          }
         }
         break
       case 'ArrowRight':
@@ -127,12 +139,12 @@ const KeyHandler = ({ store }) => {
           } else {
             store.animation.goToNext()
           }
-        }
-        if (!STAGE_HAS_FOCUS) break
-        if (store.keyHeld.Shift) {
-          store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT, true)
-        } else {
-          store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT, true)
+        } else if (STAGE_HAS_FOCUS) {
+          if (store.keyHeld.Shift) {
+            store.rootContainer.moveAllSelectedByIncrement(TEN_RIGHT, true)
+          } else {
+            store.rootContainer.moveAllSelectedByIncrement(ONE_RIGHT, true)
+          }
         }
         break
 
@@ -161,9 +173,7 @@ const KeyHandler = ({ store }) => {
             const item = store.rootContainer.findItem(itemId)
             item[propertyName].deleteKey(keyId)
           })
-        }
-        if (!STAGE_HAS_FOCUS) break
-        if (selectedIds.length > 0) {
+        } else if (STAGE_HAS_FOCUS && selectedIds.length > 0) {
           const itemsToDelete = selectedIds.map((selectedId) => (
             store.rootContainer.findItem(selectedId)
           ))
@@ -202,9 +212,9 @@ const KeyHandler = ({ store }) => {
         if (BOTTOM_HAS_FOCUS) {
           store.animation.setIn(Animation.FIRST)
           store.animation.setOut(store.animation.frames)
+        } else if (STAGE_HAS_FOCUS) {
+          store.addContainer()
         }
-        if (!STAGE_HAS_FOCUS) break
-        store.addContainer()
         break
 
       case 'r':
