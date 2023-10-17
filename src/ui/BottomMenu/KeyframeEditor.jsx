@@ -21,7 +21,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
 
   const { selectedIds } = build
-  const selectedItem = selectedIds.length === 1 && rootContainer.findItem(selectedIds[0])
+  const selectedItem = rootContainer.findItem(selectedIds[0]) || {}
   const numSelected = selectedIds.length
 
   const { firstFrame: frameIn, lastFrame: frameOut } = animation
@@ -116,16 +116,16 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                 property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
               )
 
-              const selectedFramesForThisProperty = keyframeEditor.selectedIds
+              const selectedKeyIdsForThisProperty = keyframeEditor.selectedIds
                 .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
-                .map((keyframeId) => parseInt(keyframeId.split('--').pop(), 10))
+                .map((keyframeId) => keyframeId.split('--').pop())
 
               return (
                 <LineOfKeyframes
                   key={keyframeIdPrefix}
                   label={keyframeLabel}
                   keyframes={property.keyframes}
-                  selectedFrames={selectedFramesForThisProperty}
+                  selectedKeyIds={selectedKeyIdsForThisProperty}
                   frameIn={frameIn}
                   frameOut={frameOut}
                   pixelsPerFrame={pixelsPerFrame}
@@ -141,10 +141,10 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                       absoluteFrameHovered,
                       property.getValueAtFrame(absoluteFrameHovered)
                     )
-                    store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.frame}`])
+                    store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.id}`])
                   }}
-                  onKeyframeClick={(frame, setOnlyOneKey) => {
-                    const keyframeId = `${keyframeIdPrefix}--${frame}`
+                  onKeyframeClick={(keyId, setOnlyOneKey) => {
+                    const keyframeId = `${keyframeIdPrefix}--${keyId}`
                     if (setOnlyOneKey) {
                       if (keyframeEditor.selectedIds.length === 1 && keyframeEditor.selectedIds.includes(keyframeId)) {
                         store.setSelectedKeyframes([])
@@ -157,19 +157,20 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                       store.addKeyframeToSelection(keyframeId)
                     }
                   }}
-                  onKeyframeDoubleClick={(frame) => {
+                  onKeyframeDoubleClick={(keyId) => {
                     if (keyframeEditor.selectedIds.length > 1) return
-                    const keyframeId = `${keyframeIdPrefix}--${frame}`
+                    const keyframeId = `${keyframeIdPrefix}--${keyId}`
                     store.setSelectedKeyframes([keyframeId])
-                    store.animation.goToFrame(frame)
+                    const keyframeClickedOn = property.keyframes.find((k) => k.id === keyId)
+                    store.animation.goToFrame(keyframeClickedOn.frame)
                     const labelValue = `input-label-${property.group}-${property.label}`
                     const relatedPropertyEditorLabel = document.getElementById(labelValue)
                     if (relatedPropertyEditorLabel) {
                       relatedPropertyEditorLabel.click()
                     }
                   }}
-                  onLabelClick={(visibleFrames, setOnlyOneLine) => {
-                    const keyframeIds = visibleFrames.map((frame) => `${keyframeIdPrefix}--${frame}`)
+                  onLabelClick={(visibleKeyIds, setOnlyOneLine) => {
+                    const keyframeIds = visibleKeyIds.map((keyId) => `${keyframeIdPrefix}--${keyId}`)
                     if (setOnlyOneLine) {
                       if (isEqual(keyframeIds, keyframeEditor.selectedIds)) {
                         store.setSelectedKeyframes([])
@@ -178,7 +179,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                       }
                     } else if (keyframeIds.every((kId) => keyframeEditor.selectedIds.includes(kId))) {
                       const allFrameIdsForLine = property.keyframes
-                        .map((keyframe) => `${keyframeIdPrefix}--${keyframe.frame}`)
+                        .map((keyframe) => `${keyframeIdPrefix}--${keyframe.id}`)
                       store.removeKeyframesFromSelection(allFrameIdsForLine)
                     } else {
                       store.addKeyframesToSelection(keyframeIds)

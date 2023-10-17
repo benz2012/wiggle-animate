@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid'
+
 import Handle from './Handle'
 import bezierApproximation from './Bezier'
 import Vector2 from '../structure/Vector2'
@@ -12,6 +14,7 @@ class Keyframe {
   static curveCache = {}
 
   constructor(frame, value) {
+    this._id = uuidv4()
     this.frame = frame
     this.value = value
     this.handleIn = new Handle(Handle.TYPES.IN)
@@ -19,6 +22,8 @@ class Keyframe {
 
     observeListOfProperties(this, ['frame', 'value'])
   }
+
+  get id() { return this._id }
 
   static sort = (a, b) => (a.frame - b.frame)
 

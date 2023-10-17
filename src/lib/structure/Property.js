@@ -194,8 +194,8 @@ class Property {
     return k
   }
 
-  deleteKey(frame) {
-    this.keyframes = this.keyframes.filter((keyframe) => keyframe.frame !== frame)
+  deleteKey(keyId) {
+    this.keyframes = this.keyframes.filter((keyframe) => keyframe.id !== keyId)
   }
 
   // Casting a property to a string will allow nested observation.

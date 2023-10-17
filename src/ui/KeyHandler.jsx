@@ -157,9 +157,9 @@ const KeyHandler = ({ store }) => {
       case 'Delete':
         if (BOTTOM_HAS_FOCUS && store.keyframeEditor.selectedIds.length > 0) {
           store.keyframeEditor.selectedIds.forEach((keyframeId) => {
-            const [itemId, propertyName, frameNum] = keyframeId.split('--')
+            const [itemId, propertyName, keyId] = keyframeId.split('--')
             const item = store.rootContainer.findItem(itemId)
-            item[propertyName].deleteKey(parseInt(frameNum, 10))
+            item[propertyName].deleteKey(keyId)
           })
         }
         if (!STAGE_HAS_FOCUS) break

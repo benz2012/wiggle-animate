@@ -14,7 +14,7 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 const LineOfKeyframes = observer(({
   label,
   keyframes,
-  selectedFrames,
+  selectedKeyIds,
   frameIn,
   frameOut,
   pixelsPerFrame,
@@ -35,8 +35,8 @@ const LineOfKeyframes = observer(({
           className="noselect"
           component="label"
           onClick={(event) => {
-            const visibleKeyframeFrames = visibleKeyframes.map((k) => k.frame)
-            onLabelClick(visibleKeyframeFrames, !event.shiftKey)
+            const visibleKeyframeIds = visibleKeyframes.map((k) => k.id)
+            onLabelClick(visibleKeyframeIds, !event.shiftKey)
           }}
           sx={{
             display: 'inline-block',
@@ -116,14 +116,14 @@ const LineOfKeyframes = observer(({
             }
           }
 
-          const selectedIndicator = !selectedFrames.includes(keyframe.frame) ? ({}) : ({
+          const selectedIndicator = !selectedKeyIds.includes(keyframe.id) ? ({}) : ({
             backgroundColor: `${theme.palette.tertiary[100]}`,
             outline: '1px solid white',
           })
 
           return (
             <Tooltip
-              key={`${keyframe.frame}`}
+              key={`${keyframe.id}`}
               title={`${valueShort}`}
               componentsProps={{
                 tooltip: {
@@ -135,14 +135,15 @@ const LineOfKeyframes = observer(({
               }}
             >
               <Box
-                id={`keyframe-item--${label}--${keyframe.frame}`}
+                id={`keyframe-item--${label}--${keyframe.id}`}
+                className="noselect"
                 onClick={(event) => {
                   if (event.detail !== 1) return
-                  onKeyframeClick(keyframe.frame, !event.shiftKey)
+                  onKeyframeClick(keyframe.id, !event.shiftKey)
                 }}
                 onDoubleClick={(event) => {
                   if (event.detail !== 2) return
-                  onKeyframeDoubleClick(keyframe.frame)
+                  onKeyframeDoubleClick(keyframe.id)
                 }}
                 sx={{
                   cursor: 'pointer',

@@ -428,7 +428,7 @@ class RootStore {
         .filter((keyframe) => (
           keyframe.frame >= this.animation.firstFrame && keyframe.frame <= this.animation.lastFrame
         ))
-        .map((keyframe) => `${keyframeIdPrefix}--${keyframe.frame}`)
+        .map((keyframe) => `${keyframeIdPrefix}--${keyframe.id}`)
       const newRunningList = [...runningList, ...visibleKeyframeIds]
       return newRunningList
     }, [])
