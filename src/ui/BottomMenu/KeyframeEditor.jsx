@@ -16,6 +16,7 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 // TODO [1]: On keyframe-icon click-and-drag, move keyframe.frame (+ / -)
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
 // BUG [1]: when hovering over keyframe the timeline tick stops showing
+// TODO [1]: turn off the hover indicator when dragging
 
 const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
@@ -116,7 +117,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                 property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
               )
 
-              const selectedKeyIdsForThisProperty = keyframeEditor.selectedIds
+              const selectedKeyframeIdsForThisProperty = keyframeEditor.selectedIds
                 .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
                 .map((keyframeId) => keyframeId.split('--').pop())
 
@@ -125,7 +126,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                   key={keyframeIdPrefix}
                   label={keyframeLabel}
                   keyframes={property.keyframes}
-                  selectedKeyIds={selectedKeyIdsForThisProperty}
+                  selectedKeyframeIds={selectedKeyframeIdsForThisProperty}
                   frameIn={frameIn}
                   frameOut={frameOut}
                   pixelsPerFrame={pixelsPerFrame}
@@ -143,24 +144,24 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                     )
                     store.setSelectedKeyframes([`${keyframeIdPrefix}--${newKeyframe.id}`])
                   }}
-                  onKeyframePress={(keyId, setOnlyOneKey) => {
-                    const keyframeId = `${keyframeIdPrefix}--${keyId}`
+                  onKeyframePress={(keyframeId, setOnlyOneKey) => {
+                    const keyframeFullId = `${keyframeIdPrefix}--${keyframeId}`
                     if (setOnlyOneKey) {
                       if (keyframeEditor.selectedIds.length <= 1) {
-                        store.setSelectedKeyframes([keyframeId])
-                      } else if (!keyframeEditor.selectedIds.includes(keyframeId)) {
-                        store.setSelectedKeyframes([keyframeId])
+                        store.setSelectedKeyframes([keyframeFullId])
+                      } else if (!keyframeEditor.selectedIds.includes(keyframeFullId)) {
+                        store.setSelectedKeyframes([keyframeFullId])
                       }
-                    } else if (keyframeEditor.selectedIds.includes(keyframeId)) {
-                      store.removeKeyframeFromSelection(keyframeId)
+                    } else if (keyframeEditor.selectedIds.includes(keyframeFullId)) {
+                      store.removeKeyframeFromSelection(keyframeFullId)
                     } else {
-                      store.addKeyframeToSelection(keyframeId)
+                      store.addKeyframeToSelection(keyframeFullId)
                     }
                   }}
-                  onKeyframeDoubleClick={(keyId) => {
-                    const keyframeId = `${keyframeIdPrefix}--${keyId}`
-                    store.setSelectedKeyframes([keyframeId])
-                    const keyframeClickedOn = property.keyframes.find((k) => k.id === keyId)
+                  onKeyframeDoubleClick={(keyframeId) => {
+                    const keyframeFullId = `${keyframeIdPrefix}--${keyframeId}`
+                    store.setSelectedKeyframes([keyframeFullId])
+                    const keyframeClickedOn = property.keyframes.find((k) => k.id === keyframeId)
                     store.animation.goToFrame(keyframeClickedOn.frame)
                     const labelValue = `input-label-${property.group}-${property.label}`
                     const relatedPropertyEditorLabel = document.getElementById(labelValue)

@@ -14,7 +14,7 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 const LineOfKeyframes = observer(({
   label,
   keyframes,
-  selectedKeyIds,
+  selectedKeyframeIds,
   frameIn,
   frameOut,
   pixelsPerFrame,
@@ -116,7 +116,7 @@ const LineOfKeyframes = observer(({
             }
           }
 
-          const selectedIndicator = !selectedKeyIds.includes(keyframe.id) ? ({}) : ({
+          const selectedIndicator = !selectedKeyframeIds.includes(keyframe.id) ? ({}) : ({
             backgroundColor: `${theme.palette.tertiary[100]}`,
             outline: '1px solid white',
           })
