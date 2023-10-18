@@ -12,6 +12,7 @@ import Polygon from './lib/shapes/Polygon'
 import Line from './lib/shapes/Line'
 import Path from './lib/shapes/Path'
 import Animation from './lib/animation/Animation'
+import Keyframe from './lib/animation/Keyframe'
 import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
 // import { storageEnabled } from './utility/storage'
 import { sleep } from './utility/time'
@@ -105,6 +106,8 @@ class RootStore {
       hoveredProperty: null,
       newKeyPosition: null,
       selectedIds: [],
+      dragStart: null,
+      dragStartFrameNums: {},
       pixelsPerFrame: null,
       lineWidthLessThanParent: 32,
       handleEditorWidth: 268,
@@ -171,6 +174,9 @@ class RootStore {
       removeKeyframesFromSelection: action,
       selectAllVisibleKeyframes: action,
       setKeyframePixelsPerFrame: action,
+      startKeyframeDrag: action,
+      stopKeyframeDrag: action,
+      moveKeyframesToFrameForX: action,
 
       /* Computeds */
       determineCurrentAction: computed,
@@ -436,6 +442,76 @@ class RootStore {
   }
 
   setKeyframePixelsPerFrame(value) { this.keyframeEditor.pixelsPerFrame = value }
+
+  startKeyframeDrag(startingX) {
+    this.keyframeEditor.dragStart = startingX
+    const selectedItem = this.rootContainer.findItem(this.build.selectedIds[0])
+    this.keyframeEditor.dragStartFrameNums = this.keyframeEditor.selectedIds.reduce((final, keyframeFullId) => {
+      /* eslint-disable no-param-reassign */
+      const [_, propertyName, keyframeId] = keyframeFullId.split('--')
+      const keyframe = selectedItem[propertyName].keyframes.find((k) => k.id === keyframeId)
+      final[keyframeId] = keyframe.frame
+      return final
+    }, {})
+  }
+
+  stopKeyframeDrag() {
+    this.keyframeEditor.dragStart = null
+    this.keyframeEditor.dragStartFrameNums = {}
+  }
+
+  moveKeyframesToFrameForX(xPosition, mouseMovementDirection) {
+    if (!this.keyframeEditor.dragStart) return
+    const xOffset = xPosition - this.keyframeEditor.dragStart
+    const framesToMove = Math.round(xOffset / this.keyframeEditor.pixelsPerFrame)
+
+    const selectedItem = this.rootContainer.findItem(this.build.selectedIds[0])
+    const sortingAlgorithm = mouseMovementDirection > 0 ? Keyframe.reverseSort : Keyframe.sort
+
+    const selectedKeyframeIdsPerProperty = this.keyframeEditor.selectedIds.reduce((currentObj, keyframeFullId) => {
+      const [_, propertyName, keyframeId] = keyframeFullId.split('--')
+      if (!(propertyName in currentObj)) {
+        currentObj[propertyName] = []
+      }
+      currentObj[propertyName].push(keyframeId)
+      return currentObj
+    }, {})
+    const targetKeyframesSortedPerProperty = selectedItem.keyframables.reduce((currentObj, propertyName) => {
+      const selectedKeyframeIdsForThisProperty = propertyName in selectedKeyframeIdsPerProperty
+        ? selectedKeyframeIdsPerProperty[propertyName]
+        : []
+      const keyframesToAdd = selectedItem[propertyName].keyframes
+        .filter((keyframe) => selectedKeyframeIdsForThisProperty.includes(keyframe.id))
+        .sort(sortingAlgorithm)
+      currentObj[propertyName] = keyframesToAdd
+      return currentObj
+    }, {})
+
+    Object.entries(targetKeyframesSortedPerProperty).forEach(([propertyName, keyframes]) => {
+      keyframes.forEach((targetKeyframe) => {
+        const otherKeyframeNumsOnThisProperty = selectedItem[propertyName].keyframes
+          .filter((keyframe) => keyframe.id !== targetKeyframe.id)
+          .map((keyframe) => keyframe.frame)
+
+        const initialFrameNum = this.keyframeEditor.dragStartFrameNums[targetKeyframe.id]
+        let newFrameToSet = initialFrameNum + framesToMove
+        if (newFrameToSet === targetKeyframe.frame) return
+
+        // Ensure it's actually safe to move this keyframe to that new frame
+        if (newFrameToSet > this.animation.frames) {
+          newFrameToSet = this.animation.frames
+        } else if (newFrameToSet < Animation.FIRST) {
+          newFrameToSet = Animation.FIRST
+        }
+        // Prevent keyframes from overlapping
+        if (otherKeyframeNumsOnThisProperty.includes(newFrameToSet)) {
+          newFrameToSet = targetKeyframe.frame
+        }
+
+        targetKeyframe.frame = newFrameToSet
+      })
+    })
+  }
 
   /* Output Actions */
   export = async () => {

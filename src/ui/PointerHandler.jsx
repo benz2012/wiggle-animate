@@ -28,6 +28,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   const handleDrag = action((event) => {
     const { selectedIds, dragStart, tool } = store.build
     const { dragStart: playheadDragStart } = store.playhead
+    const { dragStart: keyframeDragStart } = store.keyframeEditor
 
     if (dragStart) {
       const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
@@ -59,8 +60,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       // this will enable us to track distance moved since the last event
       store.startDrag(pointerVector)
     } else if (playheadDragStart) {
-      const pointerVector = new Vector2(event.clientX, event.clientY)
-      goToFrameWithPointerX(pointerVector.x)
+      goToFrameWithPointerX(event.clientX)
+    } else if (keyframeDragStart) {
+      store.moveKeyframesToFrameForX(event.clientX, Math.sign(event.movementX))
     }
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
@@ -207,6 +209,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setPlayheadHovered(true)
         store.setPlayheadHoverLineFrame(null)
         goToFrameWithPointerX(pointerVectorRatioOne.x)
+      } else if (event.target.id.startsWith('keyframe-item--')) {
+        store.startKeyframeDrag(pointerVectorRatioOne.x)
       }
     } else if (event.type === 'pointerup') {
       /* POINTER UP / END-OF-DRAG */
@@ -214,9 +218,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
       clearTimeout(startDragInitialWaitTimeoutId.current)
       store.stopDrag()
-      store.setSelectorRect(0, 0)
       store.stopPlayheadDrag()
+      store.stopKeyframeDrag()
 
+      store.setSelectorRect(0, 0)
       if (store.selector.hovers.length > 0) {
         store.setSelected(store.selector.hovers)
       }

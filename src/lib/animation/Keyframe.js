@@ -26,6 +26,7 @@ class Keyframe {
   get id() { return this._id }
 
   static sort = (a, b) => (a.frame - b.frame)
+  static reverseSort = (a, b) => (b.frame - a.frame)
 
   static interpolate = (k1, k2, frame) => {
     const curveParams = [
