@@ -15,14 +15,12 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 // TODO [1]: Handle Editor
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
 // BUG [1]: when hovering over keyframe the timeline tick stops showing
-// TODO [1]: turn off the hover indicator when dragging
 
 const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
 
-  const { selectedIds } = build
-  const selectedItem = rootContainer.findItem(selectedIds[0]) || {}
-  const numSelected = selectedIds.length
+  const selectedItem = rootContainer.findItem(build.selectedIds[0]) || {}
+  const numSelectedItems = build.selectedIds.length
 
   const { firstFrame: frameIn, lastFrame: frameOut } = animation
   const {
@@ -31,6 +29,8 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
     lineWidthLessThanParent,
     handleEditorWidth,
     pixelsPerFrame,
+    selectedIds,
+    dragStart,
   } = keyframeEditor
 
   /* Calculations to relate Mouse Position to Frame Number */
@@ -84,9 +84,9 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
           absoluteFrameHovered={hoveredProperty ? absoluteFrameHovered : null}
         />
 
-        {numSelected !== 1 && <CenteredMessage numSelected={numSelected} />}
+        {numSelectedItems !== 1 && <CenteredMessage numSelected={numSelectedItems} />}
 
-        {numSelected === 1 && (
+        {numSelectedItems === 1 && (
           <OverlayScrollbarsComponent
             options={{
               overflow: { x: 'hidden' },
@@ -116,7 +116,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                 property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
               )
 
-              const selectedKeyframeIdsForThisProperty = keyframeEditor.selectedIds
+              const selectedKeyframeIdsForThisProperty = selectedIds
                 .filter((keyframeId) => keyframeId.startsWith(keyframeIdPrefix))
                 .map((keyframeId) => keyframeId.split('--').pop())
 
@@ -130,7 +130,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                   frameOut={frameOut}
                   pixelsPerFrame={pixelsPerFrame}
                   drawNewKeyAt={
-                    (keyframeLabel === hoveredProperty && !hoveringNearExistingKeyframe)
+                    (keyframeLabel === hoveredProperty && !hoveringNearExistingKeyframe && dragStart == null)
                       ? drawNewKeyAt
                       : null
                   }
@@ -146,12 +146,12 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                   onKeyframePress={(keyframeId, setOnlyOneKey) => {
                     const keyframeFullId = `${keyframeIdPrefix}--${keyframeId}`
                     if (setOnlyOneKey) {
-                      if (keyframeEditor.selectedIds.length <= 1) {
+                      if (selectedIds.length <= 1) {
                         store.setSelectedKeyframes([keyframeFullId])
-                      } else if (!keyframeEditor.selectedIds.includes(keyframeFullId)) {
+                      } else if (!selectedIds.includes(keyframeFullId)) {
                         store.setSelectedKeyframes([keyframeFullId])
                       }
-                    } else if (keyframeEditor.selectedIds.includes(keyframeFullId)) {
+                    } else if (selectedIds.includes(keyframeFullId)) {
                       store.removeKeyframeFromSelection(keyframeFullId)
                     } else {
                       store.addKeyframeToSelection(keyframeFullId)
@@ -171,12 +171,12 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                   onLabelClick={(visibleKeyIds, setOnlyOneLine) => {
                     const keyframeIds = visibleKeyIds.map((keyId) => `${keyframeIdPrefix}--${keyId}`)
                     if (setOnlyOneLine) {
-                      if (isEqual(keyframeIds, keyframeEditor.selectedIds)) {
+                      if (isEqual(keyframeIds, selectedIds)) {
                         store.setSelectedKeyframes([])
                       } else {
                         store.setSelectedKeyframes(keyframeIds)
                       }
-                    } else if (keyframeIds.every((kId) => keyframeEditor.selectedIds.includes(kId))) {
+                    } else if (keyframeIds.every((kId) => selectedIds.includes(kId))) {
                       const allFrameIdsForLine = property.keyframes
                         .map((keyframe) => `${keyframeIdPrefix}--${keyframe.id}`)
                       store.removeKeyframesFromSelection(allFrameIdsForLine)
