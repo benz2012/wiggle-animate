@@ -130,9 +130,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setPlayheadHoverLineFrame(null)
       }
 
-      if (event.target.id.startsWith('keyframe-line')) {
+      if (['keyframe-line', 'keyframe-item'].includes(event.target.id.split('--')[0])) {
         const hoveredKeyframePropLabel = event.target.id.split('--').pop()
-        const mouseLeftRelativeToHoverRegion = event.nativeEvent.offsetX
+        const mouseLeftRelativeToHoverRegion = event.clientX - event.target.offsetParent.offsetLeft
         store.setHoveredProperty(hoveredKeyframePropLabel)
         store.setNewKeyPosition(mouseLeftRelativeToHoverRegion)
       } else {

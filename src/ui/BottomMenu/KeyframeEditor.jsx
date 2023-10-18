@@ -14,7 +14,6 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 // TODO [1]: Handle Editor
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
-// BUG [1]: when hovering over keyframe the timeline tick stops showing
 
 const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
