@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
@@ -40,27 +40,38 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   }, [store, keyframesLineWidth, numFramesShown])
 
   const theme = useTheme()
-  const leftOffsetStr = theme.spacing(1)
-  const leftOffset = parseInt(leftOffsetStr.substring(0, leftOffsetStr.length - 2), 10)
-  const uxFeelingOffset = 3
 
-  // Start with a comfortable position in relation to the mouse
-  let drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
-  // Snapping to Frames
-  drawNewKeyAt = Math.floor((drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
-  // Convert to Frame Number
-  const relativeFrameHovered = Math.round(drawNewKeyAt / pixelsPerFrame)
-  let absoluteFrameHovered = frameIn + relativeFrameHovered
-  // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
-  if (absoluteFrameHovered < frameIn) {
-    drawNewKeyAt = 0
-    absoluteFrameHovered = frameIn
-  } else if (absoluteFrameHovered > frameOut) {
-    drawNewKeyAt = ((numFramesShown - 1) * pixelsPerFrame)
-    absoluteFrameHovered = frameOut
-  }
-  // Final CSS Movement Tweaks
-  drawNewKeyAt -= cssRotationOffset
+  const [drawNewKeyAt, absoluteFrameHovered] = useMemo(() => {
+    const leftOffsetStr = theme.spacing(1)
+    const leftOffset = parseInt(leftOffsetStr.substring(0, leftOffsetStr.length - 2), 10)
+    const uxFeelingOffset = 3
+    const _numFramesShown = frameOut - frameIn + 1
+
+    // Start with a comfortable position in relation to the mouse
+    let _drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
+    // Snapping to Frames
+    _drawNewKeyAt = Math.floor((_drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
+    // Convert to Frame Number
+    const relativeFrameHovered = Math.round(_drawNewKeyAt / pixelsPerFrame)
+    let _absoluteFrameHovered = frameIn + relativeFrameHovered
+    // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
+    if (_absoluteFrameHovered < frameIn) {
+      _drawNewKeyAt = 0
+      _absoluteFrameHovered = frameIn
+    } else if (_absoluteFrameHovered > frameOut) {
+      _drawNewKeyAt = ((_numFramesShown - 1) * pixelsPerFrame)
+      _absoluteFrameHovered = frameOut
+    }
+    // Final CSS Movement Tweaks
+    _drawNewKeyAt -= cssRotationOffset
+    return [_drawNewKeyAt, _absoluteFrameHovered]
+  }, [
+    theme,
+    frameIn,
+    frameOut,
+    newKeyPosition,
+    pixelsPerFrame,
+  ])
   /* End Calculations */
 
   return (
