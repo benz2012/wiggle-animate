@@ -21,6 +21,8 @@ const ColorBox = ({ color, onClick }) => (
   />
 )
 
+// TODO [3]: Enter and Escape key close the color picker
+//           I feel like I already tried this and this was a reason it was conflicting with other hotkeys
 const ColorPicker = ({ color, setColor, close }) => (
   <Backdrop
     open
