@@ -110,7 +110,7 @@ class RootStore {
       dragStartFrameNums: {},
       pixelsPerFrame: null,
       lineWidthLessThanParent: 32,
-      handleEditorWidth: 268,
+      curveEditorWidth: 268,
     }
 
     this.animation = new Animation()

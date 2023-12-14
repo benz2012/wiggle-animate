@@ -7,7 +7,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
-import HandleEditorCanvas from './HandleEditorCanvas'
+import CurveEditorCanvas from './CurveEditorCanvas'
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 import { isEqual } from '../../utility/array'
 
@@ -29,14 +29,14 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
     newKeyPosition,
     hoveredProperty,
     lineWidthLessThanParent,
-    handleEditorWidth,
+    curveEditorWidth,
     pixelsPerFrame,
     selectedIds,
     dragStart,
   } = keyframeEditor
 
   /* Calculations to relate Mouse Position to Frame Number */
-  const keyframesLineWidth = windowWidth - handleEditorWidth - LABEL_WIDTH - lineWidthLessThanParent
+  const keyframesLineWidth = windowWidth - curveEditorWidth - LABEL_WIDTH - lineWidthLessThanParent
   const numFramesShown = frameOut - frameIn + 1
   useEffect(() => {
     store.setKeyframePixelsPerFrame(keyframesLineWidth / (numFramesShown - 1))
@@ -204,9 +204,9 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
         )}
       </Box>
 
-      <HandleEditorCanvas
+      <CurveEditorCanvas
         store={store}
-        width={handleEditorWidth}
+        width={curveEditorWidth}
       />
     </Box>
   )

@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-const CenteredMessageHandleEditor = () => (
+const CenteredMessageCurveEditor = () => (
   <Box
     sx={{
       height: '100%',
@@ -22,4 +22,4 @@ const CenteredMessageHandleEditor = () => (
   </Box>
 )
 
-export default CenteredMessageHandleEditor
+export default CenteredMessageCurveEditor

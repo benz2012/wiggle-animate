@@ -4,14 +4,14 @@ import Box from '@mui/material/Box'
 
 import theme from '../theme'
 import { identityMatrix } from '../../utility/matrix'
-import { drawGrid, drawBezier, drawControlHandle } from '../../utility/drawing/handleEditor'
+import { drawGrid, drawBezier, drawControlHandle } from '../../utility/drawing/curveEditor'
 import Keyframe from '../../lib/animation/Keyframe'
-import CenteredMessageHandleEditor from './CenteredMessageHandleEditor'
+import CenteredMessageCurveEditor from './CenteredMessageCurveEditor'
 
 // TODO [3]: Hold Shift to snap-to-grid while moving the handle
 
-const HandleEditorCanvas = observer(({ store, width }) => {
-  const handleEditorCanvasRef = useRef()
+const CurveEditorCanvas = observer(({ store, width }) => {
+  const curveEditorCanvasRef = useRef()
 
   // Render Determinations
   const [showCanvas, targetKeyframes] = useMemo(() => {
@@ -94,9 +94,9 @@ const HandleEditorCanvas = observer(({ store, width }) => {
   const targetKeyframesStr = JSON.stringify(targetKeyframes)
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
-    if (!handleEditorCanvasRef.current) return
+    if (!curveEditorCanvasRef.current) return
 
-    const canvas = handleEditorCanvasRef.current
+    const canvas = curveEditorCanvasRef.current
     const ctx = canvas.getContext('2d')
     const { width: canvasWidth, height: canvasHeight } = canvas
 
@@ -138,17 +138,17 @@ const HandleEditorCanvas = observer(({ store, width }) => {
       </Box>
       {showCanvas ? (
         <canvas
-          ref={handleEditorCanvasRef}
-          id="handle-editor-canvas"
+          ref={curveEditorCanvasRef}
+          id="curve-editor-canvas"
           width={canvasSourceWidth * store.DPR}
           height={canvasSourceHeight * store.DPR}
           style={{ width: canvasSourceWidth, height: canvasSourceHeight }}
         />
       ) : (
-        <CenteredMessageHandleEditor />
+        <CenteredMessageCurveEditor />
       )}
     </Box>
   )
 })
 
-export default HandleEditorCanvas
+export default CurveEditorCanvas
