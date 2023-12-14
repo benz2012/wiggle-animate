@@ -7,6 +7,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
+import HandleEditorCanvas from './HandleEditorCanvas'
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 import { isEqual } from '../../utility/array'
 
@@ -14,6 +15,8 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 // TODO [1]: Handle Editor
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
+// TODO [3]: When 1or 2 keyframe selected, maybe show the inbetween range as yellow
+//           in the keyframe timeline to indicate which region the handle editor is referencing
 
 const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store
@@ -201,15 +204,10 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
         )}
       </Box>
 
-      <Box
-        sx={{
-          width: `${handleEditorWidth}px`,
-          height: '100%',
-          backgroundColor: 'rgba(33, 150, 243, 0.2)',
-        }}
-      >
-        &nbsp;
-      </Box>
+      <HandleEditorCanvas
+        store={store}
+        width={handleEditorWidth}
+      />
     </Box>
   )
 })
