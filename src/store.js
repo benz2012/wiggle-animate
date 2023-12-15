@@ -110,6 +110,7 @@ class RootStore {
       selectedIds: [],
       dragStart: null,
       dragStartFrameNums: {},
+      dragHasMovedAtLeastOneFrame: false,
       pixelsPerFrame: null,
       lineWidthLessThanParent: 32,
       curveEditorWidth: 268,
@@ -471,17 +472,23 @@ class RootStore {
       final[keyframeId] = keyframe.frame
       return final
     }, {})
+    this.keyframeEditor.dragHasMovedAtLeastOneFrame = false
   }
 
   stopKeyframeDrag() {
     this.keyframeEditor.dragStart = null
     this.keyframeEditor.dragStartFrameNums = {}
+    this.keyframeEditor.dragHasMovedAtLeastOneFrame = false
   }
 
   moveKeyframesToFrameForX(xPosition, mouseMovementDirection) {
     if (!this.keyframeEditor.dragStart) return
     const xOffset = xPosition - this.keyframeEditor.dragStart
     const framesToMove = Math.round(xOffset / this.keyframeEditor.pixelsPerFrame)
+
+    if (framesToMove !== 0) {
+      this.keyframeEditor.dragHasMovedAtLeastOneFrame = true
+    }
 
     const selectedItem = this.rootContainer.findItem(this.build.selectedIds[0])
     const sortingAlgorithm = mouseMovementDirection > 0 ? Keyframe.reverseSort : Keyframe.sort
@@ -579,12 +586,18 @@ class RootStore {
 
   /* Curve Editor Computeds */
   get curveEditorTargets() {
+    const emptyReturn = [false, [], '']
+    if (this.keyframeEditor.dragHasMovedAtLeastOneFrame) {
+      // Dragging keyframes creates jenky output in the curve editor, so disable that possibility
+      return emptyReturn
+    }
+
     const selectedKeyframeFullIds = this.keyframeEditor.selectedIds
     const numSelected = selectedKeyframeFullIds.length
 
     if ([1, 2].includes(numSelected) === false) {
       // We can only find a pair of keyframes when 1 or 2 is selected
-      return [false, []]
+      return emptyReturn
     }
 
     const selectedItem = this.rootContainer.findItem(this.build.selectedIds[0])
@@ -595,7 +608,7 @@ class RootStore {
       const selectedProperty = selectedItem[selectedPropName]
       if (selectedProperty.keyframes.length === 1) {
         // One is selected but the are no others to create a pair
-        return [false, []]
+        return emptyReturn
       }
 
       const sortedKeyframes = [...selectedProperty.keyframes].sort(Keyframe.sort)
@@ -603,7 +616,7 @@ class RootStore {
       const nextKeyframeIdx = selectedKeyframeIdx + 1
       if ((sortedKeyframes.length - 1) < (selectedKeyframeIdx + 1)) {
         // The one that is selected is the last one, no pair exists
-        return [false, []]
+        return emptyReturn
       }
 
       const keyframeLabel = keyframeLabelFromProperty(selectedProperty)
@@ -630,7 +643,7 @@ class RootStore {
       })
 
     if (!areSelectedKeyframesFromSameItemAndProp) {
-      return [false, []]
+      return emptyReturn
     }
 
     const selectedPropName = Object.keys(seenPropNames)[0]
@@ -640,7 +653,7 @@ class RootStore {
     const keyIdx2 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[1])
     if (Math.abs(keyIdx2 - keyIdx1) !== 1) {
       // The two that are selected are not in-sequence
-      return [false, []]
+      return emptyReturn
     }
 
     const _targetKeyframes = [sortedKeyframes[keyIdx1], sortedKeyframes[keyIdx2]].sort(Keyframe.sort)

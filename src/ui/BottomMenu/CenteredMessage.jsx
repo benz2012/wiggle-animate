@@ -10,6 +10,7 @@ const CenteredMessage = ({ numSelected }) => {
   }
   return (
     <Box
+      className="noselect"
       sx={{
         height: '100%',
         display: 'flex',

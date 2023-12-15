@@ -8,8 +8,6 @@ import { drawGrid, drawBezier, drawControlHandle } from '../../utility/drawing/c
 import CenteredMessageCurveEditor from './CenteredMessageCurveEditor'
 import LabelText from './LabelText'
 
-// TODO [1]: Deleting a keyframe breaks things
-// TODO [1]: Dragging keyframes gets jenky, just disable this when that happens, re-eval when mouse up
 // TODO [2]: New keyframes should use similar curve params as the surrounding ones
 // TODO [3]: When the last keyframe in the row is selected, show the region behind it
 // TODO [3]: Hold Shift to snap-to-grid while moving the handle

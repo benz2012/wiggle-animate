@@ -14,7 +14,6 @@ import { keyframeLabelFromProperty } from '../../utility/state'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
-// TODO [1]: Handle Editor
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
 // TODO [3]: When 1or 2 keyframe selected, maybe show the inbetween range as yellow
 //           in the keyframe timeline to indicate which region the handle editor is referencing

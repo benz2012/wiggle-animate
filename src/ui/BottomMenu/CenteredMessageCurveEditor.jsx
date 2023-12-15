@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography'
 
 const CenteredMessageCurveEditor = () => (
   <Box
+    className="noselect"
     sx={{
       height: '100%',
       display: 'flex',

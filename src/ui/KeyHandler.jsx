@@ -173,6 +173,7 @@ const KeyHandler = ({ store }) => {
             const item = store.rootContainer.findItem(itemId)
             item[propertyName].deleteKey(keyframeId)
           })
+          store.setSelectedKeyframes([])
         } else if (STAGE_HAS_FOCUS && selectedIds.length > 0) {
           const itemsToDelete = selectedIds.map((selectedId) => (
             store.rootContainer.findItem(selectedId)
