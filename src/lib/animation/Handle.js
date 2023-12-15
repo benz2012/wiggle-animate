@@ -3,12 +3,12 @@ import { computed, makeObservable, observable } from 'mobx'
 class Handle {
   static get className() { return 'Handle' }
   static get TYPES() { return { IN: 'IN', OUT: 'OUT' } }
-  static get MAX() { return 100 }
+  static get MAX() { return 1 }
   static get STEP() { return 10 }
 
   constructor(type) {
     this.type = type
-    this.influence = 50
+    this.influence = 0.5
     this.distance = 0
 
     makeObservable(this, {

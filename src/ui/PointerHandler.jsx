@@ -29,9 +29,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     const { selectedIds, dragStart, tool } = store.build
     const { dragStart: playheadDragStart } = store.playhead
     const { dragStart: keyframeDragStart } = store.keyframeEditor
+    const { dragStart: curveHandleDragStart, dragStartWhichHandle: whichCurveControlHandle } = store.curveEditor
+
+    const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
 
     if (dragStart) {
-      const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
       const relativeMovement = Vector2.subtract(pointerVector, dragStart)
 
       if (store.keyHeld.Space || store.keyHeld.MiddleMouse) {
@@ -63,6 +65,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       goToFrameWithPointerX(event.clientX)
     } else if (keyframeDragStart) {
       store.moveKeyframesToFrameForX(event.clientX, Math.sign(event.movementX))
+    } else if (curveHandleDragStart) {
+      const relativeMovement = Vector2.subtract(pointerVector, curveHandleDragStart)
+      store.moveKeyframeCurveHandleByIncrement(relativeMovement)
+      store.startCurveEditorDrag(pointerVector, whichCurveControlHandle)
     }
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
@@ -129,6 +135,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.setPlayheadHovered(false)
         store.setPlayheadHoverLineFrame(null)
       }
+
+      // Note: Curve Editor Pointer Intersections are checked directly within that component
 
       if (['keyframe-line', 'keyframe-item'].includes(event.target.id.split('--')[0])) {
         const hoveredKeyframePropLabel = event.target.id.split('--').pop()
@@ -211,6 +219,13 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         goToFrameWithPointerX(pointerVectorRatioOne.x)
       } else if (event.target.id.startsWith('keyframe-item--')) {
         store.startKeyframeDrag(pointerVectorRatioOne.x)
+      } else if (event.target.id === 'curve-editor-canvas') {
+        const { handle1Intersection, handle2Intersection } = store.curveEditor
+        if (handle1Intersection) {
+          store.startCurveEditorDrag(pointerVector, 1)
+        } else if (handle2Intersection) {
+          store.startCurveEditorDrag(pointerVector, 2)
+        }
       }
     } else if (event.type === 'pointerup') {
       /* POINTER UP / END-OF-DRAG */
@@ -220,6 +235,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       store.stopDrag()
       store.stopPlayheadDrag()
       store.stopKeyframeDrag()
+      store.stopCurveEditorDrag()
 
       store.setSelectorRect(0, 0)
       if (store.selector.hovers.length > 0) {

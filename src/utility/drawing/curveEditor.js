@@ -29,7 +29,7 @@ const drawBezier = (ctx, units, innerSize, c1x, c1y, c2x, c2y) => {
   ctx.beginPath()
   ctx.moveTo(0, innerSize)
   ctx.bezierCurveTo(...[
-    innerSize * c1x, innerSize * (1 - c1y),
+    innerSize * c1x, innerSize * c1y,
     innerSize * c2x, innerSize * c2y,
     innerSize, 0,
   ])
@@ -50,39 +50,55 @@ const drawControlHandle = (
   whichHandle,
   x,
   y,
-  hovered = false,
+  setIntersection,
+  pointerPosition,
   active = false,
 ) => {
-  const realX = x * innerSize
-  const realY = whichHandle === 1 ? (1 - y) * innerSize : y * innerSize
+  const strokeLineWidth = units(1)
+  const handleCircleRadius = units(5)
+  const scalarX = x * innerSize
+  const scalarY = y * innerSize
 
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
   ctx.fillStyle = 'transparent'
-  if (hovered) {
-    ctx.fillStyle = `${theme.palette.tertiary[20]}`
-  }
-  if (active) {
-    ctx.fillStyle = `${theme.palette.tertiary[50]}`
-  }
-  ctx.lineWidth = units(1)
+  ctx.lineWidth = strokeLineWidth
   ctx.lineJoin = 'miter'
 
+  // Check for Hover Intersections & cursor handling
+  ctx.beginPath()
+  ctx.ellipse(...[
+    scalarX, scalarY,
+    handleCircleRadius + strokeLineWidth, handleCircleRadius + strokeLineWidth,
+    0, 0, Math.PI * 2,
+  ])
+  const hovered = ctx.isPointInPath(pointerPosition.x, pointerPosition.y)
+  if (hovered) {
+    setIntersection(whichHandle, true)
+  } else {
+    setIntersection(whichHandle, false)
+  }
+  if (active) {
+    // This sets everything to white, unlike the switch below that only sets the circle white
+    ctx.strokeStyle = `${theme.palette.WHITE}`
+  }
+
+  // Begin Drawing
   ctx.beginPath()
   if (whichHandle === 1) {
     ctx.moveTo(0, innerSize)
   } else if (whichHandle === 2) {
     ctx.moveTo(innerSize, 0)
   }
-  ctx.lineTo(realX, realY)
+  ctx.lineTo(scalarX, scalarY)
   ctx.stroke()
 
-  if (active) {
+  if (hovered || active) {
     ctx.strokeStyle = `${theme.palette.WHITE}`
   }
   ctx.beginPath()
   ctx.ellipse(...[
-    realX, realY,
-    units(5), units(5),
+    scalarX, scalarY,
+    handleCircleRadius, handleCircleRadius,
     0, 0, Math.PI * 2,
   ])
   ctx.stroke()

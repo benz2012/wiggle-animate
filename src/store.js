@@ -17,6 +17,7 @@ import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './u
 // import { storageEnabled } from './utility/storage'
 import { sleep } from './utility/time'
 import { isEqual } from './utility/array'
+import { clamp } from './utility/numbers'
 
 class RootStore {
   constructor() {
@@ -113,6 +114,14 @@ class RootStore {
       curveEditorWidth: 268,
     }
 
+    this.curveEditor = {
+      regionWidth: 0,
+      handle1Intersection: false,
+      handle2Intersection: false,
+      dragStart: null,
+      dragStartWhichHandle: null,
+    }
+
     this.animation = new Animation()
     // TODO [-]: remove this after debugging
     window._animation = this.animation
@@ -127,6 +136,7 @@ class RootStore {
       keyHeld: observable,
       propertyEditor: observable,
       keyframeEditor: observable,
+      curveEditor: observable,
       // animation: Never changes, no need for observable, observable within
 
       setExporting: action,
@@ -178,8 +188,15 @@ class RootStore {
       stopKeyframeDrag: action,
       moveKeyframesToFrameForX: action,
 
+      setCurveRegionWidth: action,
+      setHandleIntersection: action,
+      startCurveEditorDrag: action,
+      stopCurveEditorDrag: action,
+      moveKeyframeCurveHandleByIncrement: action,
+
       /* Computeds */
       determineCurrentAction: computed,
+      curveEditorTargets: computed,
     })
   }
 
@@ -511,6 +528,119 @@ class RootStore {
         targetKeyframe.frame = newFrameToSet
       })
     })
+  }
+
+  /* Curve Editor Actions */
+  setCurveRegionWidth(value) { this.curveEditor.regionWidth = value }
+
+  setHandleIntersection(handleNum, value) {
+    this.curveEditor[`handle${handleNum}Intersection`] = value
+  }
+
+  startCurveEditorDrag(vector, whichHandle) {
+    this.curveEditor.dragStart = vector
+    this.curveEditor.dragStartWhichHandle = whichHandle
+  }
+
+  stopCurveEditorDrag() {
+    this.curveEditor.dragStart = null
+    this.curveEditor.dragStartWhichHandle = null
+  }
+
+  moveKeyframeCurveHandleByIncrement(relativeMovement) {
+    const whichHandle = this.curveEditor.dragStartWhichHandle
+    const [_, targetKeyframes] = this.curveEditorTargets
+
+    // Note: we do the inverse tranformation from Quadrant4 to anchor-relative position
+    let toChangeX = relativeMovement.x / this.curveEditor.regionWidth
+    let toChangeY = relativeMovement.y / this.curveEditor.regionWidth
+
+    let handleTargetIdx
+    let handleTargetType
+    if (whichHandle === 1) {
+      handleTargetIdx = 0
+      handleTargetType = 'handleOut'
+      toChangeY *= -1
+    } else if (whichHandle === 2) {
+      handleTargetIdx = 1
+      handleTargetType = 'handleIn'
+      toChangeX *= -1
+    }
+
+    if (handleTargetIdx != null && handleTargetType != null) {
+      const targetControlHandle = targetKeyframes[handleTargetIdx][handleTargetType]
+      const newInfluence = targetControlHandle.influence + toChangeX
+      const newDistance = targetControlHandle.distance + toChangeY
+      targetControlHandle.influence = clamp(newInfluence, 0, 1)
+      targetControlHandle.distance = clamp(newDistance, 0, 1)
+    }
+  }
+
+  /* Curve Editor Computeds */
+  get curveEditorTargets() {
+    const selectedKeyframeFullIds = this.keyframeEditor.selectedIds
+    const numSelected = selectedKeyframeFullIds.length
+
+    if ([1, 2].includes(numSelected) === false) {
+      // We can only find a pair of keyframes when 1 or 2 is selected
+      return [false, []]
+    }
+
+    const selectedItem = this.rootContainer.findItem(this.build.selectedIds[0])
+
+    if (numSelected === 1) {
+      const fullId = selectedKeyframeFullIds[0]
+      const [_, selectedPropName, selectedKeyframeId] = fullId.split('--')
+      if (selectedItem[selectedPropName].keyframes.length === 1) {
+        // One is selected but the are no others to create a pair
+        return [false, []]
+      }
+
+      const sortedKeyframes = [...selectedItem[selectedPropName].keyframes].sort(Keyframe.sort)
+      const selectedKeyframeIdx = sortedKeyframes.findIndex((keyframe) => keyframe.id === selectedKeyframeId)
+      const nextKeyframeIdx = selectedKeyframeIdx + 1
+      if ((sortedKeyframes.length - 1) < (selectedKeyframeIdx + 1)) {
+        // The one that is selected is the last one, no pair exists
+        return [false, []]
+      }
+
+      return [true, [sortedKeyframes[selectedKeyframeIdx], sortedKeyframes[nextKeyframeIdx]]]
+    }
+
+    const seenItemIds = {}
+    const seenPropNames = {}
+    const seenKeyframeIds = []
+
+    const areSelectedKeyframesFromSameItemAndProp = selectedKeyframeFullIds
+      .every((fullId) => {
+        const [selectedItemId, selectedPropName, selectedKeyframeId] = fullId.split('--')
+        if (!(selectedItemId in seenItemIds) && Object.keys(seenItemIds).length > 0) {
+          return false
+        }
+        seenItemIds[selectedItemId] = true
+        if (!(selectedPropName in seenPropNames) && Object.keys(seenPropNames).length > 0) {
+          return false
+        }
+        seenPropNames[selectedPropName] = true
+        seenKeyframeIds.push(selectedKeyframeId)
+        return true
+      })
+
+    if (!areSelectedKeyframesFromSameItemAndProp) {
+      return [false, []]
+    }
+
+    const selectedPropName = Object.keys(seenPropNames)[0]
+    const sortedKeyframes = [...selectedItem[selectedPropName].keyframes].sort(Keyframe.sort)
+    const keyIdx1 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[0])
+    const keyIdx2 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[1])
+    if (Math.abs(keyIdx2 - keyIdx1) !== 1) {
+      // The two that are selected are not in-sequence
+      return [false, []]
+    }
+
+    const _targetKeyframes = [sortedKeyframes[keyIdx1], sortedKeyframes[keyIdx2]].sort(Keyframe.sort)
+    return [true, _targetKeyframes]
   }
 
   /* Output Actions */

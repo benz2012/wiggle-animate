@@ -33,8 +33,13 @@ const truncateFloatLeaveInt = (value) => {
   return _stringToTruncatedFloat(`${value}`)
 }
 
+const clamp = (number, min, max) => (
+  Math.min(Math.max(number, min), max)
+)
+
 export {
   isNumber,
   isOdd,
   truncateFloatLeaveInt,
+  clamp,
 }

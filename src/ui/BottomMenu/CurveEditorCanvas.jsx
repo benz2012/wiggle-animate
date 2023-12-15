@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useMemo } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 
 import theme from '../theme'
 import { identityMatrix } from '../../utility/matrix'
 import { drawGrid, drawBezier, drawControlHandle } from '../../utility/drawing/curveEditor'
-import Keyframe from '../../lib/animation/Keyframe'
 import CenteredMessageCurveEditor from './CenteredMessageCurveEditor'
 
 // TODO [3]: Hold Shift to snap-to-grid while moving the handle
@@ -13,98 +12,61 @@ import CenteredMessageCurveEditor from './CenteredMessageCurveEditor'
 const CurveEditorCanvas = observer(({ store, width }) => {
   const curveEditorCanvasRef = useRef()
 
-  // Render Determinations
-  const [showCanvas, targetKeyframes] = useMemo(() => {
-    const selectedKeyframeFullIds = store.keyframeEditor.selectedIds
-    const numSelected = selectedKeyframeFullIds.length
-
-    if ([1, 2].includes(numSelected) === false) {
-      // We can only find a pair of keyframes when 1 or 2 is selected
-      return [false, []]
-    }
-
-    const selectedItem = store.rootContainer.findItem(store.build.selectedIds[0])
-
-    if (numSelected === 1) {
-      const fullId = selectedKeyframeFullIds[0]
-      const [_, selectedPropName, selectedKeyframeId] = fullId.split('--')
-      if (selectedItem[selectedPropName].keyframes.length === 1) {
-        // One is selected but the are no others to create a pair
-        return [false, []]
-      }
-
-      const sortedKeyframes = [...selectedItem[selectedPropName].keyframes].sort(Keyframe.sort)
-      const selectedKeyframeIdx = sortedKeyframes.findIndex((keyframe) => keyframe.id === selectedKeyframeId)
-      const nextKeyframeIdx = selectedKeyframeIdx + 1
-      if ((sortedKeyframes.length - 1) < (selectedKeyframeIdx + 1)) {
-        // The one that is selected is the last one, no pair exists
-        return [false, []]
-      }
-
-      return [true, [sortedKeyframes[selectedKeyframeIdx], sortedKeyframes[nextKeyframeIdx]]]
-    }
-
-    const seenItemIds = {}
-    const seenPropNames = {}
-    const seenKeyframeIds = []
-
-    const areSelectedKeyframesFromSameItemAndProp = selectedKeyframeFullIds
-      .every((fullId) => {
-        const [selectedItemId, selectedPropName, selectedKeyframeId] = fullId.split('--')
-        if (!(selectedItemId in seenItemIds) && Object.keys(seenItemIds).length > 0) {
-          return false
-        }
-        seenItemIds[selectedItemId] = true
-        if (!(selectedPropName in seenPropNames) && Object.keys(seenPropNames).length > 0) {
-          return false
-        }
-        seenPropNames[selectedPropName] = true
-        seenKeyframeIds.push(selectedKeyframeId)
-        return true
-      })
-
-    if (!areSelectedKeyframesFromSameItemAndProp) {
-      return [false, []]
-    }
-
-    const selectedPropName = Object.keys(seenPropNames)[0]
-    const sortedKeyframes = [...selectedItem[selectedPropName].keyframes].sort(Keyframe.sort)
-    const keyIdx1 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[0])
-    const keyIdx2 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[1])
-    if (Math.abs(keyIdx2 - keyIdx1) !== 1) {
-      // The two that are selected are not in-sequence
-      return [false, []]
-    }
-
-    const _targetKeyframes = [sortedKeyframes[keyIdx1], sortedKeyframes[keyIdx2]].sort(Keyframe.sort)
-    return [true, _targetKeyframes]
-  }, [
-    store.keyframeEditor.selectedIds,
-    store.build.selectedIds,
-    store.rootContainer,
-  ])
+  const [showCanvas, targetKeyframes] = store.curveEditorTargets
 
   // Visual Helpers
   const units = useCallback((unit) => unit * store.DPR, [store.DPR])
+  const padding = units(theme.spacing[1])
   const canvasSourceWidth = Math.round(width * 0.9)
   const canvasSourceHeight = Math.round(width * 0.9)
   const labelBoxHeight = width - canvasSourceHeight
+
+  useEffect(() => {
+    if (!curveEditorCanvasRef.current) return
+    const canvas = curveEditorCanvasRef.current
+    store.setCurveRegionWidth(canvas.width - (padding * 2))
+  }, [
+    store,
+    showCanvas,
+    width,
+    padding,
+  ])
+
+  // Mouse Interactions
+  const { handle1Intersection, handle2Intersection } = store.curveEditor
+  useEffect(() => {
+    if (!curveEditorCanvasRef.current) return
+    if (handle1Intersection || handle2Intersection) {
+      curveEditorCanvasRef.current.style.cursor = 'pointer'
+    } else {
+      curveEditorCanvasRef.current.style.cursor = 'default'
+    }
+  }, [
+    handle1Intersection,
+    handle2Intersection,
+  ])
 
   // Drawing Loop
   const targetKeyframesStr = JSON.stringify(targetKeyframes)
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
+    if (!showCanvas) return
     if (!curveEditorCanvasRef.current) return
 
     const canvas = curveEditorCanvasRef.current
     const ctx = canvas.getContext('2d')
     const { width: canvasWidth, height: canvasHeight } = canvas
 
-    const padding = units(theme.spacing[1])
     const innerSize = canvasWidth - padding * 2
 
-    const { x: c1x, y: c1y } = targetKeyframes[0].handleOut.position
-    const { x: c2x, y: c2y } = targetKeyframes[1].handleOut.position
+    // Each point is defined as from-anchor, so we need to convert
+    // into Quadrant-4 space (aka web browser 0,0 = top-left)
+    const controlHandle1 = targetKeyframes[0].handleOut
+    const c1x = controlHandle1.influence
+    const c1y = 1 - controlHandle1.distance
+    const controlHandle2 = targetKeyframes[1].handleIn
+    const c2x = 1 - controlHandle2.influence
+    const c2y = controlHandle2.distance
 
     ctx.setTransform(identityMatrix())
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
@@ -113,12 +75,34 @@ const CurveEditorCanvas = observer(({ store, width }) => {
     drawGrid(ctx, units, padding, innerSize)
     drawBezier(ctx, units, innerSize, c1x, c1y, c2x, c2y)
 
-    drawControlHandle(ctx, units, innerSize, 1, c1x, c1y)
-    drawControlHandle(ctx, units, innerSize, 2, c2x, c2y)
+    const { x: pointerX, y: pointerY } = store.build.pointerPosition.object
+    const { x: canvasX, y: canvasY } = canvas.getBoundingClientRect()
+    const pointerRelative = {
+      x: pointerX - units(canvasX),
+      y: pointerY - units(canvasY),
+    }
+
+    drawControlHandle(...[
+      ctx, units, innerSize,
+      1, c1x, c1y,
+      store.setHandleIntersection.bind(store),
+      pointerRelative,
+      store.curveEditor.dragStartWhichHandle === 1,
+    ])
+    drawControlHandle(...[
+      ctx, units, innerSize,
+      2, c2x, c2y,
+      store.setHandleIntersection.bind(store),
+      pointerRelative,
+      store.curveEditor.dragStartWhichHandle === 2,
+    ])
   }, [
     showCanvas,
     units,
+    padding,
     targetKeyframesStr,
+    store.build.pointerPosition,
+    store.curveEditor.dragStartWhichHandle,
   ])
 
   return (
