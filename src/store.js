@@ -18,6 +18,7 @@ import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './u
 import { sleep } from './utility/time'
 import { isEqual } from './utility/array'
 import { clamp } from './utility/numbers'
+import { keyframeLabelFromProperty } from './utility/state'
 
 class RootStore {
   constructor() {
@@ -591,12 +592,13 @@ class RootStore {
     if (numSelected === 1) {
       const fullId = selectedKeyframeFullIds[0]
       const [_, selectedPropName, selectedKeyframeId] = fullId.split('--')
-      if (selectedItem[selectedPropName].keyframes.length === 1) {
+      const selectedProperty = selectedItem[selectedPropName]
+      if (selectedProperty.keyframes.length === 1) {
         // One is selected but the are no others to create a pair
         return [false, []]
       }
 
-      const sortedKeyframes = [...selectedItem[selectedPropName].keyframes].sort(Keyframe.sort)
+      const sortedKeyframes = [...selectedProperty.keyframes].sort(Keyframe.sort)
       const selectedKeyframeIdx = sortedKeyframes.findIndex((keyframe) => keyframe.id === selectedKeyframeId)
       const nextKeyframeIdx = selectedKeyframeIdx + 1
       if ((sortedKeyframes.length - 1) < (selectedKeyframeIdx + 1)) {
@@ -604,7 +606,8 @@ class RootStore {
         return [false, []]
       }
 
-      return [true, [sortedKeyframes[selectedKeyframeIdx], sortedKeyframes[nextKeyframeIdx]]]
+      const keyframeLabel = keyframeLabelFromProperty(selectedProperty)
+      return [true, [sortedKeyframes[selectedKeyframeIdx], sortedKeyframes[nextKeyframeIdx]], keyframeLabel]
     }
 
     const seenItemIds = {}
@@ -631,7 +634,8 @@ class RootStore {
     }
 
     const selectedPropName = Object.keys(seenPropNames)[0]
-    const sortedKeyframes = [...selectedItem[selectedPropName].keyframes].sort(Keyframe.sort)
+    const selectedProperty = selectedItem[selectedPropName]
+    const sortedKeyframes = [...selectedProperty.keyframes].sort(Keyframe.sort)
     const keyIdx1 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[0])
     const keyIdx2 = sortedKeyframes.findIndex((keyframe) => keyframe.id === seenKeyframeIds[1])
     if (Math.abs(keyIdx2 - keyIdx1) !== 1) {
@@ -640,7 +644,8 @@ class RootStore {
     }
 
     const _targetKeyframes = [sortedKeyframes[keyIdx1], sortedKeyframes[keyIdx2]].sort(Keyframe.sort)
-    return [true, _targetKeyframes]
+    const keyframeLabel = keyframeLabelFromProperty(selectedProperty)
+    return [true, _targetKeyframes, keyframeLabel]
   }
 
   /* Output Actions */

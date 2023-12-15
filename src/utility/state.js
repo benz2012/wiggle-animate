@@ -12,7 +12,15 @@ const observeListOfProperties = (instance, listOfProps, inheritedListOfProps = [
   }, {}))
 }
 
+const keyframeLabelFromProperty = (property) => {
+  let keyframeLabel = `${property.group}-${property.label}`
+  if (!property.group || ['transform', 'size'].includes(property.group)) {
+    keyframeLabel = property.label
+  }
+  return keyframeLabel
+}
+
 export {
-  // eslint-disable-next-line import/prefer-default-export
   observeListOfProperties,
+  keyframeLabelFromProperty,
 }

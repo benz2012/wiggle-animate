@@ -6,13 +6,18 @@ import theme from '../theme'
 import { identityMatrix } from '../../utility/matrix'
 import { drawGrid, drawBezier, drawControlHandle } from '../../utility/drawing/curveEditor'
 import CenteredMessageCurveEditor from './CenteredMessageCurveEditor'
+import LabelText from './LabelText'
 
+// TODO [1]: Deleting a keyframe breaks things
+// TODO [1]: Dragging keyframes gets jenky, just disable this when that happens, re-eval when mouse up
+// TODO [2]: New keyframes should use similar curve params as the surrounding ones
+// TODO [3]: When the last keyframe in the row is selected, show the region behind it
 // TODO [3]: Hold Shift to snap-to-grid while moving the handle
 
 const CurveEditorCanvas = observer(({ store, width }) => {
   const curveEditorCanvasRef = useRef()
 
-  const [showCanvas, targetKeyframes] = store.curveEditorTargets
+  const [showCanvas, targetKeyframes, keyframeLabel] = store.curveEditorTargets
 
   // Visual Helpers
   const units = useCallback((unit) => unit * store.DPR, [store.DPR])
@@ -115,11 +120,26 @@ const CurveEditorCanvas = observer(({ store, width }) => {
         alignItems: 'center',
       }}
     >
-      <Box sx={{ height: labelBoxHeight }}>
+      {/* Label text */}
+      <Box
+        sx={{
+          height: labelBoxHeight,
+          alignSelf: 'flex-start',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          ml: 2,
+          gap: 1,
+        }}
+      >
         {showCanvas && (
-          'some label text here'
+          <>
+            <LabelText>{keyframeLabel}</LabelText>
+            <LabelText>f{targetKeyframes[0].frame} - f{targetKeyframes[1].frame}</LabelText>
+          </>
         )}
       </Box>
+
       {showCanvas ? (
         <canvas
           ref={curveEditorCanvasRef}

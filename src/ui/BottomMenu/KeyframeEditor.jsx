@@ -10,6 +10,7 @@ import RegionSelection from './RegionSelection'
 import CurveEditorCanvas from './CurveEditorCanvas'
 import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
 import { isEqual } from '../../utility/array'
+import { keyframeLabelFromProperty } from '../../utility/state'
 
 const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
@@ -119,11 +120,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
             {selectedItem.keyframables.map((propName) => {
               const property = selectedItem[propName]
               const keyframeIdPrefix = `${selectedItem.id}--${propName}`
-
-              let keyframeLabel = `${property.group}-${property.label}`
-              if (!property.group || ['transform', 'size'].includes(property.group)) {
-                keyframeLabel = property.label
-              }
+              const keyframeLabel = keyframeLabelFromProperty(property)
 
               const hoveringNearExistingKeyframe = (
                 property.keyframes.findIndex((keyframe) => (keyframe.frame === absoluteFrameHovered)) !== -1
