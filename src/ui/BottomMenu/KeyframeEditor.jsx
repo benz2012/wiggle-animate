@@ -17,6 +17,9 @@ const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 // TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
 // TODO [3]: When 1or 2 keyframe selected, maybe show the inbetween range as yellow
 //           in the keyframe timeline to indicate which region the handle editor is referencing
+// TODO [4]: Moving keyframes causes lots of unecessary renders, sometimes even triggeres a
+//           "maximum update depth exceeded" warning in react. very hard to debug, and will
+//           have serious affects whenever we upgrade to the next Mobx, for an unknown reason
 
 const KeyframeEditor = observer(({ store, windowWidth }) => {
   const { build, animation, rootContainer, keyframeEditor } = store

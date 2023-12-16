@@ -63,7 +63,6 @@ const exportOneFrame = async (frameNum) => {
   const microsecondsPerFrame = millisecondsPerFrame * 1000
   const timestampOfFrame = Math.round((frameNum - 1) * microsecondsPerFrame)
 
-  console.log(canvasToTarget)
   const frame = new VideoFrame(canvas, { timestamp: timestampOfFrame })
   await videoEncoder.encode(frame, { keyFrame: frameNum % 60 === 0 })
   frame.close()
@@ -76,16 +75,11 @@ const exportVideo = async () => {
   return videoAsBlob
 }
 
-const downloadBlob = (blobData, fileExtension) => {
+const downloadBlob = (blobData, fileName) => {
   const videoObjUrl = URL.createObjectURL(blobData)
   const aTag = document.createElement('a')
   aTag.href = videoObjUrl
-  const dateStamp = (new Date()).toISOString()
-    .replaceAll('-', '')
-    .replaceAll('T', '')
-    .replaceAll(':', '')
-    .slice(0, 12)
-  aTag.download = `animation-${dateStamp}.${fileExtension}`
+  aTag.download = fileName
   document.body.appendChild(aTag)
   aTag.click()
   URL.revokeObjectURL(videoObjUrl)

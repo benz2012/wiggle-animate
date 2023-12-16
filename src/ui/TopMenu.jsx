@@ -1,6 +1,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import Box from '@mui/material/Box'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogActions from '@mui/material/DialogActions'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
 
 import './TopMenu.css'
 import bCurveIcon from '../assets/b-curve-icon.png'
@@ -13,7 +23,7 @@ const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
   </div>
 )
 
-const TopMenu = ({ store }) => {
+const TopMenu = observer(({ store }) => {
   const [insertMenuOpen, setInsertMenuOpen] = useState(false)
   const { saveStatus } = store.project
 
@@ -32,6 +42,17 @@ const TopMenu = ({ store }) => {
   const handleInsertActionWith = (func) => () => {
     func()
     document.getElementById('stage').focus()
+  }
+
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
+  const openExportDialog = () => {
+    setExportDialogOpen(true)
+    store.setOutputFilename()
+  }
+  const conditionalClose = () => {
+    // Prevent closing the dialog until export is finished
+    if (store.project.isExporting) return
+    setExportDialogOpen(false)
   }
 
   return (
@@ -138,17 +159,61 @@ const TopMenu = ({ store }) => {
       <button
         type="button"
         className="top-menu-item top-menu-item-button noselect"
-        onClick={store.export}
+        onClick={openExportDialog}
       >
         <span className="unicode-icon">↯</span>
         Export
       </button>
+      <Dialog
+        open={exportDialogOpen}
+        onClose={conditionalClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Export Animation</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={conditionalClose}
+          disabled={store.project.isExporting}
+          sx={{
+            position: 'absolute',
+            right: 12,
+            top: 12,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent>
+          <DialogContentText>Customization: coming in a future update</DialogContentText>
+          <Box sx={{ mb: 1 }} />
+          <DialogContentText>
+            {store.animation.frames} frames
+          </DialogContentText>
+          <DialogContentText>
+            {store.animation.fps} FPS
+          </DialogContentText>
+          <DialogContentText>
+            {store.rootContainer.canvasSize.width}x{store.rootContainer.canvasSize.height}
+          </DialogContentText>
+          <DialogContentText>
+            black background
+          </DialogContentText>
+          <Box sx={{ mb: 1 }} />
+          <DialogContentText>
+            Output file: {store.project.exportFileName}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button sx={{ paddingLeft: 2, paddingRight: 2 }} onClick={store.export}>Export</Button>
+        </DialogActions>
+      </Dialog>
 
       <button type="button" className="top-menu-item top-menu-item-button noselect">
         ?
       </button>
     </div>
   )
-}
+})
 
 export default TopMenu

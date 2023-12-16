@@ -25,6 +25,8 @@ class Rectangle extends VisibleShape {
     // Oh, and apparently fill.opacity affect shadow.opacity as well, just another reason
     // could use https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter
     // but it's not supported in Safari sadly
+    // Also when you make this shadow module, you should add a Spread Property which will basically
+    // just scale the original object in either x or y before generating the shadow itself
   }
 }
 

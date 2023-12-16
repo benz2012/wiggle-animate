@@ -45,6 +45,7 @@ class RootStore {
       name: '',
       saveStatus: 'unknown',
       isExporting: false,
+      exportFileName: '',
     }
 
     this.build = {
@@ -329,7 +330,9 @@ class RootStore {
   }
 
   /* Project Actions */
-  setExporting(value) { this.project.isExporting = value }
+  setExporting(value) {
+    this.project.isExporting = value
+  }
 
   /* Build Actions */
   setTool(value) { this.build.tool = value }
@@ -662,10 +665,22 @@ class RootStore {
   }
 
   /* Output Actions */
+  setOutputFilename(clearIt = false) {
+    if (clearIt) {
+      this.project.exportFileName = ''
+      return
+    }
+
+    const dateStamp = (new Date()).toISOString()
+      .replaceAll('-', '')
+      .replaceAll('T', '')
+      .replaceAll(':', '')
+      .slice(0, 12)
+    const fileName = `animation-${dateStamp}.webm`
+    this.project.exportFileName = fileName
+  }
+
   export = async () => {
-    // TODO [2]: Have this open a modal with settings & confirmation
-    // TODO [2]: Add a no-click handler to the screen since interacting with the stage
-    //       will not cause a re-draw, and will actually be misleading/error-prone
     // TODO [3]: Have progress output displayed Prepare-boolean, Frames-progress, video progress
     // TODO [3]: wrap this whole thing in a giant error handler
 
@@ -681,10 +696,11 @@ class RootStore {
     if (prepared) {
       await this.animation.animateForExport(exportOneFrame)
       const videoAsBlob = await exportVideo()
-      downloadBlob(videoAsBlob, 'webm')
+      downloadBlob(videoAsBlob, this.project.exportFileName)
     } else {
       // TODO [2]: tell the user that we can't export using their browser
-      console.warn('This browser is not preparred/capable of exporting video in the way the developer wants')
+      // do this by running prepare when we open the modal, and only enabling the button once we know
+      console.warn('Error: This browser is not preparred/capable of exporting video in the way the developer wants')
     }
 
     this.setExporting(false)
