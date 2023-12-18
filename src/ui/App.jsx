@@ -11,6 +11,7 @@ import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import useWindowSize from './hooks/useWindowSize'
 import { peekAtObservables } from '../utility/tree'
+import { rotateArrowCursor } from '../utility/drawing/cursors'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)
@@ -53,8 +54,7 @@ const App = observer(({ store }) => {
         stageRef.current.style.cursor = 'nwse-resize'
         break
       case 'rotate':
-        // TODO [2]: change this to a custom draw rotation arrow
-        stageRef.current.style.cursor = 'alias'
+        stageRef.current.style.cursor = `${rotateArrowCursor}, pointer`
         break
       default:
         stageRef.current.style.cursor = 'crosshair'
