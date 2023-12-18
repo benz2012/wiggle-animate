@@ -5,6 +5,8 @@ import Drawable from '../drawing/Drawable'
 import { insert } from '../../utility/array'
 import { drawContainerController, ContainerControllerSizes } from '../../utility/drawing'
 
+// TODO [1]: for some reason moving a container origin is moving the items inside it as well
+//           maybe this is a float percision bug (since I'm truncating)
 // TODO [3]: if an item is inside of a container, draw a dim version of the container controller to
 //       indicate this to the user, when the child item is selected
 //       Then, add an option to disable that feature

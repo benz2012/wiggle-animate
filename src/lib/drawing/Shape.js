@@ -13,17 +13,13 @@ import {
   setControllerHandleEllipseOnCtx,
   octantCursorMap,
 } from '../../utility/drawing'
+import {
+  doAxisAlignedRectanglesOverlap,
+  doLineSegmentsIntersect,
+} from '../../utility/intersections'
 
 class Shape extends Drawable {
   static get className() { return 'Shape' }
-  static doRectsOverlap(a, b) {
-    /* Check if rectangle A overlaps rectangle B, or vise-versa
-     * requires top-left corner (x1, y1) & bottom-right corner (x2, y2)
-     */
-    if (a.x1 >= b.x2 || b.x1 >= a.x2) return false // no horizontal overlap
-    if (a.y1 >= b.y2 || b.y1 >= a.y2) return false // no vertical overlap
-    return true
-  }
 
   constructor(shapeType = '', x = 0, y = 0, width = 100, height = 100) {
     super(x, y)
@@ -118,6 +114,7 @@ class Shape extends Drawable {
       this.rectSpec[3] + this.strokeWidth,
     ]
     this.ctx.rect(...rectSpec)
+    return rectSpec
   }
 
   checkPointerIntersections(pointerVector) {
@@ -180,35 +177,73 @@ class Shape extends Drawable {
     return nullReturn
   }
 
-  findRectIntersections(rectSpecTLBR) {
-    // TODO [2]: this doesn't work properly when items are rotated or scaled.
-    //       currently only used for the Rectangle-Selector-Box-Action
-    this.ctx.setTransform(this.currentTransform)
-    const strokeProtrusion = this.strokeWidth / 2
-    this.ctx.translate(
-      this.rectSpec[0] - strokeProtrusion,
-      this.rectSpec[1] - strokeProtrusion,
-    )
-    const finalTransform = this.ctx.getTransform()
-    this.ctx.translate(
-      this.rectSpec[2] + this.strokeWidth,
-      this.rectSpec[3] + this.strokeWidth
-    )
-    const bottomLeftTransform = this.ctx.getTransform()
+  calculateGlobalBoundingBox() {
+    /* This function calculates an "upright" rectangle that encapsulates the shape and also returns
+     * the global points used to calculate that upright rect which will represent the resolved rotation
+     * Note: this expects your createIntersectionsPath to be a rectSpec
+     */
+    const [startingX, startingY, width, height] = this.createIntersectionsPath()
 
-    const hasOverlap = Shape.doRectsOverlap({
-      x1: rectSpecTLBR[0],
-      y1: rectSpecTLBR[1],
-      x2: rectSpecTLBR[2],
-      y2: rectSpecTLBR[3],
-    }, {
-      x1: finalTransform.e,
-      y1: finalTransform.f,
-      x2: bottomLeftTransform.e,
-      y2: bottomLeftTransform.f,
-    })
-    if (hasOverlap) return [this.id]
-    return []
+    const topLeft = this.transformPointToGlobalSpace(startingX, startingY)
+    const topRight = this.transformPointToGlobalSpace(startingX + width, startingY)
+    const bottomRight = this.transformPointToGlobalSpace(startingX + width, startingY + height)
+    const bottomLeft = this.transformPointToGlobalSpace(startingX, startingY + height)
+    const allXPoints = [topLeft.x, topRight.x, bottomRight.x, bottomLeft.x]
+    const allYPoints = [topLeft.y, topRight.y, bottomRight.y, bottomLeft.y]
+
+    return [
+      Math.min(...allXPoints), Math.min(...allYPoints), // Top Left Global Point
+      Math.max(...allXPoints), Math.max(...allYPoints), // Bottom Right Global Point
+      topLeft, topRight, bottomRight, bottomLeft,
+    ]
+  }
+
+  findRectIntersections(otherRectTLBR) {
+    /* This function is used to find if the Shape object is intersecting or within the bounds of another Rectangle.
+     * Most notably, the selection rectangle that the user can drag-and-draw on the stage
+     * Notations: TL = Top Left, TR = Top Right, BR = Bottom Right, BL = Bottom Left
+     *            or = other rectangle, bb = Bounding Box, gp = Global Point Rectangle
+     */
+    const trueResult = [this.id]
+    const falseResult = []
+
+    const [orTLx, orTLy, orBRx, orBRy] = otherRectTLBR
+    const [bbTLx, bbTLy, bbBRx, bbBRy, gpTL, gpTR, gpBR, gpBL] = this.calculateGlobalBoundingBox()
+    const hasAxisAlignedOverlap = doAxisAlignedRectanglesOverlap(
+      { x1: orTLx, y1: orTLy, x2: orBRx, y2: orBRy },
+      { x1: bbTLx, y1: bbTLy, x2: bbBRx, y2: bbBRy },
+    )
+
+    if (!hasAxisAlignedOverlap) return falseResult
+
+    // Now that we know there is boundingBox overlap, check more specifically
+    // for intersections with the rotated rectSpec that's inside the bounding box
+    const globalRectLineSegments = [
+      [gpTL.object, gpTR.object],
+      [gpTR.object, gpBR.object],
+      [gpBL.object, gpBR.object],
+      [gpTL.object, gpBL.object],
+    ]
+
+    const hasSomeLineInsideRect = globalRectLineSegments.some((lineSegment) => (
+      orTLx < lineSegment[0].x && lineSegment[0].x < orBRx
+      && orTLy < lineSegment[0].y && lineSegment[0].y < orBRy
+    ))
+    if (hasSomeLineInsideRect) return trueResult
+
+    const otherRectLineSegments = [
+      [{ x: orTLx, y: orTLy }, { x: orBRx, y: orTLy }],
+      [{ x: orBRx, y: orTLy }, { x: orBRx, y: orBRy }],
+      [{ x: orTLx, y: orBRy }, { x: orBRx, y: orBRy }],
+      [{ x: orTLx, y: orTLy }, { x: orTLx, y: orBRy }],
+    ]
+
+    const hasSomeLineIntersection = otherRectLineSegments.some((otherRectLineSegment, index) => (
+      doLineSegmentsIntersect(...otherRectLineSegment, ...globalRectLineSegments[index])
+    ))
+    if (hasSomeLineIntersection) return trueResult
+
+    return falseResult
   }
 }
 

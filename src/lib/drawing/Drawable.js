@@ -97,6 +97,17 @@ class Drawable extends Item {
       .translateSelf(...this.currentOriginInverseTranslation)
   }
 
+  transformPointToGlobalSpace(pointX, pointY) {
+    const { a: selfA, b: selfB, c: selfC, d: selfD, e: collapsedX, f: collapsedY } = this.currentTransform
+    const collapsedScaleX = Math.sqrt(selfA ** 2 + selfB ** 2)
+    const collapsedScaleY = Math.sqrt(selfC ** 2 + selfD ** 2)
+    const collapsedRotation = Math.atan2(-1 * selfB, selfA)
+    return new Vector2(pointX, pointY)
+      .scale(collapsedScaleX, collapsedScaleY)
+      .rotate(-1 * collapsedRotation)
+      .add(new Vector2(collapsedX, collapsedY))
+  }
+
   draw(parentTransform) {
     this.parentTransform = parentTransform
     this.ctx.setTransform(this.currentTransform)
