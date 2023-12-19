@@ -184,8 +184,6 @@ class VisibleShape extends Shape {
     const currentTransform = this.ctx.getTransform()
     this.ctx.shadowColor = this.shadowColor.toStringExternalAlpha(this.shadowOpacity / 100)
     this.ctx.shadowBlur = this.shadowBlur
-    // TODO [2]: This gets rotation wrong, we should likely take the transform and apply the offset as a
-    //       translation, then get the output translation and apply it as the offsetx&y
     this.ctx.shadowOffsetX = this.shadowOffset.x * currentTransform.a
     this.ctx.shadowOffsetY = this.shadowOffset.y * currentTransform.d
   }
