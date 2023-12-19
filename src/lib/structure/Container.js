@@ -5,6 +5,7 @@ import Drawable from '../drawing/Drawable'
 import { insert } from '../../utility/array'
 import { drawContainerController, ContainerControllerSizes } from '../../utility/drawing'
 
+// TODO [2]: add rotation handle interaction
 // TODO [3]: if an item is inside of a container, draw a dim version of the container controller to
 //       indicate this to the user, when the child item is selected
 //       Then, add an option to disable that feature

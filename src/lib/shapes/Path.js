@@ -55,6 +55,9 @@ class Path extends VisibleShape {
       return true
     }
 
+    // TODO [4]: This is a bit much, we technically only need to de-translate the point,
+    // the scale and rotation don't affect mapping the point from global to local
+    // and calculating this on every addPoint is probabaly not needed
     const parentTransform = Item.rootContainer.findParent(this.id).currentTransform
     const pointInCanvasSpace = DOMMatrix
       .fromMatrix(parentTransform)

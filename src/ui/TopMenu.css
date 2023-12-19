@@ -155,6 +155,7 @@
 .insert-menu-list-item-hotkey {
   color: rgb(70, 70, 70);
   min-width: 36px;
+  font-family: monospace;
 }
 
 .list-item-icon-container {
