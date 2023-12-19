@@ -3,13 +3,11 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 
-import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
+import { LABEL_WIDTH, KEYFRAME_DIAMETER, CSS_ROTATION_OFFSET } from './config'
 import theme from '../theme'
 import Keyframe from '../../lib/animation/Keyframe'
 import Angle from '../../lib/structure/Angle'
 import Color from '../../lib/visuals/Color'
-
-const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
 
 const LineOfKeyframes = observer(({
   label,
@@ -98,7 +96,7 @@ const LineOfKeyframes = observer(({
         {/* Existing Keyframe Dots */}
         {visibleKeyframes.map((keyframe) => {
           let keyPositionX = ((keyframe.frame - frameIn) * pixelsPerFrame).toFixed(2)
-          keyPositionX -= cssRotationOffset
+          keyPositionX -= CSS_ROTATION_OFFSET
 
           let valueShort
           if (

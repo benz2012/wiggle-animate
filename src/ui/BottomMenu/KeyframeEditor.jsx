@@ -1,6 +1,5 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
-import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
@@ -8,13 +7,11 @@ import CenteredMessage from './CenteredMessage'
 import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
 import CurveEditorCanvas from './CurveEditorCanvas'
-import { LABEL_WIDTH, KEYFRAME_DIAMETER } from './config'
+import theme from '../theme'
+import { LABEL_WIDTH, CSS_ROTATION_OFFSET } from './config'
 import { isEqual } from '../../utility/array'
 import { keyframeLabelFromProperty } from '../../utility/state'
 
-const cssRotationOffset = (KEYFRAME_DIAMETER / 2)
-
-// TODO [2]: When hover over PlayheadCanvas, draw frame-num and vertical line over Keyframe Editor
 // TODO [3]: When 1or 2 keyframe selected, maybe show the inbetween range as yellow
 //           in the keyframe timeline to indicate which region the handle editor is referencing
 // TODO [4]: Moving keyframes causes lots of unecessary renders, sometimes even triggeres a
@@ -29,7 +26,6 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
 
   const { firstFrame: frameIn, lastFrame: frameOut } = animation
   const {
-    newKeyPosition,
     hoveredProperty,
     lineWidthLessThanParent,
     curveEditorWidth,
@@ -37,48 +33,16 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
     selectedIds,
     dragStart,
   } = keyframeEditor
+  const playheadHoverFrame = store.playhead.hoverLineFrame
 
-  /* Calculations to relate Mouse Position to Frame Number */
   const keyframesLineWidth = windowWidth - curveEditorWidth - LABEL_WIDTH - lineWidthLessThanParent
   const numFramesShown = frameOut - frameIn + 1
   useEffect(() => {
     store.setKeyframePixelsPerFrame(keyframesLineWidth / (numFramesShown - 1))
   }, [store, keyframesLineWidth, numFramesShown])
 
-  const theme = useTheme()
-
-  const [drawNewKeyAt, absoluteFrameHovered] = useMemo(() => {
-    const leftOffsetStr = theme.spacing(1)
-    const leftOffset = parseInt(leftOffsetStr.substring(0, leftOffsetStr.length - 2), 10)
-    const uxFeelingOffset = 3
-    const _numFramesShown = frameOut - frameIn + 1
-
-    // Start with a comfortable position in relation to the mouse
-    let _drawNewKeyAt = newKeyPosition - cssRotationOffset - leftOffset + uxFeelingOffset
-    // Snapping to Frames
-    _drawNewKeyAt = Math.floor((_drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
-    // Convert to Frame Number
-    const relativeFrameHovered = Math.round(_drawNewKeyAt / pixelsPerFrame)
-    let _absoluteFrameHovered = frameIn + relativeFrameHovered
-    // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
-    if (_absoluteFrameHovered < frameIn) {
-      _drawNewKeyAt = 0
-      _absoluteFrameHovered = frameIn
-    } else if (_absoluteFrameHovered > frameOut) {
-      _drawNewKeyAt = ((_numFramesShown - 1) * pixelsPerFrame)
-      _absoluteFrameHovered = frameOut
-    }
-    // Final CSS Movement Tweaks
-    _drawNewKeyAt -= cssRotationOffset
-    return [_drawNewKeyAt, _absoluteFrameHovered]
-  }, [
-    theme,
-    frameIn,
-    frameOut,
-    newKeyPosition,
-    pixelsPerFrame,
-  ])
-  /* End Calculations */
+  const [drawNewKeyAt, absoluteFrameHovered] = store.keyframeHoverInformation
+  const frameNowLeft = (animation.now - frameIn) * pixelsPerFrame + LABEL_WIDTH + theme.spacing[1] - 0.5
 
   return (
     <Box sx={{ height: 'calc(100% - 32px)', display: 'flex', mt: 1 }}>
@@ -96,8 +60,21 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
           frameOut={frameOut}
           setIn={animation.setIn}
           setOut={animation.setOut}
-          frameHoveredAt={drawNewKeyAt + cssRotationOffset}
-          absoluteFrameHovered={hoveredProperty ? absoluteFrameHovered : null}
+          frameHoveredAt={drawNewKeyAt + CSS_ROTATION_OFFSET}
+          absoluteFrameHovered={
+            (hoveredProperty || playheadHoverFrame)
+              ? absoluteFrameHovered
+              : null
+          }
+        />
+
+        <Box
+          sx={{
+            position: 'absolute',
+            borderLeft: `1px solid ${theme.palette.primary[15]}`,
+            height: '1000px',
+            left: `${frameNowLeft}px`,
+          }}
         />
 
         {numSelectedItems !== 1 && <CenteredMessage numSelected={numSelectedItems} />}

@@ -13,6 +13,8 @@ const PlayheadCanvas = observer(({ store, windowWidth }) => {
 
   const playheadCanvasWidth = windowWidth - canvasWidthLessThanWindow
 
+  const keyframeFrameHovered = store.keyframeHoverInformation[1]
+
   // Set Cursor over Playhead
   useEffect(() => {
     if (store.playhead.hovered) {
@@ -85,9 +87,13 @@ const PlayheadCanvas = observer(({ store, windowWidth }) => {
     ctx.translate(thinLineOffset, 0)
     const preDrawTransform = ctx.getTransform()
 
-    const drawLineAt = (store.playhead.hoverLineFrame - 1) * pixelsPerFrame + (cssTrueHalf * ummDoubleIt)
+    let { hoverLineFrame } = store.playhead
+    if (store.keyframeEditor.hoveredProperty) {
+      hoverLineFrame = keyframeFrameHovered
+    }
+    const drawLineAt = (hoverLineFrame - 1) * pixelsPerFrame + (cssTrueHalf * ummDoubleIt)
     ctx.translate(drawLineAt, 0)
-    if (store.playhead.hoverLineFrame > 0 && store.playhead.hoverLineFrame <= store.animation.frames) {
+    if (hoverLineFrame > 0 && hoverLineFrame <= store.animation.frames) {
       drawPlayheadHoverLine(ctx, store.DPR)
     }
 
@@ -105,6 +111,8 @@ const PlayheadCanvas = observer(({ store, windowWidth }) => {
     store.animation.lastFrame,
     store.playhead.pixelsPerFrame,
     store.playhead.hoverLineFrame,
+    keyframeFrameHovered,
+    store.keyframeEditor.hoveredProperty,
   ])
 
   let numTicks = 0

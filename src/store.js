@@ -13,12 +13,14 @@ import Line from './lib/shapes/Line'
 import Path from './lib/shapes/Path'
 import Animation from './lib/animation/Animation'
 import Keyframe from './lib/animation/Keyframe'
+import theme from './ui/theme'
 import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
 // import { storageEnabled } from './utility/storage'
 import { sleep } from './utility/time'
 import { isEqual } from './utility/array'
 import { clamp } from './utility/numbers'
 import { keyframeLabelFromProperty } from './utility/state'
+import { CSS_ROTATION_OFFSET } from './ui/BottomMenu/config'
 
 class RootStore {
   constructor() {
@@ -200,6 +202,7 @@ class RootStore {
       /* Computeds */
       determineCurrentAction: computed,
       curveEditorTargets: computed,
+      keyframeHoverInformation: computed,
     })
   }
 
@@ -539,6 +542,45 @@ class RootStore {
         targetKeyframe.frame = newFrameToSet
       })
     })
+  }
+
+  /* Keyframe Editor Computeds */
+  get keyframeHoverInformation() {
+    const { firstFrame: frameIn, lastFrame: frameOut } = this.animation
+    const { newKeyPosition, pixelsPerFrame } = this.keyframeEditor
+    const playheadHoverFrame = this.playhead.hoverLineFrame
+
+    const leftOffset = theme.spacing[1]
+    const uxFeelingOffset = 3
+    const _numFramesShown = frameOut - frameIn + 1
+
+    // Start with a comfortable position in relation to the mouse
+    let _drawNewKeyAt = newKeyPosition - CSS_ROTATION_OFFSET - leftOffset + uxFeelingOffset
+    // Snapping to Frames
+    _drawNewKeyAt = Math.floor((_drawNewKeyAt + pixelsPerFrame / 2) / pixelsPerFrame) * pixelsPerFrame
+    // Convert to Frame Number
+    const relativeFrameHovered = Math.round(_drawNewKeyAt / pixelsPerFrame)
+    let _absoluteFrameHovered = frameIn + relativeFrameHovered
+
+    // Overwrite values if the hover takes place in Playhead region
+    if (playheadHoverFrame != null) {
+      _absoluteFrameHovered = playheadHoverFrame
+      const _relativeFrameHovered = _absoluteFrameHovered - frameIn
+      _drawNewKeyAt = _relativeFrameHovered * pixelsPerFrame
+    }
+
+    // Prevent interactions past the frame boundaries (because we allow hovers beyond, for better UX)
+    if (_absoluteFrameHovered < frameIn) {
+      _drawNewKeyAt = 0
+      _absoluteFrameHovered = frameIn
+    } else if (_absoluteFrameHovered > frameOut) {
+      _drawNewKeyAt = ((_numFramesShown - 1) * pixelsPerFrame)
+      _absoluteFrameHovered = frameOut
+    }
+
+    // Final CSS Movement Tweaks
+    _drawNewKeyAt -= CSS_ROTATION_OFFSET
+    return [_drawNewKeyAt, _absoluteFrameHovered]
   }
 
   /* Curve Editor Actions */
