@@ -191,6 +191,23 @@ class Property {
   addKey(frame, value) {
     const k = new Keyframe(frame, value)
     this.keyframes.push(k)
+
+    // Controversial: New keyframes should use similar curve params as the surrounding ones
+    if (this.keyframes.length > 2) {
+      const sortedKeyframes = [...this.keyframes].sort(Keyframe.sort)
+      const addedKeyframedIdx = sortedKeyframes.findIndex((sk) => (sk.id === k.id))
+      if (addedKeyframedIdx > 0) {
+        const prevKeyframe = sortedKeyframes[addedKeyframedIdx - 1]
+        k.handleOut.influence = prevKeyframe.handleOut.influence
+        k.handleOut.distance = prevKeyframe.handleOut.distance
+      }
+      if (addedKeyframedIdx !== this.keyframes.length - 1) {
+        const nextKeyframe = sortedKeyframes[addedKeyframedIdx + 1]
+        k.handleIn.influence = nextKeyframe.handleIn.influence
+        k.handleIn.distance = nextKeyframe.handleIn.distance
+      }
+    }
+
     return k
   }
 

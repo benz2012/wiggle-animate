@@ -1,5 +1,8 @@
 import { computed, makeObservable, observable } from 'mobx'
 
+// TODO [3]: Add a setting for the default animation style
+//           curently it's set to ease-in-out, which is controversial
+
 class Handle {
   static get className() { return 'Handle' }
   static get TYPES() { return { IN: 'IN', OUT: 'OUT' } }
