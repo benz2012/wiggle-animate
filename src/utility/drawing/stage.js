@@ -1,7 +1,4 @@
-import Fill from '../../lib/visuals/Fill'
-
 const drawStageDots = (ctx, rootWidth, rootHeight, canvasPosition, canvasScale) => {
-  const dotFill = new Fill('rgb(42, 45, 48)')
   const dotWidth = 4
   const dotSpacing = 48
   const segmentLength = (dotSpacing + dotWidth)
@@ -32,7 +29,8 @@ const drawStageDots = (ctx, rootWidth, rootHeight, canvasPosition, canvasScale) 
     })
   })
 
-  dotFill.draw(ctx)
+  ctx.fillStyle = 'rgb(42, 45, 48)'
+  ctx.fill()
 }
 
 export {

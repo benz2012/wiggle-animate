@@ -5,8 +5,8 @@ import Item from './Item'
 import Size from './Size'
 import Alignment from './Alignment'
 import Angle from './Angle'
-import Fill from '../visuals/Fill'
 import Vector2 from './Vector2'
+import Color from '../visuals/Color'
 import { identityMatrix } from '../../utility/matrix'
 import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 
@@ -26,7 +26,7 @@ class RootContainer extends Container {
     this._canvasScale = 1
     // TODO [4]: make these customizable
     this.canvasSize = new Size(1920, 1080)
-    this.canvasFill = new Fill({ r: 0, g: 0, b: 0 })
+    this.canvasFill = new Color({ r: 0, g: 0, b: 0 })
     this.setCanvasToBestFit()
 
     // adjust inherited properties
@@ -196,7 +196,8 @@ class RootContainer extends Container {
     this.ctx.setTransform(this.currentTransform)
     this.ctx.beginPath()
     this.ctx.rect(0, 0, ...this.canvasSize.values)
-    this.canvasFill.draw(this.ctx)
+    this.ctx.fillStyle = this.canvasFill.toString()
+    this.ctx.fill()
   }
 
   drawPotentialPathPoint() {
@@ -211,9 +212,8 @@ class RootContainer extends Container {
     this.ctx.setTransform(this.currentTransform)
     this.ctx.translate(pointerInCanvasSpace.e, pointerInCanvasSpace.f)
 
-    const { color } = this.canvasFill
-    const brighterCanvas = ((color.red + color.green + color.blue) / 3) > 145
-    drawPotentialPathPoint(this.ctx, brighterCanvas)
+    const isBrightCanvas = ((this.canvasFill.red + this.canvasFill.green + this.canvasFill.blue) / 3) > 145
+    drawPotentialPathPoint(this.ctx, isBrightCanvas)
   }
 
   drawSelector() {
