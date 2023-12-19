@@ -1,6 +1,5 @@
 import theme from '../../ui/theme'
 import Fill from '../../lib/visuals/Fill'
-import Stroke from '../../lib/visuals/Stroke'
 
 const drawSelector = (ctx, selector, DPR) => {
   ctx.beginPath()
@@ -9,7 +8,6 @@ const drawSelector = (ctx, selector, DPR) => {
   const mouseGlyphOffset = DPR === 2 ? 2 : 0
   const lineWidth = 1 * DPR
   const fill = new Fill(theme.palette.primary[10])
-  const stroke = new Stroke(theme.palette.primary[100], lineWidth)
 
   ctx.rect(
     selector.position.x - mouseGlyphOffset,
@@ -17,7 +15,12 @@ const drawSelector = (ctx, selector, DPR) => {
     ...selector.rect.values,
   )
   fill.draw(ctx)
-  stroke.draw(ctx)
+
+  // prepare and draw stroke
+  ctx.strokeStyle = theme.palette.primary[100].toString()
+  ctx.lineWidth = lineWidth
+  ctx.lineJoin = 'miter'
+  ctx.stroke()
 }
 
 export {
