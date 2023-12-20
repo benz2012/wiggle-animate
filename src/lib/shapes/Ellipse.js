@@ -12,7 +12,7 @@ class Ellipse extends VisibleShape {
     against an elipse path, instead of the existing hover/controller rectSpec
   */
 
-  drawShape() {
+  drawPath() {
     const [rectX, rectY, rectW, rectH] = this.rectSpec
     this.ctx.beginPath()
     this.ctx.ellipse(
@@ -24,10 +24,6 @@ class Ellipse extends VisibleShape {
       0,
       Math.PI * 2
     )
-
-    this.prepareShadow()
-    this.drawStroke()
-    this.drawFill()
   }
 }
 

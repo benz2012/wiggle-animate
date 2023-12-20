@@ -11,7 +11,7 @@ import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import useWindowSize from './hooks/useWindowSize'
 import { peekAtObservables } from '../utility/tree'
-import { rotateArrowCursor } from '../utility/drawing/cursors'
+import { rotateArrowCursor } from '../utility/drawing'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)

@@ -1,4 +1,5 @@
 export * from './controllers'
+export * from './cursors'
 export * from './hovers'
 export * from './paths'
 export * from './playhead'

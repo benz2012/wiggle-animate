@@ -8,7 +8,6 @@ import Angle from '../structure/Angle'
 import {
   drawHoveredIndicator,
   drawControllerBox,
-  clearShadowContext,
   setControllerHandleRectOnCtx,
   setControllerHandleEllipseOnCtx,
   octantCursorMap,
@@ -77,7 +76,7 @@ class Shape extends Drawable {
   }
 
   drawShape() {
-    // overwrite this method in your subclass
+    // this will be overwritten in the VisibleShape subclass
     return this
   }
 
@@ -85,7 +84,6 @@ class Shape extends Drawable {
     super.draw(parentTransform)
 
     this.drawShape(isHovered, isSelected)
-    clearShadowContext(this.ctx)
 
     if (isSelected) {
       this.drawControllerBox(handleIdxHovered, handleIdxActive)

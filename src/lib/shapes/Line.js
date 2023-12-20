@@ -19,12 +19,9 @@ class Line extends VisibleShape {
     this.controllerType = 'Line'
   }
 
-  drawShape() {
+  drawPath() {
     this.ctx.beginPath()
     this.ctx.rect(...this.rectSpec)
-
-    this.prepareShadow()
-    this.drawFill()
   }
 }
 

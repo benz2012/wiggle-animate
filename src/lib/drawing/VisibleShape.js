@@ -3,6 +3,7 @@ import Property from '../structure/Property'
 import Vector2 from '../structure/Vector2'
 import Selection from '../structure/Selection'
 import Color from '../visuals/Color'
+import Shadow from '../visuals/Shadow'
 
 const OPACITY_DRAG_RATIO = 3
 
@@ -45,7 +46,7 @@ class VisibleShape extends Shape {
     })
     this._strokeOpacity = new Property({
       type: Property.PRIMITIVES.FLOAT,
-      value: 0,
+      value: 100,
       isEditable: true,
       group: 'stroke',
       label: 'opacity',
@@ -114,6 +115,16 @@ class VisibleShape extends Shape {
       valueDragRatio: 10,
       isKeyframable: true,
     })
+    this._shadowSpread = new Property({
+      type: Property.PRIMITIVES.FLOAT,
+      value: 0,
+      isEditable: true,
+      group: 'shadow',
+      label: 'spread',
+      order: 3,
+      minValue: 0,
+      isKeyframable: true,
+    })
     this._shadowOffset = new Property({
       type: Vector2,
       value: [0, 0],
@@ -124,6 +135,8 @@ class VisibleShape extends Shape {
       valueDragRatio: 5,
       isKeyframable: true,
     })
+
+    this.shadow = new Shadow(this)
   }
 
   get fillColor() { return this._fillColor.value }
@@ -137,6 +150,7 @@ class VisibleShape extends Shape {
   get shadowOpacity() { return this._shadowOpacity.value }
   get shadowBlur() { return this._shadowBlur.value }
   get shadowOffset() { return this._shadowOffset.value }
+  get shadowSpread() { return this._shadowSpread.value }
 
   removeStrokeProperties() {
     this._strokeColor.isEditable = false
@@ -149,20 +163,25 @@ class VisibleShape extends Shape {
     this._strokeFlow.isEditable = false
   }
 
-  prepareFill() {
-    this.ctx.fillStyle = this.fillColor.toStringExternalAlpha(this.fillOpacity / 100)
+  prepareFill({ overrideColor, overrideOpacity } = {}) {
+    const fillColor = overrideColor ?? this.fillColor
+    const fillOpacity = overrideOpacity ?? this.fillOpacity
+    this.ctx.fillStyle = fillColor.toStringExternalAlpha(fillOpacity / 100)
   }
 
-  drawFill() {
-    // TODO [4]: gradients
-    this.prepareFill()
+  drawFill(overrides) {
+    // TODO [4]: gradients (+Text submethod)
+    this.prepareFill(overrides)
     this.ctx.fill()
   }
 
-  prepareStroke() {
-    // TODO [4]: gradients
-    this.ctx.strokeStyle = this.strokeColor.toStringExternalAlpha(this.strokeOpacity / 100)
-    this.ctx.lineWidth = this.strokeWidth
+  prepareStroke({ overrideColor, overrideOpacity, overrideWidth } = {}) {
+    const strokeColor = overrideColor ?? this.strokeColor
+    const strokeOpacity = overrideOpacity ?? this.strokeOpacity
+    const strokeWidth = overrideWidth ?? this.strokeWidth
+
+    this.ctx.strokeStyle = strokeColor.toStringExternalAlpha(strokeOpacity / 100)
+    this.ctx.lineWidth = strokeWidth
     this.ctx.lineJoin = this.strokeJoin.selected
     // TODO [4]: tweak the drawing stack so that these 3 options are possible
     //       this could get complicted depending on shape, we'll see
@@ -172,20 +191,31 @@ class VisibleShape extends Shape {
     //       - outside = draw width*2, cut subtraction within shape
   }
 
-  drawStroke() {
-    this.prepareStroke()
-    if (this.strokeOpacity === 0 || this.strokeWidth === 0) return
+  drawStroke(overrides = {}) {
+    // TODO [4]: gradients (+Text submethod)
+    this.prepareStroke(overrides)
+    if (
+      !overrides.overrideWidth
+      && (this.strokeOpacity === 0 || this.strokeWidth === 0)
+    ) return
     this.ctx.stroke()
   }
 
-  prepareShadow() {
-    // Apparently the DOM Renderer doesn't scale the offset params by the existing ctx transform
-    // so we do it ourselves
-    const currentTransform = this.ctx.getTransform()
-    this.ctx.shadowColor = this.shadowColor.toStringExternalAlpha(this.shadowOpacity / 100)
-    this.ctx.shadowBlur = this.shadowBlur
-    this.ctx.shadowOffsetX = this.shadowOffset.x * currentTransform.a
-    this.ctx.shadowOffsetY = this.shadowOffset.y * currentTransform.d
+  drawShadow() {
+    if (this.shadowOpacity === 0) return
+    this.shadow.draw()
+  }
+
+  drawPath() {
+    // NOTE: Overwrite this method in your subclass
+    return this
+  }
+
+  drawShape() {
+    this.drawShadow()
+    this.drawPath()
+    this.drawStroke()
+    this.drawFill()
   }
 }
 

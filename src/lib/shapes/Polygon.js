@@ -43,7 +43,7 @@ class Polygon extends VisibleShape {
     a rectangle Spec, the there are gaps between a polygon and it's rect bounds (most notable on 3 & 5 sides)
   */
 
-  drawShape() {
+  drawPath() {
     // Adjust for rectangular/shape alignment
     const [rectX, rectY, rectW, rectH] = this.rectSpec
     this.ctx.translate(rectX + rectW / 2, rectY + rectH / 2)
@@ -59,10 +59,6 @@ class Polygon extends VisibleShape {
     })
     this.ctx.rotate(anglePerSegment)
     this.ctx.closePath()
-
-    this.prepareShadow()
-    this.drawStroke()
-    this.drawFill()
   }
 }
 

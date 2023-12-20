@@ -9,13 +9,9 @@ class Rectangle extends VisibleShape {
     super('rectangle', ...args)
   }
 
-  drawShape() {
+  drawPath() {
     this.ctx.beginPath()
     this.ctx.rect(...this.rectSpec)
-
-    this.prepareShadow()
-    this.drawStroke()
-    this.drawFill()
   }
 }
 

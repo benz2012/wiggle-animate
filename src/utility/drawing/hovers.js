@@ -27,7 +27,7 @@ const drawHoveredIndicatorPath = (instance) => {
   const { ctx } = instance
   ctx.setTransform(instance.currentTransform)
   ctx.beginPath()
-  instance.drawThePath()
+  instance.drawPath()
   ctx.strokeStyle = `${theme.palette.primary[75]}`
   ctx.lineWidth = 2
   ctx.lineJoin = 'miter'

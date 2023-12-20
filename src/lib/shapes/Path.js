@@ -9,6 +9,8 @@ import { observeListOfProperties } from '../../utility/state'
 import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
+// TODO [3]: Close Path doesn't actually connect the last two points in the right way
+
 class Path extends VisibleShape {
   static get className() { return 'Path' }
   static get NEARITY_THRESHOLD() { return 8 }
@@ -106,7 +108,8 @@ class Path extends VisibleShape {
     this.pointsVisible = false
   }
 
-  drawThePath() {
+  drawPath() {
+    this.ctx.beginPath()
     this.ctx.moveTo(...this.points[0].values)
     this.points.slice(1).forEach((point, index) => {
       const prevControl = this.points[index].controlOut
@@ -180,8 +183,7 @@ class Path extends VisibleShape {
 
   checkPointerIntersections(pointerVector) {
     this.ctx.setTransform(this.currentTransform)
-    this.ctx.beginPath()
-    this.drawThePath()
+    this.drawPath()
     // make a fake stroke around the path to check for "near" intersections
     this.ctx.lineWidth = 10
     if (this.ctx.isPointInStroke(...pointerVector.values)) return true
@@ -197,12 +199,7 @@ class Path extends VisibleShape {
   drawShape(isHovered, isSelected) {
     if (this.points.length === 0) return
 
-    // Draw the Path Itself
-    this.ctx.beginPath()
-    this.drawThePath()
-    this.prepareShadow()
-    this.drawStroke()
-    this.drawFill()
+    super.drawShape()
 
     // Draw Point Handles on top of it
     if (!this.pointsVisible && !isSelected) return

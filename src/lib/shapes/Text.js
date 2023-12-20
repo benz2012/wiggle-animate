@@ -3,6 +3,8 @@ import { makeObservable, action } from 'mobx'
 import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
 
+// TODO [2]: Actual Fonts
+
 class Text extends VisibleShape {
   static get className() { return 'Text' }
 
@@ -60,7 +62,7 @@ class Text extends VisibleShape {
     this.middleToTop = metrics.fontBoundingBoxAscent
   }
 
-  drawShape() {
+  drawPath() {
     this.ctx.font = `${this.fontSize}px ${this.font}`
     this.ctx.textAlign = this.align
     this.ctx.textBaseline = this.baseline
@@ -77,13 +79,19 @@ class Text extends VisibleShape {
     this.ctx.translate(rectX + rectW / 2, rectY + rectH / 2)
 
     this.ctx.beginPath()
-    this.prepareShadow()
-    this.prepareStroke()
-    if (this.strokeWidth > 0) {
+  }
+
+  drawStroke(overrides = {}) {
+    this.prepareStroke(overrides)
+    if (this.strokeOpacity === 0) return
+    if (overrides.overrideWidth ?? this.strokeWidth > 0) {
       // Apparently strokeWidth of 0 actually uses like 5, so we block it
       this.ctx.strokeText(this.text, 0, 0)
     }
-    this.prepareFill()
+  }
+
+  drawFill(overrides) {
+    this.prepareFill(overrides)
     this.ctx.fillText(this.text, 0, 0)
   }
 }
