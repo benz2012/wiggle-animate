@@ -144,8 +144,8 @@ class VisibleShape extends Shape {
   get strokeColor() { return this._strokeColor.value }
   get strokeOpacity() { return this._strokeOpacity.value }
   get strokeWidth() { return this._strokeWidth.value }
-  get strokeJoin() { return this._strokeJoin.value }
-  get strokeFlow() { return this._strokeFlow.value }
+  get strokeJoin() { return this._strokeJoin.value.selected }
+  get strokeFlow() { return this._strokeFlow.value.selected }
   get shadowColor() { return this._shadowColor.value }
   get shadowOpacity() { return this._shadowOpacity.value }
   get shadowBlur() { return this._shadowBlur.value }
@@ -182,7 +182,7 @@ class VisibleShape extends Shape {
 
     this.ctx.strokeStyle = strokeColor.toStringExternalAlpha(strokeOpacity / 100)
     this.ctx.lineWidth = strokeWidth
-    this.ctx.lineJoin = this.strokeJoin.selected
+    this.ctx.lineJoin = this.strokeJoin
     // TODO [4]: tweak the drawing stack so that these 3 options are possible
     //       this could get complicted depending on shape, we'll see
     //       might need to draw/cut 1 less pixel otherwise there could be a subpixel/gpu gap line

@@ -2,6 +2,7 @@ import { makeObservable, action } from 'mobx'
 
 import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
+import Selection from '../structure/Selection'
 
 // TODO [2]: Actual Fonts
 // Add these loaded fonts to the Project store
@@ -31,12 +32,33 @@ class Text extends VisibleShape {
       isEditable: true,
       isKeyframable: true,
     })
+    this._action = new Property({
+      type: Property.PRIMITIVES.STRING, // make a new property-type called Button,
+      value: '+ Add Fonts',
+      isEditable: true,
+      group: 'font',
+      label: '',
+    })
     this._font = new Property({
-      type: Property.PRIMITIVES.STRING,
-      value: 'sans-serif',
+      type: Selection,
+      value: ['sans-serif', 'serif', 'monospace', 'Roboto'],
       isEditable: true,
       group: 'font',
       label: 'typeface',
+    })
+    this._fontStyle = new Property({
+      type: Selection,
+      value: ['regular', 'italic'],
+      isEditable: true,
+      group: 'font',
+      label: 'style',
+    })
+    this._fontWeight = new Property({
+      type: Selection,
+      value: ['400 - Normal', '200 - Light', '600 - Bold', '800 - Black'],
+      isEditable: true,
+      group: 'font',
+      label: 'weight',
     })
     this._fontSize = new Property({
       type: Property.PRIMITIVES.INTEGER,
@@ -59,6 +81,7 @@ class Text extends VisibleShape {
     this.align = 'center'
 
     // other non-editible features
+    this._name.isEditable = false
     this.direction = 'ltr'
     this.middleToTop = 0
 
@@ -67,7 +90,9 @@ class Text extends VisibleShape {
 
   get text() { return this._text.value }
   get fontSize() { return this._fontSize.value }
-  get font() { return this._font.value }
+  get font() { return this._font.value.selected }
+  get fontStyle() { return this._fontStyle.value.selected }
+  get fontWeight() { return this._fontWeight.value.selected }
 
   measureAndSetSize() {
     const metrics = this.ctx.measureText(this.text)
