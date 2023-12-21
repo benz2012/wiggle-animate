@@ -1,5 +1,8 @@
 name: Trigger Parent Repo CD Pipeline
 on:
+  schedule:
+    # Run this job once a month to ensure things like the fonts are up-to-date
+    - cron: '0 18 1 * *'
   push:
     branches:
       - master
