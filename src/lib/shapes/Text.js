@@ -4,6 +4,20 @@ import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
 
 // TODO [2]: Actual Fonts
+// Add these loaded fonts to the Project store
+// this will allow us to load all the ones being used when a project opens
+// every time a font is loaded, re-render the canvas
+
+// it would be better for performance to host all these fonts myself, but that could add a lot to
+// data hostage download costs in the future, so I think I'll stick to CDN even though it's slower
+
+// For interface, I think we just have it be a clickable box that shows the current font
+// clicking that opens a modal which will show a list of fonts used in the project first
+// it will also have tabs for allowing you to browser through them: Sans-Serif, Serif, Monospace, etc
+// and at the top of it all will be a search bar
+// selecting a font closes the modal and sets the value on the text object
+// I think maybe to make it easier on the user, the clickable box will be all fonts that they added
+// to that project, and then I'll put a little plus button next to it that will open the modal
 
 class Text extends VisibleShape {
   static get className() { return 'Text' }
