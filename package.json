@@ -13,6 +13,7 @@
     "eslint": "^8.55.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-only-warn": "^1.1.0",
+    "md5": "^2.3.0",
     "mobx": "^6.12.0",
     "mobx-react-lite": "^3.4.3",
     "overlayscrollbars": "^2.4.5",
@@ -25,8 +26,8 @@
     "webm-muxer": "^3.1.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
+    "start": "node ./scripts/getAllGoogleFonts.js && react-scripts start",
+    "build": "node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(ls ./public/font-data-*) react-scripts build"
   },
   "eslintConfig": {
     "env": {
