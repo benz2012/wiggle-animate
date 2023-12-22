@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "node ./scripts/getAllGoogleFonts.js && react-scripts start",
-    "build": "node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(ls ./public/font-data-*) react-scripts build"
+    "build": "NODE_ENV=production node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(ls ./public/font-data-*) react-scripts build"
   },
   "eslintConfig": {
     "env": {
