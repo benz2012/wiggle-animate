@@ -23,6 +23,7 @@ class Property {
     minValue = null, // only applies to primitive float and int
     maxValue = null, // only applies to primitive float and int
     valueDragRatio = 1,
+    defaultSelection = 0, // only applied to Selection-type
 
     // Keyframe Attributes
     isKeyframable = false,
@@ -41,6 +42,7 @@ class Property {
     this.minValue = minValue
     this.maxValue = maxValue
     this.valueDragRatio = valueDragRatio
+    this.defaultSelection = defaultSelection
 
     this.isKeyframable = isKeyframable
     this.keyframes = null
@@ -135,6 +137,11 @@ class Property {
         }
         return element
       })
+
+      if ([Selection.className].includes(this.typeName)) {
+        return new Type(this.defaultSelection, ...cappedValue)
+      }
+
       return new Type(...cappedValue)
     }
 

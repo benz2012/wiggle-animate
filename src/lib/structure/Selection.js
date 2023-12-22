@@ -3,9 +3,9 @@ import { observeListOfProperties } from '../../utility/state'
 class Selection {
   static get className() { return 'Selection' }
 
-  constructor(...values) {
+  constructor(defaultSelectionIdx, ...values) {
     this.values = values
-    this.selected = values[0]
+    this.selected = values[defaultSelectionIdx]
 
     observeListOfProperties(this, ['values', 'selected'])
   }

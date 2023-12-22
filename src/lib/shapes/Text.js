@@ -9,16 +9,12 @@ import Selection from '../structure/Selection'
 // this will allow us to load all the ones being used when a project opens
 // every time a font is loaded, re-render the canvas
 
-// it would be better for performance to host all these fonts myself, but that could add a lot to
-// data hostage download costs in the future, so I think I'll stick to CDN even though it's slower
-
-// For interface, I think we just have it be a clickable box that shows the current font
-// clicking that opens a modal which will show a list of fonts used in the project first
-// it will also have tabs for allowing you to browser through them: Sans-Serif, Serif, Monospace, etc
-// and at the top of it all will be a search bar
-// selecting a font closes the modal and sets the value on the text object
 // I think maybe to make it easier on the user, the clickable box will be all fonts that they added
 // to that project, and then I'll put a little plus button next to it that will open the modal
+// it have tabs for allowing you to browse through them: Sans-Serif, Serif, Monospace, etc
+// and at the top of it all will be a search bar
+// selecting a font closes will leave the modal open and allow you to add more fonts
+// closing the modal does not change selected value
 
 class Text extends VisibleShape {
   static get className() { return 'Text' }
@@ -55,7 +51,8 @@ class Text extends VisibleShape {
     })
     this._fontWeight = new Property({
       type: Selection,
-      value: ['400 - Normal', '200 - Light', '600 - Bold', '800 - Black'],
+      value: ['200 - Light', '400 - Normal', '600 - Bold', '800 - Black'],
+      defaultSelection: 1,
       isEditable: true,
       group: 'font',
       label: 'weight',
