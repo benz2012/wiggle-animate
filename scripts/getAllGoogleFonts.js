@@ -15,7 +15,7 @@ const md5 = require('md5')
  * and we will obfuscate keys, and store shared values at top.
  */
 
-const API_KEY = 'AIzaSyBNBuGnLIcqDwPz9zcT_ih101xWkAY7MxA'
+const API_KEY = process.env.GOOGLE_FONTS_API_KEY
 const PREVIEW_IMAGE_HOST = 'https://raw.githubusercontent.com/getstencil/GoogleWebFonts-FontFamilyPreviewImages'
 const PREVIEW_IMAGE_BASE_URL = `${PREVIEW_IMAGE_HOST}/master/48px/compressed/`
 const WEIGHTS_TO_INCLUDE = ['200', '400', '600', '800']
