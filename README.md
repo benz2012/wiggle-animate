@@ -20,6 +20,7 @@ npm install
 Run
 
 ```sh
+export GOOGLE_FONTS_API_KEY="you-api-key-here"
 npm start
 # open browser to localhost:3000
 ```

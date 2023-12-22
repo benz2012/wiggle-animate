@@ -15,6 +15,11 @@ const md5 = require('md5')
  * and we will obfuscate keys, and store shared values at top.
  */
 
+if (!process.env.GOOGLE_FONTS_API_KEY) {
+  console.warn('GOOGLE_FONTS_API_KEY environment variable must be set!')
+  process.exit(1)
+}
+
 const API_KEY = process.env.GOOGLE_FONTS_API_KEY
 const PREVIEW_IMAGE_HOST = 'https://raw.githubusercontent.com/getstencil/GoogleWebFonts-FontFamilyPreviewImages'
 const PREVIEW_IMAGE_BASE_URL = `${PREVIEW_IMAGE_HOST}/master/48px/compressed/`
