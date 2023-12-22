@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'production') {
       fontListData = data
     })
 } else {
+  // eslint-disable-next-line
   import('../hidden/font-data-google.json')
     .then((module) => {
       fontListData = module.default
