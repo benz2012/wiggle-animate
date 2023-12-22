@@ -14,6 +14,7 @@ import { muiTheme } from './ui/theme'
 import App from './ui/App'
 import RootStore from './store'
 import { peekAtKeyframes } from './utility/tree'
+import './utility/fonts'
 import './ui/Last.css' // Leave this at bottom of import stack
 
 const store = new RootStore()
