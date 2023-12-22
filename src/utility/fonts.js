@@ -1,10 +1,12 @@
 /* NOTE: This file must be imported somewhere in order to run it's top level initialization */
 
+const STATIC_ASSETS_PATH = './_subapps/animate'
+
 let fontListData = {}
 const getFontListData = () => fontListData
 
 if (process.env.NODE_ENV === 'production') {
-  fetch(`${process.env.REACT_APP_FONT_DATA_FILE}`)
+  fetch(`${STATIC_ASSETS_PATH}/${process.env.REACT_APP_FONT_DATA_FILE}`)
     .then((res) => res.json())
     .then((data) => {
       fontListData = data
