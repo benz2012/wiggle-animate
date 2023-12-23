@@ -10,6 +10,7 @@ import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import ExportDialog from './Modal/ExportDialog'
+import FontDialog from './Modal/FontDialog'
 import useWindowSize from './hooks/useWindowSize'
 import { peekAtObservables } from '../utility/tree'
 import { rotateArrowCursor } from '../utility/drawing'
@@ -137,6 +138,11 @@ const App = observer(({ store }) => {
         store={store}
         open={store.view.dialogs.export}
         onClose={() => store.closeDialog('export')}
+      />
+      <FontDialog
+        store={store}
+        open={store.view.dialogs.addFonts}
+        onClose={() => store.closeDialog('addFonts')}
       />
     </>
   )

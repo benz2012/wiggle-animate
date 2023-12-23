@@ -52,7 +52,7 @@ class RootStore {
       saveStatus: 'unknown',
       isExporting: false,
       exportFileName: '',
-      fonts: observable([]),
+      fonts: [],
     }
 
     this.build = {
