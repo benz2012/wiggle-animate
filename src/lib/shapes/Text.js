@@ -5,8 +5,6 @@ import Property from '../structure/Property'
 import Selection from '../structure/Selection'
 
 // TODO [2]: Actual Fonts
-// Add these loaded fonts to the Project store
-// this will allow us to load all the ones being used when a project opens
 // every time a font is loaded, re-render the canvas
 
 // it have tabs for allowing you to browse through them: Sans-Serif, Serif, Monospace, etc

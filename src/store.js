@@ -1,26 +1,30 @@
 import { observable, makeObservable, action, computed } from 'mobx'
-// import { autorun } from 'mobx'
 
-import RootContainer from './lib/structure/RootContainer'
+import Animation from './lib/animation/Animation'
 import Container from './lib/structure/Container'
-import Vector2 from './lib/structure/Vector2'
-import Size from './lib/structure/Size'
-import Rectangle from './lib/shapes/Rectangle'
 import Ellipse from './lib/shapes/Ellipse'
-import Text from './lib/shapes/Text'
-import Polygon from './lib/shapes/Polygon'
+import Keyframe from './lib/animation/Keyframe'
 import Line from './lib/shapes/Line'
 import Path from './lib/shapes/Path'
-import Animation from './lib/animation/Animation'
-import Keyframe from './lib/animation/Keyframe'
-import theme from './ui/theme'
-import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
-// import { storageEnabled } from './utility/storage'
-import { sleep } from './utility/time'
-import { isEqual } from './utility/array'
-import { clamp } from './utility/numbers'
-import { keyframeLabelFromProperty } from './utility/state'
+import Polygon from './lib/shapes/Polygon'
+import Rectangle from './lib/shapes/Rectangle'
+import RootContainer from './lib/structure/RootContainer'
+import Size from './lib/structure/Size'
+import Text from './lib/shapes/Text'
+import Vector2 from './lib/structure/Vector2'
+
 import { CSS_ROTATION_OFFSET } from './ui/BottomMenu/config'
+import theme from './ui/theme'
+
+// import { storageEnabled } from './utility/storage'
+import { clamp } from './utility/numbers'
+import { isEqual } from './utility/array'
+import { keyframeLabelFromProperty } from './utility/state'
+import { loadFont } from './utility/fonts'
+import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
+import { sleep } from './utility/time'
+
+// TODO [1]: Break up this module
 
 class RootStore {
   constructor() {
@@ -48,6 +52,7 @@ class RootStore {
       saveStatus: 'unknown',
       isExporting: false,
       exportFileName: '',
+      fonts: observable([]),
     }
 
     this.build = {
@@ -153,6 +158,7 @@ class RootStore {
       setExporting: action,
       addNewPath: action,
       commitPath: action,
+      addFonts: action,
 
       setTool: action,
       setPointerPosition: action,
@@ -344,6 +350,13 @@ class RootStore {
   /* Project Actions */
   setExporting(value) {
     this.project.isExporting = value
+  }
+
+  addFonts(listOfFonts) {
+    this.project.fonts.push(...listOfFonts)
+    listOfFonts.forEach((font) => {
+      loadFont(font)
+    })
   }
 
   /* Build Actions */

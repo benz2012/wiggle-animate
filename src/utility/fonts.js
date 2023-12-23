@@ -37,14 +37,7 @@ const preloadSetOfFontImages = (fontList, onEachImageLoaded) => {
   })
 }
 
-const loadFont = (fontName) => {
-  const fonts = getFontData()
-  const font = fonts.find((elm) => elm.name === fontName)
-  if (!font) {
-    console.log('fontdata not found for', fontName)
-    return
-  }
-
+const loadFont = (font) => {
   const fontFace = new FontFace(font.name, `url(${font.file})`)
   fontFace.load().then((loadedFont) => {
     document.fonts.add(loadedFont)
