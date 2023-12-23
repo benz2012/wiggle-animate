@@ -15,12 +15,15 @@ Setup
 ```sh
 git clone thisrepo
 npm install
+
+# just run this once to get font data loaded
+export GOOGLE_FONTS_API_KEY="you-api-key-here"
+npm run predev
 ```
 
 Run
 
 ```sh
-export GOOGLE_FONTS_API_KEY="you-api-key-here"
 npm start
 # open browser to localhost:3000
 ```

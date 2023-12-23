@@ -26,7 +26,8 @@
     "webm-muxer": "^3.1.3"
   },
   "scripts": {
-    "start": "node ./scripts/getAllGoogleFonts.js && react-scripts start",
+    "predev": "node ./scripts/getAllGoogleFonts.js",
+    "start": "react-scripts start",
     "build": "node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-*) react-scripts build"
   },
   "eslintConfig": {

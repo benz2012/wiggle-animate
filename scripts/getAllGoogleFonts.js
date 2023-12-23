@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const fs = require('node:fs/promises')
 const md5 = require('md5')
 
@@ -12,7 +13,8 @@ const md5 = require('md5')
  * The selection of fonts chosen by the user will be loaded dynamically into the app.
  *
  * Too keep this bundle a bit smaller, we will only keep certain font weights,
- * and we will obfuscate keys, and store shared values at top.
+ * and we will obfuscate keys, and store shared values at top. Some values
+ * encoded as numbers to save as much space as possible (eliminates quotes)
  */
 
 if (!process.env.GOOGLE_FONTS_API_KEY) {
@@ -46,17 +48,20 @@ async function main() {
       const weight = ['regular', 'italic'].includes(variant) ? '400' : variant.substring(0, 3)
       if (WEIGHTS_TO_INCLUDE.includes(weight) === false) return
 
-      let variantSuffix = ` ${variant}`
-      if (variant === 'regular') {
-        variantSuffix = ''
-      } else if (variant.includes('0i')) {
-        variantSuffix = ` ${variant.substring(0, 3)} ${variant.substring(3)}`
+      let variantType = 0 // regular
+      if (variant === 'italic' || variant.includes('0i')) {
+        variantType = 1 // italic
+      }
+
+      let variantWeight = 4 // 400
+      if (variant.includes('0')) {
+        variantWeight = parseInt(variant.charAt(0), 10)
       }
 
       const fontFullURL = fontFamily.files[variant].replace('http://', 'https://')
       const fontSubURL = fontFullURL.replace(fontURLPrefix, '')
 
-      const imageFontFamily = fontFamily.family.replace(/[^\-A-Za-z0-9]/, '')
+      const imageFontFamily = fontFamily.family.replaceAll(/[^\-A-Za-z0-9]/g, '')
       let imageVariant = variant
       if (variant === 'regular') {
         imageVariant = '400'
@@ -66,13 +71,68 @@ async function main() {
       const imageFileName = `${imageFontFamily}-${imageVariant}.${fontFamily.version}.png`
 
       fonts.push({
-        n: `${fontFamily.family}${variantSuffix}`,
+        n: fontFamily.family,
+        t: variantType,
+        w: variantWeight,
         c: fontCategories[fontFamily.category],
         f: fontSubURL,
         i: imageFileName,
       })
     })
   })
+
+  let brokenImages = 0
+  const chunkSize = 100
+  const numChunks = Math.ceil(fonts.length / chunkSize)
+  const allResponses = []
+  for (let n = 0; n < numChunks; n += 1) {
+    console.log('checking font chunk', n * chunkSize, '-', (n + 1) * chunkSize)
+    const chunk = fonts.slice(n * chunkSize, (n + 1) * chunkSize)
+    const responses = await Promise.all(chunk.map((font) => (
+      fetch((`${imageURLPrefix}${font.i}`), { method: 'HEAD' })
+    )))
+    allResponses.push(...responses)
+  }
+  const youngerVersionsToTry = []
+  allResponses.forEach((res, idx) => {
+    if (res.status !== 200) {
+      brokenImages += 1
+      const vNumMatch = fonts[idx].i.match(/\.v(\d+)\.png/)
+      youngerVersionsToTry.push([
+        idx,
+        Array.from(Array(parseInt(vNumMatch[1], 10) - 1)).map((_, nidx) => (
+          fonts[idx].i.replace(`.v${vNumMatch[1]}.png`, `.v${nidx + 1}.png`)
+        )),
+      ])
+      fonts[idx].i = '0'
+    }
+  })
+  console.log('trying backwards version numbers for broken images')
+  const youngerTries = []
+  for (let j = 0; j < youngerVersionsToTry.length; j += 1) {
+    const [origIdx, fNames] = youngerVersionsToTry[j]
+    const responses = await Promise.all(fNames.map((fName) => (
+      fetch((`${imageURLPrefix}${fName}`), { method: 'HEAD' })
+    )))
+    youngerTries.push([origIdx, responses, fNames])
+  }
+  const youngerTriesSuccess = {}
+  youngerTries.forEach((yt) => {
+    youngerTriesSuccess[yt[0]] = ''
+    yt[1].forEach((tryResponse, tridx) => {
+      if (tryResponse.status === 200) {
+        youngerTriesSuccess[yt[0]] = yt[2][tridx]
+      }
+    })
+  })
+  Object.entries(youngerTriesSuccess).forEach((entry) => {
+    const originalFontIndex = entry[0]
+    const newWorkingImageName = entry[1]
+    if (newWorkingImageName === '') return
+    brokenImages -= 1
+    fonts[originalFontIndex].i = newWorkingImageName
+  })
+  console.log('found', brokenImages, 'broken image links')
 
   const content = JSON.stringify({
     fontURLPrefix,
