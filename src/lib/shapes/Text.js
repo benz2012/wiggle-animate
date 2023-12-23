@@ -10,9 +10,6 @@ import Selection from '../structure/Selection'
 // every time a font is loaded, re-render the canvas
 
 // it have tabs for allowing you to browse through them: Sans-Serif, Serif, Monospace, etc
-// and at the top of it all will be a search bar
-// selecting a font closes will leave the modal open and allow you to add more fonts
-// closing the modal does not change selected value
 
 class Text extends VisibleShape {
   static get className() { return 'Text' }
@@ -38,7 +35,7 @@ class Text extends VisibleShape {
     })
     this._font = new Property({
       type: Selection,
-      value: ['sans-serif', 'serif', 'monospace', 'Roboto'],
+      value: ['sans-serif', 'serif', 'monospace'],
       isEditable: true,
       group: 'font',
       label: 'typeface',

@@ -3,38 +3,52 @@ import missingPreview from '../assets/missingPreview.png'
 
 const STATIC_ASSETS_PATH = './_subapps/animate'
 
-let fontListData = {}
-const getFontListData = () => fontListData
+let fontData = []
+const getFontData = () => fontData
+
+const typeMap = ['regular', 'italic']
+const mapSlimDataToVerbose = (allData) => (
+  allData.fonts.map((entry) => ({
+    name: entry.n,
+    type: typeMap[entry.t],
+    weight: entry.w * 100,
+    category: allData.fontCategories[entry.c],
+    file: `${allData.fontURLPrefix}${entry.f}`,
+    image: entry.i === '0' ? missingPreview : `${allData.imageURLPrefix}${entry.i}`,
+  }))
+)
 
 const preloadSetOfFontImages = (fontList, onEachImageLoaded) => {
-  const { imageURLPrefix } = getFontListData()
   let numLoaded = 0
 
-  fontList.forEach((fontData) => {
-    if (fontData.i === '0') return
-    const image = new Image()
+  fontList.forEach((font) => {
+    if (font.image === missingPreview) {
+      numLoaded += 1
+      onEachImageLoaded(numLoaded)
+      return
+    }
 
+    const image = new Image()
     image.onload = () => {
       numLoaded += 1
       onEachImageLoaded(numLoaded)
     }
-
-    image.src = `${imageURLPrefix}${fontData.i}`
+    image.src = font.image
   })
 }
 
 const loadFont = (fontName) => {
-  const { fonts, fontURLPrefix } = getFontListData()
-  const fontData = fonts.find((elm) => elm.n === fontName)
-  if (!fontData) {
+  const fonts = getFontData()
+  const font = fonts.find((elm) => elm.name === fontName)
+  if (!font) {
     console.log('fontdata not found for', fontName)
     return
   }
 
-  const fontFace = new FontFace(fontData.n, `url(${fontURLPrefix}${fontData.f})`)
-  fontFace.load().then((font) => {
-    document.fonts.add(font)
-    console.log('loaded font', fontData.n)
+  const fontFace = new FontFace(font.name, `url(${font.file})`)
+  fontFace.load().then((loadedFont) => {
+    document.fonts.add(loadedFont)
+    console.log('loaded font', font.name)
   }).catch((err) => {
     console.warn(err)
   })
@@ -45,20 +59,20 @@ if (process.env.NODE_ENV === 'production') {
   fetch(`${STATIC_ASSETS_PATH}/${process.env.REACT_APP_FONT_DATA_FILE}`)
     .then((res) => res.json())
     .then((data) => {
-      fontListData = data
+      fontData = mapSlimDataToVerbose(data)
     })
 } else {
   // eslint-disable-next-line
   import('../hidden/font-data-google.json')
     .then((module) => {
-      fontListData = module.default
+      fontData = mapSlimDataToVerbose(module.default)
     })
 }
 const missingPreviewImage = new Image()
 missingPreviewImage.src = missingPreview
 
 export {
-  getFontListData,
+  getFontData,
   loadFont,
   preloadSetOfFontImages,
 }
