@@ -9,8 +9,6 @@ import Selection from '../structure/Selection'
 // this will allow us to load all the ones being used when a project opens
 // every time a font is loaded, re-render the canvas
 
-// I think maybe to make it easier on the user, the clickable box will be all fonts that they added
-// to that project, and then I'll put a little plus button next to it that will open the modal
 // it have tabs for allowing you to browse through them: Sans-Serif, Serif, Monospace, etc
 // and at the top of it all will be a search bar
 // selecting a font closes will leave the modal open and allow you to add more fonts
@@ -28,12 +26,15 @@ class Text extends VisibleShape {
       isEditable: true,
       isKeyframable: true,
     })
-    this._action = new Property({
-      type: Property.PRIMITIVES.STRING, // make a new property-type called Button,
-      value: '+ Add Fonts',
+    this._fontSize = new Property({
+      type: Property.PRIMITIVES.INTEGER,
+      value: 100,
       isEditable: true,
       group: 'font',
-      label: '',
+      label: 'size',
+      minValue: 0,
+      maxValue: 10000,
+      isKeyframable: true,
     })
     this._font = new Property({
       type: Selection,
@@ -56,16 +57,6 @@ class Text extends VisibleShape {
       isEditable: true,
       group: 'font',
       label: 'weight',
-    })
-    this._fontSize = new Property({
-      type: Property.PRIMITIVES.INTEGER,
-      value: 100,
-      isEditable: true,
-      group: 'font',
-      label: 'size',
-      minValue: 0,
-      maxValue: 10000,
-      isKeyframable: true,
     })
 
     // These mess with drawing operations too much, lock these in but allow normal

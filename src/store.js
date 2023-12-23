@@ -74,7 +74,13 @@ class RootStore {
       hovers: [],
     }
 
-    this.view = {}
+    this.view = {
+      dialogs: {
+        help: false,
+        export: false,
+        addFonts: false,
+      },
+    }
 
     this.playhead = {
       hovered: false,
@@ -165,6 +171,9 @@ class RootStore {
       setSelectorRect: action,
       setSelectorHovers: action,
 
+      openDialog: action,
+      closeDialog: action,
+      closeAllDialogs: action,
       resetView: action,
 
       setPlayheadHovered: action,
@@ -386,6 +395,26 @@ class RootStore {
   setSelectorHovers(values) { this.selector.hovers = values }
 
   /* View Actions */
+  openDialog(dialogName) {
+    if (dialogName === 'export') {
+      this.setOutputFilename()
+    }
+    this.view.dialogs[dialogName] = true
+  }
+
+  closeDialog(dialogName) {
+    // Prevent closing the dialog until export is finished
+    if (dialogName === 'export' && this.project.isExporting) return
+
+    this.view.dialogs[dialogName] = false
+  }
+
+  closeAllDialogs() {
+    Object.keys(this.view.dialogs).forEach((dialogName) => {
+      this.closeDialog(dialogName)
+    })
+  }
+
   resetView() {
     this.rootContainer.setCanvasToBestFit()
   }

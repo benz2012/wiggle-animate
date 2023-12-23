@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import './TopMenu.css'
-import ExportDialog from './Modal/ExportDialog'
 import bCurveIcon from '../assets/b-curve-icon.png'
 
 const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
@@ -34,17 +33,6 @@ const TopMenu = observer(({ store }) => {
   const handleInsertActionWith = (func) => () => {
     func()
     document.getElementById('stage').focus()
-  }
-
-  const [exportDialogOpen, setExportDialogOpen] = useState(false)
-  const openExportDialog = () => {
-    setExportDialogOpen(true)
-    store.setOutputFilename()
-  }
-  const conditionalClose = () => {
-    // Prevent closing the dialog until export is finished
-    if (store.project.isExporting) return
-    setExportDialogOpen(false)
   }
 
   return (
@@ -151,18 +139,17 @@ const TopMenu = observer(({ store }) => {
       <button
         type="button"
         className="top-menu-item top-menu-item-button noselect"
-        onClick={openExportDialog}
+        onClick={() => store.openDialog('export')}
       >
         <span className="unicode-icon">↯</span>
         Export
       </button>
-      <ExportDialog
-        store={store}
-        open={exportDialogOpen}
-        onClose={conditionalClose}
-      />
 
-      <button type="button" className="top-menu-item top-menu-item-button noselect">
+      <button
+        type="button"
+        className="top-menu-item top-menu-item-button noselect"
+        onClick={() => store.openDialog('help')}
+      >
         ?
       </button>
     </div>

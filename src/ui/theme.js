@@ -109,6 +109,9 @@ const muiTheme = createTheme({
     primary: {
       main: `${theme.base.palette.primary}`,
     },
+    secondary: {
+      main: `${theme.base.palette.secondary}`,
+    },
     background: {
       paper: `${theme.base.palette.background}`,
     },
