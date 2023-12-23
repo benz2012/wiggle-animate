@@ -15,6 +15,7 @@ import usePrevious from '../hooks/usePrevious'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
+import ButtonAction from '../inputs/ButtonAction'
 import ColorInput from '../inputs/ColorInput'
 import FloatInput from '../inputs/FloatInput'
 import IntegerInput from '../inputs/IntegerInput'
@@ -65,6 +66,14 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
         {text}
       </Typography>
     )
+  }
+
+  const groupAdditions = {
+    font: [
+      <ButtonAction key="open-add-fonts" onClick={() => store.openDialog('addFonts')}>
+        + Add Fonts
+      </ButtonAction>,
+    ],
   }
 
   const genericSetter = (property) => (newValue) => {
@@ -142,9 +151,15 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       }
     }
 
+    let additionsToRender = null
+    if (groupName in groupAdditions) {
+      additionsToRender = groupAdditions[groupName]
+    }
+
     return (
       <PropertyGroup key={`group-${groupName}`} name={groupName} show={show} toggleGroup={toggleGroup}>
         {contents.map(makePropertyComponent)}
+        {additionsToRender}
       </PropertyGroup>
     )
   }
