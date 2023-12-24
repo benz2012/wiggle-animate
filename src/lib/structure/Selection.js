@@ -40,9 +40,11 @@ class Selection {
       this._values = ['normal', 'italic']
       this.selected = 'normal'
     } else if (this.specialType === '_fontWeight') {
-      this._values = browserFonts
-        .filter((font) => font.name === 'Sans-Serif')
-        .map((font) => weightLabelMap[font.weight])
+      this._values = [...new Set(
+        browserFonts
+          .filter((font) => font.name === 'Sans-Serif')
+          .map((font) => weightLabelMap[font.weight])
+      )]
       this.selected = '400 - Normal'
     }
   }

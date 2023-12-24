@@ -35,13 +35,6 @@ class Text extends VisibleShape {
       group: 'font',
       label: 'typeface',
     })
-    this._fontStyle = new Property({
-      type: Selection,
-      value: ['_fontStyle', Text.rootContainer.store],
-      isEditable: true,
-      group: 'font',
-      label: 'style',
-    })
     this._fontWeight = new Property({
       type: Selection,
       value: ['_fontWeight', Text.rootContainer.store],
@@ -49,6 +42,13 @@ class Text extends VisibleShape {
       isEditable: true,
       group: 'font',
       label: 'weight',
+    })
+    this._fontStyle = new Property({
+      type: Selection,
+      value: ['_fontStyle', Text.rootContainer.store],
+      isEditable: true,
+      group: 'font',
+      label: 'style',
     })
 
     // These mess with drawing operations too much, lock these in but allow normal
@@ -71,8 +71,8 @@ class Text extends VisibleShape {
   get text() { return this._text.value }
   get fontSize() { return this._fontSize.value }
   get fontFamily() { return this._fontFamily.value.selected }
-  get fontStyle() { return this._fontStyle.value.selected }
   get fontWeight() { return this._fontWeight.value.selected?.split(' - ')[0] }
+  get fontStyle() { return this._fontStyle.value.selected }
 
   measureAndSetSize() {
     const metrics = this.ctx.measureText(this.text)
