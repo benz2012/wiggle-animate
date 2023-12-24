@@ -123,6 +123,13 @@ const FontDialog = observer(({ store, open, onClose }) => {
     firstOfEachFont,
   ])
 
+  const focusSearchField = () => {
+    document.getElementById('add-fonts-search-field')?.focus()
+  }
+  useEffect(() => {
+    if (imagesLoadedPercent === 100) { focusSearchField() }
+  }, [imagesLoadedPercent])
+
   const [searchQuery, setSearchQuery] = useState('')
   const filteredFontList = firstOfEachFont.filter((font) => (
     font.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -140,6 +147,7 @@ const FontDialog = observer(({ store, open, onClose }) => {
       onClose={onClose}
       maxWidth="sm"
       fullWidth
+      TransitionProps={{ onEntered: focusSearchField }}
     >
       <DialogTitle>Add Fonts to your Project</DialogTitle>
       <LinearProgress variant="determinate" color="secondary" value={imagesLoadedPercent} />
@@ -159,12 +167,14 @@ const FontDialog = observer(({ store, open, onClose }) => {
 
       <DialogContent>
         <TextField
+          id="add-fonts-search-field"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by name"
           fullWidth
           variant="outlined"
           color="secondary"
+          disabled={imagesLoadedPercent !== 100}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
