@@ -25,13 +25,12 @@ class Text extends VisibleShape {
       type: Property.PRIMITIVES.INTEGER,
       value: 100,
       isEditable: true,
-      group: 'font',
       label: 'size',
       minValue: 0,
       maxValue: 10000,
       isKeyframable: true,
     })
-    this._font = new Property({
+    this._fontFamily = new Property({
       type: Selection,
       value: ['_fontSelector', Text.rootContainer.store],
       isEditable: true,
@@ -73,9 +72,9 @@ class Text extends VisibleShape {
 
   get text() { return this._text.value }
   get fontSize() { return this._fontSize.value }
-  get font() { return this._font.value.selected }
+  get fontFamily() { return this._fontFamily.value.selected }
   get fontStyle() { return this._fontStyle.value.selected }
-  get fontWeight() { return this._fontWeight.value.selected }
+  get fontWeight() { return this._fontWeight.value.selected?.split(' - ')[0] }
 
   measureAndSetSize() {
     const metrics = this.ctx.measureText(this.text)
@@ -85,7 +84,7 @@ class Text extends VisibleShape {
   }
 
   drawPath() {
-    this.ctx.font = `${this.fontSize}px ${this.font}`
+    this.ctx.font = `${this.fontStyle} ${this.fontWeight} ${this.fontSize}px ${this.fontFamily}`
     this.ctx.textAlign = this.align
     this.ctx.textBaseline = this.baseline
     this.ctx.direction = this.direction

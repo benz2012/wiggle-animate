@@ -25,7 +25,7 @@ if (!process.env.GOOGLE_FONTS_API_KEY) {
 const API_KEY = process.env.GOOGLE_FONTS_API_KEY
 const PREVIEW_IMAGE_HOST = 'https://raw.githubusercontent.com/getstencil/GoogleWebFonts-FontFamilyPreviewImages'
 const PREVIEW_IMAGE_BASE_URL = `${PREVIEW_IMAGE_HOST}/master/48px/compressed/`
-const WEIGHTS_TO_INCLUDE = ['200', '400', '600', '800']
+const WEIGHTS_TO_INCLUDE = ['100', '300', '400', '700', '900']
 
 async function main() {
   const fontFamilys = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}&capability=WOFF2`)
@@ -48,9 +48,9 @@ async function main() {
       const weight = ['regular', 'italic'].includes(variant) ? '400' : variant.substring(0, 3)
       if (WEIGHTS_TO_INCLUDE.includes(weight) === false) return
 
-      let variantType = 0 // regular
+      let variantStyle = 0 // regular
       if (variant === 'italic' || variant.includes('0i')) {
-        variantType = 1 // italic
+        variantStyle = 1 // italic
       }
 
       let variantWeight = 4 // 400
@@ -70,9 +70,17 @@ async function main() {
       }
       const imageFileName = `${imageFontFamily}-${imageVariant}.${fontFamily.version}.png`
 
+      /**
+       * n: name
+       * s: style
+       * w: weight
+       * c: category
+       * f: file
+       * i: image
+       */
       fonts.push({
         n: fontFamily.family,
-        t: variantType,
+        s: variantStyle,
         w: variantWeight,
         c: fontCategories[fontFamily.category],
         f: fontSubURL,
