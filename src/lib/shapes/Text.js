@@ -5,8 +5,6 @@ import Property from '../structure/Property'
 import Selection from '../structure/Selection'
 
 // TODO [2]: Actual Fonts
-// every time a font is loaded, re-render the canvas
-
 // it have tabs for allowing you to browse through them: Sans-Serif, Serif, Monospace, etc
 
 class Text extends VisibleShape {
@@ -32,21 +30,21 @@ class Text extends VisibleShape {
     })
     this._fontFamily = new Property({
       type: Selection,
-      value: ['_fontSelector', Text.rootContainer.store],
+      value: ['_fontFamily', Text.rootContainer.store],
       isEditable: true,
       group: 'font',
       label: 'typeface',
     })
     this._fontStyle = new Property({
       type: Selection,
-      value: ['regular', 'italic'],
+      value: ['_fontStyle', Text.rootContainer.store],
       isEditable: true,
       group: 'font',
       label: 'style',
     })
     this._fontWeight = new Property({
       type: Selection,
-      value: ['200 - Light', '400 - Normal', '600 - Bold', '800 - Black'],
+      value: ['_fontWeight', Text.rootContainer.store],
       defaultSelection: 1,
       isEditable: true,
       group: 'font',

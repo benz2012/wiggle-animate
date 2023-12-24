@@ -12,6 +12,7 @@ import {
 } from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
+import { weightLabelMap } from '../../utility/fonts'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
@@ -82,6 +83,20 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       selectedItem.setOrigin(newValueVector, store.animation.now)
     } else {
       property.setValue(newValue, store.animation.now)
+    }
+
+    // This is fairly hacky but I need a way to link all 3 font selection boxes to one another, sad :(
+    if (property.typeName === 'Selection' && property.value.specialType === '_fontFamily') {
+      const nextFontStyles = []
+      const nextFontWeights = []
+      store.project.fonts
+        .filter((font) => font.name === newValue)
+        .forEach((font) => {
+          nextFontStyles.push(font.style)
+          nextFontWeights.push(weightLabelMap[font.weight])
+        })
+      selectedItem._fontStyle.value.setNewValues([...new Set(nextFontStyles)], 'normal')
+      selectedItem._fontWeight.value.setNewValues([...new Set(nextFontWeights)], weightLabelMap[400])
     }
   }
 

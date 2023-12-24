@@ -139,7 +139,7 @@ class Property {
       })
 
       if ([Selection.className].includes(this.typeName)) {
-        if (cappedValue[0] === '_fontSelector') {
+        if (cappedValue[0].startsWith('_font')) {
           const newObj = new Type()
           newObj.attatchStore(cappedValue[0], cappedValue[1])
           return newObj
