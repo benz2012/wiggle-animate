@@ -3,19 +3,24 @@ import { FixedSizeList as VirtualList } from 'react-window'
 import { observer } from 'mobx-react-lite'
 
 import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
 import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck'
+import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined'
 import LinearProgress from '@mui/material/LinearProgress'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 import SearchIcon from '@mui/icons-material/Search'
 import TextField from '@mui/material/TextField'
-import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined'
-import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck'
 
-import { getFontData, preloadSetOfFontImages } from '../../utility/fonts'
+import { getFontData, preloadSetOfFontImages, getCategoryMap, getWeightMap } from '../../utility/fonts'
 import missingPreview from '../../assets/missingPreview.png'
 
 const ROW_HEIGHT = 52
@@ -76,7 +81,7 @@ const VirtualRow = ({ data, index, style }) => {
               paddingTop: 1,
             }}
           >
-            {font.name}
+            {font.name} {font.numVariants > 1 && `(${font.numVariants} Variants)`}
           </Box>
         </Box>
         <Box sx={{ flexGrow: 1 }} />
@@ -88,15 +93,22 @@ const VirtualRow = ({ data, index, style }) => {
 
 const FontDialog = observer(({ store, open, onClose }) => {
   const fontData = getFontData()
+
   const firstOfEachFont = useMemo(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
     if (fontData.length === 0) return []
     return Object.values(
       fontData.reduce((accum, font) => {
         /* eslint-disable no-param-reassign */
-        if (font.name in accum) return accum
+        if (font.name in accum) {
+          accum[font.name].numVariants += 1
+          accum[font.name].weights.push(font.weight)
+          return accum
+        }
         accum[font.name] = {
           ...font,
+          numVariants: 1,
+          weights: [font.weight],
           isAdded: store.project.fonts.find((someFont) => someFont.name === font.name),
         }
         return accum
@@ -107,6 +119,19 @@ const FontDialog = observer(({ store, open, onClose }) => {
     store.project.fonts,
     store.project.fonts.length,
   ])
+
+  const categories = getCategoryMap()
+  const [shownCategories, setShownCategories] = useState([])
+  useEffect(() => {
+    setShownCategories(categories)
+  }, [categories])
+
+  const weightMap = getWeightMap()
+  const [weights, setWeights] = useState({})
+  const [shownWeight, setShownWeight] = useState(0)
+  useEffect(() => {
+    setWeights({ 0: 'Any Weight', ...weightMap })
+  }, [weightMap])
 
   const [imagesLoading, setImagesLoading] = useState(false)
   const [imagesLoadedPercent, setImagesLoadedPercent] = useState(0)
@@ -131,9 +156,16 @@ const FontDialog = observer(({ store, open, onClose }) => {
   }, [imagesLoadedPercent])
 
   const [searchQuery, setSearchQuery] = useState('')
-  const filteredFontList = firstOfEachFont.filter((font) => (
-    font.name.toLowerCase().includes(searchQuery.toLowerCase())
-  ))
+  const filteredFontList = firstOfEachFont
+    .filter((font) => (
+      shownCategories.includes(font.category)
+    ))
+    .filter((font) => (
+      shownWeight === 0 || font.weights.includes(shownWeight)
+    ))
+    .filter((font) => (
+      font.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ))
 
   const addFontFamily = (font) => {
     const allFontsThisFamily = fontData.filter((f) => f.name === font.name)
@@ -195,17 +227,93 @@ const FontDialog = observer(({ store, open, onClose }) => {
           sx={{ marginBottom: 2 }}
         />
 
-        <VirtualList
-          itemData={{
-            items: filteredFontList,
-            addFont: addFontFamily,
-          }}
-          itemCount={filteredFontList.length}
-          height={window.innerHeight - 300}
-          itemSize={ROW_HEIGHT}
-        >
-          {VirtualRow}
-        </VirtualList>
+        <Box sx={{ display: 'flex' }}>
+          <VirtualList
+            style={{ flexGrow: 1 }}
+            itemData={{
+              items: filteredFontList,
+              addFont: addFontFamily,
+            }}
+            itemCount={filteredFontList.length}
+            height={window.innerHeight - 300}
+            itemSize={ROW_HEIGHT}
+          >
+            {VirtualRow}
+          </VirtualList>
+
+          <Box sx={{ width: '110px', marginLeft: 2 }}>
+            Shown
+            <Box sx={{ marginLeft: 1, marginBottom: 2, marginTop: 0.5, fontSize: 14 }}>
+              {filteredFontList.length}{' '}
+              <Box sx={{ color: 'action.disabled', display: 'inline-block' }}>of {firstOfEachFont.length}</Box>
+            </Box>
+
+            Categories
+            <FormGroup sx={{ marginLeft: 0, marginBottom: 2 }}>
+              {categories.map((category, idx) => (
+                <FormControlLabel
+                  key={category}
+                  label={category}
+                  sx={{
+                    margin: 0,
+                    marginBottom: '-4px',
+                    marginTop: idx === 0 && 0.5,
+                    '& .MuiFormControlLabel-label': { fontSize: 14 },
+                  }}
+                  control={(
+                    <Checkbox
+                      color="secondary"
+                      checked={shownCategories.includes(category)}
+                      onChange={(event) => {
+                        if (event.target.checked === false) {
+                          setShownCategories(shownCategories.filter((c) => c !== category))
+                        } else {
+                          setShownCategories([...shownCategories, category])
+                        }
+                      }}
+                      sx={{
+                        width: '26px',
+                        height: '26px',
+                        '& .MuiSvgIcon-root': { fontSize: 18 },
+                      }}
+                    />
+                  )}
+                />
+              ))}
+            </FormGroup>
+
+            Weight
+            <RadioGroup
+              value={shownWeight}
+              onChange={(event) => setShownWeight(parseInt(event.target.value, 10))}
+              sx={{ marginLeft: 0 }}
+            >
+              {Object.entries(weights).map(([weight, weightLabel], idx) => (
+                <FormControlLabel
+                  key={weightLabel}
+                  value={`${weight}`}
+                  label={weightLabel}
+                  sx={{
+                    margin: 0,
+                    marginBottom: '-4px',
+                    marginTop: idx === 0 && 0.5,
+                    '& .MuiFormControlLabel-label': { fontSize: 14 },
+                  }}
+                  control={(
+                    <Radio
+                      color="secondary"
+                      sx={{
+                        width: '26px',
+                        height: '26px',
+                        '& .MuiSvgIcon-root': { fontSize: 18 },
+                      }}
+                    />
+                  )}
+                />
+              ))}
+            </RadioGroup>
+          </Box>
+        </Box>
       </DialogContent>
     </Dialog>
   )

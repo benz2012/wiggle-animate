@@ -4,9 +4,6 @@ import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
 import Selection from '../structure/Selection'
 
-// TODO [2]: Actual Fonts
-// it have tabs for allowing you to browse through them: Sans-Serif, Serif, Monospace, etc
-
 class Text extends VisibleShape {
   static get className() { return 'Text' }
 
