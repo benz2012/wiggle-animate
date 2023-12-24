@@ -139,6 +139,11 @@ class Property {
       })
 
       if ([Selection.className].includes(this.typeName)) {
+        if (cappedValue[0] === '_fontSelector') {
+          const newObj = new Type()
+          newObj.attatchStore(cappedValue[0], cappedValue[1])
+          return newObj
+        }
         return new Type(this.defaultSelection, ...cappedValue)
       }
 

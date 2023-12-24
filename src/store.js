@@ -20,7 +20,7 @@ import theme from './ui/theme'
 import { clamp } from './utility/numbers'
 import { isEqual } from './utility/array'
 import { keyframeLabelFromProperty } from './utility/state'
-import { loadFont } from './utility/fonts'
+import { browserFonts, loadFont } from './utility/fonts'
 import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from './utility/video'
 import { sleep } from './utility/time'
 
@@ -52,7 +52,7 @@ class RootStore {
       saveStatus: 'unknown',
       isExporting: false,
       exportFileName: '',
-      fonts: [],
+      fonts: [...browserFonts],
     }
 
     this.build = {
@@ -215,6 +215,7 @@ class RootStore {
       moveKeyframeCurveHandleByIncrement: action,
 
       /* Computeds */
+      fontFamilies: computed,
       determineCurrentAction: computed,
       curveEditorTargets: computed,
       keyframeHoverInformation: computed,
@@ -357,6 +358,13 @@ class RootStore {
     listOfFonts.forEach((font) => {
       loadFont(font)
     })
+  }
+
+  get fontFamilies() {
+    return this.project.fonts.reduce((accum, font) => {
+      if (accum.includes(font.name) === true) return accum
+      return [...accum, font.name]
+    }, []).sort()
   }
 
   /* Build Actions */

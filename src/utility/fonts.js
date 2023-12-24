@@ -47,6 +47,12 @@ const loadFont = (font) => {
   })
 }
 
+const browserFonts = [
+  { name: 'Sans-Serif', type: 'regular', weight: 400, category: 'sans-serif' },
+  { name: 'Serif', type: 'regular', weight: 400, category: 'serif' },
+  { name: 'Monospace', type: 'regular', weight: 400, category: 'monospace' },
+]
+
 // Top-Level Initialization Code -- leave this at bottom of module
 if (process.env.NODE_ENV === 'production') {
   fetch(`${STATIC_ASSETS_PATH}/${process.env.REACT_APP_FONT_DATA_FILE}`)
@@ -65,6 +71,7 @@ const missingPreviewImage = new Image()
 missingPreviewImage.src = missingPreview
 
 export {
+  browserFonts,
   getFontData,
   loadFont,
   preloadSetOfFontImages,

@@ -33,7 +33,7 @@ class Text extends VisibleShape {
     })
     this._font = new Property({
       type: Selection,
-      value: ['sans-serif', 'serif', 'monospace'],
+      value: ['_fontSelector', Text.rootContainer.store],
       isEditable: true,
       group: 'font',
       label: 'typeface',
