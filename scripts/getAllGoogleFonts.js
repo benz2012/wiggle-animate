@@ -25,7 +25,18 @@ if (!process.env.GOOGLE_FONTS_API_KEY) {
 const API_KEY = process.env.GOOGLE_FONTS_API_KEY
 const PREVIEW_IMAGE_HOST = 'https://raw.githubusercontent.com/getstencil/GoogleWebFonts-FontFamilyPreviewImages'
 const PREVIEW_IMAGE_BASE_URL = `${PREVIEW_IMAGE_HOST}/master/48px/compressed/`
-const WEIGHTS_TO_INCLUDE = ['100', '300', '400', '700', '900']
+const WEIGHT_LABEL_MAP = {
+  100: '100 - Thin',
+  // 200: 'Extra 200 - Light',
+  300: '300 - Light',
+  400: '400 - Normal',
+  // 500: '500 - Medium',
+  // 600: 'Semi 600 - Bold',
+  700: '700 - Bold',
+  // 800: 'Extra 800 - Bold',
+  900: '900 - Black',
+}
+const WEIGHTS_TO_INCLUDE = Object.keys(WEIGHT_LABEL_MAP).map((k) => `${k}`)
 
 async function main() {
   const fontFamilys = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}&capability=WOFF2`)
@@ -146,6 +157,7 @@ async function main() {
     fontURLPrefix,
     imageURLPrefix,
     fontCategories: Object.keys(fontCategories),
+    weightLabels: WEIGHT_LABEL_MAP,
     fonts,
   })
   const contentHash = md5(content)

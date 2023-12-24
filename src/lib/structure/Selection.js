@@ -1,7 +1,7 @@
 import { makeObservable, action } from 'mobx'
 
 import { observeListOfProperties } from '../../utility/state'
-import { browserFonts, weightLabelMap } from '../../utility/fonts'
+import { browserFonts, getWeightMap } from '../../utility/fonts'
 
 class Selection {
   static get className() { return 'Selection' }
@@ -43,7 +43,7 @@ class Selection {
       this._values = [...new Set(
         browserFonts
           .filter((font) => font.name === 'Sans-Serif')
-          .map((font) => weightLabelMap[font.weight])
+          .map((font) => getWeightMap()[font.weight])
       )]
       this.selected = '400 - Normal'
     }

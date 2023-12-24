@@ -3,10 +3,26 @@ import missingPreview from '../assets/missingPreview.png'
 
 const STATIC_ASSETS_PATH = './_subapps/animate'
 
+let fontDataHeaders = {}
+const getFontDataHeaders = () => fontDataHeaders
 let fontData = []
 const getFontData = () => fontData
 
 const styleMap = ['normal', 'italic']
+const getWeightMap = () => getFontDataHeaders().weightLabels || {}
+const getCategoryMap = () => getFontDataHeaders().fontCategories || []
+
+const browserFonts = ['Sans-Serif', 'Serif', 'Monospace'].map((name) => (
+  [400, 700].map((weight) => (
+    ['normal', 'italic'].map((style) => ({
+      name,
+      weight,
+      style,
+      category: name.toLowerCase(),
+    }))
+  ))
+)).flat(Infinity)
+
 const mapSlimDataToVerbose = (allData) => (
   allData.fonts.map((entry) => ({
     name: entry.n,
@@ -50,50 +66,31 @@ const loadFont = (font) => {
   })
 }
 
-const browserFonts = ['Sans-Serif', 'Serif', 'Monospace'].map((name) => (
-  [400, 700].map((weight) => (
-    ['normal', 'italic'].map((style) => ({
-      name,
-      weight,
-      style,
-      category: name.toLowerCase(),
-    }))
-  ))
-)).flat(Infinity)
-
-// We currently do not plan to support the commented-out weights
-const weightLabelMap = {
-  100: '100 - Thin',
-  // 200: 'Extra 200 - Light',
-  300: '300 - Light',
-  400: '400 - Normal',
-  // 500: '500 - Medium',
-  // 600: 'Semi 600 - Bold',
-  700: '700 - Bold',
-  // 800: 'Extra 800 - Bold',
-  900: '900 - Black',
-}
-
 // Top-Level Initialization Code -- leave this at bottom of module
 if (process.env.NODE_ENV === 'production') {
   fetch(`${STATIC_ASSETS_PATH}/${process.env.REACT_APP_FONT_DATA_FILE}`)
     .then((res) => res.json())
     .then((data) => {
       fontData = mapSlimDataToVerbose(data)
+      fontDataHeaders = data
+      delete fontDataHeaders.fonts
     })
 } else {
   // eslint-disable-next-line
   import('../hidden/font-data-google.json')
     .then((module) => {
       fontData = mapSlimDataToVerbose(module.default)
+      fontDataHeaders = module.default
+      delete fontDataHeaders.fonts
     })
 }
 const missingPreviewImage = new Image()
 missingPreviewImage.src = missingPreview
 
 export {
+  getWeightMap,
+  getCategoryMap,
   browserFonts,
-  weightLabelMap,
   getFontData,
   loadFont,
   preloadSetOfFontImages,

@@ -12,7 +12,7 @@ import {
 } from './config'
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
-import { weightLabelMap } from '../../utility/fonts'
+import { getWeightMap } from '../../utility/fonts'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
@@ -93,10 +93,10 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
         .filter((font) => font.name === newValue)
         .forEach((font) => {
           nextFontStyles.push(font.style)
-          nextFontWeights.push(weightLabelMap[font.weight])
+          nextFontWeights.push(getWeightMap()[font.weight])
         })
       selectedItem._fontStyle.value.setNewValues([...new Set(nextFontStyles)], 'normal')
-      selectedItem._fontWeight.value.setNewValues([...new Set(nextFontWeights)], weightLabelMap[400])
+      selectedItem._fontWeight.value.setNewValues([...new Set(nextFontWeights)], getWeightMap()[400])
     }
   }
 
