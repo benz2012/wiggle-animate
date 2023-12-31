@@ -12,84 +12,20 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
-import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck'
-import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined'
 import LinearProgress from '@mui/material/LinearProgress'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import SearchIcon from '@mui/icons-material/Search'
 import TextField from '@mui/material/TextField'
 
+import FontVirtualRow from './FontVirtualRow'
 import { getFontData, preloadSetOfFontImages, getCategoryMap, getWeightMap } from '../../utility/fonts'
-import missingPreview from '../../assets/missingPreview.png'
 
-const ROW_HEIGHT = 52
+const ROW_HEIGHT = 5
 
-const VirtualRow = ({ data, index, style }) => {
-  const { items, addFont } = data
-  const font = items[index]
-  const rightIcon = font.isAdded ? (
-    <LibraryAddCheckIcon
-      color="secondary"
-      sx={(theme) => ({ marginRight: `calc(${theme.spacing(1)} + 6px)` })}
-    />
-  ) : (
-    <IconButton
-      onClick={() => addFont(font)}
-      sx={{
-        width: '36px',
-        height: '36px',
-        marginRight: 1,
-      }}
-    >
-      <LibraryAddOutlinedIcon />
-    </IconButton>
-  )
-
-  return (
-    <Box
-      style={style}
-      sx={{
-        height: `${ROW_HEIGHT}px`,
-        backgroundColor: index % 2 === 0 && 'rgba(255, 255, 255, 0.08)',
-        borderRadius: 1,
-      }}
-    >
-      <Box
-        sx={{
-          padding: 1,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <Box>
-          <img
-            src={font.image}
-            alt={`font preview of ${font.name}`}
-            style={{
-              display: 'block',
-              height: '16px',
-              filter: font.image !== missingPreview && 'invert(1)',
-            }}
-          />
-          <Box
-            sx={{
-              color: 'text.disabled',
-              font: 'monospace',
-              fontSize: '12px',
-              lineHeight: '12px',
-              paddingTop: 1,
-            }}
-          >
-            {font.name} {font.numVariants > 1 && `(${font.numVariants} Variants)`}
-          </Box>
-        </Box>
-        <Box sx={{ flexGrow: 1 }} />
-        {rightIcon}
-      </Box>
-    </Box>
-  )
-}
+// TODO [4]: Add button to "load font preview" for fonts that are "missing preview"
+//           This will add the font to the DOM and render it with HTML and CSS, instead of as a png image
+// TODO [4]: create my own repo that has pre-generated google font pngs, to eliminate the missing ones
 
 const FontDialog = observer(({ store, open, onClose }) => {
   const fontData = getFontData()
@@ -233,12 +169,13 @@ const FontDialog = observer(({ store, open, onClose }) => {
             itemData={{
               items: filteredFontList,
               addFont: addFontFamily,
+              rowHeight: ROW_HEIGHT,
             }}
             itemCount={filteredFontList.length}
             height={window.innerHeight - 300}
             itemSize={ROW_HEIGHT}
           >
-            {VirtualRow}
+            {FontVirtualRow}
           </VirtualList>
 
           <Box sx={{ width: '110px', marginLeft: 2 }}>
