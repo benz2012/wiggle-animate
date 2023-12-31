@@ -46,7 +46,7 @@ const KeyHandler = ({ store }) => {
           document.getElementById('play-pause-button').click()
         } else if (STAGE_HAS_FOCUS) {
           event.preventDefault()
-          store.setKeyHeld('Space', true)
+          store.keyHeld.setKey('Space', true)
         }
         break
 
@@ -68,10 +68,10 @@ const KeyHandler = ({ store }) => {
         if (event.metaKey || event.ctrlKey) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
-            store.selectAllVisibleKeyframes()
+            store.keyframeEditor.selectAllVisible()
           } else if (STAGE_HAS_FOCUS) {
             event.preventDefault()
-            store.selectAll()
+            store.build.selectAll()
           }
         }
         break
@@ -80,17 +80,17 @@ const KeyHandler = ({ store }) => {
         if (event.metaKey || event.ctrlKey) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
-            store.setSelectedKeyframes([])
+            store.keyframeEditor.setSelected([])
           } else if (STAGE_HAS_FOCUS) {
             event.preventDefault()
-            store.setSelected([])
+            store.build.setSelected([])
           }
         }
         break
 
       case 'Shift':
         if (!(STAGE_HAS_FOCUS || BOTTOM_HAS_FOCUS)) break
-        store.setKeyHeld('Shift', true)
+        store.keyHeld.setKey('Shift', true)
         break
 
       case 'ArrowUp':
@@ -153,7 +153,7 @@ const KeyHandler = ({ store }) => {
     }
 
     if (event.metaKey || event.ctrlKey) {
-      store.setKeyHeld('Meta', true)
+      store.keyHeld.setKey('Meta', true)
     }
   })
 
@@ -173,13 +173,13 @@ const KeyHandler = ({ store }) => {
             const item = store.rootContainer.findItem(itemId)
             item[propertyName].deleteKey(keyframeId)
           })
-          store.setSelectedKeyframes([])
+          store.keyframeEditor.setSelected([])
         } else if (STAGE_HAS_FOCUS && selectedIds.length > 0) {
           const itemsToDelete = selectedIds.map((selectedId) => (
             store.rootContainer.findItem(selectedId)
           ))
-          store.setSelected([])
-          store.setHovered(null)
+          store.build.setSelected([])
+          store.build.setHovered(null)
           itemsToDelete.forEach((item) => { item.delete() })
         }
         break
@@ -187,26 +187,26 @@ const KeyHandler = ({ store }) => {
       case 'Escape':
         if (!STAGE_HAS_FOCUS) break
         if (store.build.tool === store.tools.PATH) {
-          store.commitPath()
+          store.stage.commitPath()
         }
         break
 
       case ' ':
-        store.setKeyHeld('Space', false)
+        store.keyHeld.setKey('Space', false)
         break
 
       case 'f':
         if (!STAGE_HAS_FOCUS) break
-        store.resetView()
+        store.view.reset()
         break
 
       case 'Shift':
-        store.setKeyHeld('Shift', false)
+        store.keyHeld.setKey('Shift', false)
         break
 
       case 'Meta':
       case 'Control':
-        store.setKeyHeld('Meta', false)
+        store.keyHeld.setKey('Meta', false)
         break
 
       case 'c':
@@ -214,38 +214,38 @@ const KeyHandler = ({ store }) => {
           store.animation.setIn(Animation.FIRST)
           store.animation.setOut(store.animation.frames)
         } else if (STAGE_HAS_FOCUS) {
-          store.addContainer()
+          store.stage.addContainer()
         }
         break
 
       case 'r':
         if (!STAGE_HAS_FOCUS) break
-        store.addRectangle()
+        store.stage.addRectangle()
         break
 
       case 'e':
         if (!STAGE_HAS_FOCUS) break
-        store.addEllipse()
+        store.stage.addEllipse()
         break
 
       case 't':
         if (!STAGE_HAS_FOCUS) break
-        store.addText()
+        store.stage.addText()
         break
 
       case 'y':
         if (!STAGE_HAS_FOCUS) break
-        store.addPolygon()
+        store.stage.addPolygon()
         break
 
       case 'l':
         if (!STAGE_HAS_FOCUS) break
-        store.addLine()
+        store.stage.addLine()
         break
 
       case 'p':
         if (!STAGE_HAS_FOCUS) break
-        store.setTool(store.tools.PATH)
+        store.build.setTool(store.tools.PATH)
         break
 
       case 'i':

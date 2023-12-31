@@ -60,7 +60,7 @@ const PropertyEditor = observer(({ store }) => {
     const handlePointerMove = action((moveEvent) => {
       const newX = (dragStart.pointer.x - moveEvent.clientX) + dragStart.panel.x
       const newY = (moveEvent.clientY - dragStart.pointer.y) + dragStart.panel.y
-      store.setPropertyEditorPosition({ x: newX, y: newY })
+      store.propertyEditor.setPosition({ x: newX, y: newY })
     })
     window.addEventListener('pointermove', handlePointerMove)
     setIsDragging(true)

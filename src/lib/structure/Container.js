@@ -43,7 +43,7 @@ class Container extends Drawable {
       this._sortOrder = [newId, ...this._sortOrder]
     }
 
-    Item.rootContainer.store.setSelected([newId])
+    Item.rootContainer.store.build.setSelected([newId])
   }
 
   remove(itemId) {
@@ -186,9 +186,9 @@ class Container extends Drawable {
       this.ctx.beginPath()
       this.createIntersectionsPath('origin')
       if (this.ctx.isPointInPath(...pointerVector.values)) {
-        Item.rootContainer.store.setHoveredControl('origin')
+        Item.rootContainer.store.build.setHoveredControl('origin')
       } else {
-        Item.rootContainer.store.setHoveredControl('position')
+        Item.rootContainer.store.build.setHoveredControl('position')
       }
       return true
     }
@@ -213,7 +213,7 @@ class Container extends Drawable {
       ) {
         hasIntersection = child.checkSelectedContainerPointerIntersections(pointerVector)
         if (hasIntersection) {
-          Item.rootContainer.store.setHovered(childId)
+          Item.rootContainer.store.build.setHovered(childId)
           return hasIntersection
         }
       }
@@ -228,18 +228,18 @@ class Container extends Drawable {
           if (handleIdx === 100) {
             interactionType = tools.ROTATE
           }
-          Item.rootContainer.store.setHovered(`${childId}--handle--${handleIdx}`)
-          Item.rootContainer.store.setHoveredControl(`handle--${interactionType}--${cursor}`)
+          Item.rootContainer.store.build.setHovered(`${childId}--handle--${handleIdx}`)
+          Item.rootContainer.store.build.setHoveredControl(`handle--${interactionType}--${cursor}`)
           return hasIntersection
         }
-        Item.rootContainer.store.setHoveredControl(null)
+        Item.rootContainer.store.build.setHoveredControl(null)
       }
 
       // This checks for intersections btwn the mouse and all children that are not
       // Containers, recursivley (it recurses into Containers, lol).
       hasIntersection = child.checkPointerIntersections(pointerVector)
       if (!(child instanceof Container) && hasIntersection) {
-        Item.rootContainer.store.setHovered(childId)
+        Item.rootContainer.store.build.setHovered(childId)
       }
       return hasIntersection
     })

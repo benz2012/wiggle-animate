@@ -13,7 +13,7 @@ const PlayheadCanvas = observer(({ store, windowWidth }) => {
 
   const playheadCanvasWidth = windowWidth - canvasWidthLessThanWindow
 
-  const keyframeFrameHovered = store.keyframeHoverInformation[1]
+  const keyframeFrameHovered = store.keyframeEditor.hoverInfo[1]
 
   // Set Cursor over Playhead
   useEffect(() => {
@@ -28,7 +28,7 @@ const PlayheadCanvas = observer(({ store, windowWidth }) => {
   useEffect(() => {
     const playheadCSSTrueFullWidth = cssTrueHalf * 2
     const pixelsPerFrame = (playheadCanvasWidth - playheadCSSTrueFullWidth) / (store.animation.frames - 1)
-    store.setPlayheadPixelsPerFrame(pixelsPerFrame)
+    store.playhead.setPixelsPerFrame(pixelsPerFrame)
   }, [
     playheadCanvasWidth,
     cssTrueHalf,

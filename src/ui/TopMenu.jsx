@@ -70,37 +70,37 @@ const TopMenu = observer(({ store }) => {
                 icon={<div className="list-item-icon-container" />}
                 label="Container"
                 hotkeyIndicator="c"
-                onClick={handleInsertActionWith(() => store.addContainer())}
+                onClick={handleInsertActionWith(() => store.stage.addContainer())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-rectangle" />}
                 label="Rectangle"
                 hotkeyIndicator="r"
-                onClick={handleInsertActionWith(() => store.addRectangle())}
+                onClick={handleInsertActionWith(() => store.stage.addRectangle())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-ellipse" />}
                 label="Ellipse"
                 hotkeyIndicator="e"
-                onClick={handleInsertActionWith(() => store.addEllipse())}
+                onClick={handleInsertActionWith(() => store.stage.addEllipse())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-polygon" />}
                 label="Polygon"
                 hotkeyIndicator="y"
-                onClick={handleInsertActionWith(() => store.addPolygon())}
+                onClick={handleInsertActionWith(() => store.stage.addPolygon())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-text" />}
                 label="Text"
                 hotkeyIndicator="t"
-                onClick={handleInsertActionWith(() => store.addText())}
+                onClick={handleInsertActionWith(() => store.stage.addText())}
               />
               <InsertMenuListItem
                 icon={<div className="list-item-icon-line" />}
                 label="Line"
                 hotkeyIndicator="l"
-                onClick={handleInsertActionWith(() => store.addLine())}
+                onClick={handleInsertActionWith(() => store.stage.addLine())}
               />
               <InsertMenuListItem
                 captureClickId="insert-menu-start-path-tool"
@@ -113,7 +113,7 @@ const TopMenu = observer(({ store }) => {
                 )}
                 label="Path"
                 hotkeyIndicator="p"
-                onClick={handleInsertActionWith(() => store.setTool(store.tools.PATH))}
+                onClick={handleInsertActionWith(() => store.build.setTool(store.tools.PATH))}
               />
             </div>
             <div className="dialog-backdrop" />
@@ -139,7 +139,7 @@ const TopMenu = observer(({ store }) => {
       <button
         type="button"
         className="top-menu-item top-menu-item-button noselect"
-        onClick={() => store.openDialog('export')}
+        onClick={() => store.view.openDialog('export')}
       >
         <span className="unicode-icon">↯</span>
         Export
@@ -148,7 +148,7 @@ const TopMenu = observer(({ store }) => {
       <button
         type="button"
         className="top-menu-item top-menu-item-button noselect"
-        onClick={() => store.openDialog('help')}
+        onClick={() => store.view.openDialog('help')}
       >
         ?
       </button>

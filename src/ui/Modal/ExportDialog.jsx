@@ -19,7 +19,7 @@ const ExportDialog = ({ store, open, onClose }) => (
     <IconButton
       aria-label="close"
       onClick={onClose}
-      disabled={store.project.isExporting}
+      disabled={store.output.isExporting}
       sx={{
         position: 'absolute',
         right: 12,
@@ -46,11 +46,11 @@ const ExportDialog = ({ store, open, onClose }) => (
       </DialogContentText>
       <Box sx={{ mb: 1 }} />
       <DialogContentText>
-        Output file: {store.project.exportFileName}
+        Output file: {store.output.fileName}
       </DialogContentText>
     </DialogContent>
     <DialogActions>
-      <Button sx={{ paddingLeft: 2, paddingRight: 2 }} onClick={store.export}>Export</Button>
+      <Button sx={{ paddingLeft: 2, paddingRight: 2 }} onClick={store.output.export}>Export</Button>
     </DialogActions>
   </Dialog>
 )

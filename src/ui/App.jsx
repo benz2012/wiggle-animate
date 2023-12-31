@@ -29,7 +29,8 @@ const App = observer(({ store }) => {
   }, [])
   useEffect(() => {
     /* Pointer Cursor Styles */
-    switch (store.determineCurrentAction) {
+    // TODO [3]: peel this into a hook
+    switch (store.view.currentAction) {
       case 'dragging':
         stageRef.current.style.cursor = 'grabbing'
         break
@@ -62,7 +63,7 @@ const App = observer(({ store }) => {
         stageRef.current.style.cursor = 'crosshair'
         break
     }
-  }, [store.determineCurrentAction])
+  }, [store.view.currentAction])
 
   /* Main observations */
   const allObserverablePropertiesInTheTree = JSON.stringify(
@@ -74,7 +75,7 @@ const App = observer(({ store }) => {
     /* eslint-disable react-hooks/exhaustive-deps */
     let canvasEl = stageRef.current
     let drawFunc = 'draw'
-    if (store.project.isExporting) {
+    if (store.output.isExporting) {
       canvasEl = exportCanvasRef.current
       drawFunc = 'drawForExport'
     }
@@ -88,7 +89,7 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     store.rootContainer.canvasFill.color,
-    store.project.isExporting,
+    store.output.isExporting,
     store.keyHeld.Space,
     store.keyHeld.MiddleMouse,
     store.build.tool,
@@ -122,7 +123,7 @@ const App = observer(({ store }) => {
           height={windowHeight}
           devicePixelRatio={store.DPR}
         />
-        {store.project.isExporting && (
+        {store.output.isExporting && (
           <canvas
             ref={exportCanvasRef}
             id="export-canvas"
@@ -137,12 +138,12 @@ const App = observer(({ store }) => {
       <ExportDialog
         store={store}
         open={store.view.dialogs.export}
-        onClose={() => store.closeDialog('export')}
+        onClose={() => store.view.closeDialog('export')}
       />
       <FontDialog
         store={store}
         open={store.view.dialogs.addFonts}
-        onClose={() => store.closeDialog('addFonts')}
+        onClose={() => store.view.closeDialog('addFonts')}
       />
     </>
   )

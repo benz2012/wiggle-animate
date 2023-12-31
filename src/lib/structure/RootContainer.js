@@ -227,8 +227,8 @@ class RootContainer extends Container {
   checkPointerIntersections(pointerVector) {
     const foundIntersection = super.checkPointerIntersections(pointerVector)
     if (!foundIntersection) {
-      this.store.setHovered(null)
-      this.store.setHoveredControl(null)
+      this.store.build.setHovered(null)
+      this.store.build.setHoveredControl(null)
     }
   }
 

@@ -29,9 +29,9 @@ const ContainerListOfChildren = (props) => {
     const { selectedIds } = store.build
     if (store.keyHeld.Meta) {
       if (selectedIds.includes(clickedId)) {
-        store.removeFromSelection(clickedId)
+        store.build.removeFromSelection(clickedId)
       } else {
-        store.addToSelection(clickedId)
+        store.build.addToSelection(clickedId)
       }
     } else if (store.keyHeld.Shift && selectedIds.length > 0) {
       const parent = store.rootContainer.findParent(clickedId)
@@ -53,20 +53,20 @@ const ContainerListOfChildren = (props) => {
             indexOfClickedChild,
             indexOflastSelectedSibling + 1,
           )
-          store.setSelected(childrenBetweenClickAndLast)
+          store.build.setSelected(childrenBetweenClickAndLast)
         } else if (indexOfClickedChild > indexOfFirstSelectedSibling) {
           // select downwards from first
           const childrenBetweenFirstAndClick = parent.sortOrder.slice(
             indexOfFirstSelectedSibling,
             indexOfClickedChild + 1,
           )
-          store.setSelected(childrenBetweenFirstAndClick)
+          store.build.setSelected(childrenBetweenFirstAndClick)
         }
       } else {
-        store.setSelected([clickedId])
+        store.build.setSelected([clickedId])
       }
     } else {
-      store.setSelected([clickedId])
+      store.build.setSelected([clickedId])
     }
   }
 
@@ -160,7 +160,7 @@ const LeftMenu = ({
         />
         <LeftMenuActionBottom
           label="⟲"
-          onClick={() => store.resetView()}
+          onClick={() => store.view.reset()}
           paddingBottom={3}
           paddingRight={2}
         />

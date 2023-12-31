@@ -71,7 +71,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
 
   const groupAdditions = {
     font: [
-      <ButtonAction key="open-add-fonts" onClick={() => store.openDialog('addFonts')}>
+      <ButtonAction key="open-add-fonts" onClick={() => store.view.openDialog('addFonts')}>
         + Add Fonts
       </ButtonAction>,
     ],
@@ -120,7 +120,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       pairVector = valueInStore == null || valueInStore === true
     }
     const togglePairing = (shouldPair) => {
-      store.setPairedVector(propertyKey, shouldPair)
+      store.propertyEditor.setPairedVector(propertyKey, shouldPair)
     }
 
     const componentProps = {
@@ -160,9 +160,9 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
 
     const toggleGroup = (shouldShow) => {
       if (shouldShow) {
-        store.showPropertyGroup(thisItemGroup)
+        store.propertyEditor.showGroup(thisItemGroup)
       } else {
-        store.hidePropertyGroup(thisItemGroup)
+        store.propertyEditor.hideGroup(thisItemGroup)
       }
     }
 

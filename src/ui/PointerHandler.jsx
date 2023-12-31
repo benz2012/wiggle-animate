@@ -60,15 +60,15 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       }
 
       // this will enable us to track distance moved since the last event
-      store.startDrag(pointerVector)
+      store.build.startDrag(pointerVector)
     } else if (playheadDragStart) {
       goToFrameWithPointerX(event.clientX)
     } else if (keyframeDragStart) {
-      store.moveKeyframesToFrameForX(event.clientX, Math.sign(event.movementX))
+      store.keyframeEditor.moveAllSelectedToFrameForX(event.clientX, Math.sign(event.movementX))
     } else if (curveHandleDragStart) {
       const relativeMovement = Vector2.subtract(pointerVector, curveHandleDragStart)
-      store.moveKeyframeCurveHandleByIncrement(relativeMovement)
-      store.startCurveEditorDrag(pointerVector, whichCurveControlHandle)
+      store.curveEditor.moveHandleByIncrement(relativeMovement)
+      store.curveEditor.startDrag(pointerVector, whichCurveControlHandle)
     }
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
@@ -82,7 +82,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       /* POINTER MOVEMENT */
       // Note: This is NOT drag handling, see above
 
-      store.setPointerPosition(pointerVector) // keep track of this for all potential needs
+      store.build.setPointerPosition(pointerVector) // keep track of this for all potential needs
 
       const { dragStart, tool, selectedIds } = store.build
       const { dragStart: playheadDragStart } = store.playhead
@@ -108,9 +108,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           }
 
           if (hoveringNearStartPoint) {
-            store.setPointerPosition(null)
+            store.build.setPointerPosition(null)
           } else {
-            store.setPointerPosition(pointerVector)
+            store.build.setPointerPosition(pointerVector)
           }
         }
       }
@@ -124,16 +124,16 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           pointerX >= playheadBucketToCheck
           && pointerX <= playheadBucketToCheck + store.playhead.cssTrueHalf * 2
         ) {
-          store.setPlayheadHovered(true)
-          store.setPlayheadHoverLineFrame(null)
+          store.playhead.setHovered(true)
+          store.playhead.setHoverLineFrame(null)
         } else {
-          store.setPlayheadHovered(false)
+          store.playhead.setHovered(false)
           const lineFrame = getFrameWithPointerX(pointerX)
-          store.setPlayheadHoverLineFrame(lineFrame)
+          store.playhead.setHoverLineFrame(lineFrame)
         }
       } else if (!playheadDragStart) {
-        store.setPlayheadHovered(false)
-        store.setPlayheadHoverLineFrame(null)
+        store.playhead.setHovered(false)
+        store.playhead.setHoverLineFrame(null)
       }
 
       // Note: Curve Editor Pointer Intersections are checked directly within that component
@@ -141,10 +141,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       if (['keyframe-line', 'keyframe-item'].includes(event.target.id.split('--')[0])) {
         const hoveredKeyframePropLabel = event.target.id.split('--').pop()
         const mouseLeftRelativeToHoverRegion = event.clientX - event.target.offsetParent.offsetLeft
-        store.setHoveredProperty(hoveredKeyframePropLabel)
-        store.setNewKeyPosition(mouseLeftRelativeToHoverRegion)
+        store.keyframeEditor.setHoveredProperty(hoveredKeyframePropLabel)
+        store.keyframeEditor.setNewKeyPosition(mouseLeftRelativeToHoverRegion)
       } else {
-        store.setHoveredProperty(null)
+        store.keyframeEditor.setHoveredProperty(null)
       }
 
       if (dragStart && store.selector.rect.area > 0) {
@@ -156,12 +156,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           Math.max(store.selector.position.x, x2),
           Math.max(store.selector.position.y, y2),
         ])
-        store.setSelectorHovers(intersectedIds)
+        store.selector.setHovers(intersectedIds)
       }
     } else if (event.type === 'pointerdown') {
       /* POINTER DOWN / CLICK */
       if (event.target === stageRef.current) {
-        if (event.button === 1) { store.setKeyHeld('MiddleMouse', true) }
+        if (event.button === 1) { store.keyHeld.setKey('MiddleMouse', true) }
 
         if (
           store.build.tool === store.tools.PATH
@@ -170,12 +170,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           // IF Space/MiddleMouse, User must be moving the canvas, so skip path tool interactions
 
           if (!store.build.activePath) {
-            store.addNewPath()
+            store.stage.addNewPath()
           }
 
           const shouldCommit = store.build.activePath.addPoint(pointerVector)
           if (shouldCommit) {
-            store.commitPath()
+            store.stage.commitPath()
             return
           }
         } else {
@@ -185,69 +185,69 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
         const { hoveredId, hoveredControl } = store.build
         if (hoveredId && hoveredId.includes('--handle--')) {
-          store.setActiveControl(hoveredId)
+          store.build.setActiveControl(hoveredId)
           const handleControlTool = hoveredControl && hoveredControl.replace('handle--', '').split('--')[0]
-          store.setTool(handleControlTool)
+          store.build.setTool(handleControlTool)
         } else if (hoveredId) {
           if (store.build.selectedIds.length === 0) {
-            store.setSelected([hoveredId])
+            store.build.setSelected([hoveredId])
           } else if (store.build.selectedIds.includes(hoveredId) === false) {
             if (store.keyHeld.Meta || store.keyHeld.Shift) {
-              store.addToSelection(hoveredId)
+              store.build.addToSelection(hoveredId)
             } else {
-              store.setSelected([hoveredId])
+              store.build.setSelected([hoveredId])
             }
           }
         } else {
-          store.setSelected([])
+          store.build.setSelected([])
         }
 
         /* START DRAG LOGIC */
         // Wait 50ms before starting a drag in case user has already let up on mouse
         // this prevents "micro movements" in an Item's position from just trying to
         // select it, but indicate the 'grab' hand immediatley for smoother UX
-        store.indicatePreDrag(true)
+        store.build.indicatePreDrag(true)
         startDragInitialWaitTimeoutId.current = setTimeout(
-          () => store.startDrag(pointerVector),
+          () => store.build.startDrag(pointerVector),
           50
         )
-        store.setSelectorPosition(pointerVector)
+        store.selector.setPosition(pointerVector)
       } else if (event.target.id === 'playhead-canvas') {
-        store.startPlayheadDrag(pointerVectorRatioOne)
-        store.setPlayheadHovered(true)
-        store.setPlayheadHoverLineFrame(null)
+        store.playhead.startDrag(pointerVectorRatioOne)
+        store.playhead.setHovered(true)
+        store.playhead.setHoverLineFrame(null)
         goToFrameWithPointerX(pointerVectorRatioOne.x)
       } else if (event.target.id.startsWith('keyframe-item--')) {
-        store.startKeyframeDrag(pointerVectorRatioOne.x)
+        store.keyframeEditor.startDrag(pointerVectorRatioOne.x)
       } else if (event.target.id === 'curve-editor-canvas') {
         const { handle1Intersection, handle2Intersection } = store.curveEditor
         if (handle1Intersection) {
-          store.startCurveEditorDrag(pointerVector, 1)
+          store.curveEditor.startDrag(pointerVector, 1)
         } else if (handle2Intersection) {
-          store.startCurveEditorDrag(pointerVector, 2)
+          store.curveEditor.startDrag(pointerVector, 2)
         }
       }
     } else if (event.type === 'pointerup') {
       /* POINTER UP / END-OF-DRAG */
-      if (event.button === 1) { store.setKeyHeld('MiddleMouse', false) }
+      if (event.button === 1) { store.keyHeld.setKey('MiddleMouse', false) }
 
       clearTimeout(startDragInitialWaitTimeoutId.current)
-      store.stopDrag()
-      store.stopPlayheadDrag()
-      store.stopKeyframeDrag()
-      store.stopCurveEditorDrag()
+      store.build.stopDrag()
+      store.playhead.stopDrag()
+      store.keyframeEditor.stopDrag()
+      store.curveEditor.stopDrag()
 
-      store.setSelectorRect(0, 0)
+      store.selector.setRect(0, 0)
       if (store.selector.hovers.length > 0) {
-        store.setSelected(store.selector.hovers)
+        store.build.setSelected(store.selector.hovers)
       }
 
       if ([store.tools.RESIZE, store.tools.ROTATE].includes(store.build.tool)) {
-        store.setTool(store.tools.NONE)
+        store.build.setTool(store.tools.NONE)
       }
-      store.setActiveControl(null)
+      store.build.setActiveControl(null)
 
-      store.setSelectorHovers([])
+      store.selector.setHovers([])
     }
   }
 

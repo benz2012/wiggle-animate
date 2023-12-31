@@ -16,7 +16,7 @@ import LabelText from './LabelText'
 const CurveEditorCanvas = observer(({ store, width }) => {
   const curveEditorCanvasRef = useRef()
 
-  const [showCanvas, targetKeyframes, keyframeLabel] = store.curveEditorTargets
+  const [showCanvas, targetKeyframes, keyframeLabel] = store.curveEditor.targetKeyframeInfo
 
   // Visual Helpers
   const units = useCallback((unit) => unit * store.DPR, [store.DPR])
@@ -28,7 +28,7 @@ const CurveEditorCanvas = observer(({ store, width }) => {
   useEffect(() => {
     if (!curveEditorCanvasRef.current) return
     const canvas = curveEditorCanvasRef.current
-    store.setCurveRegionWidth(canvas.width - (padding * 2))
+    store.curveEditor.setInnerWidth(canvas.width - (padding * 2))
   }, [
     store,
     showCanvas,
@@ -89,14 +89,14 @@ const CurveEditorCanvas = observer(({ store, width }) => {
     drawControlHandle(...[
       ctx, units, innerSize,
       1, c1x, c1y,
-      store.setHandleIntersection.bind(store),
+      store.curveEditor.setHandleIntersection,
       pointerRelative,
       store.curveEditor.dragStartWhichHandle === 1,
     ])
     drawControlHandle(...[
       ctx, units, innerSize,
       2, c2x, c2y,
-      store.setHandleIntersection.bind(store),
+      store.curveEditor.setHandleIntersection,
       pointerRelative,
       store.curveEditor.dragStartWhichHandle === 2,
     ])

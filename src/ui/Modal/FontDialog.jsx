@@ -21,7 +21,7 @@ import TextField from '@mui/material/TextField'
 import FontVirtualRow from './FontVirtualRow'
 import { getFontData, preloadSetOfFontImages, getCategoryMap, getWeightMap } from '../../utility/fonts'
 
-const ROW_HEIGHT = 5
+const ROW_HEIGHT = 52
 
 // TODO [4]: Add button to "load font preview" for fonts that are "missing preview"
 //           This will add the font to the DOM and render it with HTML and CSS, instead of as a png image
@@ -105,7 +105,7 @@ const FontDialog = observer(({ store, open, onClose }) => {
 
   const addFontFamily = (font) => {
     const allFontsThisFamily = fontData.filter((f) => f.name === font.name)
-    store.addFonts(allFontsThisFamily)
+    store.project.addFonts(allFontsThisFamily)
   }
 
   if (fontData.length === 0) return null

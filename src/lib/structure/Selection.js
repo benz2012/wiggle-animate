@@ -21,7 +21,7 @@ class Selection {
 
   get values() {
     if (this.specialType === '_fontFamily') {
-      return this.store.fontFamilies
+      return this.store.project.fontFamilies
     }
     return this._values
   }
