@@ -135,6 +135,7 @@ class Path extends VisibleShape {
         firstPoint.x,
         firstPoint.y,
       )
+      this.ctx.closePath()
     }
   }
 
