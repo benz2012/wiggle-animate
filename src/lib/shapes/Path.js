@@ -55,7 +55,7 @@ class Path extends VisibleShape {
 
   addPoint(pointerVector) {
     // return true if path should be "committed"
-    // TODO [4]: allow path to be committed without being closed
+    // path can also be commited without closing it, by pressing Escape
     if (this.hoveringOverStart) {
       this.closed = true
       this.hoveringOverStart = false
@@ -162,7 +162,7 @@ class Path extends VisibleShape {
     this.drawPath()
 
     // make a fake stroke around the path to check for "near" intersections
-    this.ctx.lineWidth = 10
+    this.ctx.lineWidth = 16
     if (this.ctx.isPointInStroke(...pointerVector.values)) return true
 
     // If path has a fill, check for inside intersections as well
@@ -171,6 +171,10 @@ class Path extends VisibleShape {
     }
 
     return false
+  }
+
+  checkSelectedItemHandleIntersections(pointerVector) {
+    return super.checkSelectedItemHandleIntersections(pointerVector, false)
   }
 
   drawPath() {

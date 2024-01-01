@@ -125,11 +125,11 @@ class Shape extends Drawable {
     return false
   }
 
-  checkSelectedItemHandleIntersections(pointerVector) {
+  checkSelectedItemHandleIntersections(pointerVector, checkRectHandles = true) {
     const nullReturn = [false, null, null]
     let handleIdxIntersected = null
     let handleRectSpec = null
-    const rectHandleIndicies = [0, 1, 2, 3]
+    const rectHandleIndicies = checkRectHandles ? [0, 1, 2, 3] : []
 
     rectHandleIndicies.some((handleIdx) => {
       if (this.controllerType === 'Line' && handleIdx > 1) return false

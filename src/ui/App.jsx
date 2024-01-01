@@ -42,7 +42,8 @@ const App = observer(({ store }) => {
         stageRef.current.style.cursor = 'copy'
         break
       case 'addingPathPoints':
-        stageRef.current.style.cursor = 'none'
+        // TODO [4]: Add a custom pen-pointer with plus mark
+        stageRef.current.style.cursor = 'default'
         break
       case 'ew-resize':
         stageRef.current.style.cursor = 'ew-resize'
