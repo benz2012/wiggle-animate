@@ -68,10 +68,14 @@ class Path extends VisibleShape {
     // TODO [2]: implement proper bezier control point drawing, & adjustments
     //           just using random cps for now for proof of drawing
     const thisPoint = new Point(pointInCanvasSpace.e, pointInCanvasSpace.f)
+    // TODO [1]: If user drags their mouse while placing a point, use the
+    //           total drag offset X&Y as the controlOut X&Y
+
     thisPoint.controlOut.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
     thisPoint.controlOut.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
     thisPoint.controlIn.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
     thisPoint.controlIn.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
+
     this.points.push(thisPoint)
     return false
   }
@@ -105,37 +109,6 @@ class Path extends VisibleShape {
   commitPath() {
     this.calculateOrigin()
     this.pointsVisible = false
-  }
-
-  drawPath() {
-    this.ctx.beginPath()
-    this.ctx.moveTo(...this.points[0].values)
-    this.points.slice(1).forEach((point, index) => {
-      const prevControl = this.points[index].controlOut
-      const thisControl = point.controlIn
-      this.ctx.bezierCurveTo(
-        prevControl.x,
-        prevControl.y,
-        thisControl.x,
-        thisControl.y,
-        point.x,
-        point.y,
-      )
-    })
-
-    if (this.closed) {
-      const lastPoint = this.points[this.points.length - 1]
-      const firstPoint = this.points[0]
-      this.ctx.bezierCurveTo(
-        lastPoint.controlOut.x,
-        lastPoint.controlOut.y,
-        firstPoint.controlIn.x,
-        firstPoint.controlIn.y,
-        firstPoint.x,
-        firstPoint.y,
-      )
-      this.ctx.closePath()
-    }
   }
 
   processBounds() {
@@ -177,10 +150,6 @@ class Path extends VisibleShape {
     return [topLeft[0], topLeft[1], this.width, this.height]
   }
 
-  drawHoveredIndicator() {
-    drawHoveredIndicatorPath(this)
-  }
-
   checkPointerIntersections(pointerVector) {
     this.ctx.setTransform(this.currentTransform)
     this.drawPath()
@@ -188,6 +157,53 @@ class Path extends VisibleShape {
     this.ctx.lineWidth = 10
     if (this.ctx.isPointInStroke(...pointerVector.values)) return true
     return false
+  }
+
+  drawPath() {
+    this.ctx.beginPath()
+    this.ctx.moveTo(...this.points[0].values)
+    this.points.slice(1).forEach((point, index) => {
+      const prevControl = this.points[index].controlOut
+      const thisControl = point.controlIn
+      this.ctx.bezierCurveTo(
+        prevControl.x,
+        prevControl.y,
+        thisControl.x,
+        thisControl.y,
+        point.x,
+        point.y,
+      )
+    })
+
+    if (this.closed) {
+      const lastPoint = this.points[this.points.length - 1]
+      const firstPoint = this.points[0]
+      this.ctx.bezierCurveTo(
+        lastPoint.controlOut.x,
+        lastPoint.controlOut.y,
+        firstPoint.controlIn.x,
+        firstPoint.controlIn.y,
+        firstPoint.x,
+        firstPoint.y,
+      )
+      this.ctx.closePath()
+    }
+  }
+
+  drawHoveredIndicator() {
+    drawHoveredIndicatorPath(this)
+  }
+
+  drawPointHandles() {
+    this.ctx.setTransform(this.currentTransform)
+    this.ctx.translate(...this.points[0].values)
+    drawPathPoint(this.ctx, this.hoveringOverStart)
+    this.points.slice(1).forEach((point, index) => {
+      // "index" represents the previous index since we sliced by 1
+      const translateBy = Vector2.subtract(point, this.points[index])
+      this.ctx.translate(...translateBy.values)
+      drawPathPoint(this.ctx)
+    })
   }
 
   /*
@@ -201,17 +217,8 @@ class Path extends VisibleShape {
 
     super.drawShape()
 
-    // Draw Point Handles on top of it
     if (!this.pointsVisible && !isSelected) return
-    this.ctx.setTransform(this.currentTransform)
-    this.ctx.translate(...this.points[0].values)
-    drawPathPoint(this.ctx, this.hoveringOverStart)
-    this.points.slice(1).forEach((point, index) => {
-      // "index" represents the previous index since we sliced by 1
-      const translateBy = Vector2.subtract(point, this.points[index])
-      this.ctx.translate(...translateBy.values)
-      drawPathPoint(this.ctx)
-    })
+    this.drawPointHandles(isSelected)
   }
 }
 
