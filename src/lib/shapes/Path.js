@@ -6,7 +6,7 @@ import Item from '../structure/Item'
 import Vector2 from '../structure/Vector2'
 import Point from '../structure/Point'
 import { observeListOfProperties } from '../../utility/state'
-import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
+import { drawPathPoint, drawHoveredIndicatorPath, drawControllerCenter } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
 class Path extends VisibleShape {
@@ -192,6 +192,10 @@ class Path extends VisibleShape {
 
   drawHoveredIndicator() {
     drawHoveredIndicatorPath(this)
+  }
+
+  drawControllerBox(handleIdxHovered, handleIdxActive) {
+    drawControllerCenter(this, handleIdxHovered, handleIdxActive)
   }
 
   drawPointHandles() {
