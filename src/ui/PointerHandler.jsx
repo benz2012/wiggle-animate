@@ -103,6 +103,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         if (store.build.tool === store.tools.PATH) {
           let hoveringNearStartPoint = false
           // you can't close a path with less than 3 points, so don't show the hoverNearStart interaction
+          // TODO [4]: technically this isn't true, you can close a bezier path with 2 points
+          //           so I need to design a solution for that
           if (store.build.activePath && store.build.activePath.points.length > 2) {
             hoveringNearStartPoint = store.build.activePath.pointerNearStart(pointerVector)
           }
@@ -252,6 +254,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   }
 
   /* SCROLL HANDLER */
+  // TODO [4]: Inertial Scroll on trackpad doesn't feel fast enough
   const handleWheelEvent = action((event) => {
     const { canvasScale } = store.rootContainer
     if (event.target === stageRef.current) {

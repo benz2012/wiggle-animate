@@ -6,7 +6,13 @@ import Item from '../structure/Item'
 import Vector2 from '../structure/Vector2'
 import Point from '../structure/Point'
 import { observeListOfProperties } from '../../utility/state'
-import { drawPathPoint, drawHoveredIndicatorPath, drawControllerCenter } from '../../utility/drawing'
+import {
+  drawPathPoint,
+  drawPathControlPoint,
+  drawPathControlLine,
+  drawHoveredIndicatorPath,
+  drawControllerCenter,
+} from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
 class Path extends VisibleShape {
@@ -49,6 +55,7 @@ class Path extends VisibleShape {
 
   addPoint(pointerVector) {
     // return true if path should be "committed"
+    // TODO [4]: allow path to be committed without being closed
     if (this.hoveringOverStart) {
       this.closed = true
       this.hoveringOverStart = false
@@ -198,7 +205,7 @@ class Path extends VisibleShape {
     drawControllerCenter(this, handleIdxHovered, handleIdxActive)
   }
 
-  drawPointHandles() {
+  drawPoints() {
     this.ctx.setTransform(this.currentTransform)
     this.ctx.translate(...this.points[0].values)
     drawPathPoint(this.ctx, this.hoveringOverStart)
@@ -207,6 +214,18 @@ class Path extends VisibleShape {
       const translateBy = Vector2.subtract(point, this.points[index])
       this.ctx.translate(...translateBy.values)
       drawPathPoint(this.ctx)
+    })
+  }
+
+  drawControlPoints() {
+    this.points.forEach((point) => {
+      [point.controlOut, point.controlIn].forEach((controlPoint) => {
+        this.ctx.setTransform(this.currentTransform)
+        this.ctx.translate(...controlPoint.values)
+        drawPathControlPoint(this.ctx)
+        const relativeEndpoint = Vector2.subtract(point, controlPoint)
+        drawPathControlLine(this.ctx, ...relativeEndpoint.values)
+      })
     })
   }
 
@@ -222,7 +241,8 @@ class Path extends VisibleShape {
     super.drawShape()
 
     if (!this.pointsVisible && !isSelected) return
-    this.drawPointHandles(isSelected)
+    this.drawPoints(isSelected)
+    this.drawControlPoints()
   }
 }
 
