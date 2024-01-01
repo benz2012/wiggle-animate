@@ -9,8 +9,6 @@ import { observeListOfProperties } from '../../utility/state'
 import { drawPathPoint, drawHoveredIndicatorPath } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
-// TODO [3]: Close Path doesn't actually connect the last two points in the right way
-
 class Path extends VisibleShape {
   static get className() { return 'Path' }
   static get NEARITY_THRESHOLD() { return 8 }
@@ -60,6 +58,7 @@ class Path extends VisibleShape {
     // TODO [4]: This is a bit much, we technically only need to de-translate the point,
     // the scale and rotation don't affect mapping the point from global to local
     // and calculating this on every addPoint is probabaly not needed
+    // AKA -- let's memoize the parentTranslation during point-adding
     const parentTransform = Item.rootContainer.findParent(this.id).currentTransform
     const pointInCanvasSpace = DOMMatrix
       .fromMatrix(parentTransform)

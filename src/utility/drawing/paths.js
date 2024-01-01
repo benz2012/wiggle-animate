@@ -20,7 +20,7 @@ const drawPotentialPathPoint = (ctx, brightCanvas = false) => {
   ctx.fill()
 }
 
-const drawPathPoint = (ctx, isHovered) => {
+const drawPathPoint = (ctx, isHovered = false) => {
   // Hovered "Stroke"
   if (isHovered) {
     ctx.beginPath()

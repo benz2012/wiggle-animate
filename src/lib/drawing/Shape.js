@@ -8,6 +8,7 @@ import Angle from '../structure/Angle'
 import {
   drawHoveredIndicator,
   drawControllerBox,
+  drawControllerCenter,
   setControllerHandleRectOnCtx,
   setControllerHandleEllipseOnCtx,
   octantCursorMap,
@@ -101,6 +102,7 @@ class Shape extends Drawable {
     // TODO [3]: add a setting to allow controller handles to be hidden
     // Allows being overwritten by subclass
     drawControllerBox(this, handleIdxHovered, handleIdxActive)
+    drawControllerCenter(this, handleIdxHovered, handleIdxActive)
   }
 
   createIntersectionsPath() {

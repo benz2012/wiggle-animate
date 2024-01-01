@@ -95,7 +95,7 @@ const setControllerHandleEllipseOnCtx = (instance, whichHandle, forHoverCheck = 
 //         the item(s) above it
 const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
   /* instance: type Shape */
-  const { controllerType, ctx, origin, scale, strokeWidth, rectSpec } = instance
+  const { controllerType, ctx, scale, strokeWidth, rectSpec } = instance
   const [rectX, rectY, rectW, rectH] = rectSpec
   const handleIdxActiveOrHovered = handleIdxActive != null ? handleIdxActive : handleIdxHovered
   const strokeProtrusion = strokeWidth / 2
@@ -162,6 +162,11 @@ const drawControllerBox = (instance, handleIdxHovered, handleIdxActive) => {
     ctx.fill()
     ctx.stroke()
   }
+}
+
+const drawControllerCenter = (instance, handleIdxHovered, handleIdxActive) => {
+  /* instance: type Shape */
+  const { ctx, origin, scale } = instance
 
   // rotation handle
   ctx.setTransform(instance.currentTransform)
@@ -277,6 +282,7 @@ export {
   setControllerHandleRectOnCtx,
   setControllerHandleEllipseOnCtx,
   drawControllerBox,
+  drawControllerCenter,
   ContainerControllerSizes,
   drawContainerController,
 }
