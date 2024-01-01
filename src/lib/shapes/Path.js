@@ -160,9 +160,16 @@ class Path extends VisibleShape {
   checkPointerIntersections(pointerVector) {
     this.ctx.setTransform(this.currentTransform)
     this.drawPath()
+
     // make a fake stroke around the path to check for "near" intersections
     this.ctx.lineWidth = 10
     if (this.ctx.isPointInStroke(...pointerVector.values)) return true
+
+    // If path has a fill, check for inside intersections as well
+    if (this.fillOpacity > 0) {
+      if (this.ctx.isPointInPath(...pointerVector.values)) return true
+    }
+
     return false
   }
 
