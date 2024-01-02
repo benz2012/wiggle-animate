@@ -16,6 +16,8 @@ import {
   setControlPointEllipseOnCtx,
 } from '../../utility/drawing'
 
+// TODO [1]: When control point is detatched and near the base point, snap it back into the base point
+
 class Path extends VisibleShape {
   static get className() { return 'Path' }
   static get NEARITY_THRESHOLD() { return 8 }
@@ -36,11 +38,6 @@ class Path extends VisibleShape {
     // This only exists so I can draw the path points before the path can be legally "selected"
     this.pointsVisible = true
     this.direction = Path.DIRECTIONS.CLOCKWISE
-
-    // TODO [3]: Allow Path to be edited in Object mode or Point mode
-    // Object mode -- similar to shapes now (move, scale, rotate the object as a whole)
-    // Point mode -- move each point individually, or move/scale/rotate mutliple points at once
-    //               any changes here only affect the position of each point, and nothing else
 
     // ignore these since drawing is done from points instead of relation to this.position
     this._alignment.isEditable = false
@@ -77,9 +74,6 @@ class Path extends VisibleShape {
       .translateSelf(...pointerVector.values)
 
     const thisPoint = new Point(pointInCanvasSpace.e, pointInCanvasSpace.f)
-    // TODO [1]: If user drags their mouse while placing a point, use the
-    //           total drag offset X&Y as the controlOut X&Y
-
     this.points.push(thisPoint)
     return false
   }
@@ -399,7 +393,7 @@ class Path extends VisibleShape {
 
     if (!this.pointsVisible && !isSelected) return
 
-    const { hoveredPoint, isSelectionOneCompletePath } = Path.rootContainer.store.build
+    const { hoveredPoint, selectedIds } = Path.rootContainer.store.build
     // TODO [4]: change this to check both hoveredPoint or activePoint so that
     //           the hover color doesn't flicker when quicking moving a point
 
@@ -412,7 +406,7 @@ class Path extends VisibleShape {
     }
     this.drawPoints(pointIndexHovered)
 
-    if (!isSelectionOneCompletePath) return
+    if (selectedIds.length > 1) return
 
     let controlPointIndexHovered = []
     if (hoveredPoint?.startsWith('controlpoint--')) {

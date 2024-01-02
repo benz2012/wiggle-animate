@@ -48,6 +48,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.rootContainer.canvasPosition = newCanvasPosition
       } else if (tool === store.tools.PATH) {
         // PASS in this scenario
+        if (activePoint) {
+          const [_, itemId] = activePoint.split('--')
+          const onePath = store.rootContainer.findItem(itemId)
+          onePath.moveActivePointByIncrement(relativeMovement)
+        }
       } else if (tool === store.tools.RESIZE) {
         store.rootContainer.resizeAllSelectedByIncrement(relativeMovement)
       } else if (tool === store.tools.ROTATE) {
@@ -190,6 +195,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
             store.stage.commitPath()
             return
           }
+
+          // This will allow the user to adjust control points as soon as they place a path point,
+          // but before they have lifted their mouse/pointer
+          const mostRecentPointIdx = store.build.activePath.points.length - 1
+          store.build.setActivePoint(`controlpoint--${store.build.activePath.id}--${mostRecentPointIdx}--0`)
         } else {
           // Only check pointer intersections if no tools are active
           store.rootContainer.checkPointerIntersections(pointerVector)
