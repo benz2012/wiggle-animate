@@ -38,7 +38,16 @@ class View {
   }
 
   get currentAction() {
-    const { preDrag, dragStart, hoveredId, hoveredControl, tool, selectedIds } = this.store.build
+    const {
+      preDrag,
+      dragStart,
+      hoveredId,
+      hoveredControl,
+      hoveredPoint,
+      activePoint,
+      tool,
+      selectedIds,
+    } = this.store.build
 
     if (this.store.keyHeld.Space || this.store.keyHeld.MiddleMouse) {
       if (preDrag || dragStart) {
@@ -49,6 +58,10 @@ class View {
 
     if (tool === this.store.tools.PATH) {
       return 'addingPathPoints'
+    }
+
+    if (hoveredPoint || activePoint) {
+      return 'pointing'
     }
 
     if (hoveredId) {

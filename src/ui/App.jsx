@@ -41,6 +41,7 @@ const App = observer(({ store }) => {
       case 'adding':
         stageRef.current.style.cursor = 'copy'
         break
+      case 'pointing':
       case 'addingPathPoints':
         // TODO [4]: Add a custom pen-pointer with plus mark
         stageRef.current.style.cursor = 'default'
@@ -99,6 +100,8 @@ const App = observer(({ store }) => {
     store.build.selectedIds,
     store.build.hoveredId,
     store.build.hoveredControl,
+    store.build.hoveredPoint,
+    store.build.activePoint,
     store.selector.rect.area,
     store.selector.hovers,
     allObserverablePropertiesInTheTree,

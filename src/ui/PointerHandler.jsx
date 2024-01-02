@@ -26,7 +26,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
   /* DRAG HANDLER */
   const handleDrag = action((event) => {
-    const { selectedIds, dragStart, tool } = store.build
+    const { selectedIds, dragStart, tool, pseudoTool } = store.build
     const { dragStart: playheadDragStart } = store.playhead
     const { dragStart: keyframeDragStart } = store.keyframeEditor
     const { dragStart: curveHandleDragStart, dragStartWhichHandle: whichCurveControlHandle } = store.curveEditor
@@ -52,6 +52,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.rootContainer.resizeAllSelectedByIncrement(relativeMovement)
       } else if (tool === store.tools.ROTATE) {
         store.rootContainer.rotateAllSelectedToPoint(pointerVector)
+      } else if (pseudoTool === store.tools.POINT) {
+        // PASS in this scenario
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
@@ -190,12 +192,17 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.rootContainer.checkPointerIntersections(pointerVector)
         }
 
-        const { hoveredId, hoveredControl } = store.build
+        const { hoveredId, hoveredControl, hoveredPoint } = store.build
         if (hoveredId && hoveredId.includes('--handle--')) {
+          // Shape Controls, convert hovering into active
           store.build.setActiveControl(hoveredId)
           const handleControlTool = hoveredControl && hoveredControl.replace('handle--', '').split('--')[0]
           store.build.setTool(handleControlTool)
+        } else if (hoveredPoint) {
+          // Path Controls, convert hovering into active
+          store.build.setActivePoint(hoveredPoint)
         } else if (hoveredId) {
+          // Standard Click-to-Select, ignored when above interactions occur
           if (store.build.selectedIds.length === 0) {
             store.build.setSelected([hoveredId])
           } else if (store.build.selectedIds.includes(hoveredId) === false) {
@@ -252,7 +259,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       if ([store.tools.RESIZE, store.tools.ROTATE].includes(store.build.tool)) {
         store.build.setTool(store.tools.NONE)
       }
+
       store.build.setActiveControl(null)
+      store.build.setActivePoint(null)
 
       store.selector.setHovers([])
     }
