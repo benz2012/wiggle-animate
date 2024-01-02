@@ -6,10 +6,11 @@ class Point extends Vector2 {
 
   constructor(x = 0, y = 0) {
     super(x, y)
-    this.controlOut = new Vector2()
-    this.controlIn = new Vector2()
+    this.controlOut = new Vector2(x, y)
+    this.controlIn = new Vector2(x, y)
 
-    observeListOfProperties(this, ['controlOut', 'controlIn'])
+  get controlPoints() {
+    return [this.controlOut, this.controlIn]
   }
 
   toString() {

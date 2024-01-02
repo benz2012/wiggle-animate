@@ -13,16 +13,12 @@ import Selector from './Selector'
 import Stage from './Stage'
 import View from './View'
 
+import tools from './tools'
+
 class RootStore {
   constructor() {
     this.DPR = window.devicePixelRatio || 1
-
-    this.tools = {
-      NONE: '',
-      PATH: 'path',
-      RESIZE: 'resize',
-      ROTATE: 'rotate',
-    }
+    this.tools = tools
 
     this.rootContainer = new RootContainer(this)
     this.project = new Project(this)

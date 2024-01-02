@@ -84,7 +84,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
       store.build.setPointerPosition(pointerVector) // keep track of this for all potential needs
 
-      const { dragStart, tool, selectedIds } = store.build
+      const { dragStart, tool, pseudoTool, selectedIds } = store.build
       const { dragStart: playheadDragStart } = store.playhead
 
       // Specific scenarios when we should check for intersections like hovers/etc
@@ -93,6 +93,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.rootContainer.checkPointerIntersections(pointerVector)
       } else if (tool === store.tools.PATH) {
         // PASS in this scenario
+      } else if (pseudoTool === store.tools.POINT) {
+        const onePath = store.rootContainer.findItem(selectedIds[0])
+        onePath.checkPointAndControlIntersections(pointerVector)
+        store.rootContainer.checkPointerIntersections(pointerVector)
       } else if (!draggingAnItem) {
         store.rootContainer.checkPointerIntersections(pointerVector)
       }
@@ -139,6 +143,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       }
 
       // Note: Curve Editor Pointer Intersections are checked directly within that component
+      // TODO [4]: maybe move those into this module
 
       if (['keyframe-line', 'keyframe-item'].includes(event.target.id.split('--')[0])) {
         const hoveredKeyframePropLabel = event.target.id.split('--').pop()

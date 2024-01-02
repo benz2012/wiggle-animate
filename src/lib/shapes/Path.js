@@ -12,6 +12,8 @@ import {
   drawPathControlLine,
   drawHoveredIndicatorPath,
   drawControllerCenter,
+  setPointRectOnCtx,
+  setControlPointEllipseOnCtx,
 } from '../../utility/drawing'
 import { randomChoice } from '../../utility/array'
 
@@ -177,6 +179,43 @@ class Path extends VisibleShape {
     return super.checkSelectedItemHandleIntersections(pointerVector, false)
   }
 
+  checkPointAndControlIntersections(pointerVector) {
+    const someFound = this.points.some((point, index) => {
+      this.ctx.setTransform(this.currentTransform)
+      this.ctx.translate(...point.values)
+      this.ctx.beginPath()
+      setPointRectOnCtx(this.ctx, true)
+      if (this.ctx.isPointInPath(...pointerVector.values)) {
+        Path.rootContainer.store.build.setHoveredPoint(`point--${this.id}--${index}`)
+        return true
+      }
+
+      let controlIdxIntersection = null
+      point.controlPoints.some((controlPoint, controlIdx) => {
+        this.ctx.setTransform(this.currentTransform)
+        this.ctx.translate(...controlPoint.values)
+        this.ctx.beginPath()
+        setControlPointEllipseOnCtx(this.ctx, true)
+        if (this.ctx.isPointInPath(...pointerVector.values)) {
+          controlIdxIntersection = controlIdx
+          return true
+        }
+        return false
+      })
+      if (controlIdxIntersection != null) {
+        const pointId = `controlpoint--${this.id}--${index}--${controlIdxIntersection}`
+        Path.rootContainer.store.build.setHoveredPoint(pointId)
+        return true
+      }
+
+      return false
+    })
+
+    if (!someFound) {
+      Path.rootContainer.store.build.setHoveredPoint(null)
+    }
+  }
+
   drawPath() {
     this.ctx.beginPath()
     this.ctx.moveTo(...this.points[0].values)
@@ -216,26 +255,30 @@ class Path extends VisibleShape {
     drawControllerCenter(this, handleIdxHovered, handleIdxActive)
   }
 
-  drawPoints() {
-    this.ctx.setTransform(this.currentTransform)
-    this.ctx.translate(...this.points[0].values)
-    drawPathPoint(this.ctx, this.hoveringOverStart)
-    this.points.slice(1).forEach((point, index) => {
-      // "index" represents the previous index since we sliced by 1
-      const translateBy = Vector2.subtract(point, this.points[index])
-      this.ctx.translate(...translateBy.values)
-      drawPathPoint(this.ctx)
+  drawPoints(pointIndexHovered) {
+    this.points.forEach((point, index) => {
+      this.ctx.setTransform(this.currentTransform)
+      this.ctx.translate(...point.values)
+      const isHovered = (
+        index === pointIndexHovered
+        || (index === 0 && this.hoveringOverStart)
+      )
+      drawPathPoint(this.ctx, isHovered)
     })
   }
 
-  drawControlPoints() {
-    this.points.forEach((point) => {
-      [point.controlOut, point.controlIn].forEach((controlPoint) => {
+  drawControlPoints(controlPointIndexHovered) {
+    this.points.forEach((point, pointIdx) => {
+      point.controlPoints.forEach((controlPoint, controlPointIdx) => {
         this.ctx.setTransform(this.currentTransform)
         this.ctx.translate(...controlPoint.values)
-        drawPathControlPoint(this.ctx)
+        const isHovered = (
+          controlPointIndexHovered[0] === pointIdx
+          && controlPointIndexHovered[1] === controlPointIdx
+        )
+        drawPathControlPoint(this.ctx, isHovered)
         const relativeEndpoint = Vector2.subtract(point, controlPoint)
-        drawPathControlLine(this.ctx, ...relativeEndpoint.values)
+        drawPathControlLine(this.ctx, ...relativeEndpoint.values, isHovered)
       })
     })
   }
@@ -252,8 +295,28 @@ class Path extends VisibleShape {
     super.drawShape()
 
     if (!this.pointsVisible && !isSelected) return
-    this.drawPoints(isSelected)
-    this.drawControlPoints()
+
+    const { hoveredPoint, isSelectionOneCompletePath } = Path.rootContainer.store.build
+
+    let pointIndexHovered
+    if (hoveredPoint?.startsWith('point--')) {
+      const [_, itemId, pointIdx] = hoveredPoint.split('--')
+      if (itemId === this.id) {
+        pointIndexHovered = parseInt(pointIdx, 10)
+      }
+    }
+    this.drawPoints(pointIndexHovered)
+
+    if (!isSelectionOneCompletePath) return
+
+    let controlPointIndexHovered = []
+    if (hoveredPoint?.startsWith('controlpoint--')) {
+      const [_, itemId, pointIdx, controlIdx] = hoveredPoint.split('--')
+      if (itemId === this.id) {
+        controlPointIndexHovered = [parseInt(pointIdx, 10), parseInt(controlIdx, 10)]
+      }
+    }
+    this.drawControlPoints(controlPointIndexHovered)
   }
 }
 

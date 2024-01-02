@@ -4,9 +4,6 @@ const POINT_RADIUS = 7.5
 const POINT_THICKNESS = 3
 
 const drawPotentialPathPoint = (ctx, brightCanvas = false) => {
-  // NOTE: Here I use evenodd fill with a circle cutout instead of stroking a path
-  //       so that I only have to manage a single style
-
   // These are highly specific to this component, no need to theme them
   ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
   if (brightCanvas) {
@@ -14,18 +11,32 @@ const drawPotentialPathPoint = (ctx, brightCanvas = false) => {
   }
 
   // Dull Point
-  const outerRadius = POINT_RADIUS + (POINT_THICKNESS / 2)
-  const innerRadius = POINT_RADIUS - (POINT_THICKNESS / 2)
+  const outerRadius = 6
   ctx.beginPath()
   ctx.ellipse(0, 0, outerRadius, outerRadius, 0, 0, Math.PI * 2)
-  ctx.ellipse(0, 0, innerRadius, innerRadius, 0, 0, Math.PI * 2)
-  ctx.fill('evenodd')
+  ctx.fill()
 
   // Cross
   ctx.beginPath()
   ctx.rect(-18, -25, 2, 16)
   ctx.rect(-25, -18, 16, 2)
   ctx.fill()
+}
+
+const setPointRectOnCtx = (ctx, forHoverCheck = false) => {
+  let rectSize = POINT_RADIUS * 2
+  if (forHoverCheck) {
+    rectSize += POINT_THICKNESS
+  }
+  ctx.rect(rectSize / -2, rectSize / -2, rectSize, rectSize)
+}
+
+const setControlPointEllipseOnCtx = (ctx, forHoverCheck = false) => {
+  let radius = POINT_RADIUS
+  if (forHoverCheck) {
+    radius = POINT_RADIUS + (POINT_THICKNESS / 2)
+  }
+  ctx.ellipse(0, 0, radius, radius, 0, 0, Math.PI * 2)
 }
 
 const drawPathPoint = (ctx, isHovered = false) => {
@@ -41,9 +52,8 @@ const drawPathPoint = (ctx, isHovered = false) => {
   }
 
   // The Point
-  const rectSize = POINT_RADIUS * 2
   ctx.beginPath()
-  ctx.rect(-POINT_RADIUS, -POINT_RADIUS, rectSize, rectSize)
+  setPointRectOnCtx(ctx)
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
   ctx.lineWidth = POINT_THICKNESS
   ctx.stroke()
@@ -72,7 +82,7 @@ const drawPathControlPoint = (ctx, isHovered = false) => {
 
   // The Point
   ctx.beginPath()
-  ctx.ellipse(0, 0, POINT_RADIUS, POINT_RADIUS, 0, 0, Math.PI * 2)
+  setControlPointEllipseOnCtx(ctx)
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
   ctx.lineWidth = POINT_THICKNESS
   ctx.stroke()
@@ -105,4 +115,6 @@ export {
   drawPathPoint,
   drawPathControlPoint,
   drawPathControlLine,
+  setPointRectOnCtx,
+  setControlPointEllipseOnCtx,
 }
