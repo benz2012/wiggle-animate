@@ -206,6 +206,11 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           if (hoveredPoint.startsWith('point--') && store.keyHeld.Alt) {
             const onePath = store.rootContainer.findItem(store.build.selectedIds[0])
             onePath.blastControlPoints(hoveredPoint)
+          } else if (hoveredPoint.startsWith('controlpoint--') && store.keyHeld.Alt) {
+            // Holding alt while moving a control point will detatch it from the other point
+            const onePath = store.rootContainer.findItem(store.build.selectedIds[0])
+            onePath.detatchControlPoints(hoveredPoint)
+            store.build.setActivePoint(hoveredPoint)
           } else {
             store.build.setActivePoint(hoveredPoint)
           }

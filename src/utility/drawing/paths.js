@@ -3,6 +3,8 @@ import theme from '../../ui/theme'
 const POINT_RADIUS = 7.5
 const POINT_THICKNESS = 3
 
+// TODO [1]: de-scale control points before drawing them so they stay nice and small
+
 const drawPotentialPathPoint = (ctx, brightCanvas = false) => {
   // These are highly specific to this component, no need to theme them
   ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'

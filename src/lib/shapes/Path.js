@@ -233,14 +233,18 @@ class Path extends VisibleShape {
     const { x, y } = movementVector
     const relativeMovementScaledToOwnTransform = new Vector2(x * a + y * c, x * b + y * d)
 
+    const targetPoint = this.points[pointIdx]
     if (controlIdx) {
       // Move a Control Point
-      const controlPoint = this.points[pointIdx].controlPoints[controlIdx]
-      controlPoint.x += relativeMovementScaledToOwnTransform.x
-      controlPoint.y += relativeMovementScaledToOwnTransform.y
+      const controlPointName = Point.CONTROL_POINT_NAMES[controlIdx]
+      targetPoint.moveControlPointBy(
+        controlPointName,
+        relativeMovementScaledToOwnTransform.x,
+        relativeMovementScaledToOwnTransform.y,
+      )
     } else if (pointIdx) {
       // Move the Point itself, and force the control points to follow
-      this.points[pointIdx].movePointBy(...relativeMovementScaledToOwnTransform.values)
+      targetPoint.movePointBy(...relativeMovementScaledToOwnTransform.values)
     }
   }
 
@@ -306,6 +310,11 @@ class Path extends VisibleShape {
     const blastAngle = (rightToTangent.radians + tangentialDirection) % 360
 
     targetPoint.blastOutControlPoints(blastAngle)
+  }
+
+  detatchControlPoints(pointId) {
+    const [_, __, pointIdx] = pointId.split('--')
+    this.points[parseInt(pointIdx, 10)].controlsCollinear = false
   }
 
   /* All Drawing Operations below here */
@@ -391,6 +400,8 @@ class Path extends VisibleShape {
     if (!this.pointsVisible && !isSelected) return
 
     const { hoveredPoint, isSelectionOneCompletePath } = Path.rootContainer.store.build
+    // TODO [4]: change this to check both hoveredPoint or activePoint so that
+    //           the hover color doesn't flicker when quicking moving a point
 
     let pointIndexHovered
     if (hoveredPoint?.startsWith('point--')) {
