@@ -373,9 +373,9 @@ class Path extends VisibleShape {
           controlPointIndexHovered[0] === pointIdx
           && controlPointIndexHovered[1] === controlPointIdx
         )
-        drawPathControlPoint(this.ctx, isHovered)
         const relativeEndpoint = Vector2.subtract(point, controlPoint)
         drawPathControlLine(this.ctx, ...relativeEndpoint.values, isHovered)
+        drawPathControlPoint(this.ctx, isHovered)
       })
     })
   }
@@ -396,6 +396,8 @@ class Path extends VisibleShape {
     const { hoveredPoint, selectedIds } = Path.rootContainer.store.build
     // TODO [4]: change this to check both hoveredPoint or activePoint so that
     //           the hover color doesn't flicker when quicking moving a point
+    // TODO [4]: show the entire line as highlighted so that it's clear when
+    //           you're moving controls that are attatched versus detatched
 
     let pointIndexHovered
     if (hoveredPoint?.startsWith('point--')) {
