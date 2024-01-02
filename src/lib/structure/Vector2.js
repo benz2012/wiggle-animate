@@ -30,6 +30,14 @@ class Vector2 {
     return new Vector2(xScaled, yScaled)
   }
 
+  static angleBetween(vectorA, vectorB) {
+    const dotProduct = (vectorA.x * vectorB.x) + (vectorA.y * vectorB.y)
+    const magnitudeA = Math.sqrt(vectorA.x ** 2 + vectorA.y ** 2)
+    const magnitudeB = Math.sqrt(vectorB.x ** 2 + vectorB.y ** 2)
+    const cosineTheta = dotProduct / (magnitudeA * magnitudeB)
+    return Math.acos(cosineTheta)
+  }
+
   constructor(x = 0, y = 0) {
     this.x = truncateFloatLeaveInt(x)
     this.y = truncateFloatLeaveInt(y)
@@ -68,7 +76,10 @@ class Vector2 {
   }
 
   scale(factorX, factorY) {
-    return Vector2.multiply(this, new Vector2(factorX, factorY))
+    const [newX, newY] = Vector2.multiply(this, new Vector2(factorX, factorY)).values
+    this.x = newX
+    this.y = newY
+    return this
   }
 
   toString() {

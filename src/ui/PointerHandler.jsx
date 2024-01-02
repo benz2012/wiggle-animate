@@ -55,6 +55,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else if (pseudoTool === store.tools.POINT && activePoint) {
         const onePath = store.rootContainer.findItem(selectedIds[0])
         onePath.moveActivePointByIncrement(relativeMovement)
+      } else if (pseudoTool === store.tools.POINT && store.keyHeld.Alt) {
+        // PASS in this scenario
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
@@ -201,7 +203,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.build.setTool(handleControlTool)
         } else if (hoveredPoint) {
           // Path Controls, convert hovering into active
-          store.build.setActivePoint(hoveredPoint)
+          if (hoveredPoint.startsWith('point--') && store.keyHeld.Alt) {
+            const onePath = store.rootContainer.findItem(store.build.selectedIds[0])
+            onePath.blastControlPoints(hoveredPoint)
+          } else {
+            store.build.setActivePoint(hoveredPoint)
+          }
         } else if (hoveredId) {
           // Standard Click-to-Select, ignored when above interactions occur
           if (store.build.selectedIds.length === 0) {

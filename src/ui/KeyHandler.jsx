@@ -40,6 +40,20 @@ const KeyHandler = ({ store }) => {
     const INPUT_HAS_FOCUS = doesAnInputFieldHaveFocus()
 
     switch (event.key) {
+      case 'Meta':
+      case 'Control':
+        store.keyHeld.setKey('Meta', true)
+        break
+
+      case 'Alt':
+        store.keyHeld.setKey('Alt', true)
+        break
+
+      case 'Shift':
+        if (!(STAGE_HAS_FOCUS || BOTTOM_HAS_FOCUS)) break
+        store.keyHeld.setKey('Shift', true)
+        break
+
       case ' ':
         if (BOTTOM_HAS_FOCUS && document.activeElement.id !== 'play-pause-button') {
           document.getElementById('play-pause-button').focus()
@@ -86,11 +100,6 @@ const KeyHandler = ({ store }) => {
             store.build.setSelected([])
           }
         }
-        break
-
-      case 'Shift':
-        if (!(STAGE_HAS_FOCUS || BOTTOM_HAS_FOCUS)) break
-        store.keyHeld.setKey('Shift', true)
         break
 
       case 'ArrowUp':
@@ -151,10 +160,6 @@ const KeyHandler = ({ store }) => {
       default:
         break
     }
-
-    if (event.metaKey || event.ctrlKey) {
-      store.keyHeld.setKey('Meta', true)
-    }
   })
 
   /* -- KEY UP -- */
@@ -207,6 +212,10 @@ const KeyHandler = ({ store }) => {
       case 'Meta':
       case 'Control':
         store.keyHeld.setKey('Meta', false)
+        break
+
+      case 'Alt':
+        store.keyHeld.setKey('Alt', false)
         break
 
       case 'c':

@@ -4,6 +4,7 @@ import polylabel from '../_external/polylabel'
 import VisibleShape from '../drawing/VisibleShape'
 import Vector2 from '../structure/Vector2'
 import Point from '../structure/Point'
+import Angle from '../structure/Angle'
 import { observeListOfProperties } from '../../utility/state'
 import {
   drawPathPoint,
@@ -14,11 +15,11 @@ import {
   setPointRectOnCtx,
   setControlPointEllipseOnCtx,
 } from '../../utility/drawing'
-import { randomChoice } from '../../utility/array'
 
 class Path extends VisibleShape {
   static get className() { return 'Path' }
   static get NEARITY_THRESHOLD() { return 8 }
+  static get DIRECTIONS() { return { CLOCKWISE: 1, COUNTER_CLOCKWISE: -1 } }
 
   constructor(...args) {
     super('path', ...args)
@@ -34,6 +35,7 @@ class Path extends VisibleShape {
     this.hoveringOverStart = false
     // This only exists so I can draw the path points before the path can be legally "selected"
     this.pointsVisible = true
+    this.direction = Path.DIRECTIONS.CLOCKWISE
 
     // TODO [3]: Allow Path to be edited in Object mode or Point mode
     // Object mode -- similar to shapes now (move, scale, rotate the object as a whole)
@@ -74,16 +76,9 @@ class Path extends VisibleShape {
       .invertSelf()
       .translateSelf(...pointerVector.values)
 
-    // TODO [2]: implement proper bezier control point drawing, & adjustments
-    //           just using random cps for now for proof of drawing
     const thisPoint = new Point(pointInCanvasSpace.e, pointInCanvasSpace.f)
     // TODO [1]: If user drags their mouse while placing a point, use the
     //           total drag offset X&Y as the controlOut X&Y
-
-    thisPoint.controlOut.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
-    thisPoint.controlOut.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
-    thisPoint.controlIn.x = thisPoint.x + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
-    thisPoint.controlIn.y = thisPoint.y + randomChoice([-1, 1]) * Math.floor(Math.random() * 100)
 
     this.points.push(thisPoint)
     return false
@@ -115,9 +110,21 @@ class Path extends VisibleShape {
     this.setOrigin(new Vector2(...poleOfInaccessibility))
   }
 
+  calculateDirection() {
+    const totalArea = this.points.reduce((accum, point, index) => {
+      const nextIdx = index + 1 === this.points.length ? 0 : index + 1
+      const nextPoint = this.points[nextIdx]
+      return accum + ((nextPoint.x - point.x) * (nextPoint.y + point.y))
+    }, 0)
+    if (totalArea > 0) {
+      this.direction = Path.DIRECTIONS.COUNTER_CLOCKWISE
+    }
+  }
+
   commitPath() {
     this.calculateOrigin()
     this.pointsVisible = false
+    this.calculateDirection()
   }
 
   processBounds() {
@@ -236,6 +243,72 @@ class Path extends VisibleShape {
       this.points[pointIdx].movePointBy(...relativeMovementScaledToOwnTransform.values)
     }
   }
+
+  blastControlPoints(pointId) {
+    if (!pointId.startsWith('point--')) return
+    const [_, itemId, pointIdxStr] = pointId.split('--')
+    if (itemId !== this.id) return
+
+    const pointIdx = parseInt(pointIdxStr, 10)
+    const targetPoint = this.points[pointIdx]
+    const controlPointsAreZeroed = targetPoint.controlPoints.every((controlPoint) => (
+      controlPoint.x === targetPoint.x && controlPoint.y === targetPoint.y
+    ))
+
+    // TODO [4]: add blast handling for 2-pointed bezier paths
+    //           we should ignore blasting if it would create two overlapping straight lines
+    if (this.points === 2) return
+
+    if (!controlPointsAreZeroed) {
+      targetPoint.zeroOutControlPoints()
+      return
+    }
+
+    const nextIdx = pointIdx + 1 === this.points.length ? 0 : pointIdx + 1
+    const nextPoint = this.points[nextIdx]
+    const prevIdx = pointIdx === 0 ? this.points.length - 1 : pointIdx - 1
+    const prevPoint = this.points[prevIdx]
+    const vectorToNext = Vector2.subtract(nextPoint, targetPoint)
+    const vectorToPrev = Vector2.subtract(prevPoint, targetPoint)
+
+    const absoluteAngleBetween = (
+      Angle.vectorUnitCircleAngle(...vectorToNext.values).degrees
+      - Angle.vectorUnitCircleAngle(...vectorToPrev.values).degrees
+    )
+    const positiveAngleBetween = Vector2.angleBetween(vectorToNext, vectorToPrev)
+    const halfwayRotation = positiveAngleBetween / 2
+    let halfwayRotationDirection = this.direction
+    let tangentialDirection = Math.PI / 2
+    if (this.direction === Path.DIRECTIONS.COUNTER_CLOCKWISE) {
+      tangentialDirection = -1 * (Math.PI / 2)
+    }
+
+    // Check for a convex connection between points, and reverse rotation direction
+    //  - clockwise: convex is less than -180 OR between 0 and 180
+    //  - counterclockwise: convex is greater than 180 or between -180 and 0
+    if ((
+      this.direction === Path.DIRECTIONS.CLOCKWISE && (
+        absoluteAngleBetween < -180
+        || (absoluteAngleBetween > 0 && absoluteAngleBetween < 180)
+      )
+    ) || (
+      this.direction === Path.DIRECTIONS.COUNTER_CLOCKWISE && (
+        absoluteAngleBetween > 180
+        || (absoluteAngleBetween > -180 && absoluteAngleBetween < 0)
+      )
+    )) {
+      halfwayRotationDirection *= -1
+      tangentialDirection += Math.PI
+    }
+
+    vectorToNext.rotate(halfwayRotationDirection * halfwayRotation)
+    const rightToTangent = Angle.vectorUnitCircleAngle(...vectorToNext.values)
+    const blastAngle = (rightToTangent.radians + tangentialDirection) % 360
+
+    targetPoint.blastOutControlPoints(blastAngle)
+  }
+
+  /* All Drawing Operations below here */
 
   drawPath() {
     this.ctx.beginPath()

@@ -3,6 +3,7 @@ import { observeListOfProperties } from '../../utility/state'
 
 class Point extends Vector2 {
   static get className() { return 'Point' }
+  static get BLAST_DISTANCE() { return 72 }
 
   constructor(x = 0, y = 0) {
     super(x, y)
@@ -21,6 +22,26 @@ class Point extends Vector2 {
     this.controlOut.y += relativeY
     this.controlIn.x += relativeX
     this.controlIn.y += relativeY
+  }
+
+  zeroOutControlPoints() {
+    this.controlOut.x = this.x
+    this.controlOut.y = this.y
+    this.controlIn.x = this.x
+    this.controlIn.y = this.y
+  }
+
+  blastOutControlPoints(blastAngle) {
+    // Takes angle as Radians
+    const blastPre = new Vector2(-Point.BLAST_DISTANCE, 0)
+    blastPre.rotate(blastAngle)
+    blastPre.add(this)
+    const blastPost = new Vector2(Point.BLAST_DISTANCE, 0)
+    blastPost.rotate(blastAngle)
+    blastPost.add(this)
+
+    this.controlOut = blastPre
+    this.controlIn = blastPost
   }
 
   toString() {

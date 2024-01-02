@@ -5,6 +5,7 @@ class KeyHeld {
     this.Space = false
     this.Shift = false
     this.Meta = false
+    this.Alt = false
     this.MiddleMouse = false
 
     makeAutoObservable(this)
