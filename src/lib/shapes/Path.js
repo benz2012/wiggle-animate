@@ -185,7 +185,7 @@ class Path extends VisibleShape {
       this.ctx.setTransform(this.currentTransform)
       this.ctx.translate(...point.values)
       this.ctx.beginPath()
-      setPointRectOnCtx(this.ctx, true)
+      setPointRectOnCtx(this.ctx, this.scale, true)
       if (this.ctx.isPointInPath(...pointerVector.values)) {
         Path.rootContainer.store.build.setHoveredPoint(`point--${this.id}--${index}`)
         return true
@@ -196,7 +196,7 @@ class Path extends VisibleShape {
         this.ctx.setTransform(this.currentTransform)
         this.ctx.translate(...controlPoint.values)
         this.ctx.beginPath()
-        setControlPointEllipseOnCtx(this.ctx, true)
+        setControlPointEllipseOnCtx(this.ctx, this.scale, true)
         if (this.ctx.isPointInPath(...pointerVector.values)) {
           controlIdxIntersection = controlIdx
           return true
@@ -360,7 +360,7 @@ class Path extends VisibleShape {
         index === pointIndexHovered
         || (index === 0 && this.hoveringOverStart)
       )
-      drawPathPoint(this.ctx, isHovered)
+      drawPathPoint(this.ctx, this.scale, isHovered)
     })
   }
 
@@ -374,8 +374,8 @@ class Path extends VisibleShape {
           && controlPointIndexHovered[1] === controlPointIdx
         )
         const relativeEndpoint = Vector2.subtract(point, controlPoint)
-        drawPathControlLine(this.ctx, ...relativeEndpoint.values, isHovered)
-        drawPathControlPoint(this.ctx, isHovered)
+        drawPathControlLine(this.ctx, this.scale, ...relativeEndpoint.values, isHovered)
+        drawPathControlPoint(this.ctx, this.scale, isHovered)
       })
     })
   }
