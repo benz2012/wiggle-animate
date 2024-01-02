@@ -2,7 +2,6 @@ import { makeObservable, action } from 'mobx'
 import polylabel from '../_external/polylabel'
 
 import VisibleShape from '../drawing/VisibleShape'
-import Item from '../structure/Item'
 import Vector2 from '../structure/Vector2'
 import Point from '../structure/Point'
 import { observeListOfProperties } from '../../utility/state'
@@ -33,6 +32,7 @@ class Path extends VisibleShape {
     this.points = [] // TODO [3]: (maybe) make each point a Property, iterate over them customly within PropEditor
     this.closed = false
     this.hoveringOverStart = false
+    // This only exists so I can draw the path points before the path can be legally "selected"
     this.pointsVisible = true
 
     // TODO [3]: Allow Path to be edited in Object mode or Point mode
@@ -68,7 +68,7 @@ class Path extends VisibleShape {
     // the scale and rotation don't affect mapping the point from global to local
     // and calculating this on every addPoint is probabaly not needed
     // AKA -- let's memoize the parentTranslation during point-adding
-    const parentTransform = Item.rootContainer.findParent(this.id).currentTransform
+    const parentTransform = Path.rootContainer.findParent(this.id).currentTransform
     const pointInCanvasSpace = DOMMatrix
       .fromMatrix(parentTransform)
       .invertSelf()
@@ -90,7 +90,7 @@ class Path extends VisibleShape {
   }
 
   pointerNearStart(pointerVector) {
-    const parentTransform = Item.rootContainer.findParent(this.id).currentTransform
+    const parentTransform = Path.rootContainer.findParent(this.id).currentTransform
     const pointInCanvasSpace = DOMMatrix
       .fromMatrix(parentTransform)
       .invertSelf()
@@ -213,6 +213,27 @@ class Path extends VisibleShape {
 
     if (!someFound) {
       Path.rootContainer.store.build.setHoveredPoint(null)
+    }
+  }
+
+  moveActivePointByIncrement(movementVector) {
+    const { activePoint } = Path.rootContainer.store.build
+    const [_, itemId, pointIdx, controlIdx] = activePoint?.split('--') || []
+    if (itemId !== this.id) return
+
+    const ownTransformInverse = DOMMatrix.fromMatrix(this.currentTransform).invertSelf()
+    const { a, b, c, d } = ownTransformInverse
+    const { x, y } = movementVector
+    const relativeMovementScaledToOwnTransform = new Vector2(x * a + y * c, x * b + y * d)
+
+    if (controlIdx) {
+      // Move a Control Point
+      const controlPoint = this.points[pointIdx].controlPoints[controlIdx]
+      controlPoint.x += relativeMovementScaledToOwnTransform.x
+      controlPoint.y += relativeMovementScaledToOwnTransform.y
+    } else if (pointIdx) {
+      // Move the Point itself, and force the control points to follow
+      this.points[pointIdx].movePointBy(...relativeMovementScaledToOwnTransform.values)
     }
   }
 

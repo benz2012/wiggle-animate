@@ -26,7 +26,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
   /* DRAG HANDLER */
   const handleDrag = action((event) => {
-    const { selectedIds, dragStart, tool, pseudoTool } = store.build
+    const { selectedIds, dragStart, tool, pseudoTool, activePoint } = store.build
     const { dragStart: playheadDragStart } = store.playhead
     const { dragStart: keyframeDragStart } = store.keyframeEditor
     const { dragStart: curveHandleDragStart, dragStartWhichHandle: whichCurveControlHandle } = store.curveEditor
@@ -52,8 +52,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         store.rootContainer.resizeAllSelectedByIncrement(relativeMovement)
       } else if (tool === store.tools.ROTATE) {
         store.rootContainer.rotateAllSelectedToPoint(pointerVector)
-      } else if (pseudoTool === store.tools.POINT) {
-        // PASS in this scenario
+      } else if (pseudoTool === store.tools.POINT && activePoint) {
+        const onePath = store.rootContainer.findItem(selectedIds[0])
+        onePath.moveActivePointByIncrement(relativeMovement)
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {

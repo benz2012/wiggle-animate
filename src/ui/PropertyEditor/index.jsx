@@ -10,6 +10,8 @@ import Header from './Header'
 import Contents from './Contents'
 import usePrevious from '../hooks/usePrevious'
 
+// TODO [4]: Annoying scroll bar appears when panel expands (with dedicated mouse, not trackpad)
+
 const PropertyEditor = observer(({ store }) => {
   // TODO [4]: Support multi-selected property edit case
   //       Add a box to the top for "Set To | Change By"

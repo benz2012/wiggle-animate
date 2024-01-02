@@ -13,6 +13,16 @@ class Point extends Vector2 {
     return [this.controlOut, this.controlIn]
   }
 
+  movePointBy(relativeX, relativeY) {
+    // const toMoveOffset = Vector2.subtract(this, new Vector2(newX, newY))
+    this.x += relativeX
+    this.y += relativeY
+    this.controlOut.x += relativeX
+    this.controlOut.y += relativeY
+    this.controlIn.x += relativeX
+    this.controlIn.y += relativeY
+  }
+
   toString() {
     return `Point(${super.toString()}, ${this.controlIn}, ${this.controlOut})`
   }
