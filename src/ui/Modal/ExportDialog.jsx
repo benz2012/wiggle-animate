@@ -1,12 +1,14 @@
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
-import DialogActions from '@mui/material/DialogActions'
-import Button from '@mui/material/Button'
+import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
-import CloseIcon from '@mui/icons-material/Close'
 
 const ExportDialog = ({ store, open, onClose }) => (
   <Dialog
@@ -15,7 +17,7 @@ const ExportDialog = ({ store, open, onClose }) => (
     maxWidth="sm"
     fullWidth
   >
-    <DialogTitle>Export Animation</DialogTitle>
+    <DialogTitle>Export Your Animation</DialogTitle>
     <IconButton
       aria-label="close"
       onClick={onClose}
@@ -30,8 +32,18 @@ const ExportDialog = ({ store, open, onClose }) => (
       <CloseIcon />
     </IconButton>
     <DialogContent>
-      <DialogContentText>Customization: coming in a future update</DialogContentText>
-      <Box sx={{ mb: 1 }} />
+      {/* TODO [4]: Add a link to download the Electron App and use a NodeJS exporter, once that exists */}
+      {!store.output.browserCanExport ? (
+        <Alert sx={{ mb: 2 }} severity="error">
+          <AlertTitle>Your web browser is not capable of exporting video.</AlertTitle>
+          Try using one of the green Web Browser versions{' '}
+          <a target="_blank" rel="noreferrer" href="https://caniuse.com/mdn-api_videoencoder">listed here</a>
+          .
+        </Alert>
+      ) : (
+        <Alert sx={{ mb: 2 }} severity="info">Customization is coming in a future update</Alert>
+      )}
+
       <DialogContentText>
         {store.animation.frames} frames
       </DialogContentText>
@@ -48,9 +60,16 @@ const ExportDialog = ({ store, open, onClose }) => (
       <DialogContentText>
         Output file: {store.output.fileName}
       </DialogContentText>
+      <Box sx={{ mb: 1 }} />
     </DialogContent>
     <DialogActions>
-      <Button sx={{ paddingLeft: 2, paddingRight: 2 }} onClick={store.output.export}>Export</Button>
+      <Button
+        sx={{ paddingLeft: 2, paddingRight: 2 }}
+        onClick={store.output.export}
+        disabled={!store.output.browserCanExport}
+      >
+        Export
+      </Button>
     </DialogActions>
   </Dialog>
 )

@@ -16,7 +16,7 @@ import {
   setControlPointEllipseOnCtx,
 } from '../../utility/drawing'
 
-// TODO [1]: When control point is detatched and near the base point, snap it back into the base point
+// TODO [4]: When control point is detatched and near the base point, snap it back into the base point
 
 class Path extends VisibleShape {
   static get className() { return 'Path' }

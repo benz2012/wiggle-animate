@@ -12,16 +12,16 @@ const CODEC_LEVEL = '41' // 4.1, see https://www.webmproject.org/vp9/levels/
 const CODEC_BIT_DEPTH = '08' // 8-bits per channel
 const WEBM_CODEC_PARAMS = `vp09.${CODEC_PROFILE}.${CODEC_LEVEL}.${CODEC_BIT_DEPTH}`
 
+const browserHasVideoEncoder = () => {
+  if ('VideoEncoder' in window) return true
+  return false
+}
+
 let canvasToTarget = null
 let outputFrameRate = null
 let muxer = null
 let videoEncoder = null
 const prepareForExport = (canvasId, width, height, frameRate) => {
-  if (!('VideoEncoder' in window)) {
-    // false representing that we are *not* preparred
-    return false
-  }
-
   canvasToTarget = null
   outputFrameRate = null
   muxer = null
@@ -50,7 +50,6 @@ const prepareForExport = (canvasId, width, height, frameRate) => {
     width,
     height,
   })
-  return true
 }
 
 const exportOneFrame = async (frameNum) => {
@@ -86,6 +85,7 @@ const downloadBlob = (blobData, fileName) => {
 }
 
 export {
+  browserHasVideoEncoder,
   prepareForExport,
   exportOneFrame,
   exportVideo,

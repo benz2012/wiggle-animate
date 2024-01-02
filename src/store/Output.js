@@ -1,4 +1,10 @@
-import { prepareForExport, exportOneFrame, exportVideo, downloadBlob } from '../utility/video'
+import {
+  browserHasVideoEncoder,
+  prepareForExport,
+  exportOneFrame,
+  exportVideo,
+  downloadBlob,
+} from '../utility/video'
 import { sleep } from '../utility/time'
 
 class Output {
@@ -6,7 +12,17 @@ class Output {
     this.store = store
 
     this.fileName = ''
+    this.browserCanExport = false
     this.isExporting = false
+
+    this.determineExportCapabilities()
+  }
+
+  determineExportCapabilities() {
+    this.browserCanExport = browserHasVideoEncoder()
+    if (!this.browserCanExport) {
+      console.warn('This browser is not capable of natively exporting video')
+    }
   }
 
   setFileName(value = null) {
@@ -27,6 +43,8 @@ class Output {
   setIsExporting = (value) => { this.isExporting = value }
 
   export = async () => {
+    if (!this.browserCanExport) return
+
     // TODO [3]: Have progress output displayed Prepare-boolean, Frames-progress, video progress
     // TODO [3]: wrap this whole thing in a giant error handler
 
@@ -38,16 +56,11 @@ class Output {
     await sleep(1) // give React a tick to render the export-canvas
 
     const { canvasSize } = this.store.rootContainer
-    const prepared = prepareForExport('export-canvas', canvasSize.width, canvasSize.height, this.store.animation.fps)
-    if (prepared) {
-      await this.store.animation.animateForExport(exportOneFrame)
-      const videoAsBlob = await exportVideo()
-      downloadBlob(videoAsBlob, this.fileName)
-    } else {
-      // TODO [2]: tell the user that we can't export using their browser
-      // do this by running prepare when we open the modal, and only enabling the button once we know
-      console.warn('Error: This browser is not preparred/capable of exporting video in the way the developer wants')
-    }
+    prepareForExport('export-canvas', canvasSize.width, canvasSize.height, this.store.animation.fps)
+
+    await this.store.animation.animateForExport(exportOneFrame)
+    const videoAsBlob = await exportVideo()
+    downloadBlob(videoAsBlob, this.fileName)
 
     this.setIsExporting(false)
     this.store.animation.goToFirst()
