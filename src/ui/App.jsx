@@ -30,6 +30,7 @@ const App = observer(({ store }) => {
   useEffect(() => {
     /* Pointer Cursor Styles */
     // TODO [3]: peel this into a hook
+    //           also, get rid of the abstraction, simply set the cursor name directly in the store
     switch (store.view.currentAction) {
       case 'dragging':
         stageRef.current.style.cursor = 'grabbing'
