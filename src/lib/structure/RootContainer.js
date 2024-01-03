@@ -342,7 +342,7 @@ class RootContainer extends Container {
       const parentRotation = Angle.vectorUnitCircleAngle(parentTransform.a, parentTransform.b)
 
       const rotationVector = Vector2.subtract(toPoint, fromPoint)
-      const rotationVectorOnUnitCircle = rotationVector.scale(1, -1)
+      const rotationVectorOnUnitCircle = Vector2.multiply(rotationVector, { x: 1, y: -1 })
       const rotationAngle = Angle.vectorUnitCircleAngle(...rotationVectorOnUnitCircle.values)
 
       let setDegreesTo = ((360 - rotationAngle.degrees) + 90) // convert from unit circle to clockwise-up-0
