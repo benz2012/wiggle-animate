@@ -234,8 +234,21 @@ const ContainerControllerSizes = {
   positionBox: 200,
   rotationCircle: 12,
 }
-const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
-  const { originBox, positionBox, rotationCircle } = ContainerControllerSizes
+const setContainerControllerHandleEllipseOnCtx = (ctx) => {
+  const { originBox, rotationCircle } = ContainerControllerSizes
+  ctx.ellipse(
+    0,
+    -originBox - ROTATION_LINE_DISTANCE - rotationCircle,
+    rotationCircle,
+    rotationCircle,
+    0,
+    0,
+    Math.PI * 2,
+  )
+}
+const drawContainerController = (ctx, controlHovered) => {
+  // TODO [4]: Stroke and Fill without container scale applied
+  const { originBox, positionBox } = ContainerControllerSizes
 
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
   ctx.lineWidth = 2
@@ -244,7 +257,7 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
   ctx.beginPath()
   ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
   ctx.stroke()
-  if (isOriginHovered) {
+  if (controlHovered === 'origin') {
     ctx.fillStyle = `${theme.palette.tertiary[20]}`
     ctx.fill()
   }
@@ -252,7 +265,7 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
   ctx.beginPath()
   ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
   ctx.stroke()
-  if (isPositionHovered) {
+  if (controlHovered === 'position') {
     ctx.beginPath()
     ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
     ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
@@ -266,16 +279,12 @@ const drawContainerController = (ctx, isPositionHovered, isOriginHovered) => {
   ctx.stroke()
 
   ctx.beginPath()
-  ctx.ellipse(
-    0,
-    -originBox - ROTATION_LINE_DISTANCE - rotationCircle,
-    rotationCircle,
-    rotationCircle,
-    Math.PI * 2,
-    0,
-    Math.PI * 2,
-  )
+  setContainerControllerHandleEllipseOnCtx(ctx)
   ctx.stroke()
+  if (controlHovered === 'rotation') {
+    ctx.fillStyle = `${theme.palette.tertiary[50]}`
+    ctx.fill()
+  }
 }
 
 export {
@@ -285,4 +294,5 @@ export {
   drawControllerCenter,
   ContainerControllerSizes,
   drawContainerController,
+  setContainerControllerHandleEllipseOnCtx,
 }

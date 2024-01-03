@@ -235,6 +235,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
               store.build.setSelected([hoveredId])
             }
           }
+
+          if (hoveredControl === 'rotation') {
+            store.build.setTool(store.tools.ROTATE)
+          }
         } else {
           store.build.setSelected([])
         }

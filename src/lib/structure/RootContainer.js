@@ -326,7 +326,8 @@ class RootContainer extends Container {
   }
 
   rotateAllSelectedToPoint(toPoint) {
-    const itemIdBeingTargeted = this.store.build.activeControl.split('--')[0]
+    const { activeControl, hoveredId } = this.store.build
+    const itemIdBeingTargeted = activeControl ? activeControl.split('--')[0] : hoveredId
     const itemBeingTargeted = this.findItem(itemIdBeingTargeted)
     const itemBeingTargetedRotationCenter = new DOMMatrix(itemBeingTargeted.parentTransform)
       .translateSelf(...itemBeingTargeted.position.values)

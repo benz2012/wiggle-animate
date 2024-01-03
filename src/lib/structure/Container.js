@@ -3,9 +3,12 @@ import { makeObservable, action, observable } from 'mobx'
 import Item from './Item'
 import Drawable from '../drawing/Drawable'
 import { insert } from '../../utility/array'
-import { drawContainerController, ContainerControllerSizes } from '../../utility/drawing'
+import {
+  drawContainerController,
+  ContainerControllerSizes,
+  setContainerControllerHandleEllipseOnCtx,
+} from '../../utility/drawing'
 
-// TODO [2]: add rotation handle interaction
 // TODO [3]: if an item is inside of a container, draw a dim version of the container controller to
 //       indicate this to the user, when the child item is selected
 //       Then, add an option to disable that feature
@@ -160,9 +163,8 @@ class Container extends Drawable {
     ) {
       this.ctx.setTransform(this.currentTransform)
       this.ctx.translate(...this.origin.values)
-      const isPositionHovered = hoveredId === this.id && hoveredControl === 'position'
-      const isOriginHovered = hoveredId === this.id && hoveredControl === 'origin'
-      drawContainerController(this.ctx, isPositionHovered, isOriginHovered)
+      const controlHovered = hoveredId === this.id && hoveredControl
+      drawContainerController(this.ctx, controlHovered)
     }
   }
 
@@ -173,13 +175,16 @@ class Container extends Drawable {
       rectSpec = [positionBox / -2, positionBox / -2, positionBox, positionBox]
     } else if (controlType === 'origin') {
       rectSpec = [originBox / -2, originBox / -2, originBox, originBox]
+    } else if (controlType === 'rotation') {
+      setContainerControllerHandleEllipseOnCtx(this.ctx)
     }
-    this.ctx.rect(...rectSpec)
+    if (rectSpec) { this.ctx.rect(...rectSpec) }
   }
 
   checkSelectedContainerPointerIntersections(pointerVector) {
     this.ctx.setTransform(this.currentTransform)
     this.ctx.translate(...this.origin.values)
+
     this.ctx.beginPath()
     this.createIntersectionsPath()
     if (this.ctx.isPointInPath(...pointerVector.values)) {
@@ -187,11 +192,20 @@ class Container extends Drawable {
       this.createIntersectionsPath('origin')
       if (this.ctx.isPointInPath(...pointerVector.values)) {
         Item.rootContainer.store.build.setHoveredControl('origin')
-      } else {
-        Item.rootContainer.store.build.setHoveredControl('position')
+        return true
       }
+
+      Item.rootContainer.store.build.setHoveredControl('position')
       return true
     }
+
+    this.ctx.beginPath()
+    this.createIntersectionsPath('rotation')
+    if (this.ctx.isPointInPath(...pointerVector.values)) {
+      Item.rootContainer.store.build.setHoveredControl('rotation')
+      return true
+    }
+
     return false
   }
 

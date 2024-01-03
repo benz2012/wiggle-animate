@@ -70,6 +70,11 @@ class View {
         controlAction = hoveredControl.split('--').pop()
       }
 
+      if (hoveredControl === 'rotation') {
+        // this is just for containers
+        return 'rotate'
+      }
+
       if (selectedIds.length > 0) {
         if (preDrag || dragStart) {
           if (controlAction) return controlAction
