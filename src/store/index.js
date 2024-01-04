@@ -5,6 +5,7 @@ import Build from './Build'
 import CurveEditor from './CurveEditor'
 import KeyframeEditor from './KeyframeEditor'
 import KeyHeld from './KeyHeld'
+import LeftMenu from './LeftMenu'
 import Output from './Output'
 import Playhead from './Playhead'
 import Project from './Project'
@@ -31,6 +32,7 @@ class RootStore {
     this.selector = new Selector(this)
     this.playhead = new Playhead(this)
     this.keyHeld = new KeyHeld(this)
+    this.leftMenu = new LeftMenu(this)
     this.propertyEditor = new PropertyEditor(this)
     this.keyframeEditor = new KeyframeEditor(this)
     this.curveEditor = new CurveEditor(this)

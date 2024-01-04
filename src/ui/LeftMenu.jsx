@@ -74,8 +74,6 @@ const ContainerListOfChildren = (props) => {
     child.showChildren = !child.showChildren
   })
 
-  // TODO [3]: When hovering over item in left menu, show hover outline on canvas as well
-
   // TODO [4]: Replace name prop field with double-click-to-edit in left menu
   //       item name can be a whitespace character. eliminate this
   //       and also trim whitespace on head and tail during naming /[^\s]/
@@ -92,17 +90,24 @@ const ContainerListOfChildren = (props) => {
       if (isContainer) {
         listItemClass += ' left-menu-item-container'
       }
+      if (store.build.hoveredId === childId) {
+        listItemClass += ' left-menu-item-hovered'
+      }
 
       return (
         <Fragment key={childId}>
           {isContainer ? (
-            <li className={listItemClass}>
+            <li
+              id={`left-menu-item--${child.id}`}
+              className={listItemClass}
+            >
               <div className="noselect left-menu-container-dropwdown" onClick={handleDropdownClick(child)}>
                 <div className={`left-menu-container-dropwdown-text ${child.showChildren ? 'open' : 'closed'}`}>
                   {'>'}
                 </div>
               </div>
               <div
+                id={`left-menu-item-div--${child.id}`}
                 className="noselect left-menu-item-name left-menu-item-container-name"
                 onClick={handleItemClick(childId)}
               >
@@ -110,8 +115,17 @@ const ContainerListOfChildren = (props) => {
               </div>
             </li>
           ) : (
-            <li className={listItemClass} onClick={handleItemClick(childId)}>
-              <span className="noselect left-menu-item-name">{child.name || '\u00A0'}</span>
+            <li
+              id={`left-menu-item--${child.id}`}
+              className={listItemClass}
+              onClick={handleItemClick(childId)}
+            >
+              <span
+                id={`left-menu-item-span--${child.id}`}
+                className="noselect left-menu-item-name"
+              >
+                {child.name || '\u00A0'}
+              </span>
             </li>
           )}
           <div style={{ marginLeft: 12 }}>

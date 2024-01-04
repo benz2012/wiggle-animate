@@ -47,6 +47,7 @@
   padding: 4px 8px 4px 8px;
   border-radius: 4px;
 }
+.left-menu-item-hovered,
 .left-menu-item:hover {
   cursor: pointer;
   background-color: var(--palette-action-hover);

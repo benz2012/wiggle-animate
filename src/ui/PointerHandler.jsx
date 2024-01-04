@@ -161,7 +161,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         const mouseLeftRelativeToHoverRegion = event.clientX - event.target.offsetParent.offsetLeft
         store.keyframeEditor.setHoveredProperty(hoveredKeyframePropLabel)
         store.keyframeEditor.setNewKeyPosition(mouseLeftRelativeToHoverRegion)
-      } else {
+      } else if (store.keyframeEditor.hoveredProperty !== null) {
+        // This is efficitvley an `else` statement but protected against overuse by pointer movement
         store.keyframeEditor.setHoveredProperty(null)
       }
 
@@ -175,6 +176,14 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           Math.max(store.selector.position.y, y2),
         ])
         store.selector.setHovers(intersectedIds)
+      }
+
+      if (event.target.id.startsWith('left-menu-item')) {
+        const leftMenuItemId = event.target.id.split('--').pop()
+        store.leftMenu.setHovered(leftMenuItemId)
+      } else if (store.leftMenu.hoveredId !== null) {
+        // This is efficitvley an `else` statement but protected against overuse by pointer movement
+        store.leftMenu.setHovered(null)
       }
     } else if (event.type === 'pointerdown') {
       /* POINTER DOWN / CLICK */
