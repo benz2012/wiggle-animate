@@ -2,6 +2,10 @@ import { action, makeAutoObservable } from 'mobx'
 
 import { timeStampMicro } from '../../utility/time'
 
+// NOTE: "Animation" now conflicts with the Web Animations API, but I currently have no use for that.
+// Since this causes the IDE to think that Animation is in the namespace, even if its not imported,
+// keep that in mind or you'll be calling on undefined properties (e.g. Animation.FIRST)
+
 class Animation {
   static get FIRST() { return 1 }
   static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }

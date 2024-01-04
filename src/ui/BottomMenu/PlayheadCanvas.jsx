@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import theme from '../theme'
+import Animation from '../../lib/animation/Animation'
 import { identityMatrix } from '../../utility/matrix'
 import { drawPlayheadHoverLine, drawPlayhead } from '../../utility/drawing'
 

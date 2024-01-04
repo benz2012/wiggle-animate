@@ -3,8 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import theme from '../ui/theme'
 import { CSS_ROTATION_OFFSET } from '../ui/BottomMenu/config'
 import Keyframe from '../lib/animation/Keyframe'
-
-// TODO [2]: Keyframes can be dragged to less than 1 for some reason
+import Animation from '../lib/animation/Animation'
 
 class KeyframeEditor {
   constructor(store) {
