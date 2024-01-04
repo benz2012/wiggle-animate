@@ -65,8 +65,9 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else if (selectedIds.length > 0) {
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
-        store.selector.rect.width += relativeMovement.x
-        store.selector.rect.height += relativeMovement.y
+        const newWidth = store.selector.rect.width + relativeMovement.x
+        const newHeight = store.selector.rect.height + relativeMovement.y
+        store.selector.setRect(newWidth, newHeight)
       }
 
       // this will enable us to track distance moved since the last event

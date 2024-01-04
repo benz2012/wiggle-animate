@@ -218,19 +218,18 @@ class Shape extends Drawable {
 
     // Now that we know there is boundingBox overlap, check more specifically
     // for intersections with the rotated rectSpec that's inside the bounding box
+    const hasSomeLineInsideRect = [gpTL, gpTR, gpBR, gpBL].some((point) => (
+      orTLx < point.x && point.x < orBRx
+      && orTLy < point.y && point.y < orBRy
+    ))
+    if (hasSomeLineInsideRect) return trueResult
+
     const globalRectLineSegments = [
       [gpTL.object, gpTR.object],
       [gpTR.object, gpBR.object],
       [gpBL.object, gpBR.object],
       [gpTL.object, gpBL.object],
     ]
-
-    const hasSomeLineInsideRect = globalRectLineSegments.some((lineSegment) => (
-      orTLx < lineSegment[0].x && lineSegment[0].x < orBRx
-      && orTLy < lineSegment[0].y && lineSegment[0].y < orBRy
-    ))
-    if (hasSomeLineInsideRect) return trueResult
-
     const otherRectLineSegments = [
       [{ x: orTLx, y: orTLy }, { x: orBRx, y: orTLy }],
       [{ x: orBRx, y: orTLy }, { x: orBRx, y: orBRy }],
@@ -238,8 +237,10 @@ class Shape extends Drawable {
       [{ x: orTLx, y: orTLy }, { x: orTLx, y: orBRy }],
     ]
 
-    const hasSomeLineIntersection = otherRectLineSegments.some((otherRectLineSegment, index) => (
-      doLineSegmentsIntersect(...otherRectLineSegment, ...globalRectLineSegments[index])
+    const hasSomeLineIntersection = otherRectLineSegments.some((otherRectLineSegment) => (
+      globalRectLineSegments.some((globalRectLineSegment) => (
+        doLineSegmentsIntersect(...otherRectLineSegment, ...globalRectLineSegment)
+      ))
     ))
     if (hasSomeLineIntersection) return trueResult
 
