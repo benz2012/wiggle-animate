@@ -278,7 +278,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.curveEditor.startDrag(pointerVector, 2)
         }
       } else if (event.target.id.startsWith('left-menu-item')) {
-        store.leftMenu.startDrag(pointerVector)
+        const leftMenuItemId = event.target.id.split('--').pop()
+        store.leftMenu.startDrag(pointerVectorRatioOne, leftMenuItemId)
       }
     } else if (event.type === 'pointerup') {
       /* POINTER UP / END-OF-DRAG */

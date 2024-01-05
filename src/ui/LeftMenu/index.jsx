@@ -1,6 +1,7 @@
 import './LeftMenu.css'
 import BottomActions from './BottomActions'
 import ListOfItems from './ListOfItems'
+import DraggingIndicators from './DraggingIndicators'
 
 const LeftMenu = ({ store }) => (
   <div id="left-menu-container" tabIndex="-1">
@@ -13,14 +14,7 @@ const LeftMenu = ({ store }) => (
 
       <BottomActions store={store} />
 
-      {store.leftMenu.dragStart && (
-        <div
-          className="left-menu-dragging-indicator"
-          style={{ top: store.leftMenu.dragIndicatorY }}
-        >
-          <div className="left-menu-dragging-indicator-circle" />
-        </div>
-      )}
+      {store.leftMenu.dragStart && <DraggingIndicators store={store} />}
     </div>
   </div>
 )

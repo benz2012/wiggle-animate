@@ -132,6 +132,13 @@
   border-radius: 50%;
   background-color: var(--palette-primary-100);
 }
+.left-menu-dragging-skeleton {
+  position: fixed;
+  width: 200px;
+  height: 10px;
+  border-radius: 4px;
+  background-color: var(--palette-action-active);
+}
 
 #left-menu-action-bottom {
   display: flex;
