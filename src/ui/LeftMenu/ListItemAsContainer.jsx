@@ -15,7 +15,11 @@ const ListItemAsContainer = ({
     className={className}
   >
     <div
-      className="noselect left-menu-container-dropwdown"
+      className={`
+        noselect
+        left-menu-container-dropwdown
+        ${className.includes('-selected') ? 'left-menu-container-dropwdown-selected' : ''}
+      `}
       onClick={onDropdownClick}
       onKeyUp={onDropdownClick}
       role="button"

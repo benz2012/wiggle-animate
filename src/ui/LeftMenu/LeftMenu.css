@@ -73,13 +73,16 @@
 .left-menu-container-dropwdown {
   padding: 4px 2px 4px 2px;
   border-radius: 4px 0px 0px 4px;
-  margin-right: 2px;
 }
 .left-menu-container-dropwdown:hover {
   background-color: var(--palette-action-hover);
 }
 .left-menu-container-dropwdown:active {
   background-color: var(--palette-action-active);
+}
+.left-menu-container-dropwdown-selected {
+  padding: 3px 1px 3px 1px;
+  border: 1px solid var(--palette-action-selected);
 }
 .left-menu-container-dropwdown-text {
   transform: scale(.5, 1);
@@ -90,9 +93,15 @@
 .left-menu-container-dropwdown-text.open {
   transform: translate(1px, 1px) scale(1, .5) rotate(90deg);
 }
+.left-menu-container-dropwdown-text.closed {
+  margin-top: -1px;
+  margin-bottom: 1px;
+  margin-left: 1px;
+  margin-right: -1px;
+}
 .left-menu-item-container-name {
   flex-grow: 1;
-  padding: 4px 4px 4px 4px;
+  padding: 4px 4px 4px 6px;
   border-radius: 0px 4px 4px 0px;
 }
 .left-menu-item-container-name:hover {
