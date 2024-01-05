@@ -62,6 +62,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       <Typography
         align="center"
         color="action.disabled"
+        className="noselect"
         sx={{ fontSize: 12, textTransform: 'uppercase', py: 0.5, letterSpacing: 0.75 }}
       >
         {text}

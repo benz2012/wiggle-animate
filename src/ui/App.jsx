@@ -116,11 +116,7 @@ const App = observer(({ store }) => {
       <KeyHandler store={store} />
       <PointerHandler store={store} ref={stageRef}>
         <TopMenu store={store} />
-        <LeftMenu
-          store={store}
-          incrementScale={() => store.rootContainer.incrementScale()}
-          decrementScale={() => store.rootContainer.decrementScale()}
-        />
+        <LeftMenu store={store} />
         <BottomMenu store={store} windowWidth={windowWidth} />
         <Stage
           ref={stageRef}

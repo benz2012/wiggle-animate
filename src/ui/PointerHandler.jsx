@@ -277,6 +277,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         } else if (handle2Intersection) {
           store.curveEditor.startDrag(pointerVector, 2)
         }
+      } else if (event.target.id.startsWith('left-menu-item')) {
+        store.leftMenu.startDrag(pointerVector)
       }
     } else if (event.type === 'pointerup') {
       /* POINTER UP / END-OF-DRAG */
@@ -287,6 +289,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       store.playhead.stopDrag()
       store.keyframeEditor.stopDrag()
       store.curveEditor.stopDrag()
+      store.leftMenu.stopDrag()
 
       store.selector.setRect(0, 0)
       if (store.selector.hovers.length > 0) {

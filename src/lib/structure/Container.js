@@ -27,6 +27,7 @@ class Container extends Drawable {
       _children: observable,
       _sortOrder: observable,
       showChildren: observable,
+      toggleShowChildren: action,
       add: action,
       remove: action,
       sortChild: action,
@@ -36,6 +37,10 @@ class Container extends Drawable {
 
   get children() { return this._children }
   get sortOrder() { return this._sortOrder }
+
+  toggleShowChildren = () => {
+    this.showChildren = !this.showChildren
+  }
 
   add(newItem, atIndex = null) {
     const newId = newItem.id

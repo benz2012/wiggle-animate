@@ -1,13 +1,30 @@
 import { makeAutoObservable } from 'mobx'
 
 class LeftMenu {
-  constructor() {
+  constructor(store) {
+    this.store = store
+
     this.hoveredId = null
+    this.dragStart = null
+
+    this.itemHeight = 22
+    this.itemTextHeight = 14
 
     makeAutoObservable(this)
   }
 
   setHovered(value) { this.hoveredId = value }
+  startDrag(vector) { this.dragStart = vector }
+  stopDrag() { this.dragStart = null }
+
+  get dragIndicatorY() {
+    if (this.store.build.pointerPosition == null) return 0
+    const pointerYRatioOne = this.store.build.pointerPosition.y / this.store.DPR
+    const halfItemHeight = this.itemHeight / 2
+    const pointerYNearItemGap = pointerYRatioOne - halfItemHeight
+    const pointerYIntervalLocked = Math.ceil(pointerYNearItemGap / this.itemHeight) * this.itemHeight
+    return pointerYIntervalLocked - 1
+  }
 }
 
 export default LeftMenu

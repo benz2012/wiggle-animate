@@ -44,17 +44,15 @@
 .left-menu-item {
   display: flex;
   align-items: center;
-  padding: 4px 8px 4px 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  /* Padding Top/Bottom are set via shared props in the component */
   border-radius: 4px;
 }
 .left-menu-item-hovered,
 .left-menu-item:hover {
   cursor: pointer;
   background-color: var(--palette-action-hover);
-}
-.left-menu-item-name {
-  font-size: 14px;
-  line-height: 14px;
 }
 .left-menu-item-selected {
   background-color: var(--palette-action-selected);
@@ -105,6 +103,25 @@
 }
 .left-menu-item-selected > div > .left-menu-container-dropwdown-text {
   color: white;
+}
+
+.left-menu-dragging-indicator {
+  position: fixed;
+  height: 2px;
+  /* Left Menu Width minus left/right padding */
+  width: calc(200px - 8px - 8px); 
+  left: var(--spacing-2);
+  border-radius: 4px;
+  background-color: var(--palette-primary-100);
+}
+.left-menu-dragging-indicator-circle {
+  position: absolute;
+  top: -3px;
+  left: -8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--palette-primary-100);
 }
 
 #left-menu-action-bottom {
