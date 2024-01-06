@@ -7,6 +7,7 @@ import Vector2 from '../lib/structure/Vector2'
 const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref
   const startDragInitialWaitTimeoutId = useRef(null)
+  const startDragLeftMenuInitialWaitTimeoutId = useRef(null)
 
   /* Convienience Methods */
   const getFrameWithPointerX = (pointerX) => {
@@ -279,7 +280,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
         }
       } else if (event.target.id.startsWith('left-menu-item')) {
         const leftMenuItemId = event.target.id.split('--').pop()
-        store.leftMenu.startDrag(pointerVectorRatioOne, leftMenuItemId)
+        // Wait 300ms before starting a drag because of aforementioned "micro movements"
+        // but mostly to make sure the user actually wants to drag this DOM element
+        startDragLeftMenuInitialWaitTimeoutId.current = setTimeout(
+          () => store.leftMenu.startDrag(pointerVectorRatioOne, leftMenuItemId),
+          300
+        )
       }
     } else if (event.type === 'pointerup') {
       /* POINTER UP / END-OF-DRAG */
@@ -292,6 +298,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       }
 
       clearTimeout(startDragInitialWaitTimeoutId.current)
+      clearTimeout(startDragLeftMenuInitialWaitTimeoutId.current)
       store.build.stopDrag()
       store.playhead.stopDrag()
       store.keyframeEditor.stopDrag()
