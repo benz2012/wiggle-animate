@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { observer } from 'mobx-react-lite'
 
 import Container from '../../lib/structure/Container'
 import ListItem from './ListItem'
@@ -9,7 +10,7 @@ import generateItemClickHandler from './generateItemClickHandler'
 //       item name can be a whitespace character. eliminate this
 //       and also trim whitespace on head and tail during naming /[^\s]/
 
-const ListOfItems = ({ store, parentContainer }) => {
+const ListOfItems = observer(({ store, parentContainer }) => {
   const paddingHeight = store.leftMenu.itemHeight - store.leftMenu.itemTextHeight
 
   const determineStyles = (childId, isContainer) => {
@@ -68,6 +69,6 @@ const ListOfItems = ({ store, parentContainer }) => {
       )
     })
   )
-}
+})
 
 export default ListOfItems

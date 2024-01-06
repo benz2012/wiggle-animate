@@ -285,12 +285,17 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       /* POINTER UP / END-OF-DRAG */
       if (event.button === 1) { store.keyHeld.setKey('MiddleMouse', false) }
 
+      if (store.leftMenu.dragStart) {
+        // This also stops the drag tracking for leftMenu
+        // The difference below is that none of those trackers operate onPointerUp
+        store.leftMenu.releaseDrag()
+      }
+
       clearTimeout(startDragInitialWaitTimeoutId.current)
       store.build.stopDrag()
       store.playhead.stopDrag()
       store.keyframeEditor.stopDrag()
       store.curveEditor.stopDrag()
-      store.leftMenu.stopDrag()
 
       store.selector.setRect(0, 0)
       if (store.selector.hovers.length > 0) {

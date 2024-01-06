@@ -79,9 +79,12 @@ class LeftMenu {
     }
   }
 
-  stopDrag() {
-    if (this.dragStart == null) return
+  releaseDrag() {
     this.determineNewSort()
+    this.stopDrag()
+  }
+
+  stopDrag() {
     this.dragStart = null
     this.draggedId = null
   }

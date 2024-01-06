@@ -194,6 +194,7 @@ const KeyHandler = ({ store }) => {
         if (store.build.tool === store.tools.PATH) {
           store.stage.commitPath()
         }
+        store.leftMenu.stopDrag()
         break
 
       case ' ':

@@ -1,4 +1,6 @@
-const DraggingIndicators = ({ store }) => (
+import { observer } from 'mobx-react-lite'
+
+const DraggingIndicators = observer(({ store }) => (
   <>
     {store.leftMenu.dragIndicatorY !== -1 && (
       <div
@@ -20,6 +22,6 @@ const DraggingIndicators = ({ store }) => (
       }}
     />
   </>
-)
+))
 
 export default DraggingIndicators

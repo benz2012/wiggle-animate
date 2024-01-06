@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { observer } from 'mobx-react-lite'
 
 import './LeftMenu.css'
 import BottomActions from './BottomActions'
@@ -9,12 +10,10 @@ import DraggingIndicators from './DraggingIndicators'
 
 // TODO [2]: when hovering over a container for a while, open it, so user can drag into it
 
-// TODO [2]: escape key cancels drag
-
 // TODO [4]: Add auto-scrolling when someone is dragging a list item and they
 //           move their mouse near the top or the bottom of the list
 
-const LeftMenu = ({ store, windowHeight }) => {
+const LeftMenu = observer(({ store, windowHeight }) => {
   const listContainerRef = useRef()
 
   useEffect(() => {
@@ -38,6 +37,6 @@ const LeftMenu = ({ store, windowHeight }) => {
       </div>
     </div>
   )
-}
+})
 
 export default LeftMenu
