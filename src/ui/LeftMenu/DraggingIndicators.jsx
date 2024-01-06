@@ -1,5 +1,13 @@
 const DraggingIndicators = ({ store }) => (
   <>
+    {store.leftMenu.dragIndicatorY !== -1 && (
+      <div
+        className="left-menu-dragging-indicator"
+        style={{ top: store.leftMenu.dragIndicatorY }}
+      >
+        <div className="left-menu-dragging-indicator-circle" />
+      </div>
+    )}
     <div
       // The skeleton is both a nice visual indicator, and it also blocks
       // hover interactions with the underlying list items which would have
@@ -11,12 +19,6 @@ const DraggingIndicators = ({ store }) => (
         left: (store.build.pointerPosition.x / store.DPR) - (store.leftMenu.dragStart.x) + 8,
       }}
     />
-    <div
-      className="left-menu-dragging-indicator"
-      style={{ top: store.leftMenu.dragIndicatorY }}
-    >
-      <div className="left-menu-dragging-indicator-circle" />
-    </div>
   </>
 )
 

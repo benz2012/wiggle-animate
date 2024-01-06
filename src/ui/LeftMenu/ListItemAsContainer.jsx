@@ -31,8 +31,8 @@ const ListItemAsContainer = ({
     <div
       id={`left-menu-item-div--${id}`}
       className="noselect left-menu-item-container-name"
-      onClick={onClick}
-      onKeyUp={onClick}
+      onPointerDown={onClick}
+      onKeyDown={onClick}
       role="menuitem"
       style={{
         fontSize: `${textHeight}px`,

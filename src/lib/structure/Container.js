@@ -100,12 +100,31 @@ class Container extends Drawable {
     return children
   }
 
+  get allItemsShown() {
+    // Shown = Shown in Left Menu List
+    // therefore it need to match sortOrders
+    const children = [this.id]
+    this.sortOrder.forEach((itemId) => {
+      const child = this._children[itemId]
+      if (child instanceof Container) {
+        if (child.showChildren === false) {
+          children.push(child.id)
+          return
+        }
+        children.push(...child.allItemsShown)
+      } else {
+        children.push(child.id)
+      }
+    })
+    return children
+  }
+
   sortChild(childId, toIndex, byAmount) {
     const prevIndex = this._sortOrder.findIndex((element) => element === childId)
     const tempOrderWithoutChild = [...this._sortOrder]
     tempOrderWithoutChild[prevIndex] = 'to-remove'
     let tempSortOrder
-    if (toIndex) {
+    if (toIndex !== null) {
       tempSortOrder = insert(tempOrderWithoutChild, toIndex, childId)
     } else if (byAmount) {
       tempSortOrder = insert(tempOrderWithoutChild, prevIndex + byAmount, childId)

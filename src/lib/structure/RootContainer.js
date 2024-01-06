@@ -123,6 +123,11 @@ class RootContainer extends Container {
     return super.allItems.slice(1)
   }
 
+  get allItemsShown() {
+    // remove root container id from list
+    return super.allItemsShown.slice(1)
+  }
+
   findItem(itemId) {
     if (!itemId) return null
     const result = this.findItemAndParent(itemId)

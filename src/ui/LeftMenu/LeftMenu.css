@@ -41,6 +41,12 @@
   margin-bottom: 8px;
 }
 
+#left-menu-list-container {
+  flex-grow: 1;
+  height: 100%;
+  overflow-x: auto;
+}
+
 .left-menu-item {
   display: flex;
   align-items: center;
@@ -138,6 +144,7 @@
   height: 10px;
   border-radius: 4px;
   background-color: var(--palette-action-active);
+  cursor: grabbing;
 }
 
 #left-menu-action-bottom {

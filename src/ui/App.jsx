@@ -116,7 +116,7 @@ const App = observer(({ store }) => {
       <KeyHandler store={store} />
       <PointerHandler store={store} ref={stageRef}>
         <TopMenu store={store} />
-        <LeftMenu store={store} />
+        <LeftMenu store={store} windowHeight={windowHeight} />
         <BottomMenu store={store} windowWidth={windowWidth} />
         <Stage
           ref={stageRef}

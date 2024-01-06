@@ -2,8 +2,8 @@ const ListItem = ({ id, name, className, textHeight, paddingHeight, onClick }) =
   <li
     id={`left-menu-item--${id}`}
     className={className}
-    onClick={onClick}
-    onKeyUp={onClick}
+    onPointerDown={onClick}
+    onKeyDown={onClick}
     role="menuitem"
     style={{
       paddingTop: `${paddingHeight / 2}px`,
