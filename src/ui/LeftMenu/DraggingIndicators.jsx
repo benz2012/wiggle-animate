@@ -20,7 +20,13 @@ const DraggingIndicators = observer(({ store }) => (
         top: (store.build.pointerPosition.y / store.DPR) - (store.leftMenu.itemHeight / 2),
         left: (store.build.pointerPosition.x / store.DPR) - (store.leftMenu.dragStart.x) + 8,
       }}
-    />
+    >
+      {store.build.selectedIds.length > 1 && (
+        <div className="left-menu-dragging-numeral">
+          {store.build.selectedIds.length}
+        </div>
+      )}
+    </div>
   </>
 ))
 

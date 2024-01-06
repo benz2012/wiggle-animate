@@ -146,6 +146,20 @@
   background-color: var(--palette-action-active);
   cursor: grabbing;
 }
+.left-menu-dragging-numeral {
+  position: absolute;
+  right: calc(-1 * var(--spacing-1));
+  top: calc(-1 * var(--spacing-1));
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: var(--palette-primary-100);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
 
 #left-menu-action-bottom {
   display: flex;
