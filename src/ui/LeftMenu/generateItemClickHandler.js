@@ -55,6 +55,9 @@ const generateItemClickHandler = (store, clickedId) => () => {
       store.build.setSelected([clickedId])
     }
     //
+  } else if (selectedIds.includes(clickedId)) {
+    // No modifiers held, but the user clicks and item that's already selected,
+    // then leave everything alone
   } else {
     // Default case
     store.build.setSelected([clickedId])

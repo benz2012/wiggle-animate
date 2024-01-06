@@ -8,6 +8,7 @@ import Angle from './Angle'
 import Vector2 from './Vector2'
 import Color from '../visuals/Color'
 import { identityMatrix } from '../../utility/matrix'
+import { zeroIfZero } from '../../utility/numbers'
 import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
@@ -359,7 +360,7 @@ class RootContainer extends Container {
       /* Allows angle spinning beyond +360 & -360 */
       const previousSpinCount = Math.floor(rotation.degrees / 360)
       let nextSpinCount = previousSpinCount
-      nextSpinCount = nextSpinCount === 0 ? 0 : nextSpinCount // get rid of -0
+      nextSpinCount = zeroIfZero(nextSpinCount)
       const rvrtp = rotationVector.rotate(-1 * parentRotation.radians) // rvrtp: Rotation Vector Rotated To Parent
       const previousRightOfAxis = fromRotationSimple >= 0 && fromRotationSimple <= 90
       const previousLeftOfAxis = fromRotationSimple >= 270 && fromRotationSimple < 360

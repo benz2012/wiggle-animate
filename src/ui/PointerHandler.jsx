@@ -279,11 +279,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           store.curveEditor.startDrag(pointerVector, 2)
         }
       } else if (event.target.id.startsWith('left-menu-item')) {
-        const leftMenuItemId = event.target.id.split('--').pop()
         // Wait 300ms before starting a drag because of aforementioned "micro movements"
         // but mostly to make sure the user actually wants to drag this DOM element
         startDragLeftMenuInitialWaitTimeoutId.current = setTimeout(
-          () => store.leftMenu.startDrag(pointerVectorRatioOne, leftMenuItemId),
+          () => store.leftMenu.startDrag(pointerVectorRatioOne),
           300
         )
       }

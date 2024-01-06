@@ -10,6 +10,10 @@ import Header from './Header'
 import Contents from './Contents'
 import usePrevious from '../hooks/usePrevious'
 
+// TODO [3]: The panel doesn't contract sometimes when multiple items are selected
+//           weirdly it's related to the sorting of the items.
+//           Multi-Selecting "upwards" causes panel to close, "downwards" does not
+
 // TODO [4]: Annoying scroll bar appears when panel expands (with dedicated mouse, not trackpad)
 
 const PropertyEditor = observer(({ store }) => {

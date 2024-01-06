@@ -42,7 +42,7 @@ class Container extends Drawable {
     this.showChildren = !this.showChildren
   }
 
-  add(newItem, atIndex = null) {
+  add(newItem, atIndex = null, immediatelySelect = true) {
     const newId = newItem.id
     this._children[newId] = newItem
     if (atIndex != null) {
@@ -51,7 +51,9 @@ class Container extends Drawable {
       this._sortOrder = [newId, ...this._sortOrder]
     }
 
-    Item.rootContainer.store.build.setSelected([newId])
+    if (immediatelySelect) {
+      Item.rootContainer.store.build.setSelected([newId])
+    }
   }
 
   remove(itemId) {

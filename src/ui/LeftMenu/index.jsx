@@ -6,9 +6,11 @@ import BottomActions from './BottomActions'
 import ListOfItems from './ListOfItems'
 import DraggingIndicators from './DraggingIndicators'
 
-// TODO [2]: Add dragging/re-sorting of multiple selection
-
 // TODO [2]: when hovering over a container for a while, open it, so user can drag into it
+
+// TODO [4]: Allow user to sort item Outside-of but right below a Container
+//           this will likely require having two hover regions, one for inside (to the upper-right)
+//           and one for outside (to the lower-left)
 
 // TODO [4]: Add auto-scrolling when someone is dragging a list item and they
 //           move their mouse near the top or the bottom of the list

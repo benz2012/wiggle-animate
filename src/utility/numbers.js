@@ -10,6 +10,11 @@ const isOdd = (value) => (
   (value % 2) === 1
 )
 
+// Eliminates -0
+const zeroIfZero = (value) => (
+  value === 0 ? 0 : value
+)
+
 const _stringToTruncatedFloat = (str) => {
   const [leftHand, rightHand] = str.split('.')
   const truncatedDecimal = rightHand.substring(0, FLOAT_PRECISION)
@@ -40,6 +45,7 @@ const clamp = (number, min, max) => (
 export {
   isNumber,
   isOdd,
+  zeroIfZero,
   truncateFloatLeaveInt,
   clamp,
 }
