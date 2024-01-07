@@ -83,7 +83,15 @@ class Vector2 {
   }
 
   toString() {
-    return `Vector2(${this.x}, ${this.y})`
+    return `${Vector2.className}(${this.x}, ${this.y})`
+  }
+
+  toPureObject() {
+    return { className: Vector2.className, x: this.x, y: this.y }
+  }
+
+  static fromPureObject({ x, y }) {
+    return new Vector2(x, y)
   }
 }
 

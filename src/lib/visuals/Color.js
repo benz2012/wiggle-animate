@@ -119,6 +119,24 @@ class Color {
   toShortString() {
     return `${this.red}, ${this.green}, ${this.blue}`
   }
+
+  toPureObject() {
+    return {
+      className: Color.className,
+      colorString: this.colorString,
+      red: this.red,
+      green: this.green,
+      blue: this.blue,
+      alpha: this.alpha,
+    }
+  }
+
+  static fromPureObject({ colorString, red, green, blue, alpha }) {
+    if (colorString) {
+      return new Color(colorString)
+    }
+    return new Color([red, green, blue, alpha])
+  }
 }
 
 // TODO [-]: remove this after debugging

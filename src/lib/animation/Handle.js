@@ -48,6 +48,10 @@ class Handle {
   toString() {
     return `${Handle.className}(${this.influence}, ${this.distance})`
   }
+
+  toPureObject() {
+    return { className: Handle.className, influence: this.influence, distance: this.distance }
+  }
 }
 
 export default Handle

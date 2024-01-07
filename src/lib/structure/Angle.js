@@ -57,11 +57,19 @@ class Angle {
   }
 
   toString() {
-    return `Angle(${this.degrees})`
+    return `${Angle.className}(${this.degrees})`
   }
 
   toShortString() {
     return `${this.degrees}°`
+  }
+
+  toPureObject() {
+    return { className: Angle.className, degrees: this.degrees }
+  }
+
+  static fromPureObject({ degrees }) {
+    return new Angle(degrees)
   }
 }
 

@@ -21,6 +21,14 @@ class Alignment {
   toString() {
     return `${Alignment.className}(${this.x}, ${this.y})`
   }
+
+  toPureObject() {
+    return { className: Alignment.className, x: this.x, y: this.x }
+  }
+
+  static fromPureObject({ x, y }) {
+    return new Alignment(x, y)
+  }
 }
 
 export default Alignment

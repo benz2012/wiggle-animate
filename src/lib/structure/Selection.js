@@ -50,7 +50,19 @@ class Selection {
   }
 
   toString() {
-    return `Selection(${this.selected})`
+    return `${Selection.className}(${this.selected})`
+  }
+
+  toPureObject() {
+    return {
+      className: Selection.className,
+      selected: this.selected,
+    }
+  }
+
+  static fromPureObject({ selected }) {
+    // TODO [2]: this is complicated
+    return null
   }
 }
 

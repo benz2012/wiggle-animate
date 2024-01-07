@@ -97,6 +97,25 @@ class Keyframe {
   toString() {
     return `${Keyframe.className}(${this.frame}, ${this.value}, ${this.handleIn}, ${this.handleOut})`
   }
+
+  toPureObject() {
+    return {
+      className: Keyframe.className,
+      frame: this.frame,
+      value: this.value,
+      handleIn: this.handleIn.toPureObject(),
+      handleOut: this.handleOut.toPureObject(),
+    }
+  }
+
+  static fromPureObject({ frame, value, handleIn, handleOut }) {
+    const newKey = new Keyframe(frame, value)
+    newKey.handleIn.influence = handleIn.influence
+    newKey.handleIn.distance = handleIn.distance
+    newKey.handleOut.influence = handleOut.influence
+    newKey.handleOut.distance = handleOut.distance
+    return newKey
+  }
 }
 
 // TODO [-]: remove this after debugging
