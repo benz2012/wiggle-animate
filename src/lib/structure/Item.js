@@ -109,7 +109,8 @@ class Item {
       copyOfSelf._name.setValue(`${copyOfSelf.name} 2`)
     }
 
-    parent.add(copyOfSelf, thisSortIndex - 1, false)
+    parent.add(copyOfSelf, thisSortIndex, false)
+    return copyOfSelf.id
   }
 
   delete() {

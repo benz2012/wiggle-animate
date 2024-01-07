@@ -6,6 +6,9 @@ import { observer } from 'mobx-react-lite'
 import './TopMenu.css'
 import bCurveIcon from '../assets/b-curve-icon.png'
 
+// TODO [1]: Add Official edit menu, copy, paste
+// TODO [2]: Replace Insert Menu with same Component as Edit Menu
+
 const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
   <div className="insert-menu-list-item" onClick={onClick}>
     <div className="insert-menu-list-item-icon">{icon}</div>

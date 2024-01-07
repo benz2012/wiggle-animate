@@ -90,6 +90,18 @@ const KeyHandler = ({ store }) => {
         }
         break
 
+      case 'c':
+        if (event.metaKey || event.ctrlKey) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            // TODO [4]: Put Keyframe Copying Here
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.build.copySelectionToClipboard()
+          }
+        }
+        break
+
       case 'd':
         if (event.metaKey || event.ctrlKey) {
           if (BOTTOM_HAS_FOCUS) {
@@ -100,6 +112,10 @@ const KeyHandler = ({ store }) => {
             store.build.setSelected([])
           }
         }
+        break
+
+      case 'v':
+        // NOTE: Paste has it's own special listener below
         break
 
       case 'ArrowUp':
@@ -220,6 +236,8 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'c':
+        // TODO [3]: When user was "recently" holding meta key, skip this event as it conflicts
+        //           with Meta+C "Copy"
         if (BOTTOM_HAS_FOCUS) {
           store.animation.setIn(Animation.FIRST)
           store.animation.setOut(store.animation.frames)
@@ -273,21 +291,40 @@ const KeyHandler = ({ store }) => {
     }
   })
 
+  /* -- PASTE -- */
+  const handlePasteEvent = action((event) => {
+    const STAGE_HAS_FOCUS = doesStageHaveFocus()
+    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
+
+    if (BOTTOM_HAS_FOCUS) {
+      event.preventDefault()
+      // TODO [4]: Put Keyframe Pasting Here
+    } else if (STAGE_HAS_FOCUS) {
+      event.preventDefault()
+      const clipboardText = (event.clipboardData || window.clipboardData).getData('text')
+      store.build.pasteClipboard(clipboardText)
+    }
+  })
+
   /* Memoization */
   const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [handleKeyDownEvent])
   const handleKeyUpEventMemoized = useCallback(handleKeyUpEvent, [handleKeyUpEvent])
+  const handlePasteEventMemoized = useCallback(handlePasteEvent, [handlePasteEvent])
 
   /* Window Listener Registration */
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDownEventMemoized)
     window.addEventListener('keyup', handleKeyUpEventMemoized)
+    window.addEventListener('paste', handlePasteEventMemoized)
     return () => {
       window.removeEventListener('keydown', handleKeyDownEventMemoized)
       window.removeEventListener('keyup', handleKeyUpEventMemoized)
+      window.removeEventListener('paste', handlePasteEventMemoized)
     }
   }, [
     handleKeyDownEventMemoized,
     handleKeyUpEventMemoized,
+    handlePasteEventMemoized,
   ])
 
   return null

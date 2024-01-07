@@ -76,6 +76,38 @@ class Build {
   selectAll() {
     this.setSelected(this.store.rootContainer.allItems)
   }
+
+  copySelectionToClipboard() {
+    // TODO [4]: Address the notes below, add resiliency, store enough info to paste into another project
+    //           or if the user deletes the Item between copy & paste (can no logner access by Id)
+    const selectedIdsAsJSON = JSON.stringify(this.selectedIds)
+    navigator.clipboard.writeText(selectedIdsAsJSON)
+      .then(() => {
+        // Success!
+        // Maybe add a snackbar component to show confirmation?
+      })
+      .catch(() => {
+        // Failed D:
+        // Maybe indicate this failure to the user
+        // Or maybe just have a Global store clipboard as well
+        // There's no reason we need to use the OS-level Clipboard unless we are implementing
+        // copy and paste between different instances of the App
+      })
+  }
+
+  pasteClipboard(clipboardText) {
+    const itemIdsToDuplicate = JSON.parse(clipboardText)
+    if (!Array.isArray(itemIdsToDuplicate)) return
+
+    const resultingIds = []
+    itemIdsToDuplicate.forEach((itemId) => {
+      const item = this.store.rootContainer.findItem(itemId)
+      if (!item) return
+      const newId = item.duplicate()
+      resultingIds.push(newId)
+    })
+    this.setSelected(resultingIds)
+  }
 }
 
 export default Build
