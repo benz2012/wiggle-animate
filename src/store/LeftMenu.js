@@ -11,6 +11,7 @@ class LeftMenu {
     this.dragStart = null
 
     this.listPositionTop = null
+    this.listScrollTop = 0
     this.itemHeight = 22
     this.itemTextHeight = 14
 
@@ -32,26 +33,33 @@ class LeftMenu {
     this.dragStart = null
   }
 
-  setListPosition(top, bottom) {
+  setListPosition(top, bottom, right) {
     this.listPositionTop = top
     this.listPositionBottom = bottom
+    this.listPositionRight = right
+  }
+
+  handleListScroll = (event) => {
+    this.listScrollTop = event.target.scrollTop
   }
 
   determineNewSort() {
-    if (this.store.build.pointerPosition == null) return
-    const pointerYRatioOne = this.store.build.pointerPosition.y / this.store.DPR
+    const { allItemsShown } = this.store.rootContainer
+    const { selectedIds, pointerPosition } = this.store.build
+
+    if (pointerPosition == null) return
+    if (this.dragIndicatorY === -1) return
+
+    const pointerYRatioOne = pointerPosition.y / this.store.DPR
     const halfItemHeight = this.itemHeight / 2
-    const pointerYNearItemGap = pointerYRatioOne - halfItemHeight
+    let scrollOffsetToItemBottom = this.itemHeight - (this.listScrollTop % this.itemHeight)
+    scrollOffsetToItemBottom %= this.itemHeight
+    const pointerYNearItemGap = pointerYRatioOne - halfItemHeight - scrollOffsetToItemBottom
+
     let locationNumberBasedOnHeight = Math.ceil((pointerYNearItemGap - this.listPositionTop) / this.itemHeight)
     locationNumberBasedOnHeight = zeroIfZero(locationNumberBasedOnHeight)
-    const { allItemsShown } = this.store.rootContainer
-
-    if (locationNumberBasedOnHeight < 0 || locationNumberBasedOnHeight > allItemsShown.length) return
-
-    const { selectedIds } = this.store.build
-
-    // TODO [2]: when scrolling, these indexes will be wrong
-    //           instead we will need to calculate locationNumber by whats rendered in the dom at the pointerY
+    const numItemsHiddenByScroll = Math.ceil(this.listScrollTop / this.itemHeight)
+    locationNumberBasedOnHeight += numItemsHiddenByScroll
 
     let newParent
     let newSortIndex
@@ -112,19 +120,27 @@ class LeftMenu {
   }
 
   get dragIndicatorY() {
-    if (this.store.build.pointerPosition == null) return -1
-
-    const pointerYRatioOne = this.store.build.pointerPosition.y / this.store.DPR
-    if (pointerYRatioOne < this.listPositionTop) return -1
-    if (pointerYRatioOne > this.listPositionBottom) return -1
-
+    const { pointerPosition } = this.store.build
+    if (pointerPosition == null) return -1
     const halfItemHeight = this.itemHeight / 2
-    const pointerYNearItemGap = pointerYRatioOne - halfItemHeight
+    const quarterItemHeight = (halfItemHeight / 2)
+
+    let scrollOffsetToItemBottom = this.itemHeight - (this.listScrollTop % this.itemHeight)
+    scrollOffsetToItemBottom %= this.itemHeight
+
+    // store.build.pointerPosition is multiplied by DPR for use on the Canvas
+    const pointerX = pointerPosition.x / this.store.DPR
+    const pointerY = pointerPosition.y / this.store.DPR
+    if (pointerX - this.dragStart.x > this.listPositionRight * 1.1) return -1
+    if (pointerY + quarterItemHeight - scrollOffsetToItemBottom < this.listPositionTop) return -1
+    if (pointerY + quarterItemHeight - scrollOffsetToItemBottom > this.listPositionBottom) return -1
+
+    const pointerYNearItemGap = pointerY - halfItemHeight - scrollOffsetToItemBottom
     const locationNumberBasedOnHeight = Math.ceil((pointerYNearItemGap - this.listPositionTop) / this.itemHeight)
     if (locationNumberBasedOnHeight > this.store.rootContainer.allItemsShown.length) return -1
 
     const pointerYIntervalLocked = Math.ceil(pointerYNearItemGap / this.itemHeight) * this.itemHeight
-    return pointerYIntervalLocked - 1
+    return pointerYIntervalLocked - 1 + scrollOffsetToItemBottom
   }
 }
 

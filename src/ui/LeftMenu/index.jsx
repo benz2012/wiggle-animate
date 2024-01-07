@@ -20,8 +20,8 @@ const LeftMenu = observer(({ store, windowHeight }) => {
 
   useEffect(() => {
     if (!listContainerRef.current) return
-    const { top, bottom } = listContainerRef.current.getBoundingClientRect()
-    store.leftMenu.setListPosition(top, bottom)
+    const { top, bottom, right } = listContainerRef.current.getBoundingClientRect()
+    store.leftMenu.setListPosition(top, bottom, right)
   }, [store.leftMenu, windowHeight])
 
   return (
@@ -29,7 +29,11 @@ const LeftMenu = observer(({ store, windowHeight }) => {
       <div id="left-menu">
         <div id="left-menu-header" className="noselect">Layers</div>
 
-        <div ref={listContainerRef} id="left-menu-list-container">
+        <div
+          ref={listContainerRef}
+          id="left-menu-list-container"
+          onScroll={store.leftMenu.handleListScroll}
+        >
           <ListOfItems store={store} parentContainer={store.rootContainer} />
         </div>
 
