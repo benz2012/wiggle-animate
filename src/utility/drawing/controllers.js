@@ -230,15 +230,15 @@ const drawControllerCenter = (instance, handleIdxHovered, handleIdxActive) => {
 }
 
 const ContainerControllerSizes = {
-  originBox: 100,
-  positionBox: 200,
+  innerBox: 100,
+  outerBox: 200,
   rotationCircle: 12,
 }
 const setContainerControllerHandleEllipseOnCtx = (ctx) => {
-  const { originBox, rotationCircle } = ContainerControllerSizes
+  const { innerBox, rotationCircle } = ContainerControllerSizes
   ctx.ellipse(
     0,
-    -originBox - ROTATION_LINE_DISTANCE - rotationCircle,
+    -innerBox - ROTATION_LINE_DISTANCE - rotationCircle,
     rotationCircle,
     rotationCircle,
     0,
@@ -248,34 +248,34 @@ const setContainerControllerHandleEllipseOnCtx = (ctx) => {
 }
 const drawContainerController = (ctx, controlHovered) => {
   // TODO [4]: Stroke and Fill without container scale applied
-  const { originBox, positionBox } = ContainerControllerSizes
+  const { innerBox, outerBox } = ContainerControllerSizes
 
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
   ctx.lineWidth = 2
   ctx.lineJoin = 'miter'
 
   ctx.beginPath()
-  ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
+  ctx.rect(innerBox / -2, innerBox / -2, innerBox, innerBox)
   ctx.stroke()
-  if (controlHovered === 'origin') {
+  if (controlHovered === 'innerBox') {
     ctx.fillStyle = `${theme.palette.tertiary[20]}`
     ctx.fill()
   }
 
   ctx.beginPath()
-  ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
+  ctx.rect(outerBox / -2, outerBox / -2, outerBox, outerBox)
   ctx.stroke()
-  if (controlHovered === 'position') {
+  if (controlHovered === 'outerBox') {
     ctx.beginPath()
-    ctx.rect(positionBox / -2, positionBox / -2, positionBox, positionBox)
-    ctx.rect(originBox / -2, originBox / -2, originBox, originBox)
+    ctx.rect(outerBox / -2, outerBox / -2, outerBox, outerBox)
+    ctx.rect(innerBox / -2, innerBox / -2, innerBox, innerBox)
     ctx.fillStyle = `${theme.palette.tertiary[20]}`
     ctx.fill('evenodd')
   }
 
   ctx.beginPath()
-  ctx.moveTo(0, -originBox)
-  ctx.lineTo(0, -originBox - ROTATION_LINE_DISTANCE)
+  ctx.moveTo(0, -innerBox)
+  ctx.lineTo(0, -innerBox - ROTATION_LINE_DISTANCE)
   ctx.stroke()
 
   ctx.beginPath()

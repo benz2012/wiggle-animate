@@ -190,18 +190,23 @@ class Container extends Drawable {
     ) {
       this.ctx.setTransform(this.currentTransform)
       this.ctx.translate(...this.origin.values)
-      const controlHovered = hoveredId === this.id && hoveredControl
+      let controlHovered = hoveredId === this.id && hoveredControl
+      if (controlHovered === 'position') {
+        controlHovered = 'innerBox'
+      } else if (controlHovered === 'origin') {
+        controlHovered = 'outerBox'
+      }
       drawContainerController(this.ctx, controlHovered)
     }
   }
 
-  createIntersectionsPath(controlType = 'position') {
-    const { positionBox, originBox } = ContainerControllerSizes
+  createIntersectionsPath(controlType) {
+    const { innerBox, outerBox } = ContainerControllerSizes
     let rectSpec
     if (controlType === 'position') {
-      rectSpec = [positionBox / -2, positionBox / -2, positionBox, positionBox]
+      rectSpec = [innerBox / -2, innerBox / -2, innerBox, innerBox]
     } else if (controlType === 'origin') {
-      rectSpec = [originBox / -2, originBox / -2, originBox, originBox]
+      rectSpec = [outerBox / -2, outerBox / -2, outerBox, outerBox]
     } else if (controlType === 'rotation') {
       setContainerControllerHandleEllipseOnCtx(this.ctx)
     }
@@ -213,16 +218,16 @@ class Container extends Drawable {
     this.ctx.translate(...this.origin.values)
 
     this.ctx.beginPath()
-    this.createIntersectionsPath()
+    this.createIntersectionsPath('origin')
     if (this.ctx.isPointInPath(...pointerVector.values)) {
       this.ctx.beginPath()
-      this.createIntersectionsPath('origin')
+      this.createIntersectionsPath('position')
       if (this.ctx.isPointInPath(...pointerVector.values)) {
-        Item.rootContainer.store.build.setHoveredControl('origin')
+        Item.rootContainer.store.build.setHoveredControl('position')
         return true
       }
 
-      Item.rootContainer.store.build.setHoveredControl('position')
+      Item.rootContainer.store.build.setHoveredControl('origin')
       return true
     }
 
