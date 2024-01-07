@@ -24,6 +24,9 @@ const ListOfItems = observer(({ store, parentContainer }) => {
     if (isContainer) {
       listItemClass += ' left-menu-item-container'
     }
+    if (store.leftMenu.containerToOpen === childId) {
+      listItemClass += ' left-menu-item-container-hovered'
+    }
     return listItemClass
   }
 

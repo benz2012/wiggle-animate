@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { observer } from 'mobx-react-lite'
 
 // TODO [4]: Add a vertical line that extends thru the height of the list of children
 //           to aid in visual parsing of which container holds a particular child
 //           this will look like reddit-thread lines
 
-const ListItemAsContainer = ({
+const ListItemAsContainer = observer(({
   id,
   name,
   className,
@@ -48,6 +49,6 @@ const ListItemAsContainer = ({
       {name || '\u00A0'}
     </div>
   </li>
-)
+))
 
 export default ListItemAsContainer

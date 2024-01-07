@@ -15,6 +15,9 @@ class LeftMenu {
     this.itemHeight = 22
     this.itemTextHeight = 14
 
+    this.containerToOpen = null
+    this.containerToOpenCount = 0
+
     makeAutoObservable(this)
   }
 
@@ -43,23 +46,70 @@ class LeftMenu {
     this.listScrollTop = event.target.scrollTop
   }
 
-  determineNewSort() {
-    const { allItemsShown } = this.store.rootContainer
-    const { selectedIds, pointerPosition } = this.store.build
+  pointerLocationNumberWithinShownItems(betweenTheLines = true) {
+    if (this.store.build.pointerPosition == null) return -1
+    if (this.dragIndicatorY === -1) return -1
 
-    if (pointerPosition == null) return
-    if (this.dragIndicatorY === -1) return
-
-    const pointerYRatioOne = pointerPosition.y / this.store.DPR
+    // store.build.pointerPosition is multiplied by DPR for use on the Canvas
+    const pointerY = this.store.build.pointerPosition.y / this.store.DPR
     const halfItemHeight = this.itemHeight / 2
     let scrollOffsetToItemBottom = this.itemHeight - (this.listScrollTop % this.itemHeight)
     scrollOffsetToItemBottom %= this.itemHeight
-    const pointerYNearItemGap = pointerYRatioOne - halfItemHeight - scrollOffsetToItemBottom
+    let pointerYNearItemGap = pointerY - scrollOffsetToItemBottom
+    if (betweenTheLines) {
+      pointerYNearItemGap -= halfItemHeight
+    } else {
+      pointerYNearItemGap -= this.itemHeight
+    }
 
     let locationNumberBasedOnHeight = Math.ceil((pointerYNearItemGap - this.listPositionTop) / this.itemHeight)
     locationNumberBasedOnHeight = zeroIfZero(locationNumberBasedOnHeight)
     const numItemsHiddenByScroll = Math.ceil(this.listScrollTop / this.itemHeight)
     locationNumberBasedOnHeight += numItemsHiddenByScroll
+
+    return locationNumberBasedOnHeight
+  }
+
+  closedContainerHovered() {
+    const { allItemsShown } = this.store.rootContainer
+
+    const locationNumberBasedOnHeight = this.pointerLocationNumberWithinShownItems(false)
+    if (locationNumberBasedOnHeight === -1) return null
+
+    const itemIdHovered = allItemsShown[locationNumberBasedOnHeight]
+    const itemHovered = this.store.rootContainer.findItem(itemIdHovered)
+    if (itemHovered instanceof Container && !itemHovered.showChildren) {
+      return itemIdHovered
+    }
+    return null
+  }
+
+  clearContainerToOpen() {
+    this.containerToOpen = null
+    this.containerToOpenCount = 0
+  }
+
+  incrementContainerToOpen(containerId) {
+    this.containerToOpen = containerId
+    const newCount = this.containerToOpenCount + 1
+
+    if (newCount >= 10) {
+      const container = this.store.rootContainer.findItem(containerId)
+      container.showChildren = true
+      this.clearContainerToOpen()
+      return true
+    }
+
+    this.containerToOpenCount = newCount
+    return false
+  }
+
+  determineNewSort() {
+    const { allItemsShown } = this.store.rootContainer
+    const { selectedIds } = this.store.build
+
+    const locationNumberBasedOnHeight = this.pointerLocationNumberWithinShownItems()
+    if (locationNumberBasedOnHeight === -1) return
 
     let newParent
     let newSortIndex

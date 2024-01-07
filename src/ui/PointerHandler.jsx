@@ -8,6 +8,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref
   const startDragInitialWaitTimeoutId = useRef(null)
   const startDragLeftMenuInitialWaitTimeoutId = useRef(null)
+  const waitingToOpenContainerIntervalId = useRef(null)
 
   /* Convienience Methods */
   const getFrameWithPointerX = (pointerX) => {
@@ -31,6 +32,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     const { dragStart: playheadDragStart } = store.playhead
     const { dragStart: keyframeDragStart } = store.keyframeEditor
     const { dragStart: curveHandleDragStart, dragStartWhichHandle: whichCurveControlHandle } = store.curveEditor
+    const { dragStart: leftMenuDragStart } = store.leftMenu
 
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
 
@@ -73,14 +75,36 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
       // this will enable us to track distance moved since the last event
       store.build.startDrag(pointerVector)
+      //
     } else if (playheadDragStart) {
       goToFrameWithPointerX(event.clientX)
+      //
     } else if (keyframeDragStart) {
       store.keyframeEditor.moveAllSelectedToFrameForX(event.clientX, Math.sign(event.movementX))
+      //
     } else if (curveHandleDragStart) {
       const relativeMovement = Vector2.subtract(pointerVector, curveHandleDragStart)
       store.curveEditor.moveHandleByIncrement(relativeMovement)
       store.curveEditor.startDrag(pointerVector, whichCurveControlHandle)
+      //
+    } else if (leftMenuDragStart) {
+      const { containerToOpen } = store.leftMenu
+      const containerId = store.leftMenu.closedContainerHovered()
+      if (containerId !== containerToOpen) {
+        clearInterval(waitingToOpenContainerIntervalId.current)
+        store.leftMenu.clearContainerToOpen()
+        if (containerId) {
+          store.leftMenu.incrementContainerToOpen(containerId)
+          waitingToOpenContainerIntervalId.current = setInterval(
+            () => {
+              const shouldClearSelf = store.leftMenu.incrementContainerToOpen(containerId)
+              if (shouldClearSelf) clearInterval(waitingToOpenContainerIntervalId.current)
+            },
+            100,
+          )
+        }
+      }
+      //
     }
   })
   const handleDragMemoized = useCallback(handleDrag, [handleDrag])
@@ -298,10 +322,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
 
       clearTimeout(startDragInitialWaitTimeoutId.current)
       clearTimeout(startDragLeftMenuInitialWaitTimeoutId.current)
+      clearInterval(waitingToOpenContainerIntervalId.current)
       store.build.stopDrag()
       store.playhead.stopDrag()
       store.keyframeEditor.stopDrag()
       store.curveEditor.stopDrag()
+      store.leftMenu.clearContainerToOpen()
 
       store.selector.setRect(0, 0)
       if (store.selector.hovers.length > 0) {
