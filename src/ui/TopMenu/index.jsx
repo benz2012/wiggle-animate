@@ -2,14 +2,14 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Button from '@mui/material/Button'
-import Popover from '@mui/material/Popover'
-import Typography from '@mui/material/Typography'
+import TuneIcon from '@mui/icons-material/Tune'
+import TopicIcon from '@mui/icons-material/Topic'
 
 import './TopMenu.css'
 import bCurveIcon from '../../assets/b-curve-icon.png'
+import MenuButton from './MenuButton'
+import EditMenu from './EditMenu'
 
-// TODO [1]: Add Official edit menu, copy, paste
 // TODO [2]: Replace Insert Menu with same Component as Edit Menu
 
 const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
@@ -46,38 +46,26 @@ const TopMenu = observer(({ store }) => {
 
   return (
     <div id="top-menu">
-      <button type="button" className="top-menu-item top-menu-item-button noselect">
-        <span className="unicode-icon pb-3">⚙</span>
-        Settings
-      </button>
-
-      {/* <button
-        type="button"
-        className="top-menu-item top-menu-item-button noselect"
+      <MenuButton
+        ref={null}
+        icon={<TopicIcon />}
+        onClick={() => null}
       >
-        <span className="unicode-icon font-14">⌘</span>
-        Edit
-      </button> */}
+        Project
+      </MenuButton>
 
-      <Button
+      <MenuButton
         ref={editMenuButtonRef}
+        icon={<TuneIcon />}
         onClick={() => setEditMenuOpen(!editMenuOpen)}
-        onPointerEnter={() => setEditMenuOpen(true)}
-        onPointerLeave={() => setEditMenuOpen(false)}
       >
         Edit
-      </Button>
-      <Popover
-        open={editMenuOpen}
+      </MenuButton>
+      <EditMenu
         anchorEl={editMenuButtonRef.current}
-        onClose={() => setEditMenuOpen(false)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-      </Popover>
+        open={editMenuOpen}
+        handleClose={() => setEditMenuOpen(false)}
+      />
 
       <button
         type="button"
