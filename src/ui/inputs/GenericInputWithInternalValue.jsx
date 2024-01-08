@@ -161,7 +161,7 @@ const GenericInputWithInternalValue = observer(({
             iconInTheGap
             {...rest}
           />
-          <CheckboxLock checked={pairVector} onChange={togglePairVectorLock} />
+          <CheckboxLock name="pair vector properties" checked={pairVector} onChange={togglePairVectorLock} />
           <InputBox
             key={`${label}-${subProp2}`}
             label={`${label}-${subProp2}`}

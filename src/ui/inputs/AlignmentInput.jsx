@@ -8,7 +8,10 @@ import Alignment from '../../lib/structure/Alignment'
 
 const AlignmentCheckbox = ({ label, checked, onChange }) => (
   <Checkbox
-    inputProps={{ 'aria-label': label }}
+    inputProps={{
+      id: `input-${label.replaceAll(' ', '-')}`,
+      'aria-label': label,
+    }}
     checkedIcon={<AnchorIcon />}
     checked={checked}
     onChange={onChange}
@@ -24,6 +27,18 @@ const AlignmentCheckbox = ({ label, checked, onChange }) => (
     }}
   />
 )
+
+const CHECKBOX_LABELS = [
+  'set alignment top left',
+  'set alignment top center',
+  'set alignment top right',
+  'set alignment center left',
+  'set alignment center center',
+  'set alignment center right',
+  'set alignment bottom left',
+  'set alignment bottom center',
+  'set alignment bottom right',
+]
 
 const AlignmentInput = observer(({
   label,
@@ -63,24 +78,27 @@ const AlignmentInput = observer(({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <InputLabel label={label} />
+      <InputLabel
+        label={label}
+        overwriteHtmlFor={`input-${CHECKBOX_LABELS[selectedAlignmentNum].replaceAll(' ', '-')}`}
+      />
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column' }} id={`input-${label}`}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <AlignmentCheckbox
-            label="set alignment top left"
+            label={CHECKBOX_LABELS[0]}
             checked={selectedAlignmentNum === 0}
             onChange={handleCheckboxClick(0)}
           />
           <AlignmentCheckbox
-            label="set alignment top center"
+            label={CHECKBOX_LABELS[1]}
             checked={selectedAlignmentNum === 1}
             onChange={handleCheckboxClick(1)}
           />
           <AlignmentCheckbox
-            label="set alignment top right"
+            label={CHECKBOX_LABELS[2]}
             checked={selectedAlignmentNum === 2}
             onChange={handleCheckboxClick(2)}
           />
@@ -88,17 +106,17 @@ const AlignmentInput = observer(({
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <AlignmentCheckbox
-            label="set alignment center left"
+            label={CHECKBOX_LABELS[3]}
             checked={selectedAlignmentNum === 3}
             onChange={handleCheckboxClick(3)}
           />
           <AlignmentCheckbox
-            label="set alignment center center"
+            label={CHECKBOX_LABELS[4]}
             checked={selectedAlignmentNum === 4}
             onChange={handleCheckboxClick(4)}
           />
           <AlignmentCheckbox
-            label="set alignment center right"
+            label={CHECKBOX_LABELS[5]}
             checked={selectedAlignmentNum === 5}
             onChange={handleCheckboxClick(5)}
           />
@@ -106,17 +124,17 @@ const AlignmentInput = observer(({
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <AlignmentCheckbox
-            label="set alignment bottom left"
+            label={CHECKBOX_LABELS[6]}
             checked={selectedAlignmentNum === 6}
             onChange={handleCheckboxClick(6)}
           />
           <AlignmentCheckbox
-            label="set alignment bottom center"
+            label={CHECKBOX_LABELS[7]}
             checked={selectedAlignmentNum === 7}
             onChange={handleCheckboxClick(7)}
           />
           <AlignmentCheckbox
-            label="set alignment bottom right"
+            label={CHECKBOX_LABELS[8]}
             checked={selectedAlignmentNum === 8}
             onChange={handleCheckboxClick(8)}
           />

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import Typography from '@mui/material/Typography'
 
-const InputLabel = observer(({ label, labelGroup, hasSubProp, idInsteadOfFor = false }) => {
+const InputLabel = observer(({ label, labelGroup, hasSubProp, idInsteadOfFor = false, overwriteHtmlFor }) => {
   let id = ''
   let htmlFor = `input-${label}`
   let name = label
@@ -17,7 +17,11 @@ const InputLabel = observer(({ label, labelGroup, hasSubProp, idInsteadOfFor = f
 
   if (idInsteadOfFor) {
     id = htmlFor
-    htmlFor = ''
+    htmlFor = null
+  }
+
+  if (overwriteHtmlFor) {
+    htmlFor = overwriteHtmlFor
   }
 
   return (

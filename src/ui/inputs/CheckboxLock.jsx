@@ -2,8 +2,9 @@ import Checkbox from '@mui/material/Checkbox'
 import LockIcon from '@mui/icons-material/Lock'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
 
-const CheckboxLock = ({ checked, onChange }) => (
+const CheckboxLock = ({ name, checked, onChange }) => (
   <Checkbox
+    name={name}
     icon={<LockOpenIcon />}
     checkedIcon={<LockIcon />}
     size="4px"
