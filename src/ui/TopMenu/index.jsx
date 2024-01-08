@@ -1,10 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
+import Button from '@mui/material/Button'
+import Popover from '@mui/material/Popover'
+import Typography from '@mui/material/Typography'
 
 import './TopMenu.css'
-import bCurveIcon from '../assets/b-curve-icon.png'
+import bCurveIcon from '../../assets/b-curve-icon.png'
 
 // TODO [1]: Add Official edit menu, copy, paste
 // TODO [2]: Replace Insert Menu with same Component as Edit Menu
@@ -18,7 +21,10 @@ const InsertMenuListItem = ({ icon, label, hotkeyIndicator, onClick }) => (
 )
 
 const TopMenu = observer(({ store }) => {
+  const editMenuButtonRef = useRef(null)
+  const [editMenuOpen, setEditMenuOpen] = useState(false)
   const [insertMenuOpen, setInsertMenuOpen] = useState(false)
+
   const { saveStatus } = store.project
 
   let iconClass = 'autosave-icon'
@@ -45,14 +51,33 @@ const TopMenu = observer(({ store }) => {
         Settings
       </button>
 
-      <button
+      {/* <button
         type="button"
         className="top-menu-item top-menu-item-button noselect"
       >
         <span className="unicode-icon font-14">⌘</span>
         Edit
-        {/* This menu can have like undo/redo */}
-      </button>
+      </button> */}
+
+      <Button
+        ref={editMenuButtonRef}
+        onClick={() => setEditMenuOpen(!editMenuOpen)}
+        onPointerEnter={() => setEditMenuOpen(true)}
+        onPointerLeave={() => setEditMenuOpen(false)}
+      >
+        Edit
+      </Button>
+      <Popover
+        open={editMenuOpen}
+        anchorEl={editMenuButtonRef.current}
+        onClose={() => setEditMenuOpen(false)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
+      </Popover>
 
       <button
         type="button"
