@@ -116,6 +116,17 @@ class Item {
   delete() {
     Item.rootContainer.findAndDelete(this._id)
   }
+
+  toPureObject() {
+    const finalPureObject = this.properties.reduce((ownPureObject, propertyName) => {
+      /* eslint-disable no-param-reassign */
+      const propertyCleanName = propertyName.startsWith('_') ? propertyName.slice(1) : propertyName
+      ownPureObject[propertyCleanName] = this[propertyName].toPureObject()
+      return ownPureObject
+    }, {})
+    finalPureObject.id = this.id
+    return finalPureObject
+  }
 }
 
 export default Item

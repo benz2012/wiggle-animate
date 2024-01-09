@@ -1,4 +1,4 @@
-import { makeObservable, action, observable } from 'mobx'
+import { makeObservable, action, observable, toJS } from 'mobx'
 
 import Container from './Container'
 import Item from './Item'
@@ -375,6 +375,18 @@ class RootContainer extends Container {
 
       selectedItem._rotation.setValue(setDegreesTo, now)
     })
+  }
+
+  toPureObject() {
+    const finalPureObject = {
+      canvasPosition: this.canvasPosition.toPureObject(),
+      canvasScale: this.canvasScale,
+      canvasSize: this.canvasSize.toPureObject(),
+      canvasFill: this.canvasFill.toPureObject(),
+      sortOrder: toJS(this.sortOrder),
+      children: Object.values(this.children).map((childItem) => childItem.toPureObject()),
+    }
+    return finalPureObject
   }
 }
 

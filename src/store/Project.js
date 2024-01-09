@@ -1,6 +1,7 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 
 import { browserFonts, loadFont } from '../utility/fonts'
+import { downloadBlob } from '../utility/files'
 
 // TODO [3]: Project Name setting & display
 // TODO [3]: Project saving & save status
@@ -30,9 +31,21 @@ class Project {
     }, []).sort()
   }
 
+  get nonBrowserFonts() {
+    return this.fonts.slice(browserFonts.length)
+  }
+
   save() {
-    const entireTreeAsObject = this.store.rootContainer.toPureObject()
-    console.log(entireTreeAsObject)
+    const finalPureObject = {
+      version: process.env.REACT_APP_VERSION,
+      name: this.name,
+      fonts: toJS(this.nonBrowserFonts),
+      animation: this.store.animation.toPureObject(),
+      tree: this.store.rootContainer.toPureObject(),
+    }
+    const output = JSON.stringify(finalPureObject)
+    const fileBlob = new Blob([output], { type: 'application/json' })
+    downloadBlob(fileBlob, `${this.name || 'Animation Project - Untitled'}.json`)
   }
 }
 

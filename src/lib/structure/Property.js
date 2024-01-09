@@ -230,6 +230,15 @@ class Property {
   // Casting a property to a string will allow nested observation.
   // Sub-values of complex classes can implement toString as well
   toString() { return `${this._value}` }
+
+  toPureObject() {
+    const finalPureObject = {}
+    finalPureObject.value = this.isPrimitive ? this.value : this.value.toPureObject()
+    if (this.keyframes !== null) {
+      finalPureObject.keyframes = this.keyframes.map((keyframe) => keyframe.toPureObject())
+    }
+    return finalPureObject
+  }
 }
 
 export default Property

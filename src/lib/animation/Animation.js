@@ -6,6 +6,8 @@ import { timeStampMicro } from '../../utility/time'
 // Since this causes the IDE to think that Animation is in the namespace, even if its not imported,
 // keep that in mind or you'll be calling on undefined properties (e.g. Animation.FIRST)
 
+// TODO [4]: Maybe move this into store since it fits more naturally over there -- it's not part of "the tree"
+
 class Animation {
   static get FIRST() { return 1 }
   static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }
@@ -188,6 +190,17 @@ class Animation {
 
       loop()
     })
+  }
+
+  toPureObject() {
+    return {
+      frames: this.frames,
+      firstFrame: this.firstFrame,
+      lastFrame: this.lastFrame,
+      fps: this.fps,
+      now: this.now,
+      mode: this.mode,
+    }
   }
 }
 

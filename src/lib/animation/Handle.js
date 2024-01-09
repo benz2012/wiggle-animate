@@ -50,7 +50,7 @@ class Handle {
   }
 
   toPureObject() {
-    return { className: Handle.className, influence: this.influence, distance: this.distance }
+    return { influence: this.influence, distance: this.distance }
   }
 }
 

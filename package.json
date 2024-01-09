@@ -28,8 +28,8 @@
   },
   "scripts": {
     "predev": "node ./scripts/getAllGoogleFonts.js",
-    "start": "react-scripts start",
-    "build": "node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-*) react-scripts build"
+    "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts start",
+    "build": "node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-*) REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build"
   },
   "eslintConfig": {
     "env": {

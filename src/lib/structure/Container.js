@@ -1,4 +1,4 @@
-import { makeObservable, action, observable } from 'mobx'
+import { makeObservable, action, observable, toJS } from 'mobx'
 
 import Item from './Item'
 import Drawable from '../drawing/Drawable'
@@ -301,6 +301,16 @@ class Container extends Drawable {
       intersections.push(...intersectionsWithinChild)
     })
     return intersections
+  }
+
+  toPureObject() {
+    const ownPureObject = super.toPureObject()
+    const finalPureObject = {
+      ...ownPureObject,
+      sortOrder: toJS(this.sortOrder),
+      children: Object.values(this.children).map((childItem) => childItem.toPureObject()),
+    }
+    return finalPureObject
   }
 }
 

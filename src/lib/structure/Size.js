@@ -20,7 +20,11 @@ class Size {
   }
 
   toString() {
-    return `Size(${this.width}, ${this.height})`
+    return `${this.className}(${this.width}, ${this.height})`
+  }
+
+  toPureObject() {
+    return { className: Size.className, width: this.width, height: this.height }
   }
 }
 
