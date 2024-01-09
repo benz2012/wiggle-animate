@@ -10,6 +10,7 @@ const MenuListItem = ({
   hotkey,
   HotkeyIcon,
   IconClass,
+  icon,
   onClick,
 }) => (
   <MenuItem onClick={onClick}>
@@ -22,12 +23,13 @@ const MenuListItem = ({
         marginRight: 2,
       })}
     >
-      <IconClass sx={{ width: '16px', height: '16px' }} />
+      {IconClass && <IconClass sx={{ width: '16px', height: '16px' }} />}
+      {icon}
     </Box>
     <ListItemText>{children}</ListItemText>
     {hotkey && (
       <Typography variant="body2" color="text.secondary">
-        ⌘{hotkey}
+        {hotkey}
       </Typography>
     )}
     {HotkeyIcon && (

@@ -21,24 +21,24 @@ const EditMenu = ({ anchorEl, open, handleClose }) => (
     slotProps={{ paper: { sx: { width: 220 } } }}
     MenuListProps={{ dense: true }}
   >
-    <MenuListItem hotkey="Z" IconClass={UndoIcon}>
+    <MenuListItem hotkey="⌘Z" IconClass={UndoIcon}>
       Undo
     </MenuListItem>
-    <MenuListItem hotkey="Y" IconClass={RedoIcon}>
+    <MenuListItem hotkey="⌘Y" IconClass={RedoIcon}>
       Redo
     </MenuListItem>
     <Divider />
-    <MenuListItem hotkey="X" IconClass={ContentCutIcon}>
+    <MenuListItem hotkey="⌘X" IconClass={ContentCutIcon}>
       Cut
     </MenuListItem>
-    <MenuListItem hotkey="C" IconClass={ContentCopyIcon}>
+    <MenuListItem hotkey="⌘C" IconClass={ContentCopyIcon}>
       Copy
     </MenuListItem>
-    <MenuListItem hotkey="V" IconClass={ContentPasteIcon}>
+    <MenuListItem hotkey="⌘V" IconClass={ContentPasteIcon}>
       Paste
     </MenuListItem>
     <Divider />
-    <MenuListItem hotkey="A" IconClass={SelectAllIcon}>
+    <MenuListItem hotkey="⌘A" IconClass={SelectAllIcon}>
       Select All
     </MenuListItem>
     <MenuListItem IconClass={DeleteOutlineIcon} HotkeyIcon={BackspaceOutlinedIcon}>
