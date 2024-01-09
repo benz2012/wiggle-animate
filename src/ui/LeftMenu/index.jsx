@@ -13,6 +13,10 @@ import DraggingIndicators from './DraggingIndicators'
 // TODO [4]: Add auto-scrolling when someone is dragging a list item and they
 //           move their mouse near the top or the bottom of the list
 
+// TODO [4]: Add Layer Lock & Button Icon in menu
+
+// TODO [4]: Add Layer Visible & Button Icon in menu
+
 const LeftMenu = observer(({ store, windowHeight }) => {
   const listContainerRef = useRef()
 

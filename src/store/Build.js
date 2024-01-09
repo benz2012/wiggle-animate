@@ -3,6 +3,8 @@ import { makeAutoObservable } from 'mobx'
 import { isEqual } from '../utility/array'
 import Path from '../lib/shapes/Path'
 
+// TODO [2]: Copy-Paste of a container does not duplicate all it's children
+
 class Build {
   constructor(store) {
     this.store = store

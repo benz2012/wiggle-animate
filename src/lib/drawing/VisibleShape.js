@@ -7,6 +7,8 @@ import Shadow from '../visuals/Shadow'
 
 const OPACITY_DRAG_RATIO = 3
 
+// TODO [4]: Blend Modes
+
 class VisibleShape extends Shape {
   static get className() { return 'VisibleShape' }
 

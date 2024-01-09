@@ -23,7 +23,7 @@ const MenuListItem = ({
         marginRight: 2,
       })}
     >
-      {IconClass && <IconClass sx={{ width: '16px', height: '16px' }} />}
+      {IconClass && <IconClass sx={{ width: '16px', height: '16px', color: 'text.secondary' }} />}
       {icon}
     </Box>
     <ListItemText>{children}</ListItemText>

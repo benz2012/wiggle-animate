@@ -1,7 +1,9 @@
+import { observer } from 'mobx-react-lite'
+
 import BottomActionButton from './BottomActionButton'
 import { scaleSteps } from '../../lib/structure/RootContainer'
 
-const BottomActions = ({ store }) => (
+const BottomActions = observer(({ store }) => (
   <div id="left-menu-action-bottom">
     <BottomActionButton
       label="-"
@@ -24,6 +26,6 @@ const BottomActions = ({ store }) => (
       paddingRight={2}
     />
   </div>
-)
+))
 
 export default BottomActions

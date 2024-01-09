@@ -8,6 +8,7 @@ import RedoIcon from '@mui/icons-material/Redo'
 import SelectAllIcon from '@mui/icons-material/SelectAll'
 import UndoIcon from '@mui/icons-material/Undo'
 import BackspaceOutlinedIcon from '@mui/icons-material/BackspaceOutlined'
+import ClearIcon from '@mui/icons-material/Clear'
 
 import MenuListItem from './MenuListItem'
 
@@ -40,6 +41,9 @@ const EditMenu = ({ anchorEl, open, handleClose }) => (
     <Divider />
     <MenuListItem hotkey="⌘A" IconClass={SelectAllIcon}>
       Select All
+    </MenuListItem>
+    <MenuListItem hotkey="⌘D" IconClass={ClearIcon}>
+      Deselect All
     </MenuListItem>
     <MenuListItem IconClass={DeleteOutlineIcon} HotkeyIcon={BackspaceOutlinedIcon}>
       Delete
