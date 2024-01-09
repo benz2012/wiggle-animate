@@ -7,12 +7,17 @@ import TopicIcon from '@mui/icons-material/Topic'
 import FlashOnIcon from '@mui/icons-material/FlashOn'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 
+// TODO [4]: make the button and menu animations quicker / more-snappy
+
 import './TopMenu.css'
 import MenuButton from './MenuButton'
+import ProjectMenu from './ProjectMenu'
 import EditMenu from './EditMenu'
 import InsertMenu from './InsertMenu'
 
 const TopMenu = observer(({ store }) => {
+  const projectMenuButtonRef = useRef(null)
+  const [projectMenuOpen, setProjectMenuOpen] = useState(false)
   const editMenuButtonRef = useRef(null)
   const [editMenuOpen, setEditMenuOpen] = useState(false)
   const insertMenuButtonRef = useRef(null)
@@ -28,12 +33,18 @@ const TopMenu = observer(({ store }) => {
   return (
     <div id="top-menu">
       <MenuButton
-        ref={null}
+        ref={projectMenuButtonRef}
         icon={<TopicIcon />}
-        onClick={() => null}
+        onClick={() => setProjectMenuOpen(!projectMenuOpen)}
       >
         Project
       </MenuButton>
+      <ProjectMenu
+        anchorEl={projectMenuButtonRef.current}
+        open={projectMenuOpen}
+        handleClose={() => setProjectMenuOpen(false)}
+        store={store}
+      />
 
       <MenuButton
         ref={editMenuButtonRef}

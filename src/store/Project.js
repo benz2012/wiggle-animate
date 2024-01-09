@@ -6,7 +6,9 @@ import { browserFonts, loadFont } from '../utility/fonts'
 // TODO [3]: Project saving & save status
 
 class Project {
-  constructor() {
+  constructor(store) {
+    this.store = store
+
     this.name = ''
     this.saveStatus = 'unknown'
     this.fonts = [...browserFonts]
@@ -26,6 +28,11 @@ class Project {
       if (accum.includes(font.name) === true) return accum
       return [...accum, font.name]
     }, []).sort()
+  }
+
+  save() {
+    const entireTreeAsObject = this.store.rootContainer.toPureObject()
+    console.log(entireTreeAsObject)
   }
 }
 
