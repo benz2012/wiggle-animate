@@ -66,6 +66,10 @@ const loadFont = (font) => {
   })
 }
 
+const serializeFont = (font) => (
+  `${font.name}-${font.style}-${font.weight}`
+)
+
 // Top-Level Initialization Code -- leave this at bottom of module
 if (process.env.NODE_ENV === 'production') {
   fetch(`${STATIC_ASSETS_PATH}/${process.env.REACT_APP_FONT_DATA_FILE}`)
@@ -93,5 +97,6 @@ export {
   browserFonts,
   getFontData,
   loadFont,
+  serializeFont,
   preloadSetOfFontImages,
 }

@@ -2,7 +2,11 @@ const isObject = (valueToCheck) => (
   typeof valueToCheck === 'object' && valueToCheck !== null
 )
 
+const isPrimitive = (valueToCheck) => (
+  valueToCheck !== Object(valueToCheck)
+)
+
 export {
-  // eslint-disable-next-line import/prefer-default-export
   isObject,
+  isPrimitive,
 }

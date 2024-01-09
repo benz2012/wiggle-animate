@@ -3,8 +3,8 @@ import {
   prepareForExport,
   exportOneFrame,
   exportVideo,
-  downloadBlob,
 } from '../utility/video'
+import { downloadBlob } from '../utility/files'
 import { sleep } from '../utility/time'
 
 class Output {
