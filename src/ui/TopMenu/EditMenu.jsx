@@ -14,10 +14,11 @@ import MenuListItem from './MenuListItem'
 
 // TODO [2]: Populate these actions
 
-const EditMenu = ({ anchorEl, open, handleClose }) => (
+const EditMenu = ({ anchorEl, open, handleClose, store }) => (
   <Menu
     anchorEl={anchorEl}
     open={open}
+    onClick={handleClose}
     onClose={handleClose}
     slotProps={{ paper: { sx: { width: 220 } } }}
     MenuListProps={{ dense: true }}
@@ -39,10 +40,10 @@ const EditMenu = ({ anchorEl, open, handleClose }) => (
       Paste
     </MenuListItem>
     <Divider />
-    <MenuListItem hotkey="⌘A" IconClass={SelectAllIcon}>
+    <MenuListItem hotkey="⌘A" IconClass={SelectAllIcon} onClick={() => store.build.selectAll()}>
       Select All
     </MenuListItem>
-    <MenuListItem hotkey="⌘D" IconClass={ClearIcon}>
+    <MenuListItem hotkey="⌘D" IconClass={ClearIcon} onClick={() => store.build.setSelected([])}>
       Deselect All
     </MenuListItem>
     <MenuListItem IconClass={DeleteOutlineIcon} HotkeyIcon={BackspaceOutlinedIcon}>

@@ -40,33 +40,19 @@ class Stage {
     return [width / 2, height / 2]
   }
 
-  addContainer() {
+  addContainer = () => {
     const newContainer = new Container()
     newContainer.setOrigin(new Vector2(...this.canvasCenter()))
     return this.addNewItem(newContainer)
   }
 
-  addRectangle() {
-    return this.addNewItem(new Rectangle(...this.canvasCenter()))
-  }
+  addRectangle = () => this.addNewItem(new Rectangle(...this.canvasCenter()))
+  addEllipse = () => this.addNewItem(new Ellipse(...this.canvasCenter()))
+  addText = () => this.addNewItem(new Text(...this.canvasCenter()))
+  addPolygon = () => this.addNewItem(new Polygon(...this.canvasCenter()))
+  addLine = () => this.addNewItem(new Line(...this.canvasCenter()))
 
-  addEllipse() {
-    return this.addNewItem(new Ellipse(...this.canvasCenter()))
-  }
-
-  addText() {
-    return this.addNewItem(new Text(...this.canvasCenter()))
-  }
-
-  addPolygon() {
-    return this.addNewItem(new Polygon(...this.canvasCenter()))
-  }
-
-  addLine() {
-    return this.addNewItem(new Line(...this.canvasCenter()))
-  }
-
-  addNewPath() {
+  addNewPath = () => {
     const newPath = new Path()
     this.addNewItem(newPath)
     this.store.build.activePath = newPath

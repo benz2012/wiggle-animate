@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Chip from '@mui/material/Chip'
 import AddIcon from '@mui/icons-material/Add'
-import TuneIcon from '@mui/icons-material/Tune'
+import BuildIcon from '@mui/icons-material/Build'
 import TopicIcon from '@mui/icons-material/Topic'
 import FlashOnIcon from '@mui/icons-material/FlashOn'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
@@ -48,7 +48,8 @@ const TopMenu = observer(({ store }) => {
 
       <MenuButton
         ref={editMenuButtonRef}
-        icon={<TuneIcon />}
+        icon={<BuildIcon sx={{ width: '16px', height: '16px' }} />}
+        nudge={-4}
         onClick={() => setEditMenuOpen(!editMenuOpen)}
       >
         Edit
@@ -57,6 +58,7 @@ const TopMenu = observer(({ store }) => {
         anchorEl={editMenuButtonRef.current}
         open={editMenuOpen}
         handleClose={() => setEditMenuOpen(false)}
+        store={store}
       />
 
       <MenuButton
