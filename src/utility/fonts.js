@@ -53,17 +53,19 @@ const preloadSetOfFontImages = (fontList, onEachImageLoaded) => {
   })
 }
 
-const loadFont = (font) => {
+const loadFont = async (font) => {
   const fontFace = new FontFace(font.name, `url(${font.file})`, {
     style: font.style,
     weight: font.weight,
   })
-  fontFace.load().then((loadedFont) => {
+  try {
+    const loadedFont = await fontFace.load()
     document.fonts.add(loadedFont)
     console.log('loaded font', font.name)
-  }).catch((err) => {
+  } catch (err) {
     console.warn(err)
-  })
+  }
+  return true
 }
 
 const serializeFont = (font) => (

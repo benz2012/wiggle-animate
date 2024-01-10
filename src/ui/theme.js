@@ -71,6 +71,7 @@ const theme = {
 
       background: {
         main: this.base.palette.background,
+        fullSend: new Color(0, 0, 0),
         lighter1: new Color({
           r: this.base.palette.background.red + 10,
           g: this.base.palette.background.green + 10,

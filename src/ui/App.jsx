@@ -11,6 +11,7 @@ import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import ExportDialog from './Modal/ExportDialog'
 import FontDialog from './Modal/FontDialog'
+import HoldingSnackbar from './Modal/HoldingSnackbar'
 import useWindowSize from './hooks/useWindowSize'
 import { peekAtObservables } from '../utility/tree'
 import { rotateArrowCursor } from '../utility/drawing'
@@ -105,6 +106,7 @@ const App = observer(({ store }) => {
     store.build.activePoint,
     store.selector.rect.area,
     store.selector.hovers,
+    store.project.numFontsLoaded,
     allObserverablePropertiesInTheTree,
     windowWidth,
     windowHeight,
@@ -145,6 +147,16 @@ const App = observer(({ store }) => {
         store={store}
         open={store.view.dialogs.addFonts}
         onClose={() => store.view.closeDialog('addFonts')}
+      />
+
+      {/* Snackbars */}
+      <HoldingSnackbar
+        reasons={[
+          store.project.fontsAreLoading,
+        ]}
+        messages={[
+          'Loading Fonts',
+        ]}
       />
     </>
   )

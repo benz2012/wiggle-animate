@@ -14,6 +14,7 @@ class Project {
     this.name = ''
     this.saveStatus = 'unknown'
     this.fonts = []
+    this.numFontsLoaded = 0
     this.initialize()
 
     makeAutoObservable(this)
@@ -21,12 +22,17 @@ class Project {
 
   initialize() {
     this.fonts = [...browserFonts]
+    this.numFontsLoaded = browserFonts.length
+  }
+
+  incrementFontsLoaded = () => {
+    this.numFontsLoaded += 1
   }
 
   addFonts(listOfFonts) {
     this.fonts.push(...listOfFonts)
     listOfFonts.forEach((font) => {
-      loadFont(font)
+      loadFont(font).then(this.incrementFontsLoaded)
     })
   }
 
@@ -39,6 +45,10 @@ class Project {
 
   get nonBrowserFonts() {
     return this.fonts.slice(browserFonts.length)
+  }
+
+  get fontsAreLoading() {
+    return this.fonts.length !== this.numFontsLoaded
   }
 
   toPureObject() {
@@ -54,7 +64,7 @@ class Project {
     // e.g. if (version !== process.env.REACT_APP_VERSION)
     this.initialize()
     this.name = name
-    this.fonts.push(...fonts)
+    this.addFonts(fonts)
   }
 
   generateSaveObject() {
