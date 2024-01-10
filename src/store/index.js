@@ -12,6 +12,7 @@ import Project from './Project'
 import PropertyEditor from './PropertyEditor'
 import Selector from './Selector'
 import Stage from './Stage'
+import Storage from './Storage'
 import View from './View'
 
 import tools from './tools'
@@ -21,6 +22,7 @@ class RootStore {
     this.DPR = window.devicePixelRatio || 1
     this.tools = tools
 
+    // Tree Strucutre, Primary State, User Edited
     this.rootContainer = new RootContainer(this)
     this.project = new Project(this)
     this.build = new Build(this)
@@ -28,7 +30,9 @@ class RootStore {
     this.view = new View(this)
     this.stage = new Stage(this)
     this.output = new Output(this)
+    this.storage = new Storage(this)
 
+    // Transient UI State
     this.selector = new Selector(this)
     this.playhead = new Playhead(this)
     this.keyHeld = new KeyHeld(this)

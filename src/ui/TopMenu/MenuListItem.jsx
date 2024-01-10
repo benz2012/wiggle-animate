@@ -11,9 +11,10 @@ const MenuListItem = ({
   HotkeyIcon,
   IconClass,
   icon,
+  disabled = false,
   onClick,
 }) => (
-  <MenuItem onClick={onClick}>
+  <MenuItem disabled={disabled} onClick={onClick}>
     <Box
       sx={(theme) => ({
         width: theme.spacing(2),

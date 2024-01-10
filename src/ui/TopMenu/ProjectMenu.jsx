@@ -1,6 +1,8 @@
 import { useRef } from 'react'
+import { observer } from 'mobx-react-lite'
 import Menu from '@mui/material/Menu'
 import Divider from '@mui/material/Divider'
+import Box from '@mui/material/Box'
 
 import AutoModeIcon from '@mui/icons-material/AutoMode'
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
@@ -8,14 +10,18 @@ import DrawIcon from '@mui/icons-material/Draw'
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
 import FileCopyIcon from '@mui/icons-material/FileCopy'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import OfflinePinIcon from '@mui/icons-material/OfflinePin'
 import SaveAsIcon from '@mui/icons-material/SaveAs'
 import SaveIcon from '@mui/icons-material/Save'
-import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen'
 import TuneIcon from '@mui/icons-material/Tune'
+import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen'
 
 import MenuListItem from './MenuListItem'
 
-const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
+const size20 = { width: '20px', height: '20px' }
+
+const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
   const inputProjectFileRef = useRef()
 
   return (
@@ -25,7 +31,7 @@ const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
         open={open}
         onClick={handleClose}
         onClose={handleClose}
-        slotProps={{ paper: { sx: { width: 220 } } }}
+        slotProps={{ paper: { sx: { width: 240 } } }}
         MenuListProps={{ dense: true }}
       >
         <MenuListItem
@@ -51,6 +57,7 @@ const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
         <MenuListItem
           IconClass={FileOpenIcon}
           hotkey="⌘O"
+          disabled={store.storage.autosaveToBrowser}
           onClick={() => {
             inputProjectFileRef.current.click()
           }}
@@ -60,6 +67,7 @@ const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
         <MenuListItem
           IconClass={CancelPresentationIcon}
           hotkey="⌘W"
+          disabled={store.storage.autosaveToBrowser}
           onClick={() => null}
         >
           Close
@@ -67,12 +75,14 @@ const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
         <MenuListItem
           IconClass={DrawIcon}
           hotkey="⌘N"
+          disabled={store.storage.autosaveToBrowser}
           onClick={() => null}
         >
           New
         </MenuListItem>
         <MenuListItem
           IconClass={FileCopyIcon}
+          disabled={store.storage.autosaveToBrowser}
           onClick={() => null}
         >
           Duplicate
@@ -93,7 +103,19 @@ const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
         </MenuListItem>
         <MenuListItem
           IconClass={AutoModeIcon}
-          onClick={() => null}
+          hotkey={(
+            <Box component="span" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {store.storage.autosaveToBrowser ? (
+                <OfflinePinIcon color="success" sx={{ ...size20 }} />
+              ) : (
+                <HighlightOffIcon sx={{ ...size20 }} />
+              )}
+            </Box>
+          )}
+          onClick={(event) => {
+            event.stopPropagation()
+            store.storage.setAutosaveToBrowser(!store.storage.autosaveToBrowser)
+          }}
         >
           Autosave to browser
         </MenuListItem>
@@ -112,6 +134,6 @@ const ProjectMenu = ({ anchorEl, open, handleClose, store }) => {
       />
     </>
   )
-}
+})
 
 export default ProjectMenu
