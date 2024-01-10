@@ -419,6 +419,24 @@ class Path extends VisibleShape {
     }
     this.drawControlPoints(controlPointIndexHovered)
   }
+
+  toPureObject() {
+    return {
+      ...super.toPureObject(),
+      points: this.points.map((point) => point.toPureObject()),
+      closed: this.closed,
+      direction: this.direction,
+    }
+  }
+
+  fromPureObject({ points, closed, direction, ...rest }) {
+    super.fromPureObject(rest)
+    this.points = points.map((pointObj) => Point.fromPureObject(pointObj))
+    this.closed = closed
+    this.direction = direction
+    this.pointsVisible = false
+    return this
+  }
 }
 
 export default Path

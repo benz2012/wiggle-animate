@@ -61,7 +61,25 @@ class Point extends Vector2 {
   }
 
   toString() {
-    return `Point(${super.toString()}, ${this.controlIn}, ${this.controlOut}, ${this.controlsCollinear})`
+    return `${Point.className}(${super.toString()}, ${this.controlIn}, ${this.controlOut}, ${this.controlsCollinear})`
+  }
+
+  toPureObject() {
+    return {
+      ...super.toPureObject(),
+      className: Point.className,
+      controlOut: this.controlOut.toPureObject(),
+      controlIn: this.controlIn.toPureObject(),
+      controlsCollinear: this.controlsCollinear,
+    }
+  }
+
+  static fromPureObject({ x, y, controlOut, controlIn, controlsCollinear }) {
+    const newPoint = new Point(x, y)
+    newPoint.controlOut = Vector2.fromPureObject(controlOut)
+    newPoint.controlIn = Vector2.fromPureObject(controlIn)
+    newPoint.controlsCollinear = controlsCollinear
+    return newPoint
   }
 }
 

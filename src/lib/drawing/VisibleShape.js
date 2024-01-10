@@ -125,6 +125,7 @@ class VisibleShape extends Shape {
       label: 'spread',
       order: 3,
       minValue: 0,
+      valueDragRatio: 10,
       isKeyframable: true,
     })
     this._shadowOffset = new Property({

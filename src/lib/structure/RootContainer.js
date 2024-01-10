@@ -379,21 +379,23 @@ class RootContainer extends Container {
 
   toPureObject() {
     const finalPureObject = {
-      canvasPosition: this.canvasPosition.toPureObject(),
-      canvasScale: this.canvasScale,
-      canvasSize: this.canvasSize.toPureObject(),
-      canvasFill: this.canvasFill.toPureObject(),
+      canvas: {
+        position: this.canvasPosition.toPureObject(),
+        scale: this.canvasScale,
+        size: this.canvasSize.toPureObject(),
+        fill: this.canvasFill.toPureObject(),
+      },
       sortOrder: toJS(this.sortOrder),
       children: Object.values(this.children).map((childItem) => childItem.toPureObject()),
     }
     return finalPureObject
   }
 
-  fromPureObject({ canvasPosition, canvasScale, canvasSize, canvasFill, sortOrder, children }) {
-    this.canvasPosition = Vector2.fromPureObject(canvasPosition)
-    this._canvasScale = canvasScale
-    this.canvasSize = Size.fromPureObject(canvasSize)
-    this.canvasFill = Color.fromPureObject(canvasFill)
+  fromPureObject({ canvas, sortOrder, children }) {
+    this.canvasPosition = Vector2.fromPureObject(canvas.position)
+    this._canvasScale = canvas.scale
+    this.canvasSize = Size.fromPureObject(canvas.size)
+    this.canvasFill = Color.fromPureObject(canvas.fill)
     super.fromPureObject({ sortOrder, children })
   }
 }
