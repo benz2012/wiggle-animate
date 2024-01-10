@@ -202,6 +202,15 @@ class Animation {
       mode: this.mode,
     }
   }
+
+  fromPureObject({ frames, firstFrame, lastFrame, fps, now, mode }) {
+    this.frames = frames
+    this.firstFrame = firstFrame
+    this.lastFrame = lastFrame
+    this.fps = fps
+    this.now = now
+    this.mode = mode
+  }
 }
 
 export default Animation

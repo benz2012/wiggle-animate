@@ -8,6 +8,7 @@ import {
   ContainerControllerSizes,
   setContainerControllerHandleEllipseOnCtx,
 } from '../../utility/drawing'
+import shapeTypeMap from '../shapes/shapeTypeMap'
 
 // TODO [3]: if an item is inside of a container, draw a dim version of the container controller to
 //       indicate this to the user, when the child item is selected
@@ -311,6 +312,19 @@ class Container extends Drawable {
       children: Object.values(this.children).map((childItem) => childItem.toPureObject()),
     }
     return finalPureObject
+  }
+
+  fromPureObject({ sortOrder, children, ...rest }) {
+    super.fromPureObject(rest)
+    this._children = children.reduce((resultObject, childItem) => {
+      /* eslint-disable no-param-reassign */
+      const ItemType = childItem.className === 'Container' ? Container : shapeTypeMap[childItem.className]
+      const newItem = new ItemType()
+      resultObject[childItem.id] = newItem.fromPureObject(childItem)
+      return resultObject
+    }, {})
+    this._sortOrder = sortOrder
+    return this
   }
 }
 

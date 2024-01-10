@@ -60,9 +60,8 @@ class Selection {
     }
   }
 
-  static fromPureObject({ selected }) {
-    // TODO [2]: this is complicated
-    return null
+  fromPureObject({ selected }) {
+    this.selected = selected
   }
 }
 

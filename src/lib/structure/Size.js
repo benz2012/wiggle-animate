@@ -26,6 +26,10 @@ class Size {
   toPureObject() {
     return { className: Size.className, width: this.width, height: this.height }
   }
+
+  static fromPureObject({ width, height }) {
+    return new Size(width, height)
+  }
 }
 
 export default Size

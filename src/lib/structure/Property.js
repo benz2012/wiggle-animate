@@ -1,9 +1,11 @@
 import { makeObservable, observable, action } from 'mobx'
 
-import Keyframe from '../animation/Keyframe'
-import { truncateFloatLeaveInt } from '../../utility/numbers'
 import Vector2 from './Vector2'
 import Selection from './Selection'
+import propertyValueTypeMap from './propertyValueTypeMap'
+import Keyframe from '../animation/Keyframe'
+import { truncateFloatLeaveInt } from '../../utility/numbers'
+import { isObject } from '../../utility/object'
 
 class Property {
   static get className() { return 'Property' }
@@ -238,6 +240,31 @@ class Property {
       finalPureObject.keyframes = this.keyframes.map((keyframe) => keyframe.toPureObject())
     }
     return finalPureObject
+  }
+
+  fromPureObject({ value, keyframes }) {
+    if (this.isPrimitive) {
+      this.setValue(value)
+    } else if (value.className === Selection.className) {
+      // This will help maintain custom linkages we establish during Selection instantiation
+      this.value.fromPureObject(value)
+    } else {
+      const PropertyValueType = propertyValueTypeMap[value.className]
+      const newPropertyValue = PropertyValueType.fromPureObject(value)
+      this.setValue(newPropertyValue)
+    }
+
+    if (keyframes == null) return
+    keyframes.forEach((keyframeObj) => {
+      const { value: keyframePureValue } = keyframeObj
+      let newKeyframeValue = keyframePureValue
+      if (isObject(keyframePureValue)) {
+        const KeyframeValueType = propertyValueTypeMap[keyframePureValue.className]
+        newKeyframeValue = KeyframeValueType.fromPureObject(keyframePureValue)
+      }
+      const newKeyframe = Keyframe.fromPureObject({ ...keyframeObj, value: newKeyframeValue })
+      this.keyframes.push(newKeyframe)
+    })
   }
 }
 

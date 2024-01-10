@@ -388,6 +388,14 @@ class RootContainer extends Container {
     }
     return finalPureObject
   }
+
+  fromPureObject({ canvasPosition, canvasScale, canvasSize, canvasFill, sortOrder, children }) {
+    this.canvasPosition = Vector2.fromPureObject(canvasPosition)
+    this._canvasScale = canvasScale
+    this.canvasSize = Size.fromPureObject(canvasSize)
+    this.canvasFill = Color.fromPureObject(canvasFill)
+    super.fromPureObject({ sortOrder, children })
+  }
 }
 
 export default RootContainer
