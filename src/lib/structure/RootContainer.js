@@ -14,6 +14,17 @@ import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utili
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 
 class RootContainer extends Container {
+  static get INITIAL() {
+    return {
+      canvasPosition: new Vector2(0, 0),
+      canvasScale: 1,
+      canvasSize: new Size(1920, 1080),
+      canvasFill: new Color({ r: 0, g: 0, b: 0 }),
+      children: {},
+      sortOrder: [],
+    }
+  }
+
   constructor(store) {
     super()
     this.store = store
@@ -23,11 +34,11 @@ class RootContainer extends Container {
     this.rootWidth = window.innerWidth * this.DPR
     this.rootHeight = window.innerHeight * this.DPR
 
-    this.canvasPosition = new Vector2(0, 0)
-    this._canvasScale = 1
+    this.canvasPosition = RootContainer.INITIAL.canvasPosition
+    this._canvasScale = RootContainer.INITIAL.canvasScale
     // TODO [4]: make these customizable
-    this.canvasSize = new Size(1920, 1080)
-    this.canvasFill = new Color({ r: 0, g: 0, b: 0 })
+    this.canvasSize = RootContainer.INITIAL.canvasSize
+    this.canvasFill = RootContainer.INITIAL.canvasFill
     this.setCanvasToBestFit()
 
     // adjust inherited properties

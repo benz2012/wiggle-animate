@@ -34,10 +34,10 @@ const BottomMenu = observer(({ store, windowWidth }) => {
 
   const handlePlayModeClick = action(() => {
     /* eslint-disable no-param-reassign */
-    if (animation.mode === Animation.PLAYBACK_MODES[0]) {
-      animation.mode = Animation.PLAYBACK_MODES[1]
-    } else if (animation.mode === Animation.PLAYBACK_MODES[1]) {
-      animation.mode = Animation.PLAYBACK_MODES[0]
+    if (animation.mode === Animation.PLAYBACK_MODES.LOOP) {
+      animation.mode = Animation.PLAYBACK_MODES.ONCE
+    } else if (animation.mode === Animation.PLAYBACK_MODES.ONCE) {
+      animation.mode = Animation.PLAYBACK_MODES.LOOP
     }
   })
 

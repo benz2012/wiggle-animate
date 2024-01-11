@@ -68,17 +68,9 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
           IconClass={CancelPresentationIcon}
           hotkey="⌘W"
           disabled={store.storage.autosaveToBrowser}
-          onClick={() => null}
+          onClick={() => store.project.reInitializeAll()}
         >
-          Close
-        </MenuListItem>
-        <MenuListItem
-          IconClass={DrawIcon}
-          hotkey="⌘N"
-          disabled={store.storage.autosaveToBrowser}
-          onClick={() => null}
-        >
-          New
+          Close & New
         </MenuListItem>
         <MenuListItem
           IconClass={FileCopyIcon}

@@ -10,21 +10,28 @@ import { timeStampMicro } from '../../utility/time'
 
 class Animation {
   static get FIRST() { return 1 }
-  static get PLAYBACK_MODES() { return ['LOOP', 'ONCE'] }
+  static get PLAYBACK_MODES() { return { LOOP: 'LOOP', ONCE: 'ONCE' } }
+  static get INITIAL() {
+    return {
+      frames: 100,
+      fps: 30,
+      playing: false,
+    }
+  }
 
   constructor() {
     // Animation timeline is always 1-to-#frames
-    this.frames = 100
+    this.frames = Animation.INITIAL.frames
     // firstFrame & lastFrame are simply the viewing window
     this.firstFrame = Animation.FIRST
     this.lastFrame = this.frames
 
-    this.fps = 30
+    this.fps = Animation.INITIAL.fps
     this.now = this.firstFrame
-    this.playing = false
+    this.playing = Animation.INITIAL.playing
     this.sync = []
     this.requestId = null
-    this.mode = 'LOOP'
+    this.mode = Animation.PLAYBACK_MODES.LOOP
 
     makeAutoObservable(this)
   }
@@ -69,7 +76,7 @@ class Animation {
   nextFrame() {
     const later = this.now + 1
     if (later > this.lastFrame) {
-      if (this.mode === 'LOOP') return this.firstFrame
+      if (this.mode === Animation.PLAYBACK_MODES.LOOP) return this.firstFrame
       return null
     }
     return later
@@ -78,7 +85,7 @@ class Animation {
   prevFrame() {
     const earlier = this.now - 1
     if (earlier < this.firstFrame) {
-      if (this.mode === 'LOOP') return this.lastFrame
+      if (this.mode === Animation.PLAYBACK_MODES.LOOP) return this.lastFrame
       return null
     }
     return earlier

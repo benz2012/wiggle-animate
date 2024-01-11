@@ -25,6 +25,41 @@ class Project {
     this.numFontsLoaded = browserFonts.length
   }
 
+  reInitializeAll() {
+    this.name = ''
+    this.initialize()
+
+    const { rootContainer, build, animation, propertyEditor, keyframeEditor } = this.store
+
+    const RootContainer = rootContainer.constructor
+    rootContainer.canvasPosition = RootContainer.INITIAL.canvasPosition
+    rootContainer._canvasScale = RootContainer.INITIAL.canvasScale
+    rootContainer.canvasSize = RootContainer.INITIAL.canvasSize
+    rootContainer.canvasFill = RootContainer.INITIAL.canvasFill
+    rootContainer.setCanvasToBestFit()
+
+    const Animation = animation.constructor
+    animation.frames = Animation.INITIAL.frames
+    animation.firstFrame = Animation.FIRST
+    animation.lastFrame = Animation.INITIAL.frames
+    animation.fps = Animation.INITIAL.fps
+    animation.now = Animation.FIRST
+    animation.playing = Animation.INITIAL.playing
+    animation.mode = Animation.PLAYBACK_MODES.LOOP
+
+    const PropertyEditor = propertyEditor.constructor
+    propertyEditor.position = PropertyEditor.INITIAL.position
+    propertyEditor.hiddenGroups = PropertyEditor.INITIAL.hiddenGroups
+    propertyEditor.pairedVectors = PropertyEditor.INITIAL.pairedVectors
+
+    build.setSelected([])
+    keyframeEditor.setSelected([])
+
+    // Finally, cleanse the Tree
+    rootContainer._children = RootContainer.INITIAL.children
+    rootContainer._sortOrder = RootContainer.INITIAL.sortOrder
+  }
+
   incrementFontsLoaded = () => {
     this.numFontsLoaded += 1
   }
