@@ -3,6 +3,7 @@ import { forwardRef, useCallback, useEffect, useRef } from 'react'
 import { action } from 'mobx'
 
 import Vector2 from '../lib/structure/Vector2'
+import Container from '../lib/structure/Container'
 
 const PointerHandler = forwardRef(({ children, store }, ref) => {
   const stageRef = ref
@@ -265,10 +266,25 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
             store.build.setSelected([hoveredId])
           } else if (store.build.selectedIds.includes(hoveredId) === false) {
             if (store.keyHeld.Meta || store.keyHeld.Shift) {
-              store.build.addToSelection(hoveredId)
+              // Prevent selecting a child of a container that is already selected
+              const somePreSelectedContainerHasThisNewHoveredId = store.build.selectedIds
+                .some((selectedId) => {
+                  const selectedItem = store.rootContainer.findItem(selectedId)
+                  if (selectedItem instanceof Container) {
+                    const found = selectedItem.findItemAndParent(hoveredId)
+                    if (found != null) return true
+                  }
+                  return false
+                })
+              if (!somePreSelectedContainerHasThisNewHoveredId) {
+                store.build.addToSelection(hoveredId)
+              }
             } else {
               store.build.setSelected([hoveredId])
             }
+          } else if (store.keyHeld.Meta || store.keyHeld.Shift) {
+            // In this block, we've determined that the hoveredId is already selected
+            store.build.removeFromSelection(hoveredId)
           }
 
           if (hoveredControl === 'rotation') {

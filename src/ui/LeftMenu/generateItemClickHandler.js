@@ -1,3 +1,5 @@
+import Container from '../../lib/structure/Container'
+
 /**
  * This complex function handles many specific scenarions in which an item can be clicked,
  * like when certain keys are held, and determines how to adjust the current selection.
@@ -14,7 +16,26 @@ const generateItemClickHandler = (store, clickedId) => () => {
     if (selectedIds.includes(clickedId)) {
       store.build.removeFromSelection(clickedId)
     } else {
-      store.build.addToSelection(clickedId)
+      // Prevent selecting a child of a container that is already selected
+      const somePreSelectedContainerHasThisNewClickedId = store.build.selectedIds
+        .some((selectedId) => {
+          const selectedItem = store.rootContainer.findItem(selectedId)
+          if (selectedItem instanceof Container) {
+            const found = selectedItem.findItemAndParent(clickedId)
+            if (found != null) return true
+          }
+          return false
+        })
+      if (!somePreSelectedContainerHasThisNewClickedId) {
+        store.build.addToSelection(clickedId)
+        // And if it is a container, remove any of it's children afterward
+        const clickedItem = store.rootContainer.findItem(clickedId)
+        if (clickedItem instanceof Container) {
+          store.build.removeManyFromSelection(
+            clickedItem.allItems.slice(1)
+          )
+        }
+      }
     }
     //
   } else if (store.keyHeld.Shift && selectedIds.length > 0) {

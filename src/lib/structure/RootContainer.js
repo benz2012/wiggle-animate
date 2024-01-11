@@ -178,6 +178,7 @@ class RootContainer extends Container {
       this.store.build.selectedIds,
       this.store.selector.hovers,
       this.store.leftMenu.hoveredId,
+      this.store.build.allChildrenOfSelectedContainers(this),
     )
 
     this.drawPotentialPathPoint()

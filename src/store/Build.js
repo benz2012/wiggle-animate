@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx'
 
 import { isEqual } from '../utility/array'
 import Path from '../lib/shapes/Path'
+import Container from '../lib/structure/Container'
 
 // TODO [2]: Copy-Paste of a container does not duplicate all it's children
 
@@ -58,6 +59,20 @@ class Build {
     return _pseudoTool
   }
 
+  allChildrenOfSelectedContainers(startingContainer) {
+    const allChildIds = []
+    Object.values(startingContainer.children).forEach((child) => {
+      if (child instanceof Container) {
+        if (this.selectedIds.includes(child.id)) {
+          allChildIds.push(...child.allItems.slice(1))
+        } else {
+          allChildIds.push(...this.allChildrenOfSelectedContainers(child))
+        }
+      }
+    })
+    return allChildIds
+  }
+
   setSelected(values) {
     if (!isEqual(this.selectedIds, values)) {
       this.store.keyframeEditor.setSelected([])
@@ -75,8 +90,17 @@ class Build {
     this.store.keyframeEditor.setSelected([])
   }
 
+  removeManyFromSelection(values) {
+    this.selectedIds = this.selectedIds.filter((id) => !values.includes(id))
+  }
+
   selectAll() {
-    this.setSelected(this.store.rootContainer.allItems)
+    // Technically "Select All" only applies to root-level items, since any
+    // item that is a child of a root-level container (at any depth), will be
+    // "~selected~" through the selection of it's parent, which is on the root
+    this.setSelected(
+      Object.keys(this.store.rootContainer.children)
+    )
   }
 
   copySelectionToClipboard() {

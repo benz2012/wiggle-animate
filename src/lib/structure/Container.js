@@ -150,12 +150,26 @@ class Container extends Drawable {
     })
   }
 
-  draw(parentTransform, hoveredId, hoveredControl, activeControl, selectedIds, selectorHovers, leftMenuHoveredId) {
+  draw(
+    parentTransform,
+    hoveredId,
+    hoveredControl,
+    activeControl,
+    selectedIds,
+    selectorHovers,
+    leftMenuHoveredId,
+    hoverIdsDueToSelectedParent,
+  ) {
     super.draw(parentTransform)
 
     const drawOrder = [...this.sortOrder].reverse()
     drawOrder.forEach((childId) => {
-      const anyHovers = (hoveredId === childId) || selectorHovers.includes(childId) || leftMenuHoveredId === childId
+      const anyHovers = (
+        (hoveredId === childId)
+        || selectorHovers.includes(childId)
+        || leftMenuHoveredId === childId
+        || hoverIdsDueToSelectedParent.includes(childId)
+      )
       const handleIdxHovered = (hoveredId && hoveredId.includes(childId))
         ? parseInt(hoveredId.split('--handle--')[1], 10)
         : null
@@ -173,6 +187,7 @@ class Container extends Drawable {
           selectedIds,
           selectorHovers,
           leftMenuHoveredId,
+          hoverIdsDueToSelectedParent,
         )
       } else {
         child.draw(
