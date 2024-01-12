@@ -127,6 +127,8 @@ class Project {
     fileObject.text().then((jsonStr) => {
       const pureObject = JSON.parse(jsonStr)
       this.loadFromObject(pureObject)
+    }).catch(() => {
+      // TODO [4]: Communicate the error with loading the project, invalid JSON or what-have-you
     })
   }
 

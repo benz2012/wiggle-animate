@@ -61,7 +61,6 @@ const loadFont = async (font) => {
   try {
     const loadedFont = await fontFace.load()
     document.fonts.add(loadedFont)
-    console.log('loaded font', font.name)
   } catch (err) {
     console.warn(err)
   }

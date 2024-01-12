@@ -12,8 +12,6 @@ import ClearIcon from '@mui/icons-material/Clear'
 
 import MenuListItem from './MenuListItem'
 
-// TODO [2]: Populate these actions
-
 const EditMenu = ({ anchorEl, open, handleClose, store }) => (
   <Menu
     anchorEl={anchorEl}
@@ -30,13 +28,13 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
       Redo
     </MenuListItem>
     <Divider />
-    <MenuListItem hotkey="⌘X" IconClass={ContentCutIcon}>
+    <MenuListItem hotkey="⌘X" IconClass={ContentCutIcon} onClick={() => store.build.copySelectionToClipboard(true)}>
       Cut
     </MenuListItem>
-    <MenuListItem hotkey="⌘C" IconClass={ContentCopyIcon}>
+    <MenuListItem hotkey="⌘C" IconClass={ContentCopyIcon} onClick={() => store.build.copySelectionToClipboard()}>
       Copy
     </MenuListItem>
-    <MenuListItem hotkey="⌘V" IconClass={ContentPasteIcon}>
+    <MenuListItem hotkey="⌘V" IconClass={ContentPasteIcon} onClick={() => store.build.pasteWithAButton()}>
       Paste
     </MenuListItem>
     <Divider />
@@ -46,7 +44,11 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
     <MenuListItem hotkey="⌘D" IconClass={ClearIcon} onClick={() => store.build.setSelected([])}>
       Deselect All
     </MenuListItem>
-    <MenuListItem IconClass={DeleteOutlineIcon} HotkeyIcon={BackspaceOutlinedIcon}>
+    <MenuListItem
+      IconClass={DeleteOutlineIcon}
+      HotkeyIcon={BackspaceOutlinedIcon}
+      onClick={() => store.build.deleteAllSelected()}
+    >
       Delete
     </MenuListItem>
   </Menu>

@@ -118,6 +118,18 @@ const KeyHandler = ({ store }) => {
         // NOTE: Paste has it's own special listener below
         break
 
+      case 'x':
+        if (event.metaKey || event.ctrlKey) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            // TODO [4]: Put Keyframe Cutting Here
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.build.copySelectionToClipboard(true)
+          }
+        }
+        break
+
       case 'ArrowUp':
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
@@ -196,12 +208,7 @@ const KeyHandler = ({ store }) => {
           })
           store.keyframeEditor.setSelected([])
         } else if (STAGE_HAS_FOCUS && selectedIds.length > 0) {
-          const itemsToDelete = selectedIds.map((selectedId) => (
-            store.rootContainer.findItem(selectedId)
-          ))
-          store.build.setSelected([])
-          store.build.setHovered(null)
-          itemsToDelete.forEach((item) => { item.delete() })
+          store.build.deleteAllSelected()
         }
         break
 

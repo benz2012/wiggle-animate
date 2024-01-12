@@ -121,7 +121,16 @@ class Build {
     )
   }
 
-  copySelectionToClipboard() {
+  deleteAllSelected() {
+    const itemsToDelete = this.selectedIds.map((selectedId) => (
+      this.store.rootContainer.findItem(selectedId)
+    ))
+    this.setSelected([])
+    this.setHovered(null)
+    itemsToDelete.forEach((item) => { item.delete() })
+  }
+
+  copySelectionToClipboard(andThenDeleteIt = false) {
     const selectedItemsPure = this.selectedIds.map((selectedId) => {
       const selectedItem = this.store.rootContainer.findItem(selectedId)
       return selectedItem.toPureObject()
@@ -135,14 +144,21 @@ class Build {
       .catch(() => {
         // Failed D:
         // Maybe indicate this failure to the user
-        // Or maybe just have a Global store clipboard as well
-        // There's no reason we need to use the OS-level Clipboard unless we are implementing
-        // copy and paste between different instances of the App
+        // Or maybe copy it to a Global-store clipboard instead
       })
+
+    if (andThenDeleteIt) this.deleteAllSelected()
   }
 
   pasteClipboard(clipboardText) {
-    const itemsAsPureObjects = JSON.parse(clipboardText)
+    let itemsAsPureObjects = null
+    try {
+      itemsAsPureObjects = JSON.parse(clipboardText)
+    } catch (err) {
+      // Skip the paste function since JSON was invalid
+      return
+    }
+
     if (!Array.isArray(itemsAsPureObjects)) return
 
     // Keep in mind, these Ids/Items will only reference the top-level of what was copy-pasted.
@@ -183,6 +199,24 @@ class Build {
     })
 
     this.setSelected(resultingIds)
+  }
+
+  pasteWithAButton = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      this.pasteClipboard(text)
+    } catch (error) {
+      const hiddenTextArea = document.getElementById('hidden-textarea')
+      hiddenTextArea.focus()
+      const result = document.execCommand('paste')
+      if (result === true) {
+        this.pasteClipboard(hiddenTextArea.value)
+        hiddenTextArea.value = ''
+      } else {
+        // TODO [3]: Open the Modal that says, you cannot paste via button in this browser
+        // use the hotkey instead
+      }
+    }
   }
 }
 

@@ -158,6 +158,9 @@ const App = observer(({ store }) => {
           'Loading Fonts',
         ]}
       />
+
+      {/* Other */}
+      <textarea id="hidden-textarea" style={{ opacity: 0 }} />
     </>
   )
 })

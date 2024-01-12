@@ -15,6 +15,8 @@ import ProjectMenu from './ProjectMenu'
 import EditMenu from './EditMenu'
 import InsertMenu from './InsertMenu'
 
+const focusStage = () => setTimeout(() => document.getElementById('stage').focus(), 0)
+
 const TopMenu = observer(({ store }) => {
   const projectMenuButtonRef = useRef(null)
   const [projectMenuOpen, setProjectMenuOpen] = useState(false)
@@ -42,7 +44,10 @@ const TopMenu = observer(({ store }) => {
       <ProjectMenu
         anchorEl={projectMenuButtonRef.current}
         open={projectMenuOpen}
-        handleClose={() => setProjectMenuOpen(false)}
+        handleClose={() => {
+          setProjectMenuOpen(false)
+          focusStage()
+        }}
         store={store}
       />
 
@@ -57,7 +62,10 @@ const TopMenu = observer(({ store }) => {
       <EditMenu
         anchorEl={editMenuButtonRef.current}
         open={editMenuOpen}
-        handleClose={() => setEditMenuOpen(false)}
+        handleClose={() => {
+          setEditMenuOpen(false)
+          focusStage()
+        }}
         store={store}
       />
 
@@ -72,7 +80,10 @@ const TopMenu = observer(({ store }) => {
       <InsertMenu
         anchorEl={insertMenuButtonRef.current}
         open={insertMenuOpen}
-        handleClose={() => setInsertMenuOpen(false)}
+        handleClose={() => {
+          setInsertMenuOpen(false)
+          focusStage()
+        }}
         store={store}
       />
 
