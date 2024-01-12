@@ -15,9 +15,23 @@ const incrementName = (nameStr) => {
   return `${nameStr} 2`
 }
 
+let browserModifierKey = '^'
+if ('userAgentData' in navigator) {
+  const { platform } = navigator.userAgentData
+  if (['macOS', 'iOS'].includes(platform)) {
+    browserModifierKey = '⌘'
+  }
+} else if ('platform' in navigator) {
+  if (navigator.platform.indexOf('Mac') === 0 || navigator.platform.startsWith('iP')) {
+    browserModifierKey = '⌘'
+  }
+}
+const getBrowserModifierKey = () => browserModifierKey
+
 export {
   START_OF_NORMAL_CHARS,
   END_OF_NORMAL_CHARS,
   isString,
   incrementName,
+  getBrowserModifierKey,
 }

@@ -11,6 +11,9 @@ import BackspaceOutlinedIcon from '@mui/icons-material/BackspaceOutlined'
 import ClearIcon from '@mui/icons-material/Clear'
 
 import MenuListItem from './MenuListItem'
+import { getBrowserModifierKey } from '../../utility/string'
+
+const BMK = getBrowserModifierKey()
 
 const EditMenu = ({ anchorEl, open, handleClose, store }) => (
   <Menu
@@ -21,27 +24,60 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
     slotProps={{ paper: { sx: { width: 220 } } }}
     MenuListProps={{ dense: true }}
   >
-    <MenuListItem hotkey="⌘Z" IconClass={UndoIcon}>
+    <MenuListItem
+      hotkey="Z"
+      hotkeyModifiers={[BMK]}
+      IconClass={UndoIcon}
+    >
       Undo
     </MenuListItem>
-    <MenuListItem hotkey="⌘Y" IconClass={RedoIcon}>
+    <MenuListItem
+      hotkey="Y"
+      hotkeyModifiers={[BMK]}
+      IconClass={RedoIcon}
+    >
       Redo
     </MenuListItem>
     <Divider />
-    <MenuListItem hotkey="⌘X" IconClass={ContentCutIcon} onClick={() => store.build.copySelectionToClipboard(true)}>
+    <MenuListItem
+      hotkey="X"
+      hotkeyModifiers={[BMK]}
+      IconClass={ContentCutIcon}
+      onClick={() => store.build.copySelectionToClipboard(true)}
+    >
       Cut
     </MenuListItem>
-    <MenuListItem hotkey="⌘C" IconClass={ContentCopyIcon} onClick={() => store.build.copySelectionToClipboard()}>
+    <MenuListItem
+      hotkey="C"
+      hotkeyModifiers={[BMK]}
+      IconClass={ContentCopyIcon}
+      onClick={() => store.build.copySelectionToClipboard()}
+    >
       Copy
     </MenuListItem>
-    <MenuListItem hotkey="⌘V" IconClass={ContentPasteIcon} onClick={() => store.build.pasteWithAButton()}>
+    <MenuListItem
+      hotkey="V"
+      hotkeyModifiers={[BMK]}
+      IconClass={ContentPasteIcon}
+      onClick={() => store.build.pasteWithAButton()}
+    >
       Paste
     </MenuListItem>
     <Divider />
-    <MenuListItem hotkey="⌘A" IconClass={SelectAllIcon} onClick={() => store.build.selectAll()}>
+    <MenuListItem
+      hotkey="A"
+      hotkeyModifiers={[BMK]}
+      IconClass={SelectAllIcon}
+      onClick={() => store.build.selectAll()}
+    >
       Select All
     </MenuListItem>
-    <MenuListItem hotkey="⌘D" IconClass={ClearIcon} onClick={() => store.build.setSelected([])}>
+    <MenuListItem
+      hotkey="D"
+      hotkeyModifiers={[BMK]}
+      IconClass={ClearIcon}
+      onClick={() => store.build.setSelected([])}
+    >
       Deselect All
     </MenuListItem>
     <MenuListItem

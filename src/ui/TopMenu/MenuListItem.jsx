@@ -3,11 +3,10 @@ import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 
-// TODO [2]: Determine Ctrl or Cmd depending on OS
-
 const MenuListItem = ({
   children,
   hotkey,
+  hotkeyModifiers = [],
   HotkeyIcon,
   IconClass,
   icon,
@@ -28,8 +27,18 @@ const MenuListItem = ({
       {icon}
     </Box>
     <ListItemText>{children}</ListItemText>
+    {hotkey && hotkeyModifiers.map((hotkeyModifier) => (
+      <Typography
+        key={hotkeyModifier}
+        variant="body2"
+        color="text.secondary"
+        sx={hotkeyModifier === '^' ? { fontFamily: 'monospace' } : {}}
+      >
+        {hotkeyModifier}
+      </Typography>
+    ))}
     {hotkey && (
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
         {hotkey}
       </Typography>
     )}

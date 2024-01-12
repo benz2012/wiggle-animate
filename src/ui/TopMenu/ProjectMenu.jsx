@@ -17,7 +17,9 @@ import TuneIcon from '@mui/icons-material/Tune'
 import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen'
 
 import MenuListItem from './MenuListItem'
+import { getBrowserModifierKey } from '../../utility/string'
 
+const BMK = getBrowserModifierKey()
 const size20 = { width: '20px', height: '20px' }
 
 // TODO [3]: Settings Ideas
@@ -38,7 +40,8 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
       >
         <MenuListItem
           IconClass={TuneIcon}
-          hotkey="⌘,"
+          hotkey=","
+          hotkeyModifiers={[BMK]}
           onClick={() => null}
         >
           Settings
@@ -58,7 +61,8 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         <Divider />
         <MenuListItem
           IconClass={FileOpenIcon}
-          hotkey="⌘O"
+          hotkey="O"
+          hotkeyModifiers={[BMK]}
           disabled={store.storage.autosaveToBrowser}
           onClick={() => {
             inputProjectFileRef.current.click()
@@ -68,7 +72,8 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         </MenuListItem>
         <MenuListItem
           IconClass={CancelPresentationIcon}
-          hotkey="⌘W"
+          hotkey="W"
+          hotkeyModifiers={[BMK]}
           disabled={store.storage.autosaveToBrowser}
           onClick={() => store.project.reInitializeAll()}
         >
@@ -84,7 +89,8 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         <Divider />
         <MenuListItem
           IconClass={SaveIcon}
-          hotkey="⌘S"
+          hotkey="S"
+          hotkeyModifiers={[BMK]}
           onClick={() => store.project.save()}
         >
           Save
