@@ -130,6 +130,20 @@ const KeyHandler = ({ store }) => {
         }
         break
 
+      case 'y':
+        if ((event.metaKey || event.ctrlKey)) {
+          event.preventDefault()
+          if (store.actionStack.canRedo) store.actionStack.redo()
+        }
+        break
+
+      case 'z':
+        if ((event.metaKey || event.ctrlKey)) {
+          event.preventDefault()
+          if (store.actionStack.canUndo) store.actionStack.undo()
+        }
+        break
+
       case 'ArrowUp':
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {

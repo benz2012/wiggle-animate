@@ -1,4 +1,4 @@
-import { makeObservable, action, observable, toJS } from 'mobx'
+import { makeObservable, action, observable } from 'mobx'
 
 import Container from './Container'
 import Item from './Item'

@@ -1,4 +1,4 @@
-import { makeObservable, action } from 'mobx'
+import { makeObservable, action, toJS } from 'mobx'
 
 import Container from '../lib/structure/Container'
 import Ellipse from '../lib/shapes/Ellipse'
@@ -8,6 +8,7 @@ import Polygon from '../lib/shapes/Polygon'
 import Rectangle from '../lib/shapes/Rectangle'
 import Text from '../lib/shapes/Text'
 import Vector2 from '../lib/structure/Vector2'
+import shapeTypeMap from '../lib/shapes/shapeTypeMap'
 
 class Stage {
   constructor(store) {
@@ -21,18 +22,33 @@ class Stage {
 
   addNewItem(newItem) {
     const { selectedIds } = this.store.build
-    const found = this.store.rootContainer.findItemAndParent(selectedIds[0])
-    const selectedItem = found?.item
-    if (selectedItem instanceof Container) {
-      selectedItem.add(newItem)
-    } else if (selectedItem) {
-      found.parent.add(newItem)
+    const highestSelectedItemId = this.store.build.highestSelectedItemId(this.store.rootContainer)
+    if (highestSelectedItemId) {
+      const { item, parent } = this.store.rootContainer.findItemAndParent(highestSelectedItemId)
+      if (item instanceof Container) {
+        item.add(newItem)
+      } else {
+        parent.add(newItem)
+      }
     } else {
       this.store.rootContainer.add(newItem)
     }
-    // TODO [-]: remove this after debugging
-    window._item = newItem
+
+    this.store.actionStack.push({
+      perform: ['stage.addNewItemFromPureObject', [newItem.toPureObject(), toJS(selectedIds)]],
+      revert: ['rootContainer.findAndDelete', [newItem.id]],
+    })
+
     return newItem
+  }
+
+  addNewItemFromPureObject(pureObject, selectedAtTheTime) {
+    const ItemType = pureObject.className === 'Container' ? Container : shapeTypeMap[pureObject.className]
+    const newItem = new ItemType()
+    newItem.fromPureObject(pureObject)
+
+    this.store.build.setSelected(selectedAtTheTime)
+    this.addNewItem(newItem)
   }
 
   canvasCenter() {
@@ -46,7 +62,12 @@ class Stage {
     return this.addNewItem(newContainer)
   }
 
-  addRectangle = () => this.addNewItem(new Rectangle(...this.canvasCenter()))
+  addRectangle = () => {
+    const [x, y] = this.canvasCenter()
+    const newItem = new Rectangle(x, y)
+    this.addNewItem(newItem)
+  }
+
   addEllipse = () => this.addNewItem(new Ellipse(...this.canvasCenter()))
   addText = () => this.addNewItem(new Text(...this.canvasCenter()))
   addPolygon = () => this.addNewItem(new Polygon(...this.canvasCenter()))

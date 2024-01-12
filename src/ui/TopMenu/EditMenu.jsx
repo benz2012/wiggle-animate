@@ -28,6 +28,8 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
       hotkey="Z"
       hotkeyModifiers={[BMK]}
       IconClass={UndoIcon}
+      disabled={!store.actionStack.canUndo}
+      onClick={() => store.actionStack.undo()}
     >
       Undo
     </MenuListItem>
@@ -35,6 +37,8 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
       hotkey="Y"
       hotkeyModifiers={[BMK]}
       IconClass={RedoIcon}
+      disabled={!store.actionStack.canRedo}
+      onClick={() => store.actionStack.redo()}
     >
       Redo
     </MenuListItem>

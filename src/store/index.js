@@ -1,6 +1,7 @@
 import Animation from '../lib/animation/Animation'
 import RootContainer from '../lib/structure/RootContainer'
 
+import ActionStack from './ActionStack'
 import Build from './Build'
 import CurveEditor from './CurveEditor'
 import KeyframeEditor from './KeyframeEditor'
@@ -23,6 +24,7 @@ class RootStore {
     this.tools = tools
 
     // Tree Strucutre, Primary State, User Edited
+    this.actionStack = new ActionStack(this)
     this.rootContainer = new RootContainer(this)
     this.project = new Project(this)
     this.build = new Build(this)
