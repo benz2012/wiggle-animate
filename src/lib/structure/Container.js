@@ -1,4 +1,4 @@
-import { makeObservable, action, observable, toJS } from 'mobx'
+import { makeObservable, action, observable } from 'mobx'
 
 import Item from './Item'
 import Drawable from '../drawing/Drawable'
@@ -320,25 +320,29 @@ class Container extends Drawable {
   }
 
   toPureObject() {
+    // We don't need to track sortOrder since we can store it along with children as an array
     const ownPureObject = super.toPureObject()
     const finalPureObject = {
       ...ownPureObject,
-      sortOrder: toJS(this.sortOrder),
-      children: Object.values(this.children).map((childItem) => childItem.toPureObject()),
+      children: this.sortOrder.map((childId) => this.children[childId].toPureObject()),
+      showChildren: this.showChildren,
     }
     return finalPureObject
   }
 
-  fromPureObject({ sortOrder, children, ...rest }) {
-    super.fromPureObject(rest)
+  fromPureObject({ children, showChildren, ...rest }, preserveId = true) {
+    super.fromPureObject(rest, preserveId)
+    const theSortOrder = []
     this._children = children.reduce((resultObject, childItem) => {
       /* eslint-disable no-param-reassign */
       const ItemType = childItem.className === 'Container' ? Container : shapeTypeMap[childItem.className]
       const newItem = new ItemType()
-      resultObject[childItem.id] = newItem.fromPureObject(childItem)
+      resultObject[newItem.id] = newItem.fromPureObject(childItem, preserveId)
+      theSortOrder.push(newItem.id)
       return resultObject
     }, {})
-    this._sortOrder = sortOrder
+    this._sortOrder = theSortOrder
+    this.showChildren = showChildren
     return this
   }
 }

@@ -429,8 +429,8 @@ class Path extends VisibleShape {
     }
   }
 
-  fromPureObject({ points, closed, direction, ...rest }) {
-    super.fromPureObject(rest)
+  fromPureObject({ points, closed, direction, ...rest }, preserveId = true) {
+    super.fromPureObject(rest, preserveId)
     this.points = points.map((pointObj) => Point.fromPureObject(pointObj))
     this.closed = closed
     this.direction = direction

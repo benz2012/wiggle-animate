@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 
 import { isEqual } from '../utility/array'
+import { incrementName } from '../utility/string'
 import Path from '../lib/shapes/Path'
 import Container from '../lib/structure/Container'
-
-// TODO [2]: Copy-Paste of a container does not duplicate all it's children
+import shapeTypeMap from '../lib/shapes/shapeTypeMap'
 
 class Build {
   constructor(store) {
@@ -73,6 +73,24 @@ class Build {
     return allChildIds
   }
 
+  highestSelectedItemId(startingContainer) {
+    const someChildSelected = Object.values(startingContainer.sortOrder).find((childId) => (
+      this.selectedIds.includes(childId)
+    ))
+    if (someChildSelected) return someChildSelected
+    let someGrandchildSelected
+    Object.values(startingContainer.sortOrder).some((childId) => {
+      const child = startingContainer.children[childId]
+      if (child instanceof Container) {
+        someGrandchildSelected = this.highestSelectedItemId(child)
+        return true
+      }
+      return false
+    })
+    if (someGrandchildSelected) return someGrandchildSelected
+    return undefined
+  }
+
   setSelected(values) {
     if (!isEqual(this.selectedIds, values)) {
       this.store.keyframeEditor.setSelected([])
@@ -104,10 +122,12 @@ class Build {
   }
 
   copySelectionToClipboard() {
-    // TODO [4]: Address the notes below, add resiliency, store enough info to paste into another project
-    //           or if the user deletes the Item between copy & paste (can no logner access by Id)
-    const selectedIdsAsJSON = JSON.stringify(this.selectedIds)
-    navigator.clipboard.writeText(selectedIdsAsJSON)
+    const selectedItemsPure = this.selectedIds.map((selectedId) => {
+      const selectedItem = this.store.rootContainer.findItem(selectedId)
+      return selectedItem.toPureObject()
+    })
+    const selectedItemsAsJSON = JSON.stringify(selectedItemsPure)
+    navigator.clipboard.writeText(selectedItemsAsJSON)
       .then(() => {
         // Success!
         // Maybe add a snackbar component to show confirmation?
@@ -122,16 +142,46 @@ class Build {
   }
 
   pasteClipboard(clipboardText) {
-    const itemIdsToDuplicate = JSON.parse(clipboardText)
-    if (!Array.isArray(itemIdsToDuplicate)) return
+    const itemsAsPureObjects = JSON.parse(clipboardText)
+    if (!Array.isArray(itemsAsPureObjects)) return
 
+    // Keep in mind, these Ids/Items will only reference the top-level of what was copy-pasted.
+    // If their are children also being duplicated in this process, they will simply be managed through their parent
     const resultingIds = []
-    itemIdsToDuplicate.forEach((itemId) => {
-      const item = this.store.rootContainer.findItem(itemId)
-      if (!item) return
-      const newId = item.duplicate()
-      resultingIds.push(newId)
+    const resultingItems = []
+
+    itemsAsPureObjects.forEach((itemObj) => {
+      const ItemType = itemObj.className === 'Container' ? Container : shapeTypeMap[itemObj.className]
+      const newItem = new ItemType()
+      newItem.fromPureObject(itemObj, false)
+      resultingItems.push(newItem)
+      resultingIds.push(newItem.id)
     })
+
+    // Determine Paste-Level and Paste-Index
+    // - the highest selected parent, or rootContainer if none selected
+    // - the sortIndex above the selected item, or sortIndex 0 if the parent is a container
+    let pasteParent = this.store.rootContainer
+    let pasteIndex = 0
+    const highestSelectedItemId = this.highestSelectedItemId(this.store.rootContainer)
+    if (highestSelectedItemId) {
+      pasteParent = this.store.rootContainer.findParent(highestSelectedItemId)
+      pasteIndex = pasteParent.sortOrder.findIndex((childId) => childId === highestSelectedItemId)
+    }
+
+    // Check for duplicate names on the pasted-level, and increment the names of our new items
+    const existingPasteLevelNames = Object.values(pasteParent.children).map((child) => child.name)
+    resultingItems.forEach((newItem) => {
+      while (existingPasteLevelNames.includes(newItem.name)) {
+        newItem._name.setValue(incrementName(newItem.name))
+      }
+    })
+
+    // Attatch pasted items to their new parent
+    resultingItems.forEach((newItem) => {
+      pasteParent.add(newItem, pasteIndex, false)
+    })
+
     this.setSelected(resultingIds)
   }
 }

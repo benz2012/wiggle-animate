@@ -3,6 +3,8 @@ import { makeAutoObservable } from 'mobx'
 import Container from '../lib/structure/Container'
 import { zeroIfZero } from '../utility/numbers'
 
+// TODO [3]: force open the containers in tree view, when selecting item on the stage
+
 class LeftMenu {
   constructor(store) {
     this.store = store

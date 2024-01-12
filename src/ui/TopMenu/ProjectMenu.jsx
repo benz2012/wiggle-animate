@@ -6,7 +6,6 @@ import Box from '@mui/material/Box'
 
 import AutoModeIcon from '@mui/icons-material/AutoMode'
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
-import DrawIcon from '@mui/icons-material/Draw'
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
 import FileCopyIcon from '@mui/icons-material/FileCopy'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
@@ -20,6 +19,9 @@ import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen'
 import MenuListItem from './MenuListItem'
 
 const size20 = { width: '20px', height: '20px' }
+
+// TODO [3]: Settings Ideas
+//  - When selecting item on the stage, force open the containers in tree view, default: true
 
 const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
   const inputProjectFileRef = useRef()

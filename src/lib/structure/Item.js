@@ -78,48 +78,6 @@ class Item {
     })
   }
 
-  // NOTE: This requires all Property Custom Types to be Base Classes,
-  //       otherwise we need deeper cloning
-  duplicate() {
-    const parent = Item.rootContainer.findParent(this.id)
-    const thisSortIndex = parent.sortOrder.findIndex((childId) => childId === this.id)
-    const copyOfSelf = new this.constructor()
-
-    // Since `new this.constructor()` instantiantes all brand new properties on the item,
-    // there is no need to re-instantiate each property "type" to avoid sharing pointers.
-    this.properties.forEach((propertyName) => {
-      const property = this[propertyName]
-      if (property.isPrimitive) {
-        copyOfSelf[propertyName].setValue(property.value)
-      } else {
-        const propertyObj = property.value.toPureObject()
-        Object.entries(propertyObj).forEach(([subPropName, subPropValue]) => {
-          if (subPropName === 'className') return
-          copyOfSelf[propertyName].value[subPropName] = subPropValue
-        })
-      }
-
-      if (property.keyframes == null) return
-      property.keyframes.forEach((keyframe) => {
-        const copyOfKeyframe = keyframe.constructor.fromPureObject(keyframe.toPureObject())
-        copyOfSelf[propertyName].keyframes.push(copyOfKeyframe)
-      })
-    })
-
-    // Increment Name for clarity
-    const numeralFound = this.name.match(/(.+\s)(\d+)/)
-    if (numeralFound) {
-      const [_, namePrefix, numStr] = numeralFound
-      const incremented = parseInt(numStr, 10) + 1
-      copyOfSelf._name.setValue(`${namePrefix}${incremented}`)
-    } else {
-      copyOfSelf._name.setValue(`${copyOfSelf.name} 2`)
-    }
-
-    parent.add(copyOfSelf, thisSortIndex, false)
-    return copyOfSelf.id
-  }
-
   delete() {
     Item.rootContainer.findAndDelete(this._id)
   }
@@ -136,8 +94,10 @@ class Item {
     return finalPureObject
   }
 
-  fromPureObject(pureObject) {
-    this._id = pureObject.id
+  fromPureObject(pureObject, preserveId = true) {
+    if (preserveId) {
+      this._id = pureObject.id
+    }
     Object.entries(pureObject).forEach((entry) => {
       const [keyName, propertyObj] = entry
       if (['id', 'className'].includes(keyName)) return

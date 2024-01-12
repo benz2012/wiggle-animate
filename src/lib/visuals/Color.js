@@ -1,6 +1,9 @@
 import { observeListOfProperties } from '../../utility/state'
 import { rgbToLch, lchToRgb, rgbToHsl, hslToRgb } from '../../utility/color'
 
+// TODO [4]: remove colorsting as I don't think it's in use anywhere and
+//           it's fillin up empty space in save files
+
 class Color {
   static get className() { return 'Color' }
 
