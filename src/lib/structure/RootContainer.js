@@ -7,9 +7,11 @@ import Alignment from './Alignment'
 import Angle from './Angle'
 import Vector2 from './Vector2'
 import Color from '../visuals/Color'
+import propertyValueTypeMap from './propertyValueTypeMap'
 import { identityMatrix } from '../../utility/matrix'
 import { zeroIfZero } from '../../utility/numbers'
 import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
+import { isPrimitive } from '../../utility/object'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 
@@ -386,6 +388,35 @@ class RootContainer extends Container {
       setDegreesTo += (nextSpinCount * 360)
 
       selectedItem._rotation.setValue(setDegreesTo, now)
+    })
+  }
+
+  setValueForItems(propertyName, when, itemData) {
+    let isMulti = false
+    let properties = [propertyName]
+    if (propertyName.includes('&')) {
+      isMulti = true
+      properties = propertyName.split('&')
+    }
+
+    itemData.forEach((entry) => {
+      const [itemId, pureValue] = entry
+      const item = this.store.rootContainer.findItem(itemId)
+
+      properties.forEach((_propertyName, index) => {
+        let _pureValue = pureValue
+        if (isMulti) {
+          _pureValue = pureValue[index]
+        }
+
+        let newValueWithType = _pureValue
+        if (!isPrimitive(newValueWithType)) {
+          const ValueType = propertyValueTypeMap[_pureValue.className]
+          newValueWithType = ValueType.fromPureObject(_pureValue)
+        }
+
+        item[_propertyName].setValue(newValueWithType, when)
+      })
     })
   }
 

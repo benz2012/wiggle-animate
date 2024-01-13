@@ -21,8 +21,10 @@ class Build {
     this.hoveredPoint = null
     this.dragStart = null
     this.preDrag = false
+    this.dragTargetMode = null
+    this.dragDataBefore = null
 
-    makeAutoObservable(this)
+    makeAutoObservable(this, { dragDataBefore: false })
   }
 
   setTool(value) { this.tool = value }
@@ -35,9 +37,59 @@ class Build {
 
   indicatePreDrag(indication) { this.preDrag = indication }
   startDrag(vector) { this.dragStart = vector }
+
+  setDragTargetMode(mode) {
+    this.dragTargetMode = mode
+    this.dragDataBefore = this.selectedIds.map((selectedId) => {
+      const item = this.store.rootContainer.findItem(selectedId)
+      const [_, valueBefore] = this.getDragTargetData(item)
+      return [selectedId, valueBefore]
+    })
+  }
+
+  getDragTargetData(item) {
+    let propertyName
+    let valueData
+    if (this.dragTargetMode === 'move') {
+      if (this.hoveredControl === 'origin') {
+        propertyName = '_origin'
+        valueData = item.origin.toPureObject()
+      } else {
+        propertyName = '_position'
+        valueData = item.position.toPureObject()
+      }
+    } else if (this.dragTargetMode === 'rotate') {
+      propertyName = '_rotation'
+      valueData = item.rotation.toPureObject()
+    } else if (this.dragTargetMode === 'resize') {
+      propertyName = '_width&_height'
+      valueData = [item.width, item.height]
+    }
+    return [propertyName, valueData]
+  }
+
   stopDrag() {
+    // If this was the previously active handler, submit a single action summarizing what just occured
+    if (this.dragTargetMode) {
+      let propertyName
+      const dragDataAfter = this.selectedIds.map((selectedId) => {
+        const item = this.store.rootContainer.findItem(selectedId)
+        const targetData = this.getDragTargetData(item)
+        propertyName = targetData[0]
+        const valueAfter = targetData[1]
+        return [selectedId, valueAfter]
+      })
+      this.store.actionStack.push({
+        perform: ['rootContainer.setValueForItems', [propertyName, this.store.animation.now, dragDataAfter]],
+        revert: ['rootContainer.setValueForItems', [propertyName, this.store.animation.now, this.dragDataBefore]],
+        redoPushToUndo: true,
+      })
+    }
+
     this.preDrag = false
     this.dragStart = null
+    this.dragTargetMode = null
+    this.dragDataBefore = null
   }
 
   get isSelectionOneCompletePath() {

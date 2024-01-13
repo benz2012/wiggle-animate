@@ -20,6 +20,8 @@ class ActionStack {
       revert: ['reference.toFunction', [functionArg1, functionArg2, ...]],
       redoPushToUndo: true|false, (Normally False, since `perform` will push itself onto undoStack)
     }
+
+    `reference` starts from the RootStore instance, so `rootContainer.someMember`, NOT `store.rootContainer...`
     */
     this.undoStack.push(event)
   }

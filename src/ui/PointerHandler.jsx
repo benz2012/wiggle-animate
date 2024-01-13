@@ -58,8 +58,10 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           onePath.moveActivePointByIncrement(relativeMovement)
         }
       } else if (tool === store.tools.RESIZE) {
+        if (!store.build.dragTargetMode) store.build.setDragTargetMode('resize')
         store.rootContainer.resizeAllSelectedByIncrement(relativeMovement)
       } else if (tool === store.tools.ROTATE) {
+        if (!store.build.dragTargetMode) store.build.setDragTargetMode('rotate')
         store.rootContainer.rotateAllSelectedToPoint(pointerVector)
       } else if (pseudoTool === store.tools.POINT && activePoint) {
         const onePath = store.rootContainer.findItem(selectedIds[0])
@@ -67,6 +69,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       } else if (pseudoTool === store.tools.POINT && store.keyHeld.Alt) {
         // PASS in this scenario
       } else if (selectedIds.length > 0) {
+        if (!store.build.dragTargetMode) store.build.setDragTargetMode('move')
         store.rootContainer.moveAllSelectedByIncrement(relativeMovement)
       } else {
         const newWidth = store.selector.rect.width + relativeMovement.x
@@ -331,8 +334,8 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       if (event.button === 1) { store.keyHeld.setKey('MiddleMouse', false) }
 
       if (store.leftMenu.dragStart) {
-        // This also stops the drag tracking for leftMenu
-        // The difference below is that none of those trackers operate onPointerUp
+        // This Releases & Stops the drag tracking for leftMenu
+        // The difference below is that none of those trackers operate onPointerUp, so they only need a stopDrag
         store.leftMenu.releaseDrag()
       }
 
