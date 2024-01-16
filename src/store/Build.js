@@ -82,7 +82,6 @@ class Build {
       this.store.actionStack.push({
         perform: ['rootContainer.setValueForItems', [propertyName, this.store.animation.now, dragDataAfter]],
         revert: ['rootContainer.setValueForItems', [propertyName, this.store.animation.now, this.dragDataBefore]],
-        redoPushToUndo: true,
       })
     }
 

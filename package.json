@@ -67,7 +67,8 @@
       "no-unused-vars": [
         "warn",
         {
-          "varsIgnorePattern": "^_.*"
+          "varsIgnorePattern": "^_.*",
+          "argsIgnorePattern": "^_"
         }
       ],
       "no-underscore-dangle": "off",

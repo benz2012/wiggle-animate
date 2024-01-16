@@ -18,12 +18,21 @@ class ActionStack {
     {
       perform: ['reference.toFunction', [functionArg1, functionArg2, ...]],
       revert: ['reference.toFunction', [functionArg1, functionArg2, ...]],
-      redoPushToUndo: true|false, (Normally False, since `perform` will push itself onto undoStack)
     }
 
     `reference` starts from the RootStore instance, so `rootContainer.someMember`, NOT `store.rootContainer...`
+
+    Push(...) should never be called from one of the functions referenced in perform/revert,
+    as that causes confusion over when a brand new event is pushed, versus an event simply being replayed.
+    Failing to do this will pre-maturley clear the entire redoStack from calling redo once.
     */
     this.undoStack.push(event)
+
+    // Any new action creates a timeline branch. The simplest solution to this time paradox is to
+    // empty the redo stack -- removing access to the previous forward-timeline.
+    // Undos from before this point will still be kept, as they are unrelated to the branch.
+    // More elegant idea here: https://github.com/zaboople/klonk/blob/master/TheGURQ.md
+    this.redoStack = []
   }
 
   getFunctionFromPath(functionPath) {
@@ -55,9 +64,8 @@ class ActionStack {
     const [functionPath, args] = mostRecentUndo.perform
     const functionReference = this.getFunctionFromPath(functionPath)
     functionReference(...args)
-    if (mostRecentUndo.redoPushToUndo) {
-      this.undoStack.push(mostRecentUndo)
-    }
+
+    this.undoStack.push(mostRecentUndo)
   }
 }
 

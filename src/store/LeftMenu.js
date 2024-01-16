@@ -1,7 +1,9 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 
 import Container from '../lib/structure/Container'
 import { zeroIfZero } from '../utility/numbers'
+import { isObject } from '../utility/object'
+import { insert } from '../utility/array'
 
 // TODO [3]: force open the containers in tree view, when selecting item on the stage
 
@@ -107,8 +109,9 @@ class LeftMenu {
   }
 
   determineNewSort() {
-    const { allItemsShown } = this.store.rootContainer
-    const { selectedIds } = this.store.build
+    const { rootContainer, build, actionStack } = this.store
+    const { allItemsShown } = rootContainer
+    const { selectedIds } = build
 
     const locationNumberBasedOnHeight = this.pointerLocationNumberWithinShownItems()
     if (locationNumberBasedOnHeight === -1) return
@@ -116,21 +119,21 @@ class LeftMenu {
     let newParent
     let newSortIndex
     if (locationNumberBasedOnHeight === 0) {
-      newParent = this.store.rootContainer
+      newParent = rootContainer
       newSortIndex = locationNumberBasedOnHeight
     } else {
       const itemIdAboveNewSort = allItemsShown[locationNumberBasedOnHeight - 1]
       const {
         item: itemAbove,
         parent: parentOfItemAbove,
-      } = this.store.rootContainer.findItemAndParent(itemIdAboveNewSort)
+      } = rootContainer.findItemAndParent(itemIdAboveNewSort)
 
       // Prevent moving to it's own current location
       if (selectedIds.includes(itemAbove.id)) return
 
       // Prevent a container from moving inside of itself
       const isParadox = selectedIds.some((itemId) => {
-        const item = this.store.rootContainer.findItem(itemId)
+        const item = rootContainer.findItem(itemId)
         return (
           item instanceof Container
           && item.allItems.includes(itemIdAboveNewSort)
@@ -147,27 +150,57 @@ class LeftMenu {
       }
     }
 
-    // Disconnect all selected items from the tree, and adjust for the gaps they are leaving
+    // Prepare For: Disconnecting all selected items from the tree, and adjusting for the gaps they are leaving,
+    // and re-inserting them to their new parent.
     const orderedSelectionToReSort = allItemsShown.filter((itemId) => selectedIds.includes(itemId))
-    const itemsToReSort = []
-    orderedSelectionToReSort.forEach((itemId) => {
-      const { item, parent } = this.store.rootContainer.findItemAndParent(itemId)
-      itemsToReSort.push(item)
-      if (parent.id === newParent.id) {
-        const itemsCurrentSortIndex = parent.sortOrder.findIndex((elm) => elm === itemId)
-        if (itemsCurrentSortIndex < newSortIndex) {
-          newSortIndex -= 1
-        }
-      }
-      parent.remove(itemId)
-    })
-    newSortIndex = Math.max(newSortIndex, 0)
 
-    // Finally, insert them all into their new location. Last item inserterd first since they will stack
-    // on top of eachother as they insert
-    itemsToReSort.reverse()
-    itemsToReSort.forEach((item) => {
-      newParent.add(item, newSortIndex, false)
+    let containersToMove = {}
+    const reSortTree = (subTree) => {
+      const [containerId, children] = Object.entries(subTree)[0]
+      let newChildren = children.map((itemId) => {
+        if (isObject(itemId)) {
+          const containerChildId = Object.keys(itemId)[0]
+          if (selectedIds.includes(containerChildId)) {
+            containersToMove = { ...containersToMove, ...reSortTree(itemId) }
+            return 'remove-this'
+          }
+          return reSortTree(itemId)
+        }
+        if (selectedIds.includes(itemId)) {
+          return 'remove-this'
+        }
+        return itemId
+      })
+      if (containerId === newParent.id) {
+        newChildren = insert(newChildren, newSortIndex, ...orderedSelectionToReSort)
+      }
+      newChildren = newChildren.filter((elm) => elm !== 'remove-this')
+      return { [containerId]: newChildren }
+    }
+
+    const reInsertContainers = (subTree) => {
+      const [containerId, children] = Object.entries(subTree)[0]
+      const newChildren = children.map((itemId) => {
+        if (isObject(itemId)) {
+          return reInsertContainers(itemId)
+        }
+        if (itemId in containersToMove) {
+          return { [itemId]: containersToMove[itemId] }
+        }
+        return itemId
+      })
+      return { [containerId]: newChildren }
+    }
+
+    const originalTree = rootContainer.allItemsShownAsTree
+    const newTreeSimple = reSortTree(originalTree)
+    const newTree = reInsertContainers(newTreeSimple)
+
+    // We operate on declarative snapshots of the tree to elimiate imperative sorting issues
+    rootContainer.setTree(newTree, selectedIds)
+    actionStack.push({
+      perform: ['rootContainer.setTree', [newTree, toJS(selectedIds)]],
+      revert: ['rootContainer.setTree', [originalTree, toJS(selectedIds)]],
     })
   }
 

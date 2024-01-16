@@ -31,7 +31,6 @@ class Container extends Drawable {
       toggleShowChildren: action,
       add: action,
       remove: action,
-      sortChild: action,
       updatePropertiesForFrame: action,
     })
   }
@@ -125,25 +124,21 @@ class Container extends Drawable {
     return children
   }
 
-  sortChild(childId, toIndex, byAmount) {
-    const prevIndex = this._sortOrder.findIndex((element) => element === childId)
-    const tempOrderWithoutChild = [...this._sortOrder]
-    tempOrderWithoutChild[prevIndex] = 'to-remove'
-    let tempSortOrder
-    if (toIndex !== null) {
-      tempSortOrder = insert(tempOrderWithoutChild, toIndex, childId)
-    } else if (byAmount) {
-      tempSortOrder = insert(tempOrderWithoutChild, prevIndex + byAmount, childId)
-    }
-    this._sortOrder = tempSortOrder.filter((element) => (element !== 'to-remove'))
-  }
-
-  increaseOrder(childId, by = 2) {
-    this.sortChild(childId, null, by)
-  }
-
-  decreaseOrder(childId, by = -1) {
-    this.sortChild(childId, null, by)
+  get allItemsShownAsTree() {
+    const children = { [this.id]: [] }
+    this.sortOrder.forEach((itemId) => {
+      const child = this._children[itemId]
+      if (child instanceof Container) {
+        if (child.showChildren === false) {
+          children[this.id].push(itemId)
+        } else {
+          children[this.id].push(child.allItemsShownAsTree)
+        }
+      } else {
+        children[this.id].push(itemId)
+      }
+    })
+    return children
   }
 
   updatePropertiesForFrame(frame) {

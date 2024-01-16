@@ -12,6 +12,7 @@ import { identityMatrix } from '../../utility/matrix'
 import { zeroIfZero } from '../../utility/numbers'
 import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 import { isPrimitive } from '../../utility/object'
+import { flattenTreeToRelationships } from '../../utility/tree'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
 
@@ -144,6 +145,7 @@ class RootContainer extends Container {
 
   findItem(itemId) {
     if (!itemId) return null
+    if (itemId === this.id) return this
     const result = this.findItemAndParent(itemId)
     if (result) return result.item
     return null
@@ -418,6 +420,49 @@ class RootContainer extends Container {
         item[_propertyName].setValue(newValueWithType, when)
       })
     })
+  }
+
+  setTree(tree, toSelectAfter) {
+    /**
+     * Set the parents, children, and sortOrder of all items/containers in the tree via a declarative input
+     */
+    const relationships = flattenTreeToRelationships(tree)
+    const containers = {}
+    const childrenToMove = []
+
+    Object.entries(relationships).forEach((relationship) => {
+      const [containerId, expectedChildren] = relationship
+
+      // Get container instance references
+      const container = this.findItem(containerId)
+      // If container doesn't exist in the tree then it's already being moved via a previous relationship
+      if (!container) return
+      // Cache references for use below
+      containers[containerId] = container
+
+      const misplacedChildren = Object.keys(container.children).filter((childId) => !expectedChildren.includes(childId))
+      misplacedChildren.forEach((childId) => {
+        const child = container.children[childId]
+        container.remove(childId)
+        childrenToMove.push(child)
+      })
+    })
+
+    childrenToMove.forEach((child) => {
+      const expectedParentId = Object.entries(relationships)
+        .find(([_, children]) => children.includes(child.id))[0]
+      const expectedParent = containers[expectedParentId]
+      expectedParent.add(child, null, false)
+    })
+
+    Object.values(containers).forEach((container) => {
+      const expectedSortOrder = relationships[container.id]
+      container.sortOrder.sort((childAId, childBId) => (
+        expectedSortOrder.indexOf(childAId) - expectedSortOrder.indexOf(childBId)
+      ))
+    })
+
+    this.store.build.setSelected(toSelectAfter)
   }
 
   toPureObject() {

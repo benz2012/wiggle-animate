@@ -1,4 +1,5 @@
 import Container from '../lib/structure/Container'
+import { isObject } from './object'
 
 const peekAtObservables = (item) => {
   const peekedAt = item.observables.map((propertyName) => `${item[propertyName]}`)
@@ -26,7 +27,26 @@ const peekAtKeyframes = (item) => {
   return peekedAt
 }
 
+const flattenTreeToRelationships = (tree) => {
+  let relationships = {}
+  const [containerId, children] = Object.entries(tree)[0]
+  relationships[containerId] = []
+
+  children.forEach((childId) => {
+    if (isObject(childId)) {
+      const containerChildId = Object.keys(childId)[0]
+      relationships[containerId].push(containerChildId)
+      relationships = { ...relationships, ...flattenTreeToRelationships(childId) }
+    } else {
+      relationships[containerId].push(childId)
+    }
+  })
+
+  return relationships
+}
+
 export {
   peekAtObservables,
   peekAtKeyframes,
+  flattenTreeToRelationships,
 }

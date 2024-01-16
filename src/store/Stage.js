@@ -21,7 +21,6 @@ class Stage {
   }
 
   addNewItem(newItem) {
-    const { selectedIds } = this.store.build
     const highestSelectedItemId = this.store.build.highestSelectedItemId(this.store.rootContainer)
     if (highestSelectedItemId) {
       const { item, parent } = this.store.rootContainer.findItemAndParent(highestSelectedItemId)
@@ -34,12 +33,16 @@ class Stage {
       this.store.rootContainer.add(newItem)
     }
 
+    return newItem
+  }
+
+  addNewItemAndAction(newItem) {
+    const { selectedIds } = this.store.build
+    this.addNewItem(newItem)
     this.store.actionStack.push({
       perform: ['stage.addNewItemFromPureObject', [newItem.toPureObject(), toJS(selectedIds)]],
       revert: ['rootContainer.findAndDelete', [newItem.id]],
     })
-
-    return newItem
   }
 
   addNewItemFromPureObject(pureObject, selectedAtTheTime) {
