@@ -117,10 +117,10 @@ class Project {
     return saveObject
   }
 
-  save() {
+  save(fileName) {
     const output = JSON.stringify(this.generateSaveObject())
     const fileBlob = new Blob([output], { type: 'application/json' })
-    downloadBlob(fileBlob, `${this.name || 'Untitled Animation Project'}.json`)
+    downloadBlob(fileBlob, `${fileName}.json`)
   }
 
   load(fileObject) {

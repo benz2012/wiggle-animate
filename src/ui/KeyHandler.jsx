@@ -118,6 +118,13 @@ const KeyHandler = ({ store }) => {
         // NOTE: Paste has it's own special listener below
         break
 
+      case 's':
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault()
+          store.view.openDialog('save')
+        }
+        break
+
       case 'x':
         if (event.metaKey || event.ctrlKey) {
           if (BOTTOM_HAS_FOCUS) {

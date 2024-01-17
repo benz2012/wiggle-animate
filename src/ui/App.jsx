@@ -9,6 +9,7 @@ import BottomMenu from './BottomMenu'
 import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
+import SaveDialog from './Modal/SaveDialog'
 import ExportDialog from './Modal/ExportDialog'
 import FontDialog from './Modal/FontDialog'
 import HoldingSnackbar from './Modal/HoldingSnackbar'
@@ -138,6 +139,11 @@ const App = observer(({ store }) => {
       </PointerHandler>
 
       {/* Dialog Handling */}
+      <SaveDialog
+        store={store}
+        open={store.view.dialogs.save}
+        onClose={() => store.view.closeDialog('save')}
+      />
       <ExportDialog
         store={store}
         open={store.view.dialogs.export}

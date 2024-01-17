@@ -12,7 +12,6 @@ import FileOpenIcon from '@mui/icons-material/FileOpen'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import OfflinePinIcon from '@mui/icons-material/OfflinePin'
 import SaveAsIcon from '@mui/icons-material/SaveAs'
-import SaveIcon from '@mui/icons-material/Save'
 import TuneIcon from '@mui/icons-material/Tune'
 import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen'
 
@@ -88,16 +87,10 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         </MenuListItem>
         <Divider />
         <MenuListItem
-          IconClass={SaveIcon}
+          IconClass={SaveAsIcon}
           hotkey="S"
           hotkeyModifiers={[BMK]}
-          onClick={() => store.project.save()}
-        >
-          Save
-        </MenuListItem>
-        <MenuListItem
-          IconClass={SaveAsIcon}
-          onClick={() => null}
+          onClick={() => store.view.openDialog('save')}
         >
           Save As
         </MenuListItem>

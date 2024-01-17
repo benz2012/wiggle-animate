@@ -6,6 +6,7 @@ class View {
 
     this.dialogs = {
       help: false,
+      save: false,
       export: false,
       addFonts: false,
     }
