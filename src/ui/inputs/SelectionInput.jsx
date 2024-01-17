@@ -15,6 +15,10 @@ const SelectionInput = observer(({
   const handleChange = (event) => {
     const { value: newValue } = event.target
     setPropertyValue(newValue)
+
+    // This forces the debounce listener to still capture the leading-edge and trailing-edge
+    const immediatelySubmitAction = true
+    setPropertyValue(newValue, immediatelySubmitAction)
   }
 
   return (

@@ -23,7 +23,7 @@ class Alignment {
   }
 
   toPureObject() {
-    return { className: Alignment.className, x: this.x, y: this.x }
+    return { className: Alignment.className, x: this.x, y: this.y }
   }
 
   static fromPureObject({ x, y }) {

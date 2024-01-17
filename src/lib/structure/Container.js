@@ -59,7 +59,7 @@ class Container extends Drawable {
   remove(itemId) {
     const { build } = Item.rootContainer.store
     build.removeFromSelection(itemId)
-    if (build.hoveredId === itemId) this.setHovered(null)
+    if (build.hoveredId === itemId) build.setHovered(null)
     this._sortOrder = [...this._sortOrder].filter((idInList) => (itemId !== idInList))
     delete this._children[itemId]
   }

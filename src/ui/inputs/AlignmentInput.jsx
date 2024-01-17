@@ -71,9 +71,16 @@ const AlignmentInput = observer(({
   const handleCheckboxClick = (alignmentNum) => () => {
     const xAlignmentNum = alignmentNum % 3
     const yAlignmentNum = parseInt(alignmentNum / 3, 10)
+    const newSelectedAlignmentNum = xAlignmentNum + yAlignmentNum * 3
+    if (newSelectedAlignmentNum === selectedAlignmentNum) return
+
     const xAlignment = [Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT][xAlignmentNum]
     const yAlignment = [Alignment.TOP, Alignment.CENTER, Alignment.BOTTOM][yAlignmentNum]
     setPropertyValue([xAlignment, yAlignment])
+
+    // This forces the debounce listener to still capture the leading-edge and trailing-edge
+    const immediatelySubmitAction = true
+    setPropertyValue([xAlignment, yAlignment], immediatelySubmitAction)
   }
 
   return (

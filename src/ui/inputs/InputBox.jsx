@@ -63,9 +63,12 @@ const InputBox = observer(({
   const [isDragging, setIsDragging] = useState(false)
   const valueAtDragStart = useRef(0)
   const dragStartX = useRef(0)
+  const mostRecentPointerX = useRef(null)
 
-  const handlePointerMove = (moveEvent) => {
-    const relativeOffsetX = moveEvent.clientX - dragStartX.current
+  const handlePointerMove = (moveEvent, immediatelySubmitAction = false) => {
+    if (immediatelySubmitAction && !mostRecentPointerX.current) return
+    const pointerX = immediatelySubmitAction ? mostRecentPointerX.current : moveEvent.clientX
+    const relativeOffsetX = pointerX - dragStartX.current
 
     const potentialFloat = parseFloat(valueAtDragStart.current)
     if (!Number.isNaN(potentialFloat)) {
@@ -75,7 +78,11 @@ const InputBox = observer(({
       const newValue = potentialFloat + relativeOffsetScaled
       const newValueSimplified = newValue.toFixed(sigFigsNeeded)
 
-      const simulatedEvent = { target: { value: newValueSimplified } }
+      if (!immediatelySubmitAction) {
+        mostRecentPointerX.current = moveEvent.clientX
+      }
+
+      const simulatedEvent = { target: { value: newValueSimplified, immediatelySubmitAction } }
       setValue(simulatedEvent)
     }
   }
@@ -88,6 +95,7 @@ const InputBox = observer(({
 
     window.addEventListener('pointermove', handlePointerMoveMemoized)
     const handleStopDrag = () => {
+      handlePointerMoveMemoized(null, true)
       window.removeEventListener('pointermove', handlePointerMoveMemoized)
       window.removeEventListener('pointerup', handleStopDrag)
       setIsDragging(false)
@@ -168,7 +176,11 @@ const InputBox = observer(({
       value={value}
       onChange={setValue}
       onKeyDown={handleKeyDown}
-      onBlur={onBlur}
+      onBlur={() => {
+        const simulatedEvent = { target: { value: `${value}`, immediatelySubmitAction: true } }
+        setValue(simulatedEvent)
+        onBlur()
+      }}
       error={error}
       autoFocus={autoFocus}
     />

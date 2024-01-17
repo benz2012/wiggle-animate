@@ -1,7 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import debounce from 'lodash.debounce'
 
 import {
   PANEL_WIDTH,
@@ -13,6 +14,7 @@ import {
 import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 import { getWeightMap } from '../../utility/fonts'
+import { voidFunc } from '../../utility/object'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
@@ -51,6 +53,10 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     }
   }, [numSelected])
 
+  const propertyValuesLeadingDebounce = useRef({})
+  const whichDebounceCall = useRef({})
+  const flushingDebounce = useRef({})
+
   if (numSelected !== 1) {
     let text = ''
     if (numSelected === 0) {
@@ -78,26 +84,87 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     ],
   }
 
-  const genericSetter = (property) => (newValue) => {
-    if (property.name === '_origin') {
-      const newValueVector = property.castAndCoerceValue(newValue)
-      selectedItem.setOrigin(newValueVector, store.animation.now)
-    } else {
-      property.setValue(newValue, store.animation.now)
-    }
+  const genericSetter = (property) => {
+    if (!property) return voidFunc
+    whichDebounceCall.current[property.name] = 'LEADING'
+    const DEBOUNCE_DELAY_MS = 500
 
-    // This is fairly hacky but I need a way to link all 3 font selection boxes to one another, sad :(
-    if (property.typeName === 'Selection' && property.value.specialType === '_fontFamily') {
-      const nextFontStyles = []
-      const nextFontWeights = []
-      store.project.fonts
-        .filter((font) => font.name === newValue)
-        .forEach((font) => {
-          nextFontStyles.push(font.style)
-          nextFontWeights.push(getWeightMap()[font.weight])
-        })
-      selectedItem._fontStyle.value.setNewValues([...new Set(nextFontStyles)], 'normal')
-      selectedItem._fontWeight.value.setNewValues([...new Set(nextFontWeights)], getWeightMap()[400])
+    const actionSubmitter = () => {
+      if (whichDebounceCall.current[property.name] === 'LEADING') {
+        // On the leading edge, cache the current value so we know what to roll-back to
+        let valueToCache = property.isPrimitive ? property.value : property.value.toPureObject()
+        if (property.name === '_origin') {
+          valueToCache = [valueToCache, selectedItem.position.toPureObject()]
+        }
+        propertyValuesLeadingDebounce.current = {
+          ...propertyValuesLeadingDebounce.current,
+          [property.name]: valueToCache,
+        }
+        whichDebounceCall.current[property.name] = 'TRAILING'
+      } else if (whichDebounceCall.current[property.name] === 'TRAILING') {
+        // On the trailing edge, now that we know both before/after states, submit the action, and clear the cache
+        const valueBefore = propertyValuesLeadingDebounce.current[property.name]
+        let valueAfter = property.isPrimitive ? property.value : property.value.toPureObject()
+        if (property.name === '_origin') {
+          valueAfter = [valueAfter, selectedItem.position.toPureObject()]
+        }
+
+        const stateBefore = [property.name, store.animation.now, [[selectedItem.id, valueBefore]]]
+        const stateAfter = [property.name, store.animation.now, [[selectedItem.id, valueAfter]]]
+
+        // perform generic comparison to see if we should eliminate duplicate undo/redos
+        const hasValueReallyChanged = JSON.stringify(valueBefore) !== JSON.stringify(valueAfter)
+
+        const isImmediate = flushingDebounce.current[property.name]
+        if (hasValueReallyChanged) {
+          store.actionStack.push({
+            performedAt: isImmediate ? Date.now() : Date.now() - DEBOUNCE_DELAY_MS,
+            perform: ['rootContainer.setValueForItems', stateAfter],
+            revert: ['rootContainer.setValueForItems', stateBefore],
+          })
+        }
+
+        delete propertyValuesLeadingDebounce.current[property.name]
+        delete flushingDebounce.current[property.name]
+        whichDebounceCall.current[property.name] = 'LEADING'
+      }
+    }
+    const debouncedActionSubmitter = debounce(actionSubmitter, DEBOUNCE_DELAY_MS, { leading: true, trailing: true })
+
+    return (newValue, immediatelySubmitAction = false) => {
+      if (whichDebounceCall.current[property.name] === 'LEADING' && !immediatelySubmitAction) {
+        debouncedActionSubmitter()
+      }
+
+      if (property.name === '_origin') {
+        const newValueVector = property.castAndCoerceValue(newValue)
+        selectedItem.setOrigin(newValueVector, store.animation.now)
+      } else {
+        property.setValue(newValue, store.animation.now)
+      }
+
+      if (whichDebounceCall.current[property.name] === 'TRAILING') {
+        if (immediatelySubmitAction) {
+          flushingDebounce.current[property.name] = true
+          debouncedActionSubmitter.flush(true)
+        } else {
+          debouncedActionSubmitter()
+        }
+      }
+
+      // This is fairly hacky but I need a way to link all 3 font selection boxes to one another, sad :(
+      if (property.typeName === 'Selection' && property.value.specialType === '_fontFamily') {
+        const nextFontStyles = []
+        const nextFontWeights = []
+        store.project.fonts
+          .filter((font) => font.name === newValue)
+          .forEach((font) => {
+            nextFontStyles.push(font.style)
+            nextFontWeights.push(getWeightMap()[font.weight])
+          })
+        selectedItem._fontStyle.value.setNewValues([...new Set(nextFontStyles)], 'normal')
+        selectedItem._fontWeight.value.setNewValues([...new Set(nextFontWeights)], getWeightMap()[400])
+      }
     }
   }
 

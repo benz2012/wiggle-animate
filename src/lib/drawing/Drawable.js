@@ -56,7 +56,7 @@ class Drawable extends Item {
   get x() { return this.position.x }
   get y() { return this.position.y }
 
-  setOrigin(newValue, when = 1) {
+  setOrigin(newValue, when = 1, explicitPosition = null) {
     if (!newValue || !(newValue instanceof Vector2)) return
 
     const changeInOrigin = Vector2.subtract(this.origin, newValue)
@@ -68,7 +68,11 @@ class Drawable extends Item {
     const toTranslate = new Vector2(positionalInverse.e, positionalInverse.f)
 
     this._origin.setValue(newValue, when)
-    this._position.setValue(Vector2.add(this.position, toTranslate), when)
+    if (explicitPosition) {
+      this._position.setValue(explicitPosition, when)
+    } else {
+      this._position.setValue(Vector2.add(this.position, toTranslate), when)
+    }
   }
 
   get currentTranslation() {

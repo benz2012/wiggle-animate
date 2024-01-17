@@ -8,8 +8,7 @@ import { ColorBox, ColorPicker } from './ColorSelection'
 import CheckboxLock from './CheckboxLock'
 import { PAIRED_VECTOR_TYPES } from '../PropertyEditor/config'
 import { isNumber } from '../../utility/numbers'
-
-const voidFunc = () => null
+import { voidFunc } from '../../utility/object'
 
 const GenericInputWithInternalValue = observer(({
   label,
@@ -43,7 +42,7 @@ const GenericInputWithInternalValue = observer(({
   )
 
   const setValue = (event, subProp, changeNumberBy = 0) => {
-    const { value: newValue } = event.target
+    const { value: newValue, immediatelySubmitAction } = event.target
 
     const { isValid, parsedValue } = parseAndValidateNewValue(newValue)
     if (!isValid) {
@@ -79,9 +78,9 @@ const GenericInputWithInternalValue = observer(({
       if (pairVector) {
         nextMultiValue = subProperties.map(() => newParsedValue)
       }
-      setPropertyValue(nextMultiValue)
+      setPropertyValue(nextMultiValue, immediatelySubmitAction)
     } else {
-      setPropertyValue(newParsedValue)
+      setPropertyValue(newParsedValue, immediatelySubmitAction)
     }
 
     if (subProp) {
@@ -106,6 +105,9 @@ const GenericInputWithInternalValue = observer(({
     const { a: alpha, r, g, b } = newColorSpec
     setPropertyValue({ r, g, b })
     setSecondaryPropertyValue(alpha * 100)
+    // We don't need to immediatelySubmitAction here since it will take the user some time to click
+    // away from this custom component. If we do ever want a more responsive action submission,
+    // we should attatch the immediatelySubmitAction approach to the close method of ColorPicker
   }
 
   const togglePairVectorLock = () => {
@@ -115,6 +117,9 @@ const GenericInputWithInternalValue = observer(({
       // Force set both props to `x` when re-enabling pairing on the prop
       const nextMultiValue = subProperties.map(() => propertyValue.x)
       setPropertyValue(nextMultiValue)
+
+      // This forces the debounce listener to still capture the leading-edge and trailing-edge
+      setPropertyValue(nextMultiValue, true)
     }
   }
 

@@ -6,6 +6,7 @@ class ActionStack {
 
     this.undoStack = []
     this.redoStack = []
+    this.lastPerformance = Date.now()
 
     makeAutoObservable(this)
   }
@@ -18,15 +19,24 @@ class ActionStack {
     {
       perform: ['reference.toFunction', [functionArg1, functionArg2, ...]],
       revert: ['reference.toFunction', [functionArg1, functionArg2, ...]],
+      performedAt: MillisecondsSinceEpoch, (Optional)
     }
 
     `reference` starts from the RootStore instance, so `rootContainer.someMember`, NOT `store.rootContainer...`
 
-    Push(...) should never be called from one of the functions referenced in perform/revert,
+    push(...) should never be called from one of the functions referenced in perform/revert,
     as that causes confusion over when a brand new event is pushed, versus an event simply being replayed.
     Failing to do this will pre-maturley clear the entire redoStack from calling redo once.
+
+    performedAt is used to cancel actions that might be pushed via a delay. If the user happens to fire undo/redo
+    before that delay is complete, we cancel the push, since they are no longer valid actions (timeline branch).
+    Only supply a performedAt timestamp if the action took place at a different point in time then when you call push()
     */
+    const performedAt = event.performedAt ?? Date.now()
+    if (performedAt <= this.lastPerformance) return
+
     this.undoStack.push(event)
+    this.lastPerformance = event.performedAt
 
     // Any new action creates a timeline branch. The simplest solution to this time paradox is to
     // empty the redo stack -- removing access to the previous forward-timeline.
@@ -56,6 +66,7 @@ class ActionStack {
     const functionReference = this.getFunctionFromPath(functionPath)
     functionReference(...args)
 
+    this.lastPerformance = Date.now()
     this.redoStack.push(mostRecentAction)
   }
 
@@ -65,6 +76,7 @@ class ActionStack {
     const functionReference = this.getFunctionFromPath(functionPath)
     functionReference(...args)
 
+    this.lastPerformance = Date.now()
     this.undoStack.push(mostRecentUndo)
   }
 }

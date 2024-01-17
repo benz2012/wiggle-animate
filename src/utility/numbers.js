@@ -28,7 +28,7 @@ const truncateFloatLeaveInt = (value) => {
   }
 
   if (!isNumber(value)) {
-    throw TypeError('truncateFloat must recive a string or number as input')
+    throw TypeError(`truncateFloat must recive a string or number as input, received: ${value}`)
   }
 
   if (Number.isSafeInteger(value)) {

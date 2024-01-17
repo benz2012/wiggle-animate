@@ -1,3 +1,5 @@
+const voidFunc = () => null
+
 const isObject = (valueToCheck) => (
   typeof valueToCheck === 'object' && valueToCheck !== null
 )
@@ -39,6 +41,7 @@ const replaceKeysInObj = (obj, oldKeyNewKeyMap) => {
 }
 
 export {
+  voidFunc,
   isObject,
   isPrimitive,
   replaceKeysInObj,

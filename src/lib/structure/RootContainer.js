@@ -7,6 +7,7 @@ import Alignment from './Alignment'
 import Angle from './Angle'
 import Vector2 from './Vector2'
 import Color from '../visuals/Color'
+import Selection from './Selection'
 import propertyValueTypeMap from './propertyValueTypeMap'
 import { identityMatrix } from '../../utility/matrix'
 import { zeroIfZero } from '../../utility/numbers'
@@ -394,6 +395,14 @@ class RootContainer extends Container {
   }
 
   setValueForItems(propertyName, when, itemData) {
+    /**
+     * Sets the value of one or more properties across many items, all at once.
+     * Ideally this is used in undo/redo actions.
+     *
+     * propertyName shape is: '_propName' or '_propName1&_propName2'
+     * itemData shape is: [[itemId1, pureValue1], [itemId2, pureValue2], ...]
+     *          notice that it is an array of arrays, so for one change: [[itemId1, pureValue1]]
+     */
     let isMulti = false
     let properties = [propertyName]
     if (propertyName.includes('&')) {
@@ -413,6 +422,22 @@ class RootContainer extends Container {
 
         let newValueWithType = _pureValue
         if (!isPrimitive(newValueWithType)) {
+          // Follows logic from Property.fromPureObject() with respect to Selection Properties
+          if (_pureValue.className === Selection.className) {
+            item[_propertyName].value.fromPureObject(_pureValue)
+            return
+          }
+
+          if (_propertyName === '_origin') {
+            const ValueType = Vector2
+            const _pureOrigin = _pureValue[0]
+            const _purePosition = _pureValue[1]
+            const newOrigin = ValueType.fromPureObject(_pureOrigin)
+            const newPosition = ValueType.fromPureObject(_purePosition)
+            item.setOrigin(newOrigin, when, newPosition)
+            return
+          }
+
           const ValueType = propertyValueTypeMap[_pureValue.className]
           newValueWithType = ValueType.fromPureObject(_pureValue)
         }

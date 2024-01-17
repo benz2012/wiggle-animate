@@ -53,7 +53,7 @@ class Build {
     if (this.dragTargetMode === 'move') {
       if (this.hoveredControl === 'origin') {
         propertyName = '_origin'
-        valueData = item.origin.toPureObject()
+        valueData = [item.origin.toPureObject(), item.position.toPureObject()]
       } else {
         propertyName = '_position'
         valueData = item.position.toPureObject()
@@ -75,7 +75,10 @@ class Build {
       const dragDataAfter = this.selectedIds.map((selectedId) => {
         const item = this.store.rootContainer.findItem(selectedId)
         const targetData = this.getDragTargetData(item)
-        propertyName = targetData[0]
+        if (!propertyName) {
+          // we just need to set this once since all items will be effected on a single property
+          propertyName = targetData[0]
+        }
         const valueAfter = targetData[1]
         return [selectedId, valueAfter]
       })
