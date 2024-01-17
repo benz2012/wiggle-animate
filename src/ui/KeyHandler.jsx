@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { action, toJS } from 'mobx'
+import { action } from 'mobx'
 import Vector2 from '../lib/structure/Vector2'
 import Animation from '../lib/animation/Animation'
 
@@ -235,6 +235,7 @@ const KeyHandler = ({ store }) => {
 
             item[propertyName].deleteKey(keyframeId)
           })
+          store.keyframeEditor.setSelected([])
 
           store.actionStack.push({
             revert: ['keyframeEditor.pushManyKeysOnProperties', [revertState]],

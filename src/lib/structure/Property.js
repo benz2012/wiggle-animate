@@ -5,7 +5,6 @@ import Selection from './Selection'
 import propertyValueTypeMap from './propertyValueTypeMap'
 import Keyframe from '../animation/Keyframe'
 import { truncateFloatLeaveInt } from '../../utility/numbers'
-import { isObject } from '../../utility/object'
 
 class Property {
   static get className() { return 'Property' }
