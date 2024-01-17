@@ -29,7 +29,9 @@ class Project {
     this.name = ''
     this.initialize()
 
-    const { rootContainer, build, animation, propertyEditor, keyframeEditor } = this.store
+    const { actionStack, rootContainer, build, animation, propertyEditor, keyframeEditor } = this.store
+
+    actionStack.reset()
 
     const RootContainer = rootContainer.constructor
     rootContainer.canvasPosition = RootContainer.INITIAL.canvasPosition
