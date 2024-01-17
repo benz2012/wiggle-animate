@@ -242,7 +242,7 @@ class Property {
     return finalPureObject
   }
 
-  fromPureObject({ value, keyframes }) {
+  fromPureObject({ value, keyframes }, preserveId = true) {
     if (this.isPrimitive) {
       this.setValue(value)
     } else if (value.className === Selection.className) {
@@ -256,7 +256,7 @@ class Property {
 
     if (keyframes == null) return
     keyframes.forEach((keyframeObj) => {
-      const newKeyframe = Keyframe.fromPureObject({ ...keyframeObj })
+      const newKeyframe = Keyframe.fromPureObject({ ...keyframeObj }, preserveId)
       this.keyframes.push(newKeyframe)
     })
   }

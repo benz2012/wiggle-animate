@@ -104,7 +104,7 @@ class Item {
 
       const propertyName = `_${keyName}`
       const property = this[propertyName]
-      property.fromPureObject(propertyObj)
+      property.fromPureObject(propertyObj, preserveId)
     })
     return this
   }

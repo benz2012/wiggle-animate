@@ -102,6 +102,7 @@ class Keyframe {
   toPureObject() {
     const value = isPrimitive(this.value) ? this.value : this.value.toPureObject()
     return {
+      id: this.id,
       frame: this.frame,
       value,
       handleIn: this.handleIn.toPureObject(),
@@ -109,7 +110,7 @@ class Keyframe {
     }
   }
 
-  static fromPureObject({ frame, value: pureValue, handleIn, handleOut }) {
+  static fromPureObject({ id, frame, value: pureValue, handleIn, handleOut }, preserveId = true) {
     let newKeyframeValue = pureValue
     if (isObject(pureValue)) {
       const KeyframeValueType = propertyValueTypeMap[pureValue.className]
@@ -117,6 +118,9 @@ class Keyframe {
     }
 
     const newKey = new Keyframe(frame, newKeyframeValue)
+    if (preserveId) {
+      newKey._id = id
+    }
     newKey.handleIn.influence = handleIn.influence
     newKey.handleIn.distance = handleIn.distance
     newKey.handleOut.influence = handleOut.influence
