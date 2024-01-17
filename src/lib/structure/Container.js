@@ -335,7 +335,8 @@ class Container extends Drawable {
       /* eslint-disable no-param-reassign */
       const ItemType = childItem.className === 'Container' ? Container : shapeTypeMap[childItem.className]
       const newItem = new ItemType()
-      resultObject[newItem.id] = newItem.fromPureObject(childItem, preserveId)
+      newItem.fromPureObject(childItem, preserveId)
+      resultObject[newItem.id] = newItem
       theSortOrder.push(newItem.id)
       return resultObject
     }, {})
