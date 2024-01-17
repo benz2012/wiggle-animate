@@ -73,7 +73,4 @@ class Angle {
   }
 }
 
-// TODO [-]: remove this after debugging
-window.Angle = Angle
-
 export default Angle

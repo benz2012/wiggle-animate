@@ -256,13 +256,7 @@ class Property {
 
     if (keyframes == null) return
     keyframes.forEach((keyframeObj) => {
-      const { value: keyframePureValue } = keyframeObj
-      let newKeyframeValue = keyframePureValue
-      if (isObject(keyframePureValue)) {
-        const KeyframeValueType = propertyValueTypeMap[keyframePureValue.className]
-        newKeyframeValue = KeyframeValueType.fromPureObject(keyframePureValue)
-      }
-      const newKeyframe = Keyframe.fromPureObject({ ...keyframeObj, value: newKeyframeValue })
+      const newKeyframe = Keyframe.fromPureObject({ ...keyframeObj })
       this.keyframes.push(newKeyframe)
     })
   }

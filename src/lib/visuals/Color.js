@@ -142,7 +142,4 @@ class Color {
   }
 }
 
-// TODO [-]: remove this after debugging
-window.Color = Color
-
 export default Color

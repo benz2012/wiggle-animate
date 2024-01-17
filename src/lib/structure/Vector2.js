@@ -95,7 +95,4 @@ class Vector2 {
   }
 }
 
-// TODO [-]: remove this after debugging
-window.Vector2 = Vector2
-
 export default Vector2

@@ -8,6 +8,7 @@ import Color from '../visuals/Color'
 import { observeListOfProperties } from '../../utility/state'
 import { isObject, isPrimitive } from '../../utility/object'
 import { isString, START_OF_NORMAL_CHARS, END_OF_NORMAL_CHARS } from '../../utility/string'
+import propertyValueTypeMap from '../structure/propertyValueTypeMap'
 
 class Keyframe {
   static get className() { return 'Keyframe' }
@@ -108,8 +109,14 @@ class Keyframe {
     }
   }
 
-  static fromPureObject({ frame, value, handleIn, handleOut }) {
-    const newKey = new Keyframe(frame, value)
+  static fromPureObject({ frame, value: pureValue, handleIn, handleOut }) {
+    let newKeyframeValue = pureValue
+    if (isObject(pureValue)) {
+      const KeyframeValueType = propertyValueTypeMap[pureValue.className]
+      newKeyframeValue = KeyframeValueType.fromPureObject(pureValue)
+    }
+
+    const newKey = new Keyframe(frame, newKeyframeValue)
     newKey.handleIn.influence = handleIn.influence
     newKey.handleIn.distance = handleIn.distance
     newKey.handleOut.influence = handleOut.influence
@@ -117,8 +124,5 @@ class Keyframe {
     return newKey
   }
 }
-
-// TODO [-]: remove this after debugging
-window.Keyframe = Keyframe
 
 export default Keyframe
