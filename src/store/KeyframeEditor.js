@@ -79,6 +79,7 @@ class KeyframeEditor {
       const keyframeSelectionId = this.pushKeyOnProperty(...data, false)
       idsToSelect.push(keyframeSelectionId)
     })
+    // TODO [2]: this can potentially select keyframes across differnt items, which will likely cause bugs. prevent this
     this.setSelected(idsToSelect)
   }
 

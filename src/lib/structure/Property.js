@@ -174,7 +174,7 @@ class Property {
     return new Type()
   }
 
-  // We don't use a setter for this because it complicates the observation chain
+  // We don't use a JS setter for this because it complicates the observation chain
   // when complex property types are used. This also allows for additional logic
   // within the setter without makeing JS "assignment" confusing (aka using `=`)
   setValue(newValue, when = 1) {
@@ -188,10 +188,19 @@ class Property {
       if (existingKeyframe) {
         existingKeyframe.value = castedValue
       } else {
-        // TODO [2]: uhhhh, this will be complicated to determine an undo/redo approach
-        this.addKey(when, castedValue)
+        const newKeyframe = this.addKey(when, castedValue)
+        // This will allow callers of setValue to respond to a new keyframe being created during a value change.
+        // Most notably: adding an action to the actionStack to undo/redo the creation of this keyframe
+        // Warning: Technically the castedValue attatched to the newKeyframe will be the first new value
+        //          in a sequence of edits. This means that when re-doing the addKey action, it will appear to
+        //          hold some weird value. This is not a bug, but rather a flaw in how we both create the newKeyframe
+        //          and edit it's value all on the same tick. Theoretically we would want to make the newKeyframe
+        //          without the new value, however, then the keyframe itself is "wrong", because the user has already
+        //          completed the action of changing the underlying value. So there's not a clear solution to this flaw.
+        return newKeyframe
       }
     }
+    return null
   }
 
   // This function is needed so that we can directly trigger canvas drawing

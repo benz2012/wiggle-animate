@@ -57,7 +57,7 @@ class Drawable extends Item {
   get y() { return this.position.y }
 
   setOrigin(newValue, when = 1, explicitPosition = null) {
-    if (!newValue || !(newValue instanceof Vector2)) return
+    if (!newValue || !(newValue instanceof Vector2)) return [null, null]
 
     const changeInOrigin = Vector2.subtract(this.origin, newValue)
     const positionalInverse = identityMatrix()
@@ -67,12 +67,15 @@ class Drawable extends Item {
       .translateSelf(-1 * changeInOrigin.x, -1 * changeInOrigin.y)
     const toTranslate = new Vector2(positionalInverse.e, positionalInverse.f)
 
-    this._origin.setValue(newValue, when)
+    const addedKeyframeOrigin = this._origin.setValue(newValue, when)
+    let addedKeyframePosition
     if (explicitPosition) {
-      this._position.setValue(explicitPosition, when)
+      addedKeyframePosition = this._position.setValue(explicitPosition, when)
     } else {
-      this._position.setValue(Vector2.add(this.position, toTranslate), when)
+      addedKeyframePosition = this._position.setValue(Vector2.add(this.position, toTranslate), when)
     }
+
+    return [addedKeyframeOrigin, addedKeyframePosition]
   }
 
   get currentTranslation() {

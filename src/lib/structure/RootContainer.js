@@ -257,6 +257,8 @@ class RootContainer extends Container {
   }
 
   moveAllSelectedByIncrement(relativeMovement, fromArrowKey = false) {
+    const addedKeyframeData = []
+
     this.store.build.selectedIds.forEach((selectedId) => {
       const relativeMovementScaledToCanvas = Vector2.multiply(
         relativeMovement,
@@ -266,17 +268,28 @@ class RootContainer extends Container {
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
       const currentPosition = selectedItem._position.getValueAtFrame(now)
+      let addedKeyframePosition
+      let addedKeyframeOrigin
 
       if (fromArrowKey) {
+        // TODO [1]: capture end of arrow key movement and submit action
         // Plain and Simple 1-for-1 movement from Arrow Keys
-        selectedItem._position.setValue(Vector2.add(currentPosition, relativeMovement), now)
+        addedKeyframePosition = selectedItem._position.setValue(
+          Vector2.add(currentPosition, relativeMovement),
+          now
+        )
       } else if (this.store.build.hoveredControl === 'origin') {
         // Move origin of Selected item(s) (currently only for Containers)
         const currentOrigin = selectedItem._origin.getValueAtFrame(now)
         const transformationalInverse = relativeMovementScaledToCanvas
           .rotate(-1 * selectedItem.rotation.radians)
           .scale(1 / selectedItem.scale.x, 1 / selectedItem.scale.y)
-        selectedItem.setOrigin(Vector2.add(currentOrigin, transformationalInverse), now)
+        const addedKeyframes = selectedItem.setOrigin(
+          Vector2.add(currentOrigin, transformationalInverse),
+          now
+        )
+        addedKeyframeOrigin = addedKeyframes[0]
+        addedKeyframePosition = addedKeyframes[1]
       } else {
         // Move the selected item(s)
         // But apply the vector in the space of the item's parent so that it can be within
@@ -287,9 +300,27 @@ class RootContainer extends Container {
         const { a, b, c, d } = parentTransformInverse
         const { x, y } = relativeMovement
         const relativeMovementScaledToItemsParent = new Vector2(x * a + y * c, x * b + y * d)
-        selectedItem._position.setValue(Vector2.add(currentPosition, relativeMovementScaledToItemsParent), now)
+        addedKeyframePosition = selectedItem._position.setValue(
+          Vector2.add(currentPosition, relativeMovementScaledToItemsParent),
+          now
+        )
+      }
+
+      if (addedKeyframePosition) {
+        addedKeyframeData.push([selectedId, '_position', addedKeyframePosition.toPureObject()])
+      }
+      if (addedKeyframeOrigin) {
+        addedKeyframeData.push([selectedId, '_origin', addedKeyframeOrigin.toPureObject()])
       }
     })
+
+    if (addedKeyframeData.length > 0) {
+      const revertState = addedKeyframeData.map((oneData) => ([oneData[0], oneData[1], oneData[2].id]))
+      this.store.actionStack.push({
+        revert: ['keyframeEditor.deleteManyKeysOnProperties', [revertState]],
+        perform: ['keyframeEditor.pushManyKeysOnProperties', [addedKeyframeData]],
+      })
+    }
   }
 
   resizeAllSelectedByIncrement(relativeMovement) {
@@ -301,6 +332,8 @@ class RootContainer extends Container {
     const activeHandleIdx = parseInt(activeControl.split('--').pop(), 10)
     const resizeHandleIndicies = [0, 1, 2, 3]
     if (!resizeHandleIndicies.includes(activeHandleIdx)) return
+
+    const addedKeyframeData = []
 
     this.store.build.selectedIds.forEach((selectedId) => {
       const selectedItem = this.findItem(selectedId)
@@ -344,9 +377,24 @@ class RootContainer extends Container {
         deltaHeight = 0
       }
 
-      selectedItem._width.setValue(currentWidth + deltaWidth, now)
-      selectedItem._height.setValue(currentHeight + deltaHeight, now)
+      const addedKeyframeWidth = selectedItem._width.setValue(currentWidth + deltaWidth, now)
+      const addedKeyframeHeight = selectedItem._height.setValue(currentHeight + deltaHeight, now)
+
+      if (addedKeyframeWidth) {
+        addedKeyframeData.push([selectedId, '_width', addedKeyframeWidth.toPureObject()])
+      }
+      if (addedKeyframeHeight) {
+        addedKeyframeData.push([selectedId, '_height', addedKeyframeHeight.toPureObject()])
+      }
     })
+
+    if (addedKeyframeData.length > 0) {
+      const revertState = addedKeyframeData.map((oneData) => ([oneData[0], oneData[1], oneData[2].id]))
+      this.store.actionStack.push({
+        revert: ['keyframeEditor.deleteManyKeysOnProperties', [revertState]],
+        perform: ['keyframeEditor.pushManyKeysOnProperties', [addedKeyframeData]],
+      })
+    }
   }
 
   rotateAllSelectedToPoint(toPoint) {
@@ -358,6 +406,8 @@ class RootContainer extends Container {
       .translateSelf(...itemBeingTargeted.origin.values)
     const fromPoint = new Vector2(itemBeingTargetedRotationCenter.e, itemBeingTargetedRotationCenter.f)
     const fromRotationSimple = ((itemBeingTargeted.rotation.degrees % 360) + 360) % 360
+
+    const addedKeyframeData = []
 
     this.store.build.selectedIds.forEach((selectedId) => {
       const { now } = this.store.animation
@@ -390,14 +440,25 @@ class RootContainer extends Container {
       }
       setDegreesTo += (nextSpinCount * 360)
 
-      selectedItem._rotation.setValue(setDegreesTo, now)
+      const addedKeyframe = selectedItem._rotation.setValue(setDegreesTo, now)
+      if (addedKeyframe) {
+        addedKeyframeData.push([selectedId, '_rotation', addedKeyframe.toPureObject()])
+      }
     })
+
+    if (addedKeyframeData.length > 0) {
+      const revertState = addedKeyframeData.map((oneData) => ([oneData[0], oneData[1], oneData[2].id]))
+      this.store.actionStack.push({
+        revert: ['keyframeEditor.deleteManyKeysOnProperties', [revertState]],
+        perform: ['keyframeEditor.pushManyKeysOnProperties', [addedKeyframeData]],
+      })
+    }
   }
 
   setValueForItems(propertyName, when, itemData) {
     /**
      * Sets the value of one or more properties across many items, all at once.
-     * Ideally this is used in undo/redo actions.
+     * Ideally this is only used in undo/redo actions.
      *
      * propertyName shape is: '_propName' or '_propName1&_propName2'
      * itemData shape is: [[itemId1, pureValue1], [itemId2, pureValue2], ...]

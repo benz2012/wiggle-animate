@@ -138,9 +138,38 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
 
       if (property.name === '_origin') {
         const newValueVector = property.castAndCoerceValue(newValue)
-        selectedItem.setOrigin(newValueVector, store.animation.now)
+        // Official Setter
+        const addedKeyframes = selectedItem.setOrigin(newValueVector, store.animation.now)
+
+        const addedKeyframeData = []
+        const addedKeyframeOrigin = addedKeyframes[0]
+        const addedKeyframePosition = addedKeyframes[1]
+        if (addedKeyframeOrigin) {
+          addedKeyframeData.push([selectedItem.id, '_origin', addedKeyframeOrigin.toPureObject()])
+        }
+        if (addedKeyframePosition) {
+          addedKeyframeData.push([selectedItem.id, '_position', addedKeyframePosition.toPureObject()])
+        }
+        if (addedKeyframeData.length > 0) {
+          const revertState = addedKeyframeData.map((oneData) => ([oneData[0], oneData[1], oneData[2].id]))
+          store.actionStack.push({
+            revert: ['keyframeEditor.deleteManyKeysOnProperties', [revertState]],
+            perform: ['keyframeEditor.pushManyKeysOnProperties', [addedKeyframeData]],
+          })
+        }
       } else {
-        property.setValue(newValue, store.animation.now)
+        // Official Setter
+        const addedKeyframe = property.setValue(newValue, store.animation.now)
+
+        if (addedKeyframe) {
+          store.actionStack.push({
+            revert: ['keyframeEditor.deleteKeyOnProperty', [selectedItem.id, property.name, addedKeyframe.id]],
+            perform: [
+              'keyframeEditor.pushKeyOnProperty',
+              [selectedItem.id, property.name, addedKeyframe.toPureObject()],
+            ],
+          })
+        }
       }
 
       if (whichDebounceCall.current[property.name] === 'TRAILING') {
