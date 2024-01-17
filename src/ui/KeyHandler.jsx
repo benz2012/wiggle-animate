@@ -222,10 +222,23 @@ const KeyHandler = ({ store }) => {
       case 'Backspace':
       case 'Delete':
         if (BOTTOM_HAS_FOCUS && store.keyframeEditor.selectedIds.length > 0) {
+          const revertState = []
+          const performState = []
+
           store.keyframeEditor.selectedIds.forEach((keyframeFullId) => {
             const [itemId, propertyName, keyframeId] = keyframeFullId.split('--')
             const item = store.rootContainer.findItem(itemId)
+            const keyframe = item[propertyName].keyframes.find((k) => k.id === keyframeId)
+
+            revertState.push([itemId, propertyName, keyframe.toPureObject()])
+            performState.push([itemId, propertyName, keyframeId])
+
             item[propertyName].deleteKey(keyframeId)
+          })
+
+          store.actionStack.push({
+            revert: ['keyframeEditor.pushManyKeysOnProperties', revertState],
+            perform: ['keyframeEditor.deleteManyKeysOnProperties', performState],
           })
           store.keyframeEditor.setSelected([])
         } else if (STAGE_HAS_FOCUS && selectedIds.length > 0) {

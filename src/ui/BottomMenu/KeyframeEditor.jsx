@@ -131,6 +131,13 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                       property.getValueAtFrame(absoluteFrameHovered)
                     )
                     store.keyframeEditor.setSelected([`${keyframeIdPrefix}--${newKeyframe.id}`])
+                    store.actionStack.push({
+                      perform: [
+                        'keyframeEditor.pushKeyOnProperty',
+                        [selectedItem.id, propName, newKeyframe.toPureObject()],
+                      ],
+                      revert: ['keyframeEditor.deleteKeyOnProperty', [selectedItem.id, propName, newKeyframe.id]],
+                    })
                   }}
                   onKeyframePress={(keyframeId, setOnlyOneKey) => {
                     const keyframeFullId = `${keyframeIdPrefix}--${keyframeId}`

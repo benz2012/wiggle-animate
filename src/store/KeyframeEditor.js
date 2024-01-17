@@ -56,6 +56,36 @@ class KeyframeEditor {
 
   setPixelsPerFrame(value) { this.pixelsPerFrame = value }
 
+  pushKeyOnProperty(itemId, propertyName, keyframeObj, selectOne = true) {
+    const newKey = Keyframe.fromPureObject(keyframeObj)
+    const item = this.store.rootContainer.findItem(itemId)
+    item[propertyName].keyframes.push(newKey)
+    const keyframeSelectionId = `${itemId}--${propertyName}--${newKey.id}`
+    if (selectOne) {
+      this.setSelected([keyframeSelectionId])
+    }
+    return keyframeSelectionId
+  }
+
+  deleteKeyOnProperty(itemId, propertyName, keyframeId) {
+    const item = this.store.rootContainer.findItem(itemId)
+    item[propertyName].deleteKey(keyframeId)
+    this.setSelected([])
+  }
+
+  pushManyKeysOnProperties(...itemData) {
+    const idsToSelect = []
+    itemData.forEach((data) => {
+      const keyframeSelectionId = this.pushKeyOnProperty(...data, false)
+      idsToSelect.push(keyframeSelectionId)
+    })
+    this.setSelected(idsToSelect)
+  }
+
+  deleteManyKeysOnProperties(...itemData) {
+    itemData.forEach((data) => this.deleteKeyOnProperty(...data))
+  }
+
   startDrag(startingX) {
     this.dragStart = startingX
     const selectedItem = this.store.rootContainer.findItem(this.store.build.selectedIds[0])

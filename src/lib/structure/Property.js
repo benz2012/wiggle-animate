@@ -189,6 +189,7 @@ class Property {
       if (existingKeyframe) {
         existingKeyframe.value = castedValue
       } else {
+        // TODO [2]: uhhhh, this will be complicated to determine an undo/redo approach
         this.addKey(when, castedValue)
       }
     }
