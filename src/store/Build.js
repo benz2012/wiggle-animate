@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 
 import { isEqual } from '../utility/array'
 import { incrementName } from '../utility/string'
@@ -175,8 +175,9 @@ class Build {
     )
   }
 
-  deleteAllSelected() {
-    const itemsToDelete = this.selectedIds.map((selectedId) => (
+  deleteAllSelected(explicitListOfIds) {
+    const idsToTarget = explicitListOfIds ?? this.selectedIds
+    const itemsToDelete = idsToTarget.map((selectedId) => (
       this.store.rootContainer.findItem(selectedId)
     ))
     this.setSelected([])
@@ -184,11 +185,28 @@ class Build {
     itemsToDelete.forEach((item) => { item.delete() })
   }
 
-  copySelectionToClipboard(andThenDeleteIt = false) {
-    const selectedItemsPure = this.selectedIds.map((selectedId) => {
+  deleteAllSelectedWithAction() {
+    const selectedItemsPure = this.selectedItemsAsPureObjects
+    const treeSnapshot = this.store.rootContainer.allItemsShownAsTree
+    const selectionSnapshot = toJS(this.selectedIds)
+
+    this.deleteAllSelected()
+
+    this.store.actionStack.push({
+      revert: ['build.rebuildItemsAndTree', [selectedItemsPure, treeSnapshot]],
+      perform: ['build.deleteAllSelected', [selectionSnapshot]],
+    })
+  }
+
+  get selectedItemsAsPureObjects() {
+    return this.selectedIds.map((selectedId) => {
       const selectedItem = this.store.rootContainer.findItem(selectedId)
       return selectedItem.toPureObject()
     })
+  }
+
+  copySelectionToClipboard(andThenDeleteIt = false) {
+    const selectedItemsPure = this.selectedItemsAsPureObjects
     const selectedItemsAsJSON = JSON.stringify(selectedItemsPure)
     navigator.clipboard.writeText(selectedItemsAsJSON)
       .then(() => {
@@ -201,7 +219,20 @@ class Build {
         // Or maybe copy it to a Global-store clipboard instead
       })
 
-    if (andThenDeleteIt) this.deleteAllSelected()
+    if (andThenDeleteIt) this.deleteAllSelectedWithAction()
+  }
+
+  static buildItemsFromPureObjects(itemsAsPureObjects, preserveIds) {
+    const resultingIds = []
+    const resultingItems = []
+    itemsAsPureObjects.forEach((itemObj) => {
+      const ItemType = itemObj.className === 'Container' ? Container : shapeTypeMap[itemObj.className]
+      const newItem = new ItemType()
+      newItem.fromPureObject(itemObj, preserveIds)
+      resultingItems.push(newItem)
+      resultingIds.push(newItem.id)
+    })
+    return [resultingIds, resultingItems]
   }
 
   pasteClipboard(clipboardText) {
@@ -217,16 +248,9 @@ class Build {
 
     // Keep in mind, these Ids/Items will only reference the top-level of what was copy-pasted.
     // If their are children also being duplicated in this process, they will simply be managed through their parent
-    const resultingIds = []
-    const resultingItems = []
-
-    itemsAsPureObjects.forEach((itemObj) => {
-      const ItemType = itemObj.className === 'Container' ? Container : shapeTypeMap[itemObj.className]
-      const newItem = new ItemType()
-      newItem.fromPureObject(itemObj, false)
-      resultingItems.push(newItem)
-      resultingIds.push(newItem.id)
-    })
+    // Also, when pasting, we never want to preserve Id as their will either be a collision, or we are in another
+    // project file in which case the original ids have no value anyways
+    const [resultingIds, resultingItems] = Build.buildItemsFromPureObjects(itemsAsPureObjects, false)
 
     // Determine Paste-Level and Paste-Index
     // - the highest selected parent, or rootContainer if none selected
@@ -253,6 +277,13 @@ class Build {
     })
 
     this.setSelected(resultingIds)
+
+    const finalPastedItemsPure = resultingItems.map((item) => item.toPureObject())
+    const treeSnapshot = this.store.rootContainer.allItemsShownAsTree
+    this.store.actionStack.push({
+      revert: ['build.deleteAllSelected', [resultingIds]],
+      perform: ['build.rebuildItemsAndTree', [finalPastedItemsPure, treeSnapshot]],
+    })
   }
 
   pasteWithAButton = async () => {
@@ -271,6 +302,15 @@ class Build {
         // use the hotkey instead
       }
     }
+  }
+
+  rebuildItemsAndTree(selectedItemsPure, treeSnapshot) {
+    const [resultingIds, resultingItems] = Build.buildItemsFromPureObjects(selectedItemsPure, true)
+    // We blindly attatch the new items to the root, as we are about to re-sort them all in the next step
+    resultingItems.forEach((newItem) => {
+      this.store.rootContainer.add(newItem)
+    })
+    this.store.rootContainer.setTree(treeSnapshot, resultingIds)
   }
 }
 

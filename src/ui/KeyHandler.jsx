@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { action } from 'mobx'
+import { action, toJS } from 'mobx'
 import Vector2 from '../lib/structure/Vector2'
 import Animation from '../lib/animation/Animation'
 
@@ -237,12 +237,11 @@ const KeyHandler = ({ store }) => {
           })
 
           store.actionStack.push({
-            revert: ['keyframeEditor.pushManyKeysOnProperties', revertState],
-            perform: ['keyframeEditor.deleteManyKeysOnProperties', performState],
+            revert: ['keyframeEditor.pushManyKeysOnProperties', [revertState]],
+            perform: ['keyframeEditor.deleteManyKeysOnProperties', [performState]],
           })
-          store.keyframeEditor.setSelected([])
         } else if (STAGE_HAS_FOCUS && selectedIds.length > 0) {
-          store.build.deleteAllSelected()
+          store.build.deleteAllSelectedWithAction()
         }
         break
 

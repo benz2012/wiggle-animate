@@ -87,7 +87,7 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
     <MenuListItem
       IconClass={DeleteOutlineIcon}
       HotkeyIcon={BackspaceOutlinedIcon}
-      onClick={() => store.build.deleteAllSelected()}
+      onClick={() => store.build.deleteAllSelectedWithAction()}
     >
       Delete
     </MenuListItem>

@@ -73,7 +73,7 @@ class KeyframeEditor {
     this.setSelected([])
   }
 
-  pushManyKeysOnProperties(...itemData) {
+  pushManyKeysOnProperties(itemData) {
     const idsToSelect = []
     itemData.forEach((data) => {
       const keyframeSelectionId = this.pushKeyOnProperty(...data, false)
@@ -82,7 +82,7 @@ class KeyframeEditor {
     this.setSelected(idsToSelect)
   }
 
-  deleteManyKeysOnProperties(...itemData) {
+  deleteManyKeysOnProperties(itemData) {
     itemData.forEach((data) => this.deleteKeyOnProperty(...data))
   }
 
