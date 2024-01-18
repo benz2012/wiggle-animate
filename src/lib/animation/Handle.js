@@ -33,24 +33,17 @@ class Handle {
     return { x, y }
   }
 
-  set position({ x, y }) {
-    const newX = x * Handle.MAX
-    const newY = y * Handle.MAX
-    if (this.type === Handle.TYPES.IN) {
-      this.influence = Handle.MAX - newX
-      this.distance = Handle.MAX - newY
-    } else {
-      this.influence = newX
-      this.distance = newY
-    }
-  }
-
   toString() {
     return `${Handle.className}(${this.influence}, ${this.distance})`
   }
 
   toPureObject() {
-    return { influence: this.influence, distance: this.distance }
+    return { type: this.type, influence: this.influence, distance: this.distance }
+  }
+
+  fromPureObject({ influence, distance }) {
+    this.influence = influence
+    this.distance = distance
   }
 }
 

@@ -106,6 +106,7 @@ class KeyframeEditor {
     this.dragHasMovedAtLeastOneFrame = false
   }
 
+  // TODO [1]: Need to track undo/redo for Keyframe Frame Movement
   moveAllSelectedToFrameForX(xPosition, mouseMovementDirection) {
     if (!this.dragStart) return
     const xOffset = xPosition - this.dragStart

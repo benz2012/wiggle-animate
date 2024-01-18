@@ -121,10 +121,8 @@ class Keyframe {
     if (preserveId) {
       newKey._id = id
     }
-    newKey.handleIn.influence = handleIn.influence
-    newKey.handleIn.distance = handleIn.distance
-    newKey.handleOut.influence = handleOut.influence
-    newKey.handleOut.distance = handleOut.distance
+    newKey.handleIn.fromPureObject(handleIn)
+    newKey.handleOut.fromPureObject(handleOut)
     return newKey
   }
 }

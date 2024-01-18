@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
 import Keyframe from '../lib/animation/Keyframe'
+import Handle from '../lib/animation/Handle'
 import { clamp } from '../utility/numbers'
 import { keyframeLabelFromProperty } from '../utility/state'
 
@@ -14,12 +15,43 @@ class CurveEditor {
     this.handle1Intersection = false
     this.handle2Intersection = false
     this.dragStart = null
-    this.dragStartWhichHandle = null
+    this.dragStartWhichHandle = null // will be 1, 2, or null
+    this.dragDataBefore = null
 
     makeAutoObservable(this)
   }
 
   setInnerWidth(value) { this.innerWidth = value }
+
+  static getHandleTargetInfo(whichHandle) {
+    let handleTargetIdx
+    let handleTargetType
+    if (whichHandle === 1) {
+      handleTargetIdx = 0
+      handleTargetType = 'handleOut'
+    } else if (whichHandle === 2) {
+      handleTargetIdx = 1
+      handleTargetType = 'handleIn'
+    }
+    return [handleTargetIdx, handleTargetType]
+  }
+
+  getDragTargetData(whichHandle) {
+    const [, targetKeyframes] = this.targetKeyframeInfo
+    const [handleTargetIdx, handleTargetType] = CurveEditor.getHandleTargetInfo(whichHandle)
+    const targetKeyframe = targetKeyframes[handleTargetIdx]
+    const selectedKeyframeFullIds = this.store.keyframeEditor.selectedIds
+    let targetKeyframeFullId = selectedKeyframeFullIds.find((fullId) => fullId.split('--')[2] === targetKeyframe.id)
+    if (!targetKeyframeFullId) {
+      // Somtimes only 1 keyframe is selected, but they share the same fullId prefix, thankfully
+      const otherKeyframe = targetKeyframes[(handleTargetIdx + 1) % 2]
+      const otherKeyframeFullId = selectedKeyframeFullIds.find((fullId) => fullId.split('--')[2] === otherKeyframe.id)
+      const otherKeyframeIdParts = otherKeyframeFullId.split('--')
+      targetKeyframeFullId = `${otherKeyframeIdParts[0]}--${otherKeyframeIdParts[1]}--${targetKeyframe.id}`
+    }
+    const targetControlHandle = targetKeyframe[handleTargetType]
+    return [targetKeyframeFullId, targetControlHandle.toPureObject()]
+  }
 
   setHandleIntersection = (handleNum, value) => {
     this[`handle${handleNum}Intersection`] = value
@@ -28,34 +60,39 @@ class CurveEditor {
   startDrag(vector, whichHandle) {
     this.dragStart = vector
     this.dragStartWhichHandle = whichHandle
+    if (!this.dragDataBefore) {
+      this.dragDataBefore = this.getDragTargetData(whichHandle)
+    }
   }
 
   stopDrag() {
+    if (this.dragStartWhichHandle) {
+      const dragDataAfter = this.getDragTargetData(this.dragStartWhichHandle)
+      this.store.actionStack.push({
+        revert: ['curveEditor.setHandlesOnKeyframe', [this.dragDataBefore]],
+        perform: ['curveEditor.setHandlesOnKeyframe', [dragDataAfter]],
+      })
+    }
+
     this.dragStart = null
     this.dragStartWhichHandle = null
+    this.dragDataBefore = null
   }
 
   moveHandleByIncrement(relativeMovement) {
-    const whichHandle = this.dragStartWhichHandle
-    const [_, targetKeyframes] = this.targetKeyframeInfo
-
     // Note: we do the inverse tranformation from Quadrant4 to anchor-relative position
     let toChangeX = relativeMovement.x / this.innerWidth
     let toChangeY = relativeMovement.y / this.innerWidth
 
-    let handleTargetIdx
-    let handleTargetType
-    if (whichHandle === 1) {
-      handleTargetIdx = 0
-      handleTargetType = 'handleOut'
+    const [handleTargetIdx, handleTargetType] = CurveEditor.getHandleTargetInfo(this.dragStartWhichHandle)
+    if (handleTargetIdx === 0) {
       toChangeY *= -1
-    } else if (whichHandle === 2) {
-      handleTargetIdx = 1
-      handleTargetType = 'handleIn'
+    } else if (handleTargetIdx === 1) {
       toChangeX *= -1
     }
 
     if (handleTargetIdx != null && handleTargetType != null) {
+      const [_, targetKeyframes] = this.targetKeyframeInfo
       const targetControlHandle = targetKeyframes[handleTargetIdx][handleTargetType]
       const newInfluence = targetControlHandle.influence + toChangeX
       const newDistance = targetControlHandle.distance + toChangeY
@@ -64,7 +101,22 @@ class CurveEditor {
     }
   }
 
+  setHandlesOnKeyframe(handleData) {
+    const [targetKeyframeFullId, targetControlHandlePure] = handleData
+    const [itemId, propertyName, keyframeId] = targetKeyframeFullId.split('--')
+    const item = this.store.rootContainer.findItem(itemId)
+    const targetKeyframe = item[propertyName].keyframes.find((k) => k.id === keyframeId)
+    const handleTargetType = targetControlHandlePure.type === Handle.TYPES.IN ? 'handleIn' : 'handleOut'
+    targetKeyframe[handleTargetType].fromPureObject(targetControlHandlePure)
+  }
+
   get targetKeyframeInfo() {
+    /**
+     * Returns an array of:
+     * - Should we show the CurveEditor canvas, or not
+     * - The 2 keyframe instances representing the left and right handles on the CurveEditor
+     * - The keyframe label to display above the canvas, for context
+     */
     const emptyReturn = [false, [], '']
     if (this.store.keyframeEditor.dragHasMovedAtLeastOneFrame) {
       // Dragging keyframes creates jenky output in the curve editor, so disable that possibility
