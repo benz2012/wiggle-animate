@@ -75,12 +75,18 @@ class KeyframeEditor {
 
   pushManyKeysOnProperties(itemData) {
     const idsToSelect = []
+    const lastItemId = itemData[0][0]
     itemData.forEach((data) => {
       const keyframeSelectionId = this.pushKeyOnProperty(...data, false)
-      idsToSelect.push(keyframeSelectionId)
+      const itemId = data[0]
+      if (itemId === lastItemId) {
+        idsToSelect.push(keyframeSelectionId)
+      }
     })
-    // TODO [2]: this can potentially select keyframes across differnt items, which will likely cause bugs. prevent this
-    this.setSelected(idsToSelect)
+    // We could try to set this, but it is dependant on which item the user has selected
+    // So we would need to either take that into account, or force select the last item
+    // For now, lets skip it, it causes bugs
+    // this.setSelected(idsToSelect)
   }
 
   deleteManyKeysOnProperties(itemData) {
