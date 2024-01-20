@@ -7,7 +7,6 @@ import Box from '@mui/material/Box'
 import AutoModeIcon from '@mui/icons-material/AutoMode'
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
-import FileCopyIcon from '@mui/icons-material/FileCopy'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import OfflinePinIcon from '@mui/icons-material/OfflinePin'
@@ -77,13 +76,6 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
           onClick={() => store.project.reInitializeAll()}
         >
           Close & New
-        </MenuListItem>
-        <MenuListItem
-          IconClass={FileCopyIcon}
-          disabled={store.storage.autosaveToBrowser}
-          onClick={() => null}
-        >
-          Duplicate
         </MenuListItem>
         <Divider />
         <MenuListItem
