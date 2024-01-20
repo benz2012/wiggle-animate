@@ -6,7 +6,6 @@ import Box from '@mui/material/Box'
 
 import AutoModeIcon from '@mui/icons-material/AutoMode'
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import OfflinePinIcon from '@mui/icons-material/OfflinePin'
@@ -43,12 +42,6 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
           onClick={() => null}
         >
           Settings
-        </MenuListItem>
-        <MenuListItem
-          IconClass={DriveFileRenameOutlineIcon}
-          onClick={() => null}
-        >
-          Rename
         </MenuListItem>
         <MenuListItem
           IconClass={TypeSpecimenIcon}
