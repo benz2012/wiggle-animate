@@ -15,6 +15,7 @@ class KeyframeEditor {
     this.dragStart = null
     this.dragStartFrameNums = {}
     this.dragHasMovedAtLeastOneFrame = false
+    this.dragDataBefore = null
     this.pixelsPerFrame = null
 
     this.lineWidthLessThanParent = 32
@@ -96,23 +97,44 @@ class KeyframeEditor {
   startDrag(startingX) {
     this.dragStart = startingX
     const selectedItem = this.store.rootContainer.findItem(this.store.build.selectedIds[0])
+    const shortToFullIdMap = {}
     this.dragStartFrameNums = this.selectedIds.reduce((final, keyframeFullId) => {
       /* eslint-disable no-param-reassign */
-      const [_, propertyName, keyframeId] = keyframeFullId.split('--')
+      const [, propertyName, keyframeId] = keyframeFullId.split('--')
       const keyframe = selectedItem[propertyName].keyframes.find((k) => k.id === keyframeId)
       final[keyframeId] = keyframe.frame
+      shortToFullIdMap[keyframeId] = keyframeFullId
       return final
     }, {})
     this.dragHasMovedAtLeastOneFrame = false
+    if (!this.dragDataBefore) {
+      this.dragDataBefore = Object.entries(this.dragStartFrameNums).map(([keyframeId, frameNum]) => {
+        const keyframeFullId = shortToFullIdMap[keyframeId]
+        return [keyframeFullId, frameNum]
+      })
+    }
   }
 
   stopDrag() {
+    if (this.dragHasMovedAtLeastOneFrame) {
+      const selectedItem = this.store.rootContainer.findItem(this.store.build.selectedIds[0])
+      const dragDataAfter = this.selectedIds.map((keyframeFullId) => {
+        const [, propertyName, keyframeId] = keyframeFullId.split('--')
+        const keyframe = selectedItem[propertyName].keyframes.find((k) => k.id === keyframeId)
+        return [keyframeFullId, keyframe.frame]
+      })
+      this.store.actionStack.push({
+        revert: ['keyframeEditor.setFrameNumsOnKeyframes', [this.dragDataBefore]],
+        perform: ['keyframeEditor.setFrameNumsOnKeyframes', [dragDataAfter]],
+      })
+    }
+
     this.dragStart = null
     this.dragStartFrameNums = {}
     this.dragHasMovedAtLeastOneFrame = false
+    this.dragDataBefore = null
   }
 
-  // TODO [1]: Need to track undo/redo for Keyframe Frame Movement
   moveAllSelectedToFrameForX(xPosition, mouseMovementDirection) {
     if (!this.dragStart) return
     const xOffset = xPosition - this.dragStart
@@ -167,6 +189,33 @@ class KeyframeEditor {
 
         targetKeyframe.frame = newFrameToSet
       })
+    })
+  }
+
+  setFrameNumsOnKeyframes(keyframeData) {
+    const itemRefs = {}
+    const keyframeRefs = {}
+    keyframeData.forEach((entry) => {
+      const [keyframeFullId, frameNum] = entry
+      const [itemId, propertyName, keyframeId] = keyframeFullId.split('--')
+
+      let item
+      if (itemId in itemRefs) {
+        item = itemRefs[itemId]
+      } else {
+        item = this.store.rootContainer.findItem(itemId)
+        itemRefs[itemId] = item
+      }
+
+      let keyframe
+      if (keyframeId in keyframeRefs) {
+        keyframe = keyframeRefs[keyframeId]
+      } else {
+        keyframe = item[propertyName].keyframes.find((k) => k.id === keyframeId)
+        keyframeRefs[keyframeId] = keyframe
+      }
+
+      keyframe.frame = frameNum
     })
   }
 
