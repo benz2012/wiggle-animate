@@ -78,17 +78,25 @@ class Stage {
 
   addNewPath = () => {
     const newPath = new Path()
-    this.addNewItemAndAction(newPath)
+    this.addNewItem(newPath)
     this.store.build.activePath = newPath
     return newPath
   }
 
   commitPath() {
     let pathId
-    if (this.store.build.activePath) {
-      pathId = this.store.build.activePath.id
-      this.store.build.activePath.commitPath()
+    const { activePath } = this.store.build
+    if (activePath) {
+      pathId = activePath.id
+      activePath.commitPath()
+
+      const pathParent = this.store.rootContainer.findParent(pathId)
+      this.store.actionStack.push({
+        perform: ['stage.addNewItemFromPureObject', [activePath.toPureObject(), [pathParent.id]]],
+        revert: ['rootContainer.findAndDelete', [pathId]],
+      })
     }
+
     this.store.build.tool = this.store.tools.NONE
     this.store.build.activePath = null
     this.store.build.pointerPosition = null
