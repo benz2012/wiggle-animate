@@ -1,4 +1,5 @@
 import { makeObservable, action, observable } from 'mobx'
+import debounce from 'lodash.debounce'
 
 import Container from './Container'
 import Item from './Item'
@@ -16,6 +17,7 @@ import { isPrimitive } from '../../utility/object'
 import { flattenTreeToRelationships } from '../../utility/tree'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
+const DEBOUNCE_DELAY_MS = 500
 
 class RootContainer extends Container {
   static get INITIAL() {
@@ -37,6 +39,10 @@ class RootContainer extends Container {
     // non-observable, just for local reference
     this.rootWidth = window.innerWidth * this.DPR
     this.rootHeight = window.innerHeight * this.DPR
+    this.arrowKeyMovement = {
+      whichDebounceCall: 'LEADING',
+      dataBefore: null,
+    }
 
     this.canvasPosition = RootContainer.INITIAL.canvasPosition
     this._canvasScale = RootContainer.INITIAL.canvasScale
@@ -256,8 +262,45 @@ class RootContainer extends Container {
     }
   }
 
+  debouncedActionSubmitter = debounce(() => {
+    if (this.arrowKeyMovement.whichDebounceCall === 'LEADING') {
+      // On the leading edge, cache the current value so we know what to roll-back to
+      // let valueToCache = property.isPrimitive ? property.value : property.value.toPureObject()
+      this.arrowKeyMovement.dataBefore = this.store.build.selectedIds.map((selectedId) => {
+        const selectedItem = this.findItem(selectedId)
+        return [selectedId, selectedItem.position.toPureObject()]
+      })
+      this.arrowKeyMovement.whichDebounceCall = 'TRAILING'
+    } else if (this.arrowKeyMovement.whichDebounceCall === 'TRAILING') {
+      // On the trailing edge, now that we know both before/after states, submit the action, and clear the cache
+      const dataAfter = this.store.build.selectedIds.map((selectedId) => {
+        const selectedItem = this.findItem(selectedId)
+        return [selectedId, selectedItem.position.toPureObject()]
+      })
+
+      // perform generic comparison to see if we should eliminate duplicate undo/redos
+      const hasValueReallyChanged = JSON.stringify(this.arrowKeyMovement.dataBefore) !== JSON.stringify(dataAfter)
+      if (hasValueReallyChanged) {
+        const stateBefore = ['_position', this.store.animation.now, this.arrowKeyMovement.dataBefore]
+        const stateAfter = ['_position', this.store.animation.now, dataAfter]
+        this.store.actionStack.push({
+          performedAt: Date.now() - DEBOUNCE_DELAY_MS,
+          revert: ['rootContainer.setValueForItems', stateBefore],
+          perform: ['rootContainer.setValueForItems', stateAfter],
+        })
+      }
+
+      this.arrowKeyMovement.dataBefore = null
+      this.arrowKeyMovement.whichDebounceCall = 'LEADING'
+    }
+  }, DEBOUNCE_DELAY_MS, { leading: true, trailing: true })
+
   moveAllSelectedByIncrement(relativeMovement, fromArrowKey = false) {
     const addedKeyframeData = []
+
+    if (fromArrowKey && this.arrowKeyMovement.whichDebounceCall === 'LEADING') {
+      this.debouncedActionSubmitter()
+    }
 
     this.store.build.selectedIds.forEach((selectedId) => {
       const relativeMovementScaledToCanvas = Vector2.multiply(
@@ -267,12 +310,11 @@ class RootContainer extends Container {
 
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
-      const currentPosition = selectedItem._position.getValueAtFrame(now)
+      const currentPosition = selectedItem.position
       let addedKeyframePosition
       let addedKeyframeOrigin
 
       if (fromArrowKey) {
-        // TODO [1]: capture end of arrow key movement and submit action
         // Plain and Simple 1-for-1 movement from Arrow Keys
         addedKeyframePosition = selectedItem._position.setValue(
           Vector2.add(currentPosition, relativeMovement),
@@ -280,7 +322,7 @@ class RootContainer extends Container {
         )
       } else if (this.store.build.hoveredControl === 'origin') {
         // Move origin of Selected item(s) (currently only for Containers)
-        const currentOrigin = selectedItem._origin.getValueAtFrame(now)
+        const currentOrigin = selectedItem.origin
         const transformationalInverse = relativeMovementScaledToCanvas
           .rotate(-1 * selectedItem.rotation.radians)
           .scale(1 / selectedItem.scale.x, 1 / selectedItem.scale.y)
@@ -314,6 +356,13 @@ class RootContainer extends Container {
       }
     })
 
+    // It would be cleaner to call this after adding the keyframe action, but instead I opted for
+    // consistency with mouse movements. This creates the same flaw where the redo-apply-keyframe
+    // uses the first changed value, not the true original value.
+    if (fromArrowKey && this.arrowKeyMovement.whichDebounceCall === 'TRAILING') {
+      this.debouncedActionSubmitter()
+    }
+
     if (addedKeyframeData.length > 0) {
       const revertState = addedKeyframeData.map((oneData) => ([oneData[0], oneData[1], oneData[2].id]))
       this.store.actionStack.push({
@@ -338,8 +387,8 @@ class RootContainer extends Container {
     this.store.build.selectedIds.forEach((selectedId) => {
       const selectedItem = this.findItem(selectedId)
       const { now } = this.store.animation
-      const currentWidth = selectedItem._width.getValueAtFrame(now)
-      const currentHeight = selectedItem._height.getValueAtFrame(now)
+      const currentWidth = selectedItem.width
+      const currentHeight = selectedItem.height
 
       const { parentTransform, rotation, scale, alignment } = selectedItem
       const parentTransformInverse = DOMMatrix.fromMatrix(parentTransform).invertSelf()

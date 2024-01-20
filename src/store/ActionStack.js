@@ -42,7 +42,7 @@ class ActionStack {
     if (performedAt <= this.lastPerformance) return
 
     this.undoStack.push(event)
-    this.lastPerformance = event.performedAt
+    this.lastPerformance = performedAt
 
     // Any new action creates a timeline branch. The simplest solution to this time paradox is to
     // empty the redo stack -- removing access to the previous forward-timeline.

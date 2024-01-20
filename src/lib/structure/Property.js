@@ -53,7 +53,7 @@ class Property {
 
     // Set initial value plainly or instantiate with null, arg, or ...args
     const castedValue = this.castAndCoerceValue(value)
-    this._setObservableValue(castedValue)
+    this._setObservableValue(castedValue) // sets this._value
 
     makeObservable(this, {
       _value: observable,
