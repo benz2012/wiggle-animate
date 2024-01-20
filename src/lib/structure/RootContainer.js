@@ -209,7 +209,7 @@ class RootContainer extends Container {
     this.parentTransform = identityMatrix()
 
     this.drawCanvas()
-    super.draw(this.parentTransform, null, null, null, [], [])
+    super.draw(this.parentTransform, null, null, null, [], [], null, [])
   }
 
   drawStageDots(rootWidth, rootHeight) {

@@ -30,12 +30,17 @@ const SaveDialog = ({ store, open, onClose }) => {
     store.project.name,
   ])
 
+  const focusNameField = () => {
+    document.getElementById('save-as-name-field')?.focus()
+  }
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
       maxWidth="sm"
       fullWidth
+      TransitionProps={{ onEntered: focusNameField }}
     >
       <DialogTitle>Download Your Project File</DialogTitle>
       <IconButton
@@ -57,6 +62,7 @@ const SaveDialog = ({ store, open, onClose }) => {
           It&apos;s small and portable, and you can even edit the JSON by-hand if you&apos;d like.
         </DialogContentText>
         <TextField
+          id="save-as-name-field"
           label="File Name"
           fullWidth
           InputProps={{ endAdornment: <InputAdornment position="end">.json</InputAdornment> }}
