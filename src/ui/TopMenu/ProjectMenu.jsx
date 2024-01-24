@@ -63,8 +63,6 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         </MenuListItem>
         <MenuListItem
           IconClass={CancelPresentationIcon}
-          hotkey="W"
-          hotkeyModifiers={[BMK]}
           disabled={store.storage.autosaveToBrowser}
           onClick={() => store.project.reInitializeAll()}
         >

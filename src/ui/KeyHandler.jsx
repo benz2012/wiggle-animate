@@ -65,21 +65,21 @@ const KeyHandler = ({ store }) => {
         break
 
       case '-':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           event.preventDefault()
           store.rootContainer.decrementScale()
         }
         break
 
       case '=':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           event.preventDefault()
           store.rootContainer.incrementScale()
         }
         break
 
       case 'a':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
             store.keyframeEditor.selectAllVisible()
@@ -91,7 +91,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'c':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
             // TODO [4]: Put Keyframe Copying Here
@@ -103,7 +103,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'd':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
             store.keyframeEditor.setSelected([])
@@ -115,10 +115,17 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'o':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           event.preventDefault()
           const inputEl = document.getElementById('input-project-file')
           inputEl.click()
+        }
+        break
+
+      case 's':
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          store.view.openDialog('save')
         }
         break
 
@@ -126,15 +133,12 @@ const KeyHandler = ({ store }) => {
         // NOTE: Paste has it's own special listener below
         break
 
-      case 's':
-        if (event.metaKey || event.ctrlKey) {
-          event.preventDefault()
-          store.view.openDialog('save')
-        }
+      case 'w':
+        // NOTE: the browser prevents overwriting this key
         break
 
       case 'x':
-        if (event.metaKey || event.ctrlKey) {
+        if (store.keyHeld.Meta) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
             // TODO [4]: Put Keyframe Cutting Here
@@ -146,14 +150,14 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'y':
-        if ((event.metaKey || event.ctrlKey)) {
+        if (store.keyHeld.Meta) {
           event.preventDefault()
           if (store.actionStack.canRedo) store.actionStack.redo()
         }
         break
 
       case 'z':
-        if ((event.metaKey || event.ctrlKey)) {
+        if (store.keyHeld.Meta) {
           event.preventDefault()
           if (store.actionStack.canUndo) store.actionStack.undo()
         }
@@ -176,7 +180,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowLeft':
-        if ((event.metaKey || event.ctrlKey) && !INPUT_HAS_FOCUS) {
+        if (store.keyHeld.Meta && !INPUT_HAS_FOCUS) {
           // Prevents accidental page navigation
           event.preventDefault()
         }
@@ -195,7 +199,7 @@ const KeyHandler = ({ store }) => {
         }
         break
       case 'ArrowRight':
-        if ((event.metaKey || event.ctrlKey) && !INPUT_HAS_FOCUS) {
+        if (store.keyHeld.Meta && !INPUT_HAS_FOCUS) {
           // Prevents accidental page navigation
           event.preventDefault()
         }
