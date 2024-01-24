@@ -80,6 +80,7 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
           Save As
         </MenuListItem>
         <MenuListItem
+          disabled={store.storage.storageEnabled === false}
           IconClass={AutoModeIcon}
           hotkey={(
             <Box component="span" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

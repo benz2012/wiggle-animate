@@ -66,6 +66,7 @@ const theme = {
         hover: new Color({ ...this.base.palette.WHITE.spec, a: 0.10 }),
         disabled: new Color({ ...this.base.palette.WHITE.spec, a: 0.15 }),
         active: new Color({ ...this.base.palette.WHITE.spec, a: 0.30 }),
+        half: new Color({ ...this.base.palette.WHITE.spec, a: 0.50 }),
         selected: new Color({ ...this.base.palette.WHITE.spec, a: 0.80 }),
       },
 

@@ -8,11 +8,22 @@ import { replaceKeysInObj } from '../utility/object'
 // TODO [3]: Project saving & save status
 
 class Project {
+  static get STATUSES() {
+    return {
+      CLEAN: 'clean slate',
+      UNSAVED: 'unsaved',
+      SAVING: 'saving',
+      SAVED: 'saved',
+      LOADED: 'loaded',
+      ERROR: 'error saving', // has no use, currently
+    }
+  }
+
   constructor(store) {
     this.store = store
 
     this.name = ''
-    this.saveStatus = 'unknown'
+    this._saveStatus = Project.STATUSES.CLEAN
     this.fonts = []
     this.numFontsLoaded = 0
     this.initialize()
@@ -27,6 +38,7 @@ class Project {
 
   reInitializeAll() {
     this.name = ''
+    this.saveStatus = Project.STATUSES.CLEAN
     this.initialize()
 
     const { actionStack, rootContainer, build, animation, propertyEditor, keyframeEditor } = this.store
@@ -60,6 +72,13 @@ class Project {
     // Finally, cleanse the Tree
     rootContainer._children = RootContainer.INITIAL.children
     rootContainer._sortOrder = RootContainer.INITIAL.sortOrder
+  }
+
+  // We use a get/set here since saveStatus is touched inside of a callback, so to enables a proper mobx
+  // action to be used in that "this" context
+  get saveStatus() { return this._saveStatus }
+  set saveStatus(newValue) {
+    this._saveStatus = newValue
   }
 
   incrementFontsLoaded = () => {
@@ -123,6 +142,7 @@ class Project {
     const output = JSON.stringify(this.generateSaveObject())
     const fileBlob = new Blob([output], { type: 'application/json' })
     downloadBlob(fileBlob, `${fileName}.json`)
+    this.saveStatus = Project.STATUSES.SAVED
   }
 
   load(fileObject) {
@@ -135,6 +155,8 @@ class Project {
   }
 
   loadFromObject(saveObject) {
+    this.reInitializeAll()
+
     const pureObject = replaceKeysInObj(saveObject, {
       c: 'className',
       v: 'value',
@@ -143,6 +165,8 @@ class Project {
     this.fromPureObject(pureObject.project)
     this.store.animation.fromPureObject(pureObject.animation)
     this.store.rootContainer.fromPureObject(pureObject.tree)
+
+    this.saveStatus = Project.STATUSES.LOADED
   }
 }
 

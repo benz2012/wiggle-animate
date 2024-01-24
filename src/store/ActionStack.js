@@ -49,6 +49,13 @@ class ActionStack {
     // Undos from before this point will still be kept, as they are unrelated to the branch.
     // More elegant idea here: https://github.com/zaboople/klonk/blob/master/TheGURQ.md
     this.redoStack = []
+
+    // The first action performed invalidates a "clean slate" project
+    // However, in Autosave mode, there is technically never an Unsaved state
+    if (!this.store.storage.autosaveToBrowser) {
+      const ProjectClass = this.store.project.constructor
+      this.store.project.saveStatus = ProjectClass.STATUSES.UNSAVED
+    }
   }
 
   getFunctionFromPath(functionPath) {

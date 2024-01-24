@@ -1,5 +1,6 @@
 import { makeObservable, action, autorun, observable } from 'mobx'
 
+import Project from './Project'
 import { storageEnabled, storageSet, storageGet } from '../utility/storage'
 
 class Storage {
@@ -13,14 +14,17 @@ class Storage {
   constructor(store) {
     this.store = store
 
+    this.storageEnabled = storageEnabled()
     this.autosaveToBrowser = false
     this.disposer1 = null
+    this.holdTextOnScreenTimeoutId = null
+
     makeObservable(this, {
       autosaveToBrowser: observable,
       setAutosaveToBrowser: action,
     })
 
-    if (storageEnabled() === false) return
+    if (this.storageEnabled === false) return
 
     const prevAutosavePreference = storageGet(Storage.KEYS.AUTOSAVE_TO_BROWSER)
     if (prevAutosavePreference != null) {
@@ -37,20 +41,28 @@ class Storage {
     if (projectObj) this.store.project.loadFromObject(projectObj)
 
     this.startAutosavingToBrowser()
+    // TODO [4]: autosaving might be cause unnecessary synchrnous load if the project file
+    //           is getting large. we should design a solution for this
   }
 
-  saveProjectToBrowserLocalStorate = () => {
+  saveProjectToBrowserLocalStorage = () => {
+    clearTimeout(this.holdTextOnScreenTimeoutId)
+    this.store.project.saveStatus = Project.STATUSES.SAVING
     const saveObject = this.store.project.generateSaveObject()
     storageSet(Storage.KEYS.PROJECT, saveObject)
+    this.holdTextOnScreenTimeoutId = setTimeout(() => {
+      this.store.project.saveStatus = Project.STATUSES.SAVED
+    }, 500)
   }
 
   startAutosavingToBrowser() {
-    this.saveProjectToBrowserLocalStorate() // run once without delay
-    this.disposer1 = autorun(this.saveProjectToBrowserLocalStorate, { delay: 3000 })
+    this.saveProjectToBrowserLocalStorage() // run once without delay
+    this.disposer1 = autorun(this.saveProjectToBrowserLocalStorage, { delay: 400 })
   }
 
   stopAutosavingToBrowser() {
     if (this.disposer1) this.disposer1()
+    this.store.project.saveStatus = Project.STATUSES.UNSAVED
   }
 
   setAutosaveToBrowser(value) {
