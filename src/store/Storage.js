@@ -33,16 +33,6 @@ class Storage {
       this.autosaveToBrowser = true
       storageSet(Storage.KEYS.AUTOSAVE_TO_BROWSER, true)
     }
-
-    if (!this.autosaveToBrowser) return
-
-    // Auto Load project from storage, if its there
-    const projectObj = storageGet(Storage.KEYS.PROJECT)
-    if (projectObj) this.store.project.loadFromObject(projectObj)
-
-    this.startAutosavingToBrowser()
-    // TODO [4]: autosaving might be cause unnecessary synchrnous load if the project file
-    //           is getting large. we should design a solution for this
   }
 
   saveProjectToBrowserLocalStorage = () => {
@@ -55,7 +45,21 @@ class Storage {
     }, 500)
   }
 
+  initiateAutosaveLogicOnce() {
+    // Only call this function once, when the Root Store is fully setup
+    // regardless of Load/Clear/New/Save actions during the users session
+    if (!this.autosaveToBrowser) return
+
+    // Auto Load project from storage, if its there
+    const projectObj = storageGet(Storage.KEYS.PROJECT)
+    if (projectObj) this.store.project.loadFromObject(projectObj)
+
+    this.startAutosavingToBrowser()
+  }
+
   startAutosavingToBrowser() {
+    // TODO [4]: autosaving might be cause unnecessary synchrnous load if the project file
+    //           is getting large. we should design a solution for this
     this.saveProjectToBrowserLocalStorage() // run once without delay
     this.disposer1 = autorun(this.saveProjectToBrowserLocalStorage, { delay: 400 })
   }

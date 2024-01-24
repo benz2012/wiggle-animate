@@ -5,7 +5,6 @@ import { downloadBlob } from '../utility/files'
 import { replaceKeysInObj } from '../utility/object'
 
 // TODO [3]: Project Name setting & display
-// TODO [3]: Project saving & save status
 
 class Project {
   static get STATUSES() {

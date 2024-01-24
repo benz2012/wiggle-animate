@@ -42,6 +42,9 @@ class RootStore {
     this.propertyEditor = new PropertyEditor(this)
     this.keyframeEditor = new KeyframeEditor(this)
     this.curveEditor = new CurveEditor(this)
+
+    // Perform Last
+    this.storage.initiateAutosaveLogicOnce()
   }
 }
 
