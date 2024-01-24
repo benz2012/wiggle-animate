@@ -31,12 +31,17 @@ class Output {
       return
     }
 
+    let prefix = 'animation'
+    if (this.store.project.name) {
+      prefix = this.store.project.name.replaceAll(' ', '_')
+    }
+
     const dateStamp = (new Date()).toISOString()
       .replaceAll('-', '')
       .replaceAll('T', '')
       .replaceAll(':', '')
       .slice(0, 12)
-    const fileName = `animation-${dateStamp}.webm`
+    const fileName = `${prefix}-${dateStamp}.webm`
     this.fileName = fileName
   }
 

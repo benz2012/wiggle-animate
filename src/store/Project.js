@@ -4,8 +4,6 @@ import { browserFonts, loadFont } from '../utility/fonts'
 import { downloadBlob } from '../utility/files'
 import { replaceKeysInObj } from '../utility/object'
 
-// TODO [3]: Project Name setting & display
-
 class Project {
   static get STATUSES() {
     return {
@@ -71,6 +69,10 @@ class Project {
     // Finally, cleanse the Tree
     rootContainer._children = RootContainer.INITIAL.children
     rootContainer._sortOrder = RootContainer.INITIAL.sortOrder
+  }
+
+  setName = (newName) => {
+    this.name = newName
   }
 
   // We use a get/set here since saveStatus is touched inside of a callback, so to enables a proper mobx
