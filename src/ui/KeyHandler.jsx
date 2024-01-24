@@ -114,6 +114,14 @@ const KeyHandler = ({ store }) => {
         }
         break
 
+      case 'o':
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault()
+          const inputEl = document.getElementById('input-project-file')
+          inputEl.click()
+        }
+        break
+
       case 'v':
         // NOTE: Paste has it's own special listener below
         break

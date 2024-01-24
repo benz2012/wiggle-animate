@@ -107,14 +107,10 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         accept="application/json"
         style={{ display: 'none' }}
         onChange={(event) => {
-          // TODO [2]: since the input doesn't clear itself, onChange doesn't get called if you try to
-          //           load the same file from disk a 2nd time, which is a valid use case
-
-          // TODO [2]: for some reason chosing cance;/escape makes this fire with an empty list
-          //           of files, but only after we had already used it once and chosen a file
-
+          /* eslint-disable no-param-reassign */
           const chosenFile = event.target.files[0]
           store.project.load(chosenFile)
+          event.target.value = ''
         }}
       />
     </>
