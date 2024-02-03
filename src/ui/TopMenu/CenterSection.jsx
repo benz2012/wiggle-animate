@@ -27,10 +27,13 @@ const CenterSection = observer(({ store }) => {
   const [nameTextWidth, setNameTextWidth] = useState(0)
 
   const commitNewName = () => {
-    store.actionStack.push({
-      revert: ['project.setName', [previousName.current]],
-      perform: ['project.setName', [store.project.name]],
-    })
+    const nameDidChange = previousName.current !== store.project.name
+    if (nameDidChange) {
+      store.actionStack.push({
+        revert: ['project.setName', [previousName.current]],
+        perform: ['project.setName', [store.project.name]],
+      })
+    }
     setEditName(false)
   }
 
