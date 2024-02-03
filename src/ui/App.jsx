@@ -12,6 +12,7 @@ import PointerHandler from './PointerHandler'
 import SaveDialog from './Modal/SaveDialog'
 import ExportDialog from './Modal/ExportDialog'
 import FontDialog from './Modal/FontDialog'
+import HelpDialog from './Modal/HelpDialog'
 import HoldingSnackbar from './Modal/HoldingSnackbar'
 import useWindowSize from './hooks/useWindowSize'
 import { peekAtObservables } from '../utility/tree'
@@ -153,6 +154,10 @@ const App = observer(({ store }) => {
         store={store}
         open={store.view.dialogs.addFonts}
         onClose={() => store.view.closeDialog('addFonts')}
+      />
+      <HelpDialog
+        open={store.view.dialogs.help}
+        onClose={() => store.view.closeDialog('help')}
       />
 
       {/* Snackbars */}
