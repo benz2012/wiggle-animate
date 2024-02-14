@@ -137,7 +137,7 @@ class Build {
       const child = startingContainer.children[childId]
       if (child instanceof Container) {
         someGrandchildSelected = this.highestSelectedItemId(child)
-        return true
+        if (someGrandchildSelected) return true
       }
       return false
     })
