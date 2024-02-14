@@ -17,6 +17,10 @@ import DraggingIndicators from './DraggingIndicators'
 
 // TODO [4]: Add Layer Visible & Button Icon in menu
 
+// TODO [4]: Add arrow on header that allows show/hide of left menu
+
+// TODO [4]: use material icons on left menu action buttons
+
 const LeftMenu = observer(({ store, windowHeight }) => {
   const listContainerRef = useRef()
 
