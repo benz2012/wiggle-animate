@@ -141,6 +141,36 @@ class Container extends Drawable {
     return children
   }
 
+  openParentsOfTheseItems(itemIds) {
+    let openUp = false
+
+    const itemsNotOnThisLevel = []
+    itemIds.forEach((itemId) => {
+      if (itemId in this._children) {
+        openUp = true
+      } else {
+        itemsNotOnThisLevel.push(itemId)
+      }
+    })
+
+    this.sortOrder.forEach((childId) => {
+      const child = this._children[childId]
+      if (child instanceof Container) {
+        const childHasOpened = child.openParentsOfTheseItems(itemsNotOnThisLevel)
+        if (childHasOpened === true) {
+          // we bubble up true events, but not false ones
+          openUp = true
+        }
+      }
+    })
+
+    if (openUp) {
+      this.showChildren = true
+    }
+
+    return openUp
+  }
+
   updatePropertiesForFrame(frame) {
     super.updatePropertiesForFrame(frame)
     Object.values(this.children).forEach((child) => {

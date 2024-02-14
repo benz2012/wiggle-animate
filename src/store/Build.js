@@ -149,11 +149,15 @@ class Build {
     if (!isEqual(this.selectedIds, values)) {
       this.store.keyframeEditor.setSelected([])
     }
+
     this.selectedIds = values
+
+    this.store.rootContainer.openParentsOfTheseItems(values)
   }
 
   addToSelection(value) {
     this.selectedIds = [...this.selectedIds, value]
+    this.store.rootContainer.openParentsOfTheseItems([value])
     this.store.keyframeEditor.setSelected([])
   }
 
