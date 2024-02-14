@@ -246,25 +246,28 @@ const setContainerControllerHandleEllipseOnCtx = (ctx) => {
     Math.PI * 2,
   )
 }
-const drawContainerController = (ctx, controlHovered) => {
+const drawContainerController = (ctx, controlHovered, dimmed = false) => {
   // TODO [4]: Stroke and Fill without container scale applied
   const { innerBox, outerBox } = ContainerControllerSizes
 
   ctx.strokeStyle = `${theme.palette.tertiary[100]}`
+  if (dimmed) ctx.strokeStyle = `${theme.palette.tertiary[50]}`
   ctx.lineWidth = 2
   ctx.lineJoin = 'miter'
 
   ctx.beginPath()
   ctx.rect(innerBox / -2, innerBox / -2, innerBox, innerBox)
-  ctx.stroke()
+  if (!dimmed) ctx.stroke()
   if (controlHovered === 'innerBox') {
     ctx.fillStyle = `${theme.palette.tertiary[20]}`
     ctx.fill()
   }
 
   ctx.beginPath()
+  if (dimmed) ctx.setLineDash([outerBox / 16, outerBox / 8, outerBox / 16, 0])
   ctx.rect(outerBox / -2, outerBox / -2, outerBox, outerBox)
   ctx.stroke()
+  ctx.setLineDash([])
   if (controlHovered === 'outerBox') {
     ctx.beginPath()
     ctx.rect(outerBox / -2, outerBox / -2, outerBox, outerBox)
@@ -272,6 +275,8 @@ const drawContainerController = (ctx, controlHovered) => {
     ctx.fillStyle = `${theme.palette.tertiary[20]}`
     ctx.fill('evenodd')
   }
+
+  if (dimmed) return
 
   ctx.beginPath()
   ctx.moveTo(0, -innerBox)
