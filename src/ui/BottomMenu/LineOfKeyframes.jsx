@@ -17,6 +17,7 @@ const LineOfKeyframes = observer(({
   frameOut,
   pixelsPerFrame,
   drawNewKeyAt,
+  drawCurveTargetLineWith,
   addKeyframe,
   onKeyframePress,
   onKeyframeDoubleClick,
@@ -25,6 +26,14 @@ const LineOfKeyframes = observer(({
   const visibleKeyframes = keyframes.filter((keyframe) => (
     keyframe.frame >= frameIn && keyframe.frame <= frameOut
   )).sort(Keyframe.sort)
+
+  let curveTargetLineLeft
+  let curveTargetLineRight
+  if (drawCurveTargetLineWith?.length > 0) {
+    const [firstKeyframe, secondKeyframe] = drawCurveTargetLineWith
+    curveTargetLineLeft = ((firstKeyframe.frame - frameIn) * pixelsPerFrame).toFixed(2)
+    curveTargetLineRight = ((secondKeyframe.frame - frameIn) * pixelsPerFrame).toFixed(2)
+  }
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -63,6 +72,19 @@ const LineOfKeyframes = observer(({
             backgroundColor: 'action.hover',
           })}
         />
+
+        {/* Selected Keyframe Curve Range */}
+        {(drawCurveTargetLineWith != null) && (
+          <Box
+            sx={{
+              position: 'absolute',
+              left: `${curveTargetLineLeft}px`,
+              width: `${curveTargetLineRight - curveTargetLineLeft}px`,
+              height: '2px',
+              backgroundColor: `${theme.palette.tertiary[100]}`,
+            }}
+          />
+        )}
 
         {/* Dimmed Keyframe-to-Add Dot */}
         {(drawNewKeyAt != null) && (
