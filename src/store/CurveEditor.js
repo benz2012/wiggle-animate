@@ -145,12 +145,14 @@ class CurveEditor {
       const sortedKeyframes = [...selectedProperty.keyframes].sort(Keyframe.sort)
       const selectedKeyframeIdx = sortedKeyframes.findIndex((keyframe) => keyframe.id === selectedKeyframeId)
       const nextKeyframeIdx = selectedKeyframeIdx + 1
-      if ((sortedKeyframes.length - 1) < (selectedKeyframeIdx + 1)) {
-        // The one that is selected is the last one, no pair exists
-        return emptyReturn
+      const keyframeLabel = keyframeLabelFromProperty(selectedProperty)
+
+      // The one that is selected is the last one, no forward pair exists, but we will
+      // allow the user to act on the reverse pair for convenience
+      if ((sortedKeyframes.length - 1) === selectedKeyframeIdx) {
+        return [true, [sortedKeyframes[selectedKeyframeIdx - 1], sortedKeyframes[selectedKeyframeIdx]], keyframeLabel]
       }
 
-      const keyframeLabel = keyframeLabelFromProperty(selectedProperty)
       return [true, [sortedKeyframes[selectedKeyframeIdx], sortedKeyframes[nextKeyframeIdx]], keyframeLabel]
     }
 

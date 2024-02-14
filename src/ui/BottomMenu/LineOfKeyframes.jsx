@@ -81,7 +81,7 @@ const LineOfKeyframes = observer(({
               left: `${curveTargetLineLeft}px`,
               width: `${curveTargetLineRight - curveTargetLineLeft}px`,
               height: '2px',
-              backgroundColor: `${theme.palette.tertiary[100]}`,
+              backgroundColor: `${theme.palette.tertiary[50]}`,
             }}
           />
         )}
