@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx'
 
 import Keyframe from '../lib/animation/Keyframe'
 import Handle from '../lib/animation/Handle'
+import Vector2 from '../lib/structure/Vector2'
 import { clamp } from '../utility/numbers'
 import { keyframeLabelFromProperty } from '../utility/state'
 
@@ -79,10 +80,13 @@ class CurveEditor {
     this.dragDataBefore = null
   }
 
-  moveHandleByIncrement(relativeMovement) {
+  moveHandleToVector(pointerVector) {
+    const { influence: dragStartInfluence, distance: dragStartDistance } = this.dragDataBefore[1]
+    const relativeMovementFromDragStart = Vector2.subtract(pointerVector, this.dragStart)
+
     // Note: we do the inverse tranformation from Quadrant4 to anchor-relative position
-    let toChangeX = relativeMovement.x / this.innerWidth
-    let toChangeY = relativeMovement.y / this.innerWidth
+    let toChangeX = relativeMovementFromDragStart.x / this.innerWidth
+    let toChangeY = relativeMovementFromDragStart.y / this.innerWidth
 
     const [handleTargetIdx, handleTargetType] = CurveEditor.getHandleTargetInfo(this.dragStartWhichHandle)
     if (handleTargetIdx === 0) {
@@ -94,8 +98,14 @@ class CurveEditor {
     if (handleTargetIdx != null && handleTargetType != null) {
       const [_, targetKeyframes] = this.targetKeyframeInfo
       const targetControlHandle = targetKeyframes[handleTargetIdx][handleTargetType]
-      const newInfluence = targetControlHandle.influence + toChangeX
-      const newDistance = targetControlHandle.distance + toChangeY
+      let newInfluence = dragStartInfluence + toChangeX
+      let newDistance = dragStartDistance + toChangeY
+
+      if (this.store.keyHeld.Shift) {
+        newInfluence = Math.round(newInfluence * 10) / 10
+        newDistance = Math.round(newDistance * 10) / 10
+      }
+
       targetControlHandle.influence = clamp(newInfluence, 0, 1)
       targetControlHandle.distance = clamp(newDistance, 0, 1)
     }

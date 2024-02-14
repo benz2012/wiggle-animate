@@ -87,9 +87,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
       store.keyframeEditor.moveAllSelectedToFrameForX(event.clientX, Math.sign(event.movementX))
       //
     } else if (curveHandleDragStart) {
-      const relativeMovement = Vector2.subtract(pointerVector, curveHandleDragStart)
-      store.curveEditor.moveHandleByIncrement(relativeMovement)
-      store.curveEditor.startDrag(pointerVector, whichCurveControlHandle)
+      store.curveEditor.moveHandleToVector(pointerVector)
       //
     } else if (leftMenuDragStart) {
       const { containerToOpen } = store.leftMenu
