@@ -24,17 +24,10 @@ const ColorBox = ({ color, onClick }) => (
 
 const ColorPicker = ({ color, setColor, close, autoFocus = true }) => {
   useEffect(() => {
-    // The goal is that this will only run once when the element is rendered
-    // however, to make it future proof, we should pass in an open/close prop
-    // since "one initial render" is no longer gaurunteed
     if (!autoFocus) return
-    // TODO [1]: figure out how to make these elements the activeElemnets. Doesn't need to be "focused" per-se
-    //           but I need to route key events to this after I call the following lines
-    setTimeout(() => {
-      const colorPickerPicker = document.getElementById('color-picker-picker')
-      if (!colorPickerPicker) return
-      colorPickerPicker.focus()
-    }, 1500)
+    const colorPickerPicker = document.getElementById('color-picker-picker')
+    if (!colorPickerPicker) return
+    colorPickerPicker.focus()
   }, [autoFocus])
 
   return (
@@ -46,7 +39,6 @@ const ColorPicker = ({ color, setColor, close, autoFocus = true }) => {
         }
       }}
       onKeyDown={(event) => {
-        // TODO [1]: check these keywords on MDN
         // NOTE: Here are some key actions that live outside of the KeyHandler since the
         //       Colorpicker open-state would be extra complicatcated if controlled globally
         if (['Escape', 'Enter'].includes(event.key)) {
@@ -79,7 +71,13 @@ const ColorPicker = ({ color, setColor, close, autoFocus = true }) => {
         >
           <IconButton size="small" onClick={close}><CloseIcon /></IconButton>
         </Box>
-        <RgbaColorPicker id="color-picker-picker" color={color} onChange={setColor} />
+        <RgbaColorPicker
+          id="color-picker-picker"
+          tabIndex={-1}
+          style={{ outline: 'none' }}
+          color={color}
+          onChange={setColor}
+        />
       </Box>
     </Backdrop>
   )
