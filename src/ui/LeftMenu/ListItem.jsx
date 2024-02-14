@@ -1,3 +1,5 @@
+// TODO [2]: add the item icon to the left of the item, instead of using the name prefix (or maybe try both)
+
 const ListItem = ({ id, name, className, textHeight, paddingHeight, onClick }) => (
   <li
     id={`left-menu-item--${id}`}

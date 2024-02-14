@@ -19,6 +19,8 @@ import { getBrowserModifierKey } from '../../utility/string'
 const BMK = getBrowserModifierKey()
 const size20 = { width: '20px', height: '20px' }
 
+// TODO [2]: Add Project Settings modal: canvas size, canvas, background color, animation length, FPS
+
 // TODO [3]: Settings Ideas
 //  - When selecting item on the stage, force open the containers in tree view, default: true
 

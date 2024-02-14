@@ -289,7 +289,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'c':
-        // TODO [3]: When user was "recently" holding meta key, skip this event as it conflicts
+        // TODO [2]: When user was "recently" holding meta key, skip this event as it conflicts
         //           with Meta+C "Copy"
         if (BOTTOM_HAS_FOCUS) {
           store.animation.setIn(Animation.FIRST)

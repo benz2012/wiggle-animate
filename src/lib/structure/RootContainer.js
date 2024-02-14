@@ -46,7 +46,7 @@ class RootContainer extends Container {
 
     this.canvasPosition = RootContainer.INITIAL.canvasPosition
     this._canvasScale = RootContainer.INITIAL.canvasScale
-    // TODO [4]: make these customizable
+    // TODO [2]: make these customizable
     this.canvasSize = RootContainer.INITIAL.canvasSize
     this.canvasFill = RootContainer.INITIAL.canvasFill
     this.setCanvasToBestFit()

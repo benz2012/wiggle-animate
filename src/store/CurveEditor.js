@@ -5,7 +5,7 @@ import Handle from '../lib/animation/Handle'
 import { clamp } from '../utility/numbers'
 import { keyframeLabelFromProperty } from '../utility/state'
 
-// TODO [3]: handle drag release when outside of HTML element
+// TODO [2]: handle drag release when outside of HTML element
 
 class CurveEditor {
   constructor(store) {

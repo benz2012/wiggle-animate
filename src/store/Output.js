@@ -51,7 +51,7 @@ class Output {
     if (!this.browserCanExport) return
 
     // TODO [3]: Have progress output displayed Prepare-boolean, Frames-progress, video progress
-    // TODO [3]: wrap this whole thing in a giant error handler
+    // TODO [2]: wrap this whole thing in a giant error handler
 
     this.store.animation.pause()
     this.store.animation.goToFirst()

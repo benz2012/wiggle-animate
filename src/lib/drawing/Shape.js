@@ -161,6 +161,7 @@ class Shape extends Drawable {
     if (rectHandleIndicies.includes(handleIdxIntersected)) {
       // TODO [3]: don't base octet on item position, instead use the angle between the two conjoining edges
       //       however you will need to backtrack for special alignment cases
+      //       -- not so sure on this one. I need to see a more specific case where it would help
       const [handleX, handleY, handleW, handleH] = handleRectSpec
       const handleCenterPoint = new Vector2(handleX + handleW / 2, handleY + handleH / 2)
       const handlePointInGlobalSpace = this.currentTransform.translateSelf(...handleCenterPoint.values)

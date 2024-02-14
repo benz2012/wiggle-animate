@@ -31,7 +31,7 @@ const Dash = () => (
   />
 )
 
-// TODO [3]: when work region is smaller than Project total, draw left/right arrow instead of vertical tick mark
+// TODO [2]: when work region is smaller than Project total, draw left/right arrow instead of vertical tick mark
 
 const RegionSelection = observer(({
   frameIn,

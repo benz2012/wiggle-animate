@@ -10,7 +10,7 @@ import {
 } from '../../utility/drawing'
 import shapeTypeMap from '../shapes/shapeTypeMap'
 
-// TODO [3]: if an item is inside of a container, draw a dim version of the container controller to
+// TODO [2]: if an item is inside of a container, draw a dim version of the container controller to
 //       indicate this to the user, when the child item is selected
 //       Then, add an option to disable that feature
 

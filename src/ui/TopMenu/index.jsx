@@ -14,8 +14,9 @@ import EditMenu from './EditMenu'
 import InsertMenu from './InsertMenu'
 import CenterSection from './CenterSection'
 
+// TODO [2]: finish the help-page branch work
 // TODO [4]: make the button and menu animations quicker / more-snappy
-// TODO [3]: allow "menu-open-rollover", once once menu is open, moving mouse over
+// TODO [2]: allow "menu-open-rollover", once once menu is open, moving mouse over
 //           the other buttons instantly opens that menu instead
 
 const focusStage = () => setTimeout(() => document.getElementById('stage').focus(), 0)
