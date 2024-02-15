@@ -32,7 +32,7 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
     const { selectedIds, dragStart, tool, pseudoTool, activePoint } = store.build
     const { dragStart: playheadDragStart } = store.playhead
     const { dragStart: keyframeDragStart } = store.keyframeEditor
-    const { dragStart: curveHandleDragStart, dragStartWhichHandle: whichCurveControlHandle } = store.curveEditor
+    const { dragStart: curveHandleDragStart } = store.curveEditor
     const { dragStart: leftMenuDragStart } = store.leftMenu
 
     const pointerVector = new Vector2(event.clientX * store.DPR, event.clientY * store.DPR)
