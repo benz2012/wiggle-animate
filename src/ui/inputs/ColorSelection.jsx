@@ -3,9 +3,7 @@ import Box from '@mui/material/Box'
 import Backdrop from '@mui/material/Backdrop'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
-import { RgbaColorPicker } from 'react-colorful'
-
-import { PANEL_WIDTH } from '../PropertyEditor/config'
+import { RgbaColorPicker, RgbColorPicker } from 'react-colorful'
 
 const ColorBox = ({ color, onClick }) => (
   <Box
@@ -22,13 +20,21 @@ const ColorBox = ({ color, onClick }) => (
   />
 )
 
-const ColorPicker = ({ color, setColor, close, autoFocus = true }) => {
+const ColorPicker = ({ color, setColor, close, excludeAlpha = false, autoFocus = true }) => {
   useEffect(() => {
     if (!autoFocus) return
     const colorPickerPicker = document.getElementById('color-picker-picker')
     if (!colorPickerPicker) return
     colorPickerPicker.focus()
   }, [autoFocus])
+
+  const sharedProps = {
+    id: 'color-picker-picker',
+    tabIndex: -1,
+    style: { outline: 'none' },
+    color,
+    onChange: setColor,
+  }
 
   return (
     <Backdrop
@@ -53,7 +59,6 @@ const ColorPicker = ({ color, setColor, close, autoFocus = true }) => {
       <Box
         sx={(theme) => ({
           position: 'absolute',
-          left: (PANEL_WIDTH - 200) / 2,
           zIndex: theme.zIndex.modal + 1,
           display: 'flex',
           flexDirection: 'column',
@@ -71,13 +76,11 @@ const ColorPicker = ({ color, setColor, close, autoFocus = true }) => {
         >
           <IconButton size="small" onClick={close}><CloseIcon /></IconButton>
         </Box>
-        <RgbaColorPicker
-          id="color-picker-picker"
-          tabIndex={-1}
-          style={{ outline: 'none' }}
-          color={color}
-          onChange={setColor}
-        />
+        {excludeAlpha ? (
+          <RgbColorPicker {...sharedProps} />
+        ) : (
+          <RgbaColorPicker {...sharedProps} />
+        )}
       </Box>
     </Backdrop>
   )

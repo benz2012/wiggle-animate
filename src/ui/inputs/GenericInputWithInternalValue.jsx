@@ -22,6 +22,7 @@ const GenericInputWithInternalValue = observer(({
   pairVector = false,
   togglePairing,
   isColor = false,
+  excludeAlpha = false,
   noLabel = false,
   onBlur = voidFunc,
   ...rest
@@ -238,6 +239,7 @@ const GenericInputWithInternalValue = observer(({
           color={{ ...propertyValue.spec, a: secondaryValue / 100 }}
           setColor={setColorPickerValue}
           close={() => toggleColorPicker(false)}
+          excludeAlpha={excludeAlpha}
         />
       )}
 

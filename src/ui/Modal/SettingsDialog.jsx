@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import Box from '@mui/material/Box'
@@ -10,9 +10,8 @@ import List from '@mui/material/List'
 import Paper from '@mui/material/Paper'
 
 import TabListButton from '../settingsComponents/TabListButton'
-import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
-import { parseAndValidateInteger } from '../inputs/util'
-import { voidFunc } from '../../utility/object'
+import CanvasSizeInput from '../settingsComponents/CanvasSizeInput'
+import CanvasFillInput from '../settingsComponents/CanvasFillInput'
 
 // animation length, FPS
 
@@ -21,6 +20,18 @@ import { voidFunc } from '../../utility/object'
 
 const SettingsDialog = observer(({ store, open, onClose }) => {
   const [tab, setTab] = useState('project')
+
+  const settingsForTab = useMemo(() => {
+    if (tab === 'project') {
+      return (
+        <>
+          <CanvasSizeInput store={store} availableWidth={200} />
+          <CanvasFillInput store={store} availableWidth={200} />
+        </>
+      )
+    }
+    return null
+  }, [tab, store])
 
   return (
     <Dialog
@@ -63,36 +74,7 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
             gap: 1,
           })}
         >
-          <GenericInputWithInternalValue
-            label="Canvas Size"
-            availableWidth={200}
-            propertyValue={store.rootContainer.canvasSize}
-            subProperties={['width', 'height']}
-            setPropertyValue={(newValue) => store.rootContainer.setCanvasSize(newValue)}
-            parseAndValidateNewValue={(value) => {
-              // Values below 10-pixel minimum will be marked invalid
-              const parseOutput = parseAndValidateInteger(value)
-              if (parseOutput.isValid && parseOutput.parsedValue !== Math.max(parseOutput.parsedValue, 10)) {
-                parseOutput.isValid = false
-              }
-              return parseOutput
-            }}
-            addDragBox
-          />
-          <GenericInputWithInternalValue
-            label="Canvas Fill"
-            availableWidth={200}
-            propertyValue={store.rootContainer.canvasFill}
-            // We aren't allowing alpha editing at this time, but this is needed to prevent the
-            // colorpicker component from entering an infinite render loop
-            secondaryValue={100}
-            subProperties={['red', 'green', 'blue']}
-            setPropertyValue={(newValue) => store.rootContainer.setCanvasFill(newValue)}
-            setSecondaryPropertyValue={voidFunc}
-            parseAndValidateNewValue={parseAndValidateInteger}
-            isColor
-            addDragBox
-          />
+          {settingsForTab}
         </Paper>
       </Box>
     </Dialog>
