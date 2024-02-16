@@ -6,6 +6,7 @@ import InputLabel from './InputLabel'
 import InputBox from './InputBox'
 import { ColorBox, ColorPicker } from './ColorSelection'
 import CheckboxLock from './CheckboxLock'
+import KeyframeButton from './KeyframeButton'
 import { PAIRED_VECTOR_TYPES } from '../PropertyEditor/config'
 import { isNumber } from '../../utility/numbers'
 import { voidFunc } from '../../utility/object'
@@ -21,6 +22,11 @@ const GenericInputWithInternalValue = observer(({
   setSecondaryPropertyValue,
   pairVector = false,
   togglePairing,
+  isKeyframable,
+  addKey,
+  numKeyframes = 0,
+  isKeyframe = false,
+  noKeyframeGap = false,
   isColor = false,
   excludeAlpha = false,
   noLabel = false,
@@ -124,6 +130,13 @@ const GenericInputWithInternalValue = observer(({
     }
   }
 
+  // Add a gap that mimics keyframe button for proper left alignment of labels
+  // except for the highest-box `name`
+  let keyframeGap = null
+  if (label !== 'name' && !noKeyframeGap) {
+    keyframeGap = <Box sx={{ marginRight: '16px' }} />
+  }
+
   const renderInputBoxes = () => {
     // Single Property Box Rendering
     if (!isMulti) {
@@ -219,6 +232,13 @@ const GenericInputWithInternalValue = observer(({
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       {noLabel === false && (
         <>
+          {isKeyframable ? (
+            <KeyframeButton
+              frameHasKey={isKeyframe}
+              otherFramesHaveKeys={numKeyframes > 0}
+              addKey={addKey}
+            />
+          ) : (keyframeGap)}
           <InputLabel
             label={!isMulti ? label : `${label}-${subProperties[0]}`}
             labelGroup={labelGroup}

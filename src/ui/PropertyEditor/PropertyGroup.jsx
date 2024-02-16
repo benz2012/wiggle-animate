@@ -30,7 +30,8 @@ const PropertyGroup = observer(({ name, show, toggleGroup, children }) => (
           variant="caption"
           sx={{ fontFamily: 'monospace' }}
         >
-          {name}{show ? '' : `  (${children.length})`}
+          {/* children is expected as [[list of property inputs], [list of special stuff]] */}
+          {name}{show ? '' : `  (${children[0].length})`}
         </Typography>
       </Box>
       <Divider sx={{ ml: 1, flexGrow: 1 }} />

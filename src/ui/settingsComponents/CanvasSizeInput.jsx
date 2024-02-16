@@ -19,6 +19,7 @@ const CanvasSizeInput = observer(({ store, availableWidth }) => (
       return parseOutput
     }}
     addDragBox
+    noKeyframeGap
   />
 ))
 

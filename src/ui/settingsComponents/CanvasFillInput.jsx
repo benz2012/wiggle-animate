@@ -19,6 +19,7 @@ const CanvasFillInput = observer(({ store, availableWidth }) => (
     isColor
     excludeAlpha
     addDragBox
+    noKeyframeGap
   />
 ))
 

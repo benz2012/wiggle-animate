@@ -13,8 +13,8 @@ const TabListButton = ({ name, tab, setTab }) => (
       borderTopRightRadius: muiTheme.spacing(4),
       borderBottomRightRadius: muiTheme.spacing(4),
       '&.Mui-selected': {
-        backgroundColor: `${theme.palette.primary[100]}`,
-        '&:hover': { backgroundColor: `${theme.palette.primary[75]}` },
+        backgroundColor: `${theme.palette.primary[75]}`,
+        '&:hover': { backgroundColor: `${theme.palette.primary[100]}` },
       },
     })}
   >

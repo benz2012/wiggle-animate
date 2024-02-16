@@ -13,16 +13,19 @@ class Polygon extends VisibleShape {
       type: Property.PRIMITIVES.INTEGER,
       value: 3,
       isEditable: true,
+      group: 'size',
+      order: 0.5,
       minValue: 3,
       maxValue: 100,
       valueDragRatio: 9,
     })
 
+    this._width.label = 'diameter'
     this._height.isEditable = false
     this._height.isKeyframable = false
-    this._width.label = 'diameter'
-    this._width.group = null
-    this._width.order = 0.5
+
+    // Size is normally closed by default but we want it open for polygons
+    VisibleShape.rootContainer.store.propertyEditor.showGroup(`${this.id}-size`)
 
     makeObservable(this, { radius: computed })
 

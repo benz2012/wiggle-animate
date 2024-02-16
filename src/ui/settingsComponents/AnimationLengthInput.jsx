@@ -19,6 +19,7 @@ const AnimationLengthInput = observer(({ store, availableWidth }) => (
       return parseOutput
     }}
     addDragBox
+    noKeyframeGap
   />
 ))
 

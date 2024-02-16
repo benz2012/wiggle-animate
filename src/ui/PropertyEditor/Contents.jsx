@@ -6,6 +6,7 @@ import debounce from 'lodash.debounce'
 
 import {
   PANEL_WIDTH,
+  LEFT_SIDE_SPACE,
   EXPANSION_DURATION,
   INITIALLY_COLLAPSED_GROUPS,
   PAIRED_VECTOR_TYPES,
@@ -27,7 +28,7 @@ import SizeInput from '../inputs/SizeInput'
 import StringInput from '../inputs/StringInput'
 import Vector2Input from '../inputs/Vector2Input'
 
-const INPUT_WIDTH = PANEL_WIDTH - 100
+const INPUT_WIDTH = PANEL_WIDTH - LEFT_SIDE_SPACE
 const inputClasses = {
   Alignment: AlignmentInput,
   Angle: AngleInput,
@@ -219,6 +220,12 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     const togglePairing = (shouldPair) => {
       store.propertyEditor.setPairedVector(propertyKey, shouldPair)
     }
+    const thereIsAKeyframeForThisPropertyOnThisFrame = property.keyframes
+      ?.find((keyframe) => keyframe.frame === store.animation.now)
+    const addKey = () => {
+      if (thereIsAKeyframeForThisPropertyOnThisFrame) return
+      property.addKey(store.animation.now, property.value)
+    }
 
     const componentProps = {
       key: propertyKey,
@@ -233,6 +240,10 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       togglePairing,
       addDragBox: !NO_DRAG_BOX_TYPES.includes(property.typeName),
       valueDragRatio: property.valueDragRatio,
+      isKeyframable: property.isKeyframable,
+      addKey,
+      numKeyframes: property.keyframes?.length,
+      isKeyframe: thereIsAKeyframeForThisPropertyOnThisFrame,
     }
     return <ComponentClass {...componentProps} />
   }
