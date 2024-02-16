@@ -5,6 +5,7 @@ class View {
     this.store = store
 
     this.dialogs = {
+      settings: false,
       help: false,
       save: false,
       export: false,

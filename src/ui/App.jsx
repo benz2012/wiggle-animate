@@ -10,6 +10,7 @@ import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import SaveDialog from './Modal/SaveDialog'
+import SettingsDialog from './Modal/SettingsDialog'
 import ExportDialog from './Modal/ExportDialog'
 import FontDialog from './Modal/FontDialog'
 import HoldingSnackbar from './Modal/HoldingSnackbar'
@@ -93,7 +94,7 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.x,
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
-    store.rootContainer.canvasFill.color,
+    `${store.rootContainer.canvasFill}`,
     store.output.isExporting,
     store.keyHeld.Space,
     store.keyHeld.MiddleMouse,
@@ -139,6 +140,11 @@ const App = observer(({ store }) => {
       </PointerHandler>
 
       {/* Dialog Handling */}
+      <SettingsDialog
+        store={store}
+        open={store.view.dialogs.settings}
+        onClose={() => store.view.closeDialog('settings')}
+      />
       <SaveDialog
         store={store}
         open={store.view.dialogs.save}

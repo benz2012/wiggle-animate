@@ -95,6 +95,7 @@ const KeyHandler = ({ store }) => {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
             // TODO [4]: Put Keyframe Copying Here
+            //           - should be item independent, user should be able to copy-paste between items
           } else if (STAGE_HAS_FOCUS) {
             event.preventDefault()
             store.build.copySelectionToClipboard()
@@ -160,6 +161,13 @@ const KeyHandler = ({ store }) => {
         if (store.keyHeld.Meta) {
           event.preventDefault()
           if (store.actionStack.canUndo) store.actionStack.undo()
+        }
+        break
+
+      case ',':
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          store.view.openDialog('settings')
         }
         break
 

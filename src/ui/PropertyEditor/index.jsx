@@ -10,6 +10,8 @@ import Header from './Header'
 import Contents from './Contents'
 import usePrevious from '../hooks/usePrevious'
 
+// TODO [2]: add little key button next to each property to make a keyframe
+
 // TODO [3]: The panel doesn't contract sometimes when multiple items are selected
 //           weirdly it's related to the sorting of the items.
 //           Multi-Selecting "upwards" causes panel to close, "downwards" does not

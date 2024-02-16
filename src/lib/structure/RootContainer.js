@@ -46,7 +46,6 @@ class RootContainer extends Container {
 
     this.canvasPosition = RootContainer.INITIAL.canvasPosition
     this._canvasScale = RootContainer.INITIAL.canvasScale
-    // TODO [2]: make these customizable
     this.canvasSize = RootContainer.INITIAL.canvasSize
     this.canvasFill = RootContainer.INITIAL.canvasFill
     this.setCanvasToBestFit()
@@ -62,10 +61,28 @@ class RootContainer extends Container {
       canvasPosition: observable,
       _canvasScale: observable,
       canvasFill: observable,
+      setCanvasSize: action,
+      setCanvasFill: action,
       checkPointerIntersections: action,
       findRectIntersections: action,
       changeScaleByStep: action,
     })
+  }
+
+  setCanvasSize(newValue) {
+    if (newValue instanceof Size) {
+      this.canvasSize = newValue
+    } else if (Array.isArray(newValue) && newValue.length === 2) {
+      this.canvasSize = new Size(...newValue)
+    }
+  }
+
+  setCanvasFill(newValue) {
+    if (newValue instanceof Color) {
+      this.canvasFill = newValue
+    } else {
+      this.canvasFill = new Color(newValue)
+    }
   }
 
   get canvasScale() { return this._canvasScale }

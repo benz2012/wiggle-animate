@@ -6,6 +6,8 @@ import BottomActions from './BottomActions'
 import ListOfItems from './ListOfItems'
 import DraggingIndicators from './DraggingIndicators'
 
+// TODO [1]: I broke sorting!
+
 // TODO [4]: Allow user to sort item Outside-of but right below a Container
 //           this will likely require having two hover regions, one for inside (to the upper-right)
 //           and one for outside (to the lower-left)

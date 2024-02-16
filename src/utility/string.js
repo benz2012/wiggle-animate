@@ -5,6 +5,10 @@ const isString = (value) => (
   typeof value === 'string' || value instanceof String
 )
 
+const titleCase = (txt) => (
+  txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+)
+
 const incrementName = (nameStr) => {
   const numeralFound = nameStr.match(/(.+\s)(\d+)/)
   if (numeralFound) {
@@ -32,6 +36,7 @@ export {
   START_OF_NORMAL_CHARS,
   END_OF_NORMAL_CHARS,
   isString,
+  titleCase,
   incrementName,
   getBrowserModifierKey,
 }
