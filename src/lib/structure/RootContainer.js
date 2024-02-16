@@ -635,7 +635,7 @@ class RootContainer extends Container {
     this._canvasScale = canvas.scale
     this.canvasSize = Size.fromPureObject(canvas.size)
     this.canvasFill = Color.fromPureObject(canvas.fill)
-    super.fromPureObject({ children })
+    super.fromPureObject({ children, id: this.id })
   }
 }
 

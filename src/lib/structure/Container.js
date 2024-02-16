@@ -372,7 +372,9 @@ class Container extends Drawable {
       return resultObject
     }, {})
     this._sortOrder = theSortOrder
-    this.showChildren = showChildren
+    if (showChildren != null) {
+      this.showChildren = showChildren
+    }
     return this
   }
 }
