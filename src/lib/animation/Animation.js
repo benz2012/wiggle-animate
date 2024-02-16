@@ -11,6 +11,7 @@ import { timeStampMicro } from '../../utility/time'
 class Animation {
   static get FIRST() { return 1 }
   static get PLAYBACK_MODES() { return { LOOP: 'LOOP', ONCE: 'ONCE' } }
+  static get RATES() { return [24.0, 29.97, 30.0, 59.94, 60.0] }
   static get INITIAL() {
     return {
       frames: 100,
@@ -47,6 +48,11 @@ class Animation {
       this.now = newLength
     }
     this.frames = newLength
+  }
+
+  setRate(newRate) {
+    if (!Animation.RATES.includes(newRate)) return
+    this.fps = newRate
   }
 
   setIn = (frame) => {

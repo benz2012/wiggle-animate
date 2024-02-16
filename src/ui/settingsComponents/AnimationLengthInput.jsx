@@ -3,17 +3,17 @@ import { observer } from 'mobx-react-lite'
 import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
 import { parseAndValidateInteger } from '../inputs/util'
 
-const CanvasSizeInput = observer(({ store, availableWidth }) => (
+const AnimationLengthInput = observer(({ store, availableWidth }) => (
   <GenericInputWithInternalValue
-    label="size"
+    label="frame length"
     availableWidth={availableWidth}
-    propertyValue={store.rootContainer.canvasSize}
-    subProperties={['width', 'height']}
-    setPropertyValue={(newValue) => store.rootContainer.setCanvasSize(newValue)}
+    halfWidth
+    propertyValue={store.animation.frames}
+    setPropertyValue={(newValue) => store.animation.setLength(newValue)}
     parseAndValidateNewValue={(value) => {
-      // Values below 10-pixel minimum will be marked invalid
+      // Values below 1 minimum will be marked invalid
       const parseOutput = parseAndValidateInteger(value)
-      if (parseOutput.isValid && parseOutput.parsedValue !== Math.max(parseOutput.parsedValue, 10)) {
+      if (parseOutput.isValid && parseOutput.parsedValue !== Math.max(parseOutput.parsedValue, 1)) {
         parseOutput.isValid = false
       }
       return parseOutput
@@ -22,4 +22,4 @@ const CanvasSizeInput = observer(({ store, availableWidth }) => (
   />
 ))
 
-export default CanvasSizeInput
+export default AnimationLengthInput

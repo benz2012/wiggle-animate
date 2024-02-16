@@ -6,7 +6,7 @@ import { voidFunc } from '../../utility/object'
 
 const CanvasFillInput = observer(({ store, availableWidth }) => (
   <GenericInputWithInternalValue
-    label="Canvas Fill"
+    label="fill color"
     availableWidth={availableWidth}
     propertyValue={store.rootContainer.canvasFill}
     // We aren't allowing alpha editing at this time, but this is needed to prevent the

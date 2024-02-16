@@ -1,3 +1,5 @@
+import { observer } from 'mobx-react-lite'
+
 import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import Box from '@mui/material/Box'
@@ -10,7 +12,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
 
-const ExportDialog = ({ store, open, onClose }) => (
+const ExportDialog = observer(({ store, open, onClose }) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -41,20 +43,35 @@ const ExportDialog = ({ store, open, onClose }) => (
           .
         </Alert>
       ) : (
-        <Alert sx={{ mb: 2 }} severity="info">Customization is coming in a future update</Alert>
+        <Alert sx={{ mb: 2 }} severity="info">You can customize these settings in: Project &gt; Settings</Alert>
       )}
 
       <DialogContentText>
-        {store.animation.frames} frames
+        Frame Length: {store.animation.frames} frames
       </DialogContentText>
       <DialogContentText>
-        {store.animation.fps} FPS
+        Frame Rate: {store.animation.fps} FPS
       </DialogContentText>
       <DialogContentText>
-        {store.rootContainer.canvasSize.width}x{store.rootContainer.canvasSize.height}
+        Resolution: {store.rootContainer.canvasSize.width}x{store.rootContainer.canvasSize.height}
       </DialogContentText>
-      <DialogContentText>
-        black background
+      <DialogContentText
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        Background Color: {store.rootContainer.canvasFill.toShortString()}
+        <Box
+          component="span"
+          sx={{
+            backgroundColor: `${store.rootContainer.canvasFill}`,
+            width: '16px',
+            height: '16px',
+            marginLeft: 1,
+            borderRadius: 1,
+          }}
+        />
       </DialogContentText>
       <Box sx={{ mb: 1 }} />
       <DialogContentText>
@@ -72,6 +89,6 @@ const ExportDialog = ({ store, open, onClose }) => (
       </Button>
     </DialogActions>
   </Dialog>
-)
+))
 
 export default ExportDialog

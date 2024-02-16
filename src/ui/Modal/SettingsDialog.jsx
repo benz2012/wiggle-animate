@@ -12,11 +12,13 @@ import Paper from '@mui/material/Paper'
 import TabListButton from '../settingsComponents/TabListButton'
 import CanvasSizeInput from '../settingsComponents/CanvasSizeInput'
 import CanvasFillInput from '../settingsComponents/CanvasFillInput'
-
-// animation length, FPS
+import AnimationLengthInput from '../settingsComponents/AnimationLengthInput'
+import AnimationRateInput from '../settingsComponents/AnimationRateInput'
 
 // TODO [3]: Settings Ideas
 //  - When selecting item on the stage, force open the containers in tree view, default: true
+
+const WIDTH_OF_SETTINGS = 200
 
 const SettingsDialog = observer(({ store, open, onClose }) => {
   const [tab, setTab] = useState('project')
@@ -25,8 +27,12 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
     if (tab === 'project') {
       return (
         <>
-          <CanvasSizeInput store={store} availableWidth={200} />
-          <CanvasFillInput store={store} availableWidth={200} />
+          <Box mb={1}>Animation</Box>
+          <AnimationLengthInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
+          <AnimationRateInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
+          <Box mt={1} mb={1}>Canvas</Box>
+          <CanvasSizeInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
+          <CanvasFillInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
         </>
       )
     }
@@ -71,7 +77,7 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
             borderTopLeftRadius: theme.spacing(1),
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
+            gap: 0.5,
           })}
         >
           {settingsForTab}

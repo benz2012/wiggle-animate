@@ -1,3 +1,5 @@
+import { makeObservable, observable, action } from 'mobx'
+
 import {
   browserHasVideoEncoder,
   prepareForExport,
@@ -16,6 +18,11 @@ class Output {
     this.isExporting = false
 
     this.determineExportCapabilities()
+
+    makeObservable(this, {
+      isExporting: observable,
+      setIsExporting: action,
+    })
   }
 
   determineExportCapabilities() {
