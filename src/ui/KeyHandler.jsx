@@ -94,7 +94,7 @@ const KeyHandler = ({ store }) => {
         if (store.keyHeld.Meta) {
           if (BOTTOM_HAS_FOCUS) {
             event.preventDefault()
-            // TODO [4]: Put Keyframe Copying Here
+            // TODO [3]: Put Keyframe Copying Here
             //           - should be item independent, user should be able to copy-paste between items
           } else if (STAGE_HAS_FOCUS) {
             event.preventDefault()

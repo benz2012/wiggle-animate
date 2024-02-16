@@ -5,6 +5,7 @@ import Container from '../../lib/structure/Container'
 import ListItem from './ListItem'
 import ListItemAsContainer from './ListItemAsContainer'
 import generateItemClickHandler from './generateItemClickHandler'
+import theme from '../theme'
 
 // TODO [4]: Replace name prop field with double-click-to-edit in left menu
 //       item name can be a whitespace character. eliminate this
@@ -36,6 +37,10 @@ const ListOfItems = observer(({ store, parentContainer }) => {
       const isContainer = item instanceof Container
 
       if (isContainer) {
+        let containerLineColor = theme.palette.action.disabled
+        if (store.build.selectedIds.includes(itemId)) {
+          containerLineColor = theme.palette.action.selected
+        }
         return (
           <Fragment key={itemId}>
             <ListItemAsContainer
@@ -50,7 +55,13 @@ const ListOfItems = observer(({ store, parentContainer }) => {
             />
             {/* Render it's children, recursivley */}
             {item.showChildren && (
-              <div style={{ marginLeft: 12 }}>
+              <div
+                style={{
+                  marginLeft: '6.5px',
+                  borderLeft: `1px solid ${containerLineColor}`,
+                  paddingLeft: '4.5px',
+                }}
+              >
                 <ListOfItems store={store} parentContainer={item} />
               </div>
             )}
