@@ -252,7 +252,7 @@ class Build {
 
     // Keep in mind, these Ids/Items will only reference the top-level of what was copy-pasted.
     // If their are children also being duplicated in this process, they will simply be managed through their parent
-    // Also, when pasting, we never want to preserve Id as their will either be a collision, or we are in another
+    // Also, when pasting, we never want to preserve Id as there will either be a collision, or we are in another
     // project file in which case the original ids have no value anyways
     const [resultingIds, resultingItems] = Build.buildItemsFromPureObjects(itemsAsPureObjects, false)
 
