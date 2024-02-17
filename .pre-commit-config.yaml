@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: update-package-version
+        name: Update Package Version
+        entry: ./scripts/update-package-version.sh
+        language: script
+        files: \.json$
