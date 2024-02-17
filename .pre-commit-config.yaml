@@ -5,4 +5,3 @@ repos:
         name: Update Package Version
         entry: ./scripts/update-package-version.sh
         language: script
-        files: \.json$
