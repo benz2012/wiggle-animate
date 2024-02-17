@@ -21,9 +21,8 @@ import {
 class Shape extends Drawable {
   static get className() { return 'Shape' }
 
-  constructor(shapeType = '', x = 0, y = 0, width = 100, height = 100) {
+  constructor(x = 0, y = 0, width = 100, height = 100) {
     super(x, y)
-    this._name.setValue(`${shapeType}-${this.name}`)
 
     this._width = new Property({
       type: Property.PRIMITIVES.FLOAT,

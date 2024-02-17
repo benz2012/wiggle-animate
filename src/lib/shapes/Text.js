@@ -10,7 +10,7 @@ class Text extends VisibleShape {
   static get className() { return 'Text' }
 
   constructor(...args) {
-    super('text', ...args)
+    super(...args)
 
     this._text = new Property({
       type: Property.PRIMITIVES.STRING,

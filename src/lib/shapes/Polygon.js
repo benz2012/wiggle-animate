@@ -7,7 +7,7 @@ class Polygon extends VisibleShape {
   static get className() { return 'Polygon' }
 
   constructor(...args) {
-    super('polygon', ...args)
+    super(...args)
 
     this._sides = new Property({
       type: Property.PRIMITIVES.INTEGER,
