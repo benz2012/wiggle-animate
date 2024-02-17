@@ -220,11 +220,14 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     const togglePairing = (shouldPair) => {
       store.propertyEditor.setPairedVector(propertyKey, shouldPair)
     }
-    const thereIsAKeyframeForThisPropertyOnThisFrame = property.keyframes
+    const keyframeForThisPropertyOnThisFrame = property.keyframes
       ?.find((keyframe) => keyframe.frame === store.animation.now)
-    const addKey = () => {
-      if (thereIsAKeyframeForThisPropertyOnThisFrame) return
-      property.addKey(store.animation.now, property.value)
+    const toggleKeyframe = () => {
+      if (keyframeForThisPropertyOnThisFrame) {
+        property.deleteKey(keyframeForThisPropertyOnThisFrame.id)
+      } else {
+        property.addKey(store.animation.now, property.value)
+      }
     }
 
     const componentProps = {
@@ -241,9 +244,9 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       addDragBox: !NO_DRAG_BOX_TYPES.includes(property.typeName),
       valueDragRatio: property.valueDragRatio,
       isKeyframable: property.isKeyframable,
-      addKey,
+      toggleKeyframe,
       numKeyframes: property.keyframes?.length,
-      isKeyframe: thereIsAKeyframeForThisPropertyOnThisFrame,
+      isKeyframe: !!keyframeForThisPropertyOnThisFrame,
     }
     return <ComponentClass {...componentProps} />
   }

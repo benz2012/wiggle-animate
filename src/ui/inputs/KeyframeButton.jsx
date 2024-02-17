@@ -1,19 +1,23 @@
 import IconButton from '@mui/material/IconButton'
-import KeyIcon from '@mui/icons-material/Key'
+import StopRounded from '@mui/icons-material/StopRounded'
 
+import { ReactComponent as AddKeyIcon } from '../../assets/add-keyframe.svg'
 import theme from '../theme'
 
-const KeyframeButton = ({ frameHasKey, otherFramesHaveKeys, addKey }) => {
+const KeyframeButton = ({ frameHasKey, otherFramesHaveKeys, toggleKeyframe }) => {
   let buttonColor = `${theme.palette.action.disabled}`
+  let buttonIcon = <AddKeyIcon style={{ width: '12px', height: '12px' }} />
+
   if (frameHasKey) {
     buttonColor = `${theme.palette.tertiary[100]}`
+    buttonIcon = <StopRounded sx={{ fontSize: '16px', transform: 'rotate(45deg)' }} />
   } else if (otherFramesHaveKeys) {
-    buttonColor = `${theme.palette.tertiary[20]}`
+    buttonColor = `${theme.palette.tertiary[50]}`
   }
 
   return (
     <IconButton
-      onClick={addKey}
+      onClick={toggleKeyframe}
       sx={{
         width: '16px',
         height: '24px',
@@ -26,7 +30,7 @@ const KeyframeButton = ({ frameHasKey, otherFramesHaveKeys, addKey }) => {
         color: buttonColor,
       }}
     >
-      <KeyIcon sx={{ fontSize: '16px', transform: 'rotate(-90deg)' }} />
+      {buttonIcon}
     </IconButton>
   )
 }

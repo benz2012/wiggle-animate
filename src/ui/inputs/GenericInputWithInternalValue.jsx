@@ -23,7 +23,7 @@ const GenericInputWithInternalValue = observer(({
   pairVector = false,
   togglePairing,
   isKeyframable,
-  addKey,
+  toggleKeyframe,
   numKeyframes = 0,
   isKeyframe = false,
   noKeyframeGap = false,
@@ -236,7 +236,7 @@ const GenericInputWithInternalValue = observer(({
             <KeyframeButton
               frameHasKey={isKeyframe}
               otherFramesHaveKeys={numKeyframes > 0}
-              addKey={addKey}
+              toggleKeyframe={toggleKeyframe}
             />
           ) : (keyframeGap)}
           <InputLabel

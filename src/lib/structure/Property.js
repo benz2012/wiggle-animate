@@ -62,6 +62,7 @@ class Property {
       keyframes: observable,
       setValue: action,
       addKey: action,
+      deleteKey: action,
     })
   }
 
