@@ -8,6 +8,7 @@ import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
 import CurveEditorCanvas from './CurveEditorCanvas'
 import theme from '../theme'
+import Animation from '../../lib/animation/Animation'
 import { LABEL_WIDTH, CSS_ROTATION_OFFSET } from './config'
 import { isEqual } from '../../utility/array'
 import { keyframeLabelFromProperty } from '../../utility/state'
@@ -42,7 +43,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   const [drawNewKeyAt, absoluteFrameHovered] = store.keyframeEditor.hoverInfo
   const frameNowLeft = (animation.now - frameIn) * pixelsPerFrame + LABEL_WIDTH + theme.spacing[1] - 0.5
 
-  // This is gaurnteed to be the two relevant to the active curve (and sorted), or null
+  // This is guaranteed to be the two relevant to the active curve (and sorted), or null
   const [, targetKeyframes, targetKeyframeLabel] = store.curveEditor.targetKeyframeInfo
 
   return (
@@ -59,6 +60,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
         <RegionSelection
           frameIn={frameIn}
           frameOut={frameOut}
+          animationRange={[Animation.FIRST, store.animation.frames]}
           setIn={animation.setIn}
           setOut={animation.setOut}
           frameHoveredAt={drawNewKeyAt + CSS_ROTATION_OFFSET}
