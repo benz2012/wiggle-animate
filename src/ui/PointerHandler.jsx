@@ -327,40 +327,43 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
           300
         )
       }
-    } else if (event.type === 'pointerup') {
-      /* POINTER UP / END-OF-DRAG */
-      if (event.button === 1) { store.keyHeld.setKey('MiddleMouse', false) }
-
-      if (store.leftMenu.dragStart) {
-        // This Releases & Stops the drag tracking for leftMenu
-        // The difference below is that none of those trackers operate onPointerUp, so they only need a stopDrag
-        store.leftMenu.releaseDrag()
-      }
-
-      clearTimeout(startDragInitialWaitTimeoutId.current)
-      clearTimeout(startDragLeftMenuInitialWaitTimeoutId.current)
-      clearInterval(waitingToOpenContainerIntervalId.current)
-      store.build.stopDrag()
-      store.playhead.stopDrag()
-      store.keyframeEditor.stopDrag()
-      store.curveEditor.stopDrag()
-      store.leftMenu.clearContainerToOpen()
-
-      store.selector.setRect(0, 0)
-      if (store.selector.hovers.length > 0) {
-        store.build.setSelected(store.selector.hovers)
-      }
-
-      if ([store.tools.RESIZE, store.tools.ROTATE].includes(store.build.tool)) {
-        store.build.setTool(store.tools.NONE)
-      }
-
-      store.build.setActiveControl(null)
-      store.build.setActivePoint(null)
-
-      store.selector.setHovers([])
     }
   }
+
+  const handlePointerUpEvent = action((event) => {
+    /* POINTER UP or END-OF-DRAG */
+    if (event.button === 1) { store.keyHeld.setKey('MiddleMouse', false) }
+
+    if (store.leftMenu.dragStart) {
+      // This Releases & Stops the drag tracking for leftMenu
+      // The difference below is that none of those trackers operate onPointerUp, so they only need a stopDrag
+      store.leftMenu.releaseDrag()
+    }
+
+    clearTimeout(startDragInitialWaitTimeoutId.current)
+    clearTimeout(startDragLeftMenuInitialWaitTimeoutId.current)
+    clearInterval(waitingToOpenContainerIntervalId.current)
+    store.build.stopDrag()
+    store.playhead.stopDrag()
+    store.keyframeEditor.stopDrag()
+    store.curveEditor.stopDrag()
+    store.leftMenu.clearContainerToOpen()
+
+    store.selector.setRect(0, 0)
+    if (store.selector.hovers.length > 0) {
+      store.build.setSelected(store.selector.hovers)
+    }
+
+    if ([store.tools.RESIZE, store.tools.ROTATE].includes(store.build.tool)) {
+      store.build.setTool(store.tools.NONE)
+    }
+
+    store.build.setActiveControl(null)
+    store.build.setActivePoint(null)
+
+    store.selector.setHovers([])
+  })
+  const handlePointerUpMemoized = useCallback(handlePointerUpEvent, [handlePointerUpEvent])
 
   /* SCROLL HANDLER */
   // TODO [4]: Inertial Scroll on trackpad doesn't feel fast enough
@@ -386,12 +389,12 @@ const PointerHandler = forwardRef(({ children, store }, ref) => {
   /* Window Listener Registration */
   useEffect(() => {
     window.addEventListener('pointermove', handleDragMemoized)
-    return () => {
-      window.removeEventListener('pointermove', handleDragMemoized)
-    }
-  }, [
-    handleDragMemoized,
-  ])
+    return () => window.removeEventListener('pointermove', handleDragMemoized)
+  }, [handleDragMemoized])
+  useEffect(() => {
+    window.addEventListener('pointerup', handlePointerUpMemoized)
+    return () => window.removeEventListener('pointerup', handlePointerUpMemoized)
+  }, [handlePointerUpMemoized])
 
   return (
     <div

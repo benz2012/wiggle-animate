@@ -215,7 +215,7 @@ class Build {
     navigator.clipboard.writeText(selectedItemsAsJSON)
       .then(() => {
         // Success!
-        // Maybe add a snackbar component to show confirmation?
+        // TODO [3]: Maybe add a snackbar component to show confirmation?
       })
       .catch(() => {
         // Failed D:
