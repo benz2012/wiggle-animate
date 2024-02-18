@@ -36,6 +36,12 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
         </>
       )
     }
+    if (tab === 'interactions') {
+      return <Box>Coming Soon</Box>
+    }
+    if (tab === 'hotkeys') {
+      return <Box>Coming Soon</Box>
+    }
     return null
   }, [tab, store])
 

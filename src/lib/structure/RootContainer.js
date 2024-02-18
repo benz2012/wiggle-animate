@@ -15,9 +15,9 @@ import { zeroIfZero } from '../../utility/numbers'
 import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 import { isPrimitive } from '../../utility/object'
 import { flattenTreeToRelationships } from '../../utility/tree'
+import { DEBOUNCE_DELAY_MS } from '../../utility/state'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
-const DEBOUNCE_DELAY_MS = 500
 
 class RootContainer extends Container {
   static get INITIAL() {
@@ -620,8 +620,9 @@ class RootContainer extends Container {
   toPureObject() {
     const finalPureObject = {
       canvas: {
-        position: this.canvasPosition.toPureObject(),
-        scale: this.canvasScale,
+        // I think saving Canvas position and scale is a bit jarring when loading a project, but will think on it
+        // position: this.canvasPosition.toPureObject(),
+        // scale: this.canvasScale,
         size: this.canvasSize.toPureObject(),
         fill: this.canvasFill.toPureObject(),
       },
@@ -631,8 +632,8 @@ class RootContainer extends Container {
   }
 
   fromPureObject({ canvas, children }) {
-    this.canvasPosition = Vector2.fromPureObject(canvas.position)
-    this._canvasScale = canvas.scale
+    // this.canvasPosition = Vector2.fromPureObject(canvas.position)
+    // this._canvasScale = canvas.scale
     this.canvasSize = Size.fromPureObject(canvas.size)
     this.canvasFill = Color.fromPureObject(canvas.fill)
     super.fromPureObject({ children, id: this.id })

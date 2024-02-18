@@ -15,7 +15,10 @@ const AnimationRateInput = observer(({ store, availableWidth }) => (
       label: 'frame rate',
       group: 'animation',
     }}
-    setPropertyValue={(newValue) => store.animation.setRate(parseFloat(newValue))}
+    setPropertyValue={(newValue) => {
+      store.animation.setRate(parseFloat(newValue))
+      store.actionStack.untrackedPush()
+    }}
     availableWidth={availableWidth / 2}
     noKeyframeGap
   />

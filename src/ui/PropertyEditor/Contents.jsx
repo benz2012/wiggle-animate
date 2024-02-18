@@ -16,6 +16,7 @@ import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 import { getWeightMap } from '../../utility/fonts'
 import { voidFunc } from '../../utility/object'
+import { DEBOUNCE_DELAY_MS } from '../../utility/state'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
@@ -88,7 +89,6 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
   const genericSetter = (property) => {
     if (!property) return voidFunc
     whichDebounceCall.current[property.name] = 'LEADING'
-    const DEBOUNCE_DELAY_MS = 500
 
     const actionSubmitter = () => {
       if (whichDebounceCall.current[property.name] === 'LEADING') {

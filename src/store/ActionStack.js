@@ -51,7 +51,18 @@ class ActionStack {
     this.redoStack = []
 
     // The first action performed invalidates a "clean slate" project
-    // However, in Autosave mode, there is technically never an Unsaved state
+    this.invalidateSaveState()
+  }
+
+  untrackedPush() {
+    /* Sometimes actions should not be un-doable/re-doable, but we will want them to trigger standard
+     * ActionStack logic, like invalidating a Saved project. A great example is changing the Frame Rate
+     */
+    this.invalidateSaveState()
+  }
+
+  invalidateSaveState() {
+    // In Autosave mode, there is technically never an Unsaved state
     if (!this.store.storage.autosaveToBrowser) {
       const ProjectClass = this.store.project.constructor
       this.store.project.saveStatus = ProjectClass.STATUSES.UNSAVED

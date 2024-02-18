@@ -117,7 +117,7 @@ const RegionSelection = observer(({
               label="editIn"
               propertyValue={frameIn}
               parseAndValidateNewValue={parseAndValidateFrameIn}
-              setPropertyValue={(newValue) => setIn(newValue)}
+              setPropertyValue={setIn}
               onBlur={() => setEditIn(false)}
               focusIdAfterCommitting="bottom-menu"
               noLabel
@@ -150,7 +150,7 @@ const RegionSelection = observer(({
                 label="editOut"
                 propertyValue={frameOut}
                 parseAndValidateNewValue={parseAndValidateFrameOut}
-                setPropertyValue={(newValue) => setOut(newValue)}
+                setPropertyValue={setOut}
                 onBlur={() => setEditOut(false)}
                 focusIdAfterCommitting="bottom-menu"
                 noLabel
