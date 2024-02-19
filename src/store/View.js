@@ -18,6 +18,7 @@ class View {
   openDialog(dialogName) {
     if (dialogName === 'export') {
       this.store.output.setFileName()
+      this.store.output.errorMessage = ''
     }
     this.dialogs[dialogName] = true
   }

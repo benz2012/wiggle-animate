@@ -1,13 +1,9 @@
 import { makeObservable, observable, action } from 'mobx'
 
-import {
-  browserHasVideoEncoder,
-  prepareForExport,
-  exportOneFrame,
-  exportVideo,
-} from '../utility/video'
+import { browserHasVideoEncoder, VideoExporter } from '../utility/video'
 import { downloadBlob } from '../utility/files'
 import { sleep } from '../utility/time'
+import { ENCODING_OPTIONS } from '../utility/encoding'
 
 class Output {
   constructor(store) {
@@ -16,12 +12,18 @@ class Output {
     this.fileName = ''
     this.browserCanExport = false
     this.isExporting = false
+    this.errorMessage = ''
+
+    this.videoExporter = new VideoExporter()
+    this.encodingOption = ENCODING_OPTIONS[0]
 
     this.determineExportCapabilities()
 
     makeObservable(this, {
       isExporting: observable,
+      encodingOption: observable,
       setIsExporting: action,
+      setEncodingOption: action,
     })
   }
 
@@ -48,17 +50,23 @@ class Output {
       .replaceAll('T', '')
       .replaceAll(':', '')
       .slice(0, 12)
-    const fileName = `${prefix}-${dateStamp}.webm`
+    const fileName = `${prefix}-${dateStamp}`
     this.fileName = fileName
   }
 
   setIsExporting = (value) => { this.isExporting = value }
 
-  export = async () => {
-    if (!this.browserCanExport) return
+  setEncodingOption = (value) => { this.encodingOption = value }
 
-    // TODO [3]: Have progress output displayed Prepare-boolean, Frames-progress, video progress
-    // TODO [2]: wrap this whole thing in a giant error handler
+  handleError(error) {
+    const errorSentance = `Error during export: ${error.name} -- ${error.message}`
+    console.error(errorSentance)
+    this.errorMessage = errorSentance
+  }
+
+  export = async () => {
+    // TODO [3]: Display an export progress bar
+    if (!this.browserCanExport) return
 
     this.store.animation.pause()
     this.store.animation.goToFirst()
@@ -67,12 +75,33 @@ class Output {
     this.setIsExporting(true)
     await sleep(1) // give React a tick to render the export-canvas
 
-    const { canvasSize } = this.store.rootContainer
-    prepareForExport('export-canvas', canvasSize.width, canvasSize.height, this.store.animation.fps)
+    try {
+      const { canvasSize } = this.store.rootContainer
+      let preparationFailure = ''
+      this.videoExporter.prepareForExport(
+        (err) => { preparationFailure = err },
+        'export-canvas',
+        canvasSize.width,
+        canvasSize.height,
+        this.store.animation.fps,
+        this.encodingOption,
+        this.fileName,
+      )
 
-    await this.store.animation.animateForExport(exportOneFrame)
-    const videoAsBlob = await exportVideo()
-    downloadBlob(videoAsBlob, this.fileName)
+      await sleep(100) // give VideoEncoder a moment to fail preparations
+      if (preparationFailure) throw preparationFailure
+
+      await this.store.animation.animateForExport(this.videoExporter.encodeOneFrame.bind(this.videoExporter))
+      const videoAsBlob = await this.videoExporter.finalizeVideo()
+      let filename = `${this.fileName}.${this.encodingOption.container}`
+      if (this.encodingOption.container === 'png') {
+        filename = `${this.fileName}.zip`
+      }
+
+      downloadBlob(videoAsBlob, filename)
+    } catch (error) {
+      this.handleError(error)
+    }
 
     this.setIsExporting(false)
     this.store.animation.goToFirst()

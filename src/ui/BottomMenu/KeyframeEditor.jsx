@@ -11,8 +11,7 @@ import theme from '../theme'
 import Animation from '../../lib/animation/Animation'
 import { LABEL_WIDTH, CSS_ROTATION_OFFSET } from './config'
 import { isEqual } from '../../utility/array'
-import { keyframeLabelFromProperty } from '../../utility/state'
-import { generateDebouncedSetterAndSubmitter } from '../../utility/state'
+import { keyframeLabelFromProperty, generateDebouncedSetterAndSubmitter } from '../../utility/state'
 
 // TODO [4]: Moving keyframes causes lots of unecessary renders, sometimes even triggeres a
 //           "maximum update depth exceeded" warning in react. very hard to debug, and will
