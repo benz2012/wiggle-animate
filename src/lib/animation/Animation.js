@@ -33,6 +33,7 @@ class Animation {
     this.sync = []
     this.requestId = null
     this.mode = Animation.PLAYBACK_MODES.LOOP
+    this.drawingAFrameForExportHasFinished = false
 
     makeAutoObservable(this)
   }
@@ -186,7 +187,9 @@ class Animation {
     return new Promise((resolve) => {
       const loop = async () => {
         await exportOneFrameAsync(this.now)
-        const nextSteps = action(() => {
+        this.drawingAFrameForExportHasFinished = false
+
+        action(() => {
           if (this.now === this.frames) {
             resolve()
             return
@@ -194,11 +197,19 @@ class Animation {
 
           const nextFrame = this.nextFrame()
           if (nextFrame === null) return
-
           this.now = nextFrame
-          requestAnimationFrame(loop)
-        })
-        nextSteps()
+
+          // requestAnimationFrame doesn't seem to work properly when a canvas is hidden,
+          // so we use an explicit synchronous flag to indicate that drawing operations
+          // have finished, and that we can export out that drawing as a discreet frame
+          // This was more obnoxious in Safari than in Chrome, but frame skips were seen in both
+          const intervalId = setInterval(() => {
+            if (this.drawingAFrameForExportHasFinished === true) {
+              clearInterval(intervalId)
+              loop()
+            }
+          }, 10)
+        })()
       }
 
       loop()

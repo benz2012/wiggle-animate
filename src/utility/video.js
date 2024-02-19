@@ -95,9 +95,6 @@ class VideoExporter {
   }
 
   async encodeOneFrame(frameNum) {
-    // BUG: Safari isn't letting the canvas render on each frame
-    //      as if it sees consequitive canvas updates and has some sort of
-    //      internal debounce that waits a few mills before drawing the canvas updates
     if (this.pngEncoder) {
       await this.pngEncoder.encodeOneFrame(frameNum)
       return
