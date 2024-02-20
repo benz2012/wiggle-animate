@@ -20,7 +20,9 @@ class Animation {
     }
   }
 
-  constructor() {
+  constructor(store) {
+    this.store = store
+
     // Animation timeline is always 1-to-#frames
     this.frames = Animation.INITIAL.frames
     // firstFrame & lastFrame are simply the viewing window
@@ -33,7 +35,6 @@ class Animation {
     this.sync = []
     this.requestId = null
     this.mode = Animation.PLAYBACK_MODES.LOOP
-    this.drawingAFrameForExportHasFinished = false
 
     makeAutoObservable(this)
   }
@@ -184,32 +185,24 @@ class Animation {
   }
 
   animateForExport(exportOneFrameAsync) {
+    let exportFrameNum = 1
     return new Promise((resolve) => {
       const loop = async () => {
-        await exportOneFrameAsync(this.now)
-        this.drawingAFrameForExportHasFinished = false
+        this.store.rootContainer.updatePropertiesForFrame(exportFrameNum)
 
-        action(() => {
-          if (this.now === this.frames) {
-            resolve()
-            return
-          }
+        const canvasEl = document.getElementById('export-canvas')
+        const ctx = canvasEl.getContext('2d')
+        this.store.rootContainer.drawForExport(ctx, canvasEl.width, canvasEl.height)
 
-          const nextFrame = this.nextFrame()
-          if (nextFrame === null) return
-          this.now = nextFrame
+        await exportOneFrameAsync(exportFrameNum)
 
-          // requestAnimationFrame doesn't seem to work properly when a canvas is hidden,
-          // so we use an explicit synchronous flag to indicate that drawing operations
-          // have finished, and that we can export out that drawing as a discreet frame
-          // This was more obnoxious in Safari than in Chrome, but frame skips were seen in both
-          const intervalId = setInterval(() => {
-            if (this.drawingAFrameForExportHasFinished === true) {
-              clearInterval(intervalId)
-              loop()
-            }
-          }, 10)
-        })()
+        if (exportFrameNum === this.frames) {
+          resolve()
+          return
+        }
+
+        exportFrameNum += 1
+        loop()
       }
 
       loop()

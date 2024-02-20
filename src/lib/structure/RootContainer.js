@@ -227,7 +227,6 @@ class RootContainer extends Container {
 
     this.drawCanvas()
     super.draw(this.parentTransform, null, null, null, [], [], null, [])
-    this.store.animation.drawingAFrameForExportHasFinished = true
   }
 
   drawStageDots(rootWidth, rootHeight) {

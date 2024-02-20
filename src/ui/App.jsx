@@ -20,7 +20,6 @@ import { rotateArrowCursor } from '../utility/drawing'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)
-  const exportCanvasRef = useRef(null)
   const [windowWidth, windowHeight] = useWindowSize()
 
   /* State Syncs */
@@ -79,14 +78,10 @@ const App = observer(({ store }) => {
   /* Main drawing trigger */
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
-    let canvasEl = stageRef.current
-    let drawFunc = 'draw'
-    if (store.output.isExporting) {
-      canvasEl = exportCanvasRef.current
-      drawFunc = 'drawForExport'
-    }
+    if (store.output.isExporting) return
+    const canvasEl = stageRef.current
     const ctx = canvasEl.getContext('2d')
-    store.rootContainer[drawFunc](ctx, canvasEl.width, canvasEl.height)
+    store.rootContainer.draw(ctx, canvasEl.width, canvasEl.height)
   }, [
     store.rootContainer.sortOrder,
     store.rootContainer.canvasSize.width,
@@ -130,7 +125,6 @@ const App = observer(({ store }) => {
         />
         {store.output.isExporting && (
           <canvas
-            ref={exportCanvasRef}
             id="export-canvas"
             style={{ visibility: 'hidden' }}
             width={store.rootContainer.canvasSize.width}
