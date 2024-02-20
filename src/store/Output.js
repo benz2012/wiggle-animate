@@ -12,6 +12,7 @@ class Output {
     this.fileName = ''
     this.browserCanExport = false
     this.isExporting = false
+    this.exportProgress = null
     this.errorMessage = ''
 
     this.videoExporter = new VideoExporter()
@@ -21,9 +22,11 @@ class Output {
 
     makeObservable(this, {
       isExporting: observable,
+      exportProgress: observable,
       encodingOption: observable,
       setIsExporting: action,
       setEncodingOption: action,
+      setExportProgress: action,
     })
   }
 
@@ -58,6 +61,8 @@ class Output {
 
   setEncodingOption = (value) => { this.encodingOption = value }
 
+  setExportProgress = (value) => { this.exportProgress = value }
+
   handleError(error) {
     const errorSentance = `Error during export: ${error.name} -- ${error.message}`
     console.error(errorSentance)
@@ -65,13 +70,13 @@ class Output {
   }
 
   export = async () => {
-    // TODO [3]: Display an export progress bar
     if (!this.browserCanExport) return
 
     this.store.animation.pause()
     this.store.animation.goToFirst()
     this.store.build.setSelected([])
 
+    this.setExportProgress(0)
     this.setIsExporting(true)
     await sleep(1) // give React a tick to render the export-canvas
 

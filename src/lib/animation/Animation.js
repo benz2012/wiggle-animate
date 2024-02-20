@@ -196,13 +196,16 @@ class Animation {
 
         await exportOneFrameAsync(exportFrameNum)
 
+        const loopProgress = Math.floor((exportFrameNum / this.frames) * 100)
+        this.store.output.setExportProgress(loopProgress)
+
         if (exportFrameNum === this.frames) {
           resolve()
           return
         }
 
         exportFrameNum += 1
-        loop()
+        requestAnimationFrame(loop)
       }
 
       loop()

@@ -10,12 +10,15 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
-import Select from '@mui/material/Select'
+import IconButton from '@mui/material/IconButton'
+import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 
 import { ENCODING_OPTIONS } from '../../utility/encoding'
+
+// TODO [1]: enhance this visually and add note about browser, quality, and png or download would be best
 
 const ExportDialog = observer(({ store, open, onClose }) => (
   <Dialog
@@ -90,6 +93,7 @@ const ExportDialog = observer(({ store, open, onClose }) => (
             `${option.container}-${option.codec}` === newValue
           ))
           store.output.setEncodingOption(newEncodingOption)
+          store.output.setExportProgress(null)
         }}
       >
         {ENCODING_OPTIONS.map((option) => {
@@ -111,6 +115,9 @@ const ExportDialog = observer(({ store, open, onClose }) => (
             Output status
           </DialogContentText>
           <Box sx={{ mb: 1 }} />
+          Progress: {store.output.exportProgress != null && (
+            <LinearProgress variant="determinate" color="secondary" value={store.output.exportProgress} />
+          )}
           {!!store.output.errorMessage && <Alert severity="error">{store.output.errorMessage}</Alert>}
         </>
       )}
@@ -120,7 +127,7 @@ const ExportDialog = observer(({ store, open, onClose }) => (
       <Button
         sx={{ paddingLeft: 2, paddingRight: 2 }}
         onClick={store.output.export}
-        disabled={!store.output.browserCanExport || !!store.output.errorMessage}
+        disabled={!store.output.browserCanExport || !!store.output.errorMessage || store.output.isExporting}
       >
         Export
       </Button>
