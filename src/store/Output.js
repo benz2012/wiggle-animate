@@ -10,7 +10,7 @@ class Output {
     this.store = store
 
     this.fileName = ''
-    this.browserCanExport = false
+    this.browserHasVideoEncoder = false
     this.isExporting = false
     this.exportProgress = null
     this.errorMessage = ''
@@ -31,8 +31,8 @@ class Output {
   }
 
   determineExportCapabilities() {
-    this.browserCanExport = browserHasVideoEncoder()
-    if (!this.browserCanExport) {
+    this.browserHasVideoEncoder = browserHasVideoEncoder()
+    if (!this.browserHasVideoEncoder) {
       console.warn('This browser is not capable of natively exporting video')
     }
   }
@@ -70,8 +70,6 @@ class Output {
   }
 
   export = async () => {
-    if (!this.browserCanExport) return
-
     this.store.animation.pause()
     this.store.animation.goToFirst()
     this.store.build.setSelected([])

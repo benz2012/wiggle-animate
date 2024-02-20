@@ -19,6 +19,8 @@ import Select from '@mui/material/Select'
 import { ENCODING_OPTIONS } from '../../utility/encoding'
 
 // TODO [1]: enhance this visually and add note about browser, quality, and png or download would be best
+// TODO [1]: add alpha setting to project settings
+// TODO [1]: add alpha support via png sequence
 
 const ExportDialog = observer(({ store, open, onClose }) => (
   <Dialog
@@ -42,8 +44,8 @@ const ExportDialog = observer(({ store, open, onClose }) => (
       <CloseIcon />
     </IconButton>
     <DialogContent>
-      {/* TODO [4]: Add a link to download the Electron App and use a NodeJS exporter, once that exists */}
-      {!store.output.browserCanExport && (
+      {/* TODO [2]: Add a link to download the Electron App and use a NodeJS exporter, once that exists */}
+      {!store.output.browserHasVideoEncoder && (
         <Alert sx={{ mb: 2 }} severity="error">
           <AlertTitle>Your web browser is not capable of exporting video.</AlertTitle>
           Try using one of the green Web Browser versions{' '}
@@ -96,38 +98,45 @@ const ExportDialog = observer(({ store, open, onClose }) => (
           store.output.setExportProgress(null)
         }}
       >
-        {ENCODING_OPTIONS.map((option) => {
-          const optionKey = `${option.container}-${option.codec}`
-          return (
-            <MenuItem key={optionKey} value={optionKey}>
-              {option.containerName} {option.codecName ? `with ${option.codecName}` : ''}
-            </MenuItem>
-          )
-        })}
+        {
+          ENCODING_OPTIONS
+            .filter((option) => {
+              if (store.output.browserHasVideoEncoder === false) {
+                return !option.requiresVideoEncoder
+              }
+              return true
+            })
+            .map((option) => {
+              const optionKey = `${option.container}-${option.codec}`
+              return (
+                <MenuItem key={optionKey} value={optionKey}>
+                  {option.containerName} {option.codecName ? `with ${option.codecName}` : ''}
+                </MenuItem>
+              )
+            })
+        }
       </Select>
 
       <Divider />
       <Box sx={{ mb: 1 }} />
 
-      {store.output.browserCanExport && (
-        <>
-          <DialogContentText>
-            Output status
-          </DialogContentText>
-          <Box sx={{ mb: 1 }} />
-          Progress: {store.output.exportProgress != null && (
-            <LinearProgress variant="determinate" color="secondary" value={store.output.exportProgress} />
-          )}
-          {!!store.output.errorMessage && <Alert severity="error">{store.output.errorMessage}</Alert>}
-        </>
+      <DialogContentText>
+        Output status
+      </DialogContentText>
+      <Box sx={{ mb: 1 }} />
+
+      Progress: {store.output.exportProgress != null && (
+        <LinearProgress variant="determinate" color="secondary" value={store.output.exportProgress} />
       )}
+
+      {!!store.output.errorMessage && <Alert severity="error">{store.output.errorMessage}</Alert>}
     </DialogContent>
 
     <DialogActions>
       <Button
         sx={{ paddingLeft: 2, paddingRight: 2 }}
         onClick={store.output.export}
-        disabled={!store.output.browserCanExport || !!store.output.errorMessage || store.output.isExporting}
+        disabled={!!store.output.errorMessage || store.output.isExporting}
       >
         Export
       </Button>

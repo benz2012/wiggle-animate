@@ -4,6 +4,7 @@ const ENCODING_OPTIONS = [
   {
     container: 'png',
     containerName: 'png sequence',
+    requiresVideoEncoder: false,
   },
   {
     container: 'mp4',
@@ -15,6 +16,7 @@ const ENCODING_OPTIONS = [
     // 4d0029 = AVC Main Profile Level 4.1
     // for more, see https://dmnsgn.github.io/media-codecs/
     codecParameters: 'avc1.4d0029',
+    requiresVideoEncoder: true,
   },
   {
     container: 'webm',
@@ -27,6 +29,7 @@ const ENCODING_OPTIONS = [
     // 41 = Level 4.1, see see https://www.webmproject.org/vp9/levels/
     // 08 = 8-bits per channel
     codecParameters: 'vp09.00.41.08',
+    requiresVideoEncoder: true,
   },
   {
     container: 'webm',
@@ -41,6 +44,7 @@ const ENCODING_OPTIONS = [
     // 08 = 8-bits per channel
     // 0  = not monochrome
     codecParameters: 'av01.0.09M.08.0',
+    requiresVideoEncoder: true,
   },
 ]
 
