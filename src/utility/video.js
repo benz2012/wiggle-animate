@@ -105,7 +105,10 @@ class VideoExporter {
     const microsecondsPerFrame = millisecondsPerFrame * 1000
     const timestampOfFrame = Math.round((frameNum - 1) * microsecondsPerFrame)
 
-    const frame = new VideoFrame(canvas, { timestamp: timestampOfFrame })
+    const frame = new VideoFrame(canvas, {
+      timestamp: timestampOfFrame,
+      duration: microsecondsPerFrame,
+    })
     await this.videoEncoder.encode(frame, { keyFrame: frameNum % 60 === 0 })
     frame.close()
   }
