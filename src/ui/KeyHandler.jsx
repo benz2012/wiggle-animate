@@ -115,6 +115,13 @@ const KeyHandler = ({ store }) => {
         }
         break
 
+      case 'e':
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          store.view.openDialog('export')
+        }
+        break
+
       case 'o':
         if (store.keyHeld.Meta) {
           event.preventDefault()
