@@ -9,11 +9,11 @@ import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import Paper from '@mui/material/Paper'
 
-import TabListButton from '../settingsComponents/TabListButton'
-import CanvasSizeInput from '../settingsComponents/CanvasSizeInput'
-import CanvasFillInput from '../settingsComponents/CanvasFillInput'
-import AnimationLengthInput from '../settingsComponents/AnimationLengthInput'
-import AnimationRateInput from '../settingsComponents/AnimationRateInput'
+import TabListButton from './TabListButton'
+import CanvasSizeInput from './CanvasSizeInput'
+import CanvasFillInput from './CanvasFillInput'
+import AnimationLengthInput from './AnimationLengthInput'
+import AnimationRateInput from './AnimationRateInput'
 
 // TODO [3]: Settings Ideas
 //  - When selecting item on the stage, force open the containers in tree view, default: true

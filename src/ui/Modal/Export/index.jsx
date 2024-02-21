@@ -21,12 +21,13 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Typography from '@mui/material/Typography'
 
-import myTheme from '../theme'
-import Storage from '../../store/Storage'
-import { storageGet, storageSet } from '../../utility/storage'
-import { ENCODING_OPTIONS } from '../../utility/encoding'
+import myTheme from '../../theme'
+import Storage from '../../../store/Storage'
+import { storageGet, storageSet } from '../../../utility/storage'
+import { ENCODING_OPTIONS } from '../../../utility/encoding'
 
 // TODO [1]: add alpha setting to project settings
+// TODO [1]: clean up this component
 
 const ProjectSettingText = ({ label, value, sx, valueNotTypography = false }) => (
   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...sx }}>

@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 
-import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
-import { parseAndValidateInteger } from '../inputs/util'
-import { generateDebouncedSetterAndSubmitter } from '../../utility/state'
-import { voidFunc } from '../../utility/object'
+import GenericInputWithInternalValue from '../../inputs/GenericInputWithInternalValue'
+import { parseAndValidateInteger } from '../../inputs/util'
+import { generateDebouncedSetterAndSubmitter } from '../../../utility/state'
+import { voidFunc } from '../../../utility/object'
 
 const CanvasFillInput = observer(({ store, availableWidth }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
