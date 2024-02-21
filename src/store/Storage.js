@@ -8,6 +8,7 @@ class Storage {
     return {
       AUTOSAVE_TO_BROWSER: 'wiggle.animate.autosaveToBrowser',
       PROJECT: 'wiggle.animate.project',
+      DOWNLOAD_ALERT_CLOSED: 'wiggle.animate.userClosedTheDownloadAppAlertInTheExportMenu',
     }
   }
 

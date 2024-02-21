@@ -17,12 +17,15 @@ const browserHasVideoEncoder = () => {
   return false
 }
 
-class PNGEncoder {
-  constructor(canvasId, width, height, expectedFilename) {
+class ImageSequenceEncoder {
+  constructor(canvasId, width, height, encodingOptions, expectedFilename) {
     this.canvasToTarget = canvasId
     this.width = width
     this.height = height
     this.filename = expectedFilename
+    this.container = encodingOptions.container
+    this.mimeType = encodingOptions.containerMime
+    this.quality = encodingOptions.quality ?? undefined
 
     this.zip = new JSZip()
     this.imagesFolder = this.zip.folder(this.filename)
@@ -30,12 +33,12 @@ class PNGEncoder {
 
   async encodeOneFrame(frameNum) {
     const canvas = document.getElementById(this.canvasToTarget)
-    const filename = `${this.filename}.${frameNum.toString().padStart(5, '0')}.png`
+    const filename = `${this.filename}.${frameNum.toString().padStart(5, '0')}.${this.container}`
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         this.imagesFolder.file(filename, blob)
         resolve()
-      }, 'image/png')
+      }, this.mimeType, this.quality)
     })
   }
 
@@ -52,7 +55,7 @@ class VideoExporter {
     this.encodingOptions = null
     this.muxer = null
     this.videoEncoder = null
-    this.pngEncoder = null
+    this.imageSequenceEncoder = null
   }
 
   prepareForExport(errorCallback, canvasId, width, height, frameRate, encodingOptions, expectedFilename) {
@@ -60,8 +63,8 @@ class VideoExporter {
     this.outputFrameRate = frameRate
     this.encodingOptions = encodingOptions
 
-    if (encodingOptions.container === 'png') {
-      this.pngEncoder = new PNGEncoder(canvasId, width, height, expectedFilename)
+    if (encodingOptions.imageSequence) {
+      this.imageSequenceEncoder = new ImageSequenceEncoder(canvasId, width, height, encodingOptions, expectedFilename)
       return
     }
 
@@ -95,8 +98,8 @@ class VideoExporter {
   }
 
   async encodeOneFrame(frameNum) {
-    if (this.pngEncoder) {
-      await this.pngEncoder.encodeOneFrame(frameNum)
+    if (this.imageSequenceEncoder) {
+      await this.imageSequenceEncoder.encodeOneFrame(frameNum)
       return
     }
 
@@ -114,10 +117,10 @@ class VideoExporter {
   }
 
   async finalizeVideo() {
-    if (this.pngEncoder) {
-      const pngSequenceBlob = await this.pngEncoder.finalizeSequence()
-      this.pngEncoder = null
-      return pngSequenceBlob
+    if (this.imageSequenceEncoder) {
+      const imageSequenceBlob = await this.imageSequenceEncoder.finalizeSequence()
+      this.imageSequenceEncoder = null
+      return imageSequenceBlob
     }
 
     await this.videoEncoder.flush()

@@ -97,7 +97,7 @@ class Output {
       await this.store.animation.animateForExport(this.videoExporter.encodeOneFrame.bind(this.videoExporter))
       const videoAsBlob = await this.videoExporter.finalizeVideo()
       let filename = `${this.fileName}.${this.encodingOption.container}`
-      if (this.encodingOption.container === 'png') {
+      if (this.encodingOption.imageSequence) {
         filename = `${this.fileName}.zip`
       }
 
