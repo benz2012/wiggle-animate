@@ -5,17 +5,20 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import { RgbaColorPicker, RgbColorPicker } from 'react-colorful'
 
-const ColorBox = ({ color, onClick }) => (
+const ColorBox = ({ color, onClick, disabled }) => (
   <Box
-    onClick={onClick}
+    onClick={(event) => {
+      if (disabled) return
+      onClick(event)
+    }}
     sx={(theme) => ({
       width: theme.spacing(1),
       height: 24,
       mr: 0.5,
       borderRadius: 1,
       backgroundColor: color,
-      cursor: 'pointer',
-      '&:hover': { outline: `1px solid ${theme.palette.primary.main}` },
+      cursor: disabled ? 'inherit' : 'pointer',
+      '&:hover': (disabled ? {} : { outline: `1px solid ${theme.palette.primary.main}` }),
     })}
   />
 )
