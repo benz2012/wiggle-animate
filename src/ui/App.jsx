@@ -90,6 +90,8 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     `${store.rootContainer.canvasFill}`,
+    store.stage.transparent,
+    store.stage.transparentIndicator,
     store.output.isExporting,
     store.keyHeld.Space,
     store.keyHeld.MiddleMouse,

@@ -10,9 +10,10 @@ import Vector2 from './Vector2'
 import Color from '../visuals/Color'
 import Selection from './Selection'
 import propertyValueTypeMap from './propertyValueTypeMap'
+import Stage from '../../store/Stage'
 import { identityMatrix } from '../../utility/matrix'
 import { zeroIfZero } from '../../utility/numbers'
-import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
+import { drawStageDots, checkerboardRects, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 import { isPrimitive } from '../../utility/object'
 import { flattenTreeToRelationships } from '../../utility/tree'
 import { DEBOUNCE_DELAY_MS } from '../../utility/state'
@@ -196,7 +197,12 @@ class RootContainer extends Container {
       .scaleSelf(this.canvasScale, this.canvasScale)
 
     this.drawStageDots(rootWidth, rootHeight)
-    this.drawCanvas()
+
+    if (this.store.stage.transparent) {
+      this.drawTransparentIndicator()
+    } else {
+      this.drawCanvas()
+    }
 
     super.draw(
       this.parentTransform,
@@ -225,7 +231,9 @@ class RootContainer extends Container {
     this.ctx.clearRect(0, 0, rootWidth, rootHeight)
     this.parentTransform = identityMatrix()
 
-    this.drawCanvas()
+    if (this.store.stage.transparent === false) {
+      this.drawCanvas()
+    }
     super.draw(this.parentTransform, null, null, null, [], [], null, [])
   }
 
@@ -244,6 +252,34 @@ class RootContainer extends Container {
     this.ctx.beginPath()
     this.ctx.rect(0, 0, ...this.canvasSize.values)
     this.ctx.fillStyle = this.canvasFill.toString()
+    this.ctx.fill()
+  }
+
+  drawTransparentIndicator() {
+    const { transparentIndicator } = this.store.stage
+    if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.BLACK) {
+      this.ctx.fillStyle = 'rgb(0, 0, 0)'
+    } else if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_DARK) {
+      this.ctx.fillStyle = 'rgb(10, 10, 10)'
+    } else if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_LIGHT) {
+      this.ctx.fillStyle = 'rgb(200, 200, 200)'
+    }
+
+    this.ctx.setTransform(this.currentTransform)
+    this.ctx.beginPath()
+    this.ctx.rect(0, 0, ...this.canvasSize.values)
+    this.ctx.fill()
+
+    if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.BLACK) return
+    if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_DARK) {
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.04)'
+    } else if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_LIGHT) {
+      this.ctx.fillStyle = 'rgb(230, 230, 230)'
+    }
+
+    this.ctx.beginPath()
+    const checkerSize = 10
+    checkerboardRects(this.ctx, this.canvasSize, checkerSize)
     this.ctx.fill()
   }
 

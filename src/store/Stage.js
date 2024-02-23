@@ -1,4 +1,6 @@
-import { makeObservable, action, toJS } from 'mobx'
+import { makeObservable, observable, action, toJS } from 'mobx'
+
+// TODO [1]: export the transparency values into save file
 
 import Container from '../lib/structure/Container'
 import Ellipse from '../lib/shapes/Ellipse'
@@ -11,14 +13,39 @@ import Vector2 from '../lib/structure/Vector2'
 import shapeTypeMap from '../lib/shapes/shapeTypeMap'
 
 class Stage {
+  static get TRANSPARENT_INDICATORS() {
+    return {
+      CHECKERBOARD_DARK: 'checkerboard-dark',
+      CHECKERBOARD_LIGHT: 'checkerboard-light',
+      BLACK: 'black',
+    }
+  }
+
+  static get INITIAL() {
+    return {
+      transparent: false,
+      transparentIndicator: Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_DARK,
+    }
+  }
+
   constructor(store) {
     this.store = store
 
+    this.transparent = Stage.INITIAL.transparent
+    this.transparentIndicator = Stage.INITIAL.transparentIndicator
+
     makeObservable(this, {
+      transparent: observable,
+      transparentIndicator: observable,
+      setTransparency: action,
+      setTransparencyIndicator: action,
       addNewPath: action,
       commitPath: action,
     })
   }
+
+  setTransparency(newValue) { this.transparent = newValue }
+  setTransparencyIndicator(newValue) { this.transparentIndicator = newValue }
 
   addNewItem(newItem) {
     const highestSelectedItemId = this.store.build.highestSelectedItemId(this.store.rootContainer)
@@ -103,6 +130,18 @@ class Stage {
     if (pathId) {
       this.store.build.setSelected([pathId])
     }
+  }
+
+  toPureObject() {
+    return {
+      transparent: this.transparent,
+      transparentIndicator: this.transparentIndicator,
+    }
+  }
+
+  fromPureObject({ transparent, transparentIndicator }) {
+    this.transparent = transparent
+    this.transparentIndicator = transparentIndicator
   }
 }
 

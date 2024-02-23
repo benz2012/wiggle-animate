@@ -23,9 +23,6 @@ import Storage from '../../../store/Storage'
 import { storageGet, storageSet } from '../../../utility/storage'
 import ExportSettings from './ExportSettings'
 
-// TODO [1]: add alpha setting to project settings
-// TODO [1]: clean up this component
-
 const ExportDialog = observer(({ store, open, onClose }) => {
   const [downloadAlertClosed, setDownloadAlertClosed] = useState(
     storageGet(Storage.KEYS.DOWNLOAD_ALERT_CLOSED) === 'true'

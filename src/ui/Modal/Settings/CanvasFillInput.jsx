@@ -27,6 +27,7 @@ const CanvasFillInput = observer(({ store, availableWidth }) => {
       setPropertyValue={setterAndSubmitter}
       setSecondaryPropertyValue={voidFunc}
       parseAndValidateNewValue={parseAndValidateInteger}
+      disabled={store.stage.transparent}
       isColor
       excludeAlpha
       addDragBox
