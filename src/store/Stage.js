@@ -1,7 +1,5 @@
 import { makeObservable, observable, action, toJS } from 'mobx'
 
-// TODO [1]: export the transparency values into save file
-
 import Container from '../lib/structure/Container'
 import Ellipse from '../lib/shapes/Ellipse'
 import Line from '../lib/shapes/Line'

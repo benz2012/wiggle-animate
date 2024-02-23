@@ -45,6 +45,11 @@ class RootContainer extends Container {
       dataBefore: null,
     }
 
+    // For Posterity: canvasPosition & canvasScale are actually in reference to the Stage Position & Scale.
+    // The Canvas is merely a "crop box" that determines the size of the export, and is always stationed
+    // at the same position and scale within the Stage. Canvas Fill is a glorified rectangle that can't
+    // be interacted with like other Shapes in the tree, but is necessary for communicating this "crop box"
+    // to the user. Someday I might rename these attributes or move them to the Stage class. ¯\_(ツ)_/¯
     this.canvasPosition = RootContainer.INITIAL.canvasPosition
     this._canvasScale = RootContainer.INITIAL.canvasScale
     this.canvasSize = RootContainer.INITIAL.canvasSize
