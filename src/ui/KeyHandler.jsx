@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
+import throttle from 'lodash.throttle'
+
 import Vector2 from '../lib/structure/Vector2'
 import Animation from '../lib/animation/Animation'
 
@@ -30,10 +32,6 @@ const doesBottomMenuHaveFocus = () => [
 const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('input-')
 
 // TODO [1]: not all hotkey actions are pushing onto actionstack
-
-// TODO [4]: periodically check the keys in case someone scrolled away and came back and is no longer holding down
-//       a meta key (or others). maybe this could be checked when window gets focused?
-//       basically there is a bug now where it's stuck on the "add item to selection" cursor
 
 const KeyHandler = ({ store }) => {
   /* -- KEY DOWN --
@@ -397,6 +395,19 @@ const KeyHandler = ({ store }) => {
     }
   })
 
+  /* -- Check for Modifiers that changed when the tab isn't active -- */
+  const catchMissedModifiers = action((event) => {
+    if (!(event.ctrlKey || event.metaKey)) {
+      store.keyHeld.setKey('Meta', false)
+    }
+    if (!event.altKey) {
+      store.keyHeld.setKey('Alt', false)
+    }
+    if (!event.shiftKey) {
+      store.keyHeld.setKey('Shift', false)
+    }
+  })
+
   /* Memoization */
   const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [
     store.actionStack.canRedo,
@@ -412,6 +423,7 @@ const KeyHandler = ({ store }) => {
   ])
   const handleKeyUpEventMemoized = useCallback(handleKeyUpEvent, [])
   const handlePasteEventMemoized = useCallback(handlePasteEvent, [])
+  const catchMissedModifiersMemoized = useCallback(catchMissedModifiers, [])
 
   /* Window Listener Registration */
   useEffect(() => {
@@ -426,6 +438,15 @@ const KeyHandler = ({ store }) => {
     window.addEventListener('paste', handlePasteEventMemoized)
     return () => window.removeEventListener('paste', handlePasteEventMemoized)
   }, [handlePasteEventMemoized])
+  useEffect(() => {
+    const catchMissedModifiersThrottled = throttle(
+      catchMissedModifiersMemoized,
+      2500,
+      { leading: true, trailing: true }
+    )
+    window.addEventListener('pointermove', catchMissedModifiersThrottled)
+    return () => window.removeEventListener('pointermove', catchMissedModifiersThrottled)
+  }, [catchMissedModifiersMemoized])
 
   return null
 }
