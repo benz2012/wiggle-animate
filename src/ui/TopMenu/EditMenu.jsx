@@ -25,6 +25,7 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
     onClose={handleClose}
     slotProps={{ paper: { sx: { width: 220 } } }}
     MenuListProps={{ dense: true }}
+    transitionDuration={150}
   >
     <MenuListItem
       hotkey="Z"

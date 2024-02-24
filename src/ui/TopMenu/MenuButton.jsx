@@ -1,7 +1,9 @@
 import { forwardRef } from 'react'
 import Button from '@mui/material/Button'
 
-const MenuButton = forwardRef(({ onClick, icon, children, nudge = -2, noText = false }, ref) => (
+import theme from '../theme'
+
+const MenuButton = forwardRef(({ onClick, icon, children, menuOpen, nudge = -2, noText = false }, ref) => (
   <Button
     ref={ref}
     onClick={onClick}
@@ -16,6 +18,8 @@ const MenuButton = forwardRef(({ onClick, icon, children, nudge = -2, noText = f
         ...(noText ? { margin: 0 } : {}),
       },
       ...(noText ? { minWidth: 0 } : {}),
+
+      backgroundColor: menuOpen ? `${theme.palette.primary[10]}` : undefined,
     }}
   >
     {children}
