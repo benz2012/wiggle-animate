@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
-import throttle from 'lodash.throttle'
 
 import Vector2 from '../lib/structure/Vector2'
 import Animation from '../lib/animation/Animation'
@@ -30,8 +29,6 @@ const doesBottomMenuHaveFocus = () => [
 ].includes(document.activeElement.id)
 
 const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('input-')
-
-// TODO [1]: not all hotkey actions are pushing onto actionstack
 
 const KeyHandler = ({ store }) => {
   /* -- KEY DOWN --
@@ -410,19 +407,6 @@ const KeyHandler = ({ store }) => {
     }
   })
 
-  /* -- Check for Modifiers that changed when the tab isn't active -- */
-  const catchMissedModifiers = action((event) => {
-    if (!(event.ctrlKey || event.metaKey)) {
-      store.keyHeld.setKey('Meta', false)
-    }
-    if (!event.altKey) {
-      store.keyHeld.setKey('Alt', false)
-    }
-    if (!event.shiftKey) {
-      store.keyHeld.setKey('Shift', false)
-    }
-  })
-
   /* Memoization */
   const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [
     store.actionStack.canRedo,
@@ -438,7 +422,6 @@ const KeyHandler = ({ store }) => {
   ])
   const handleKeyUpEventMemoized = useCallback(handleKeyUpEvent, [])
   const handlePasteEventMemoized = useCallback(handlePasteEvent, [])
-  const catchMissedModifiersMemoized = useCallback(catchMissedModifiers, [])
 
   /* Window Listener Registration */
   useEffect(() => {
@@ -453,15 +436,50 @@ const KeyHandler = ({ store }) => {
     window.addEventListener('paste', handlePasteEventMemoized)
     return () => window.removeEventListener('paste', handlePasteEventMemoized)
   }, [handlePasteEventMemoized])
+
+  /* -- Missed Modifiers section --
+   * Adds a pointermove listener that will only trigger once, and update the truth state of currently-held
+   * modifier keys. This is needed because modifier keys can be released when the window/tab is not active,
+   * so keyup event will miss them. We run this check at an interval of a few seconds to make sure nothing
+   * goes missed. We also run it after the window is re-focused (focusin), since thats when this special
+   * case happens the most.
+   */
+  const catchMissedModifiers = action((event) => {
+    if (!(event.ctrlKey || event.metaKey)) {
+      store.keyHeld.setKey('Meta', false)
+    }
+    if (!event.altKey) {
+      store.keyHeld.setKey('Alt', false)
+    }
+    if (!event.shiftKey) {
+      store.keyHeld.setKey('Shift', false)
+    }
+  })
+  const checkForMissedModifiers = () => new Promise((resolve) => {
+    const removeSelfAfterOneTrigger = (event) => {
+      catchMissedModifiers(event)
+      window.removeEventListener('pointermove', removeSelfAfterOneTrigger)
+      resolve()
+    }
+    window.addEventListener('pointermove', removeSelfAfterOneTrigger)
+  })
+  const checkForMissedModifiersMemoized = useCallback(checkForMissedModifiers, [])
   useEffect(() => {
-    const catchMissedModifiersThrottled = throttle(
-      catchMissedModifiersMemoized,
-      2500,
-      { leading: true, trailing: true }
-    )
-    window.addEventListener('pointermove', catchMissedModifiersThrottled)
-    return () => window.removeEventListener('pointermove', catchMissedModifiersThrottled)
-  }, [catchMissedModifiersMemoized])
+    const checkFrequency = 3000 // 3 seconds
+    let checkerExists = false
+    const intervalId = setInterval(() => {
+      if (checkerExists) return
+      checkForMissedModifiersMemoized().then(() => {
+        checkerExists = false
+      })
+      checkerExists = true
+    }, checkFrequency)
+    return () => clearInterval(intervalId)
+  }, [checkForMissedModifiersMemoized])
+  useEffect(() => {
+    window.addEventListener('focusin', checkForMissedModifiersMemoized)
+    return () => window.removeEventListener('focusin', checkForMissedModifiersMemoized)
+  }, [checkForMissedModifiersMemoized])
 
   return null
 }
