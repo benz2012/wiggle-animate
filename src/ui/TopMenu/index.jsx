@@ -16,7 +16,6 @@ import InsertMenu from './InsertMenu'
 import CenterSection from './CenterSection'
 import { voidFunc } from '../../utility/object'
 
-// TODO [2]: finish the help-page branch work
 // TODO [4]: make the button and menu animations quicker / more-snappy
 
 const focusStage = () => setTimeout(() => document.getElementById('stage').focus(), 0)
