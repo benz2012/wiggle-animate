@@ -3,6 +3,16 @@ import { action } from 'mobx'
 import Vector2 from '../lib/structure/Vector2'
 import Animation from '../lib/animation/Animation'
 
+const ONE_UP = new Vector2(0, -1)
+const ONE_DOWN = new Vector2(0, 1)
+const ONE_LEFT = new Vector2(-1, 0)
+const ONE_RIGHT = new Vector2(1, 0)
+
+const TEN_UP = new Vector2(0, -10)
+const TEN_DOWN = new Vector2(0, 10)
+const TEN_LEFT = new Vector2(-10, 0)
+const TEN_RIGHT = new Vector2(10, 0)
+
 const doesStageHaveFocus = () => [
   'stage',
   'left-menu-container',
@@ -23,161 +33,56 @@ const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('in
 //       basically there is a bug now where it's stuck on the "add item to selection" cursor
 
 const KeyHandler = ({ store }) => {
-  const ONE_UP = new Vector2(0, -1)
-  const ONE_DOWN = new Vector2(0, 1)
-  const ONE_LEFT = new Vector2(-1, 0)
-  const ONE_RIGHT = new Vector2(1, 0)
-
-  const TEN_UP = new Vector2(0, -10)
-  const TEN_DOWN = new Vector2(0, 10)
-  const TEN_LEFT = new Vector2(-10, 0)
-  const TEN_RIGHT = new Vector2(10, 0)
-
-  /* -- KEY DOWN -- */
+  /* -- KEY DOWN --
+   * Normally we would Only place events here if they are:
+   *  - Capturing a modifier key press, for use in other parts of the app
+   *  - repeatable events (e.g. holding an arrow key for movement)
+   *
+   * But since MacOS prevents keyup events when the Meta key is held, we must capture all
+   * Meta+Something key combos in keydown. Since we don't want those combos to act as repeatable events,
+   * we will check for event.repeat and break if it is true. Additionally, to keep logic centralized,
+   * we will capture all other Modifier+Something events here.
+   */
   const handleKeyDownEvent = action((event) => {
     const STAGE_HAS_FOCUS = doesStageHaveFocus()
     const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
     const INPUT_HAS_FOCUS = doesAnInputFieldHaveFocus()
+    const SOME_MODIFIER_HELD = ['Meta', 'Alt', 'Shift'].some((mod) => store.keyHeld[mod])
+
+    const { selectedIds } = store.build
 
     switch (event.key) {
+      /* -- Meta Key Capture -- */
       case 'Meta':
       case 'Control':
         store.keyHeld.setKey('Meta', true)
         break
-
       case 'Alt':
         store.keyHeld.setKey('Alt', true)
         break
-
       case 'Shift':
-        if (!(STAGE_HAS_FOCUS || BOTTOM_HAS_FOCUS)) break
         store.keyHeld.setKey('Shift', true)
         break
-
       case ' ':
-        if (BOTTOM_HAS_FOCUS && document.activeElement.id !== 'play-pause-button') {
-          document.getElementById('play-pause-button').focus()
-          document.getElementById('play-pause-button').click()
-        } else if (STAGE_HAS_FOCUS) {
+        if (STAGE_HAS_FOCUS) {
           event.preventDefault()
-          store.keyHeld.setKey('Space', true)
         }
+        store.keyHeld.setKey('Space', true)
         break
 
+      /* -- Repeatable-while-held Events -- */
       case '-':
         if (store.keyHeld.Meta) {
           event.preventDefault()
           store.rootContainer.decrementScale()
         }
         break
-
       case '=':
         if (store.keyHeld.Meta) {
           event.preventDefault()
           store.rootContainer.incrementScale()
         }
         break
-
-      case 'a':
-        if (store.keyHeld.Meta) {
-          if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
-            store.keyframeEditor.selectAllVisible()
-          } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
-            store.build.selectAll()
-          }
-        }
-        break
-
-      case 'c':
-        if (store.keyHeld.Meta) {
-          if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
-            // TODO [3]: Put Keyframe Copying Here
-            //           - should be item independent, user should be able to copy-paste between items
-          } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
-            store.build.copySelectionToClipboard()
-          }
-        }
-        break
-
-      case 'd':
-        if (store.keyHeld.Meta) {
-          if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
-            store.keyframeEditor.setSelected([])
-          } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
-            store.build.setSelected([])
-          }
-        }
-        break
-
-      case 'e':
-        if (store.keyHeld.Meta) {
-          event.preventDefault()
-          store.view.openDialog('export')
-        }
-        break
-
-      case 'o':
-        if (store.keyHeld.Meta) {
-          event.preventDefault()
-          const inputEl = document.getElementById('input-project-file')
-          inputEl.click()
-        }
-        break
-
-      case 's':
-        if (store.keyHeld.Meta) {
-          event.preventDefault()
-          store.view.openDialog('save')
-        }
-        break
-
-      case 'v':
-        // NOTE: Paste has it's own special listener below
-        break
-
-      case 'w':
-        // NOTE: the browser prevents overwriting this key
-        break
-
-      case 'x':
-        if (store.keyHeld.Meta) {
-          if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
-            // TODO [4]: Put Keyframe Cutting Here
-          } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
-            store.build.copySelectionToClipboard(true)
-          }
-        }
-        break
-
-      case 'y':
-        if (store.keyHeld.Meta) {
-          event.preventDefault()
-          if (store.actionStack.canRedo) store.actionStack.redo()
-        }
-        break
-
-      case 'z':
-        if (store.keyHeld.Meta) {
-          event.preventDefault()
-          if (store.actionStack.canUndo) store.actionStack.undo()
-        }
-        break
-
-      case ',':
-        if (store.keyHeld.Meta) {
-          event.preventDefault()
-          store.view.openDialog('settings')
-        }
-        break
-
       case 'ArrowUp':
         if (!STAGE_HAS_FOCUS) break
         if (store.keyHeld.Shift) {
@@ -233,21 +138,11 @@ const KeyHandler = ({ store }) => {
         }
         break
 
-      default:
-        break
-    }
-  })
-
-  /* -- KEY UP -- */
-  const handleKeyUpEvent = action((event) => {
-    const STAGE_HAS_FOCUS = doesStageHaveFocus()
-    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
-
-    const { selectedIds } = store.build
-
-    switch (event.key) {
+      /* -- All other events, none meant to be repeatable -- */
       case 'Backspace':
       case 'Delete':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
         if (BOTTOM_HAS_FOCUS && store.keyframeEditor.selectedIds.length > 0) {
           const revertState = []
           const performState = []
@@ -274,6 +169,8 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'Escape':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
         if (!STAGE_HAS_FOCUS) break
         if (store.build.tool === store.tools.PATH) {
           store.stage.commitPath()
@@ -281,77 +178,200 @@ const KeyHandler = ({ store }) => {
         store.leftMenu.stopDrag()
         break
 
-      case ' ':
-        store.keyHeld.setKey('Space', false)
+      case ',':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          store.view.openDialog('settings')
+        }
         break
 
-      case 'f':
-        if (!STAGE_HAS_FOCUS) break
-        store.view.reset()
-        break
-
-      case 'Shift':
-        store.keyHeld.setKey('Shift', false)
-        break
-
-      case 'Meta':
-      case 'Control':
-        store.keyHeld.setKey('Meta', false)
-        break
-
-      case 'Alt':
-        store.keyHeld.setKey('Alt', false)
+      case 'a':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            store.keyframeEditor.selectAllVisible()
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.build.selectAll()
+          }
+        }
         break
 
       case 'c':
-        // TODO [2]: When user was "recently" holding meta key, skip this event as it conflicts
-        //           with Meta+C "Copy"
-        if (BOTTOM_HAS_FOCUS) {
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            // TODO [3]: Put Keyframe Copying Here
+            //           - should be item independent, user should be able to copy-paste between items
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.build.copySelectionToClipboard()
+          }
+        } else if (BOTTOM_HAS_FOCUS && !SOME_MODIFIER_HELD) {
           store.animation.setIn(Animation.FIRST)
           store.animation.setOut(store.animation.frames)
-        } else if (STAGE_HAS_FOCUS) {
+        } else if (STAGE_HAS_FOCUS && !SOME_MODIFIER_HELD) {
           store.stage.addContainer()
         }
         break
 
-      case 'r':
-        if (!STAGE_HAS_FOCUS) break
-        store.stage.addRectangle()
+      case 'd':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            store.keyframeEditor.setSelected([])
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.build.setSelected([])
+          }
+        }
         break
 
       case 'e':
-        if (!STAGE_HAS_FOCUS) break
-        store.stage.addEllipse()
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          store.view.openDialog('export')
+        } else if (STAGE_HAS_FOCUS && !SOME_MODIFIER_HELD) {
+          store.stage.addEllipse()
+        }
         break
 
-      case 't':
+      case 'f':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
         if (!STAGE_HAS_FOCUS) break
-        store.stage.addText()
-        break
-
-      case 'y':
-        if (!STAGE_HAS_FOCUS) break
-        store.stage.addPolygon()
-        break
-
-      case 'l':
-        if (!STAGE_HAS_FOCUS) break
-        store.stage.addLine()
-        break
-
-      case 'p':
-        if (!STAGE_HAS_FOCUS) break
-        store.build.setTool(store.tools.PATH)
+        store.view.reset()
         break
 
       case 'i':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
         if (!BOTTOM_HAS_FOCUS) break
         store.animation.setIn(store.animation.now)
         break
 
+      case 'l':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
+        if (!STAGE_HAS_FOCUS) break
+        store.stage.addLine()
+        break
+
       case 'o':
-        if (!BOTTOM_HAS_FOCUS) break
-        store.animation.setOut(store.animation.now)
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          const inputEl = document.getElementById('input-project-file')
+          inputEl.click()
+        } else if (BOTTOM_HAS_FOCUS && !SOME_MODIFIER_HELD) {
+          store.animation.setOut(store.animation.now)
+        }
+        break
+
+      case 'p':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
+        if (!STAGE_HAS_FOCUS) break
+        store.build.setTool(store.tools.PATH)
+        break
+
+      case 'r':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
+        if (!STAGE_HAS_FOCUS) break
+        store.stage.addRectangle()
+        break
+
+      case 's':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          store.view.openDialog('save')
+        }
+        break
+
+      case 't':
+        if (event.repeat) break
+        if (SOME_MODIFIER_HELD) break
+        if (!STAGE_HAS_FOCUS) break
+        store.stage.addText()
+        break
+
+      case 'v':
+        // NOTE for Meta+V: Paste has it's own special listener below
+        break
+
+      case 'w':
+        // NOTE for Meta+W: At least Chrome prevents overwriting this action (close browser tab)
+        break
+
+      case 'x':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          if (BOTTOM_HAS_FOCUS) {
+            event.preventDefault()
+            // TODO [4]: Put Keyframe Cutting Here
+          } else if (STAGE_HAS_FOCUS) {
+            event.preventDefault()
+            store.build.copySelectionToClipboard(true)
+          }
+        }
+        break
+
+      case 'y':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          if (store.actionStack.canRedo) store.actionStack.redo()
+        } else if (STAGE_HAS_FOCUS && !SOME_MODIFIER_HELD) {
+          store.stage.addPolygon()
+        }
+        break
+
+      case 'z':
+        if (event.repeat) break
+        if (store.keyHeld.Meta) {
+          event.preventDefault()
+          if (store.actionStack.canUndo) store.actionStack.undo()
+        }
+        break
+
+      default:
+        break
+    }
+  })
+
+  /* -- KEY UP --
+   * The only keys guaranteed to always have a keyup event are the modifier keys
+   */
+  const handleKeyUpEvent = action((event) => {
+    const BOTTOM_HAS_FOCUS = doesBottomMenuHaveFocus()
+
+    switch (event.key) {
+      /* -- Meta Key Releases -- */
+      case 'Meta':
+      case 'Control':
+        store.keyHeld.setKey('Meta', false)
+        break
+      case 'Alt':
+        store.keyHeld.setKey('Alt', false)
+        break
+      case 'Shift':
+        store.keyHeld.setKey('Shift', false)
+        break
+      case ' ':
+        store.keyHeld.setKey('Space', false)
+        if (BOTTOM_HAS_FOCUS && document.activeElement.id !== 'play-pause-button') {
+          // Instead of treating the Space bar as a trigger for the Play/Pause functionality,
+          // I have it focus and click the button, which gives some usability benefits
+          document.getElementById('play-pause-button').focus()
+          document.getElementById('play-pause-button').click()
+        }
         break
 
       default:
