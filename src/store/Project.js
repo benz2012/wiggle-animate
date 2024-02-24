@@ -38,7 +38,7 @@ class Project {
     this.saveStatus = Project.STATUSES.CLEAN
     this.initialize()
 
-    const { actionStack, rootContainer, build, animation, propertyEditor, keyframeEditor } = this.store
+    const { actionStack, rootContainer, stage, build, animation, propertyEditor, keyframeEditor } = this.store
 
     actionStack.reset()
 
@@ -48,6 +48,10 @@ class Project {
     rootContainer.canvasSize = RootContainer.INITIAL.canvasSize
     rootContainer.canvasFill = RootContainer.INITIAL.canvasFill
     rootContainer.setCanvasToBestFit()
+
+    const Stage = stage.constructor
+    stage.transparent = Stage.INITIAL.transparent
+    stage.transparentIndicator = Stage.INITIAL.transparentIndicator
 
     const Animation = animation.constructor
     animation.frames = Animation.INITIAL.frames
@@ -128,6 +132,7 @@ class Project {
     const pureObject = {
       project: this.toPureObject(),
       animation: this.store.animation.toPureObject(),
+      stage: this.store.stage.toPureObject(),
       tree: this.store.rootContainer.toPureObject(),
     }
     // Small obfuscation to save some bytespace
@@ -165,6 +170,7 @@ class Project {
     })
     this.fromPureObject(pureObject.project)
     this.store.animation.fromPureObject(pureObject.animation)
+    this.store.stage.fromPureObject(pureObject.stage)
     this.store.rootContainer.fromPureObject(pureObject.tree)
 
     this.saveStatus = Project.STATUSES.LOADED

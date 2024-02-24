@@ -16,6 +16,7 @@ import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 import { getWeightMap } from '../../utility/fonts'
 import { voidFunc } from '../../utility/object'
+import { DEBOUNCE_DELAY_MS } from '../../utility/state'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
@@ -88,7 +89,6 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
   const genericSetter = (property) => {
     if (!property) return voidFunc
     whichDebounceCall.current[property.name] = 'LEADING'
-    const DEBOUNCE_DELAY_MS = 500
 
     const actionSubmitter = () => {
       if (whichDebounceCall.current[property.name] === 'LEADING') {
@@ -198,6 +198,28 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     }
   }
 
+  const makeKeyframeToggler = (property, existingKeyframe) => () => {
+    if (existingKeyframe) {
+      property.deleteKey(existingKeyframe.id)
+      store.actionStack.push({
+        revert: [
+          'keyframeEditor.pushKeyOnProperty',
+          [selectedItem.id, property.name, existingKeyframe.toPureObject()],
+        ],
+        perform: ['keyframeEditor.deleteKeyOnProperty', [selectedItem.id, property.name, existingKeyframe.id]],
+      })
+    } else {
+      const addedKeyframe = property.addKey(store.animation.now, property.value)
+      store.actionStack.push({
+        revert: ['keyframeEditor.deleteKeyOnProperty', [selectedItem.id, property.name, addedKeyframe.id]],
+        perform: [
+          'keyframeEditor.pushKeyOnProperty',
+          [selectedItem.id, property.name, addedKeyframe.toPureObject()],
+        ],
+      })
+    }
+  }
+
   const makePropertyComponent = (property) => {
     const ComponentClass = inputClasses[property.typeName]
     if (ComponentClass == null) return null
@@ -222,13 +244,7 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     }
     const keyframeForThisPropertyOnThisFrame = property.keyframes
       ?.find((keyframe) => keyframe.frame === store.animation.now)
-    const toggleKeyframe = () => {
-      if (keyframeForThisPropertyOnThisFrame) {
-        property.deleteKey(keyframeForThisPropertyOnThisFrame.id)
-      } else {
-        property.addKey(store.animation.now, property.value)
-      }
-    }
+    const toggleKeyframe = makeKeyframeToggler(property, keyframeForThisPropertyOnThisFrame)
 
     const componentProps = {
       key: propertyKey,

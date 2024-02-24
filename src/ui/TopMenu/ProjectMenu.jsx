@@ -31,6 +31,7 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         onClose={handleClose}
         slotProps={{ paper: { sx: { width: 240 } } }}
         MenuListProps={{ dense: true }}
+        transitionDuration={150}
       >
         <MenuListItem
           IconClass={TuneIcon}

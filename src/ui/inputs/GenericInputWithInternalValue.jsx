@@ -252,6 +252,7 @@ const GenericInputWithInternalValue = observer(({
         <ColorBox
           color={propertyValue.toString()}
           onClick={() => toggleColorPicker(!showColorPicker)}
+          disabled={rest.disabled}
         />
       )}
       {showColorPicker && (

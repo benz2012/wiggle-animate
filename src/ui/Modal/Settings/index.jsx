@@ -9,11 +9,13 @@ import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import Paper from '@mui/material/Paper'
 
-import TabListButton from '../settingsComponents/TabListButton'
-import CanvasSizeInput from '../settingsComponents/CanvasSizeInput'
-import CanvasFillInput from '../settingsComponents/CanvasFillInput'
-import AnimationLengthInput from '../settingsComponents/AnimationLengthInput'
-import AnimationRateInput from '../settingsComponents/AnimationRateInput'
+import TabListButton from './TabListButton'
+import AnimationLengthInput from './AnimationLengthInput'
+import AnimationRateInput from './AnimationRateInput'
+import CanvasSizeInput from './CanvasSizeInput'
+import CanvasFillInput from './CanvasFillInput'
+import TransparencyInput from './TransparencyInput'
+import TransparencyIndicatorInput from './TransparencyIndicatorInput'
 
 // TODO [3]: Settings Ideas
 //  - When selecting item on the stage, force open the containers in tree view, default: true
@@ -33,8 +35,16 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
           <Box mt={1} mb={1}>Canvas</Box>
           <CanvasSizeInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
           <CanvasFillInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
+          <TransparencyInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
+          <TransparencyIndicatorInput store={store} availableWidth={WIDTH_OF_SETTINGS} />
         </>
       )
+    }
+    if (tab === 'interactions') {
+      return <Box>Coming Soon</Box>
+    }
+    if (tab === 'hotkeys') {
+      return <Box>Coming Soon</Box>
     }
     return null
   }, [tab, store])

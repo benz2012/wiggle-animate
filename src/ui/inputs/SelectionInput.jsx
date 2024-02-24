@@ -10,6 +10,7 @@ const SelectionInput = observer(({
   targetProperty,
   setPropertyValue,
   noKeyframeGap,
+  disabled,
 }) => {
   const { value: selectionObj, label, group } = targetProperty
 
@@ -35,6 +36,7 @@ const SelectionInput = observer(({
         labelId={`input-${group ? `${group}-` : ''}${label}`}
         value={selectionObj.selected}
         onChange={handleChange}
+        disabled={disabled}
         sx={(theme) => ({
           width: availableWidth,
           '& .MuiInputBase-input': {

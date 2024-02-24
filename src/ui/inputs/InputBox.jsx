@@ -17,6 +17,7 @@ const InputBox = observer(({
   valueDragRatio = 1, // the higher the ratio, the slower a value will change during drag-updates
   onBlur,
   error,
+  disabled,
   autoFocus = false,
   focusIdAfterCommitting = null,
 }) => {
@@ -133,7 +134,7 @@ const InputBox = observer(({
           pl: addDragBox ? 0 : 0.5,
           py: addDragBox ? 0 : 0.5,
           outline: isDragging ? focusedOutline : 'inherit',
-          '&:hover': { backgroundColor: 'action.selected' },
+          '&:hover': disabled ? {} : { backgroundColor: 'action.selected' },
           '&:focus-within': { outline: focusedOutline },
           '&.Mui-error': { outline: `1px solid ${theme.palette.error.main}` },
         })
@@ -153,7 +154,10 @@ const InputBox = observer(({
       }}
       startAdornment={addDragBox && (
         <Box
-          onPointerDown={startDrag}
+          onPointerDown={(event) => {
+            if (disabled) return
+            startDrag(event)
+          }}
           sx={(theme) => ({
             px: 0.5,
             pb: '1px',
@@ -166,8 +170,8 @@ const InputBox = observer(({
             backgroundColor: theme.palette.mode === 'dark'
               ? ('rgb(20, 20, 20)') : (theme.palette.action.disabledBackground),
 
-            cursor: 'ew-resize',
-            '&:hover': { color: theme.palette.action.active },
+            cursor: disabled ? 'inherit' : 'ew-resize',
+            '&:hover': disabled ? {} : { color: theme.palette.action.active },
           })}
         >
           {dragButtonLabel}
@@ -182,6 +186,7 @@ const InputBox = observer(({
         onBlur()
       }}
       error={error}
+      disabled={disabled}
       autoFocus={autoFocus}
     />
   )

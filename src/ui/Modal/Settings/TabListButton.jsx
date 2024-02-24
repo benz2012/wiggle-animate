@@ -1,8 +1,8 @@
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 
-import theme from '../theme'
-import { titleCase } from '../../utility/string'
+import theme from '../../theme'
+import { titleCase } from '../../../utility/string'
 
 const TabListButton = ({ name, tab, setTab }) => (
   <ListItemButton

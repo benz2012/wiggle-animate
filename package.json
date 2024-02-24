@@ -1,6 +1,6 @@
 {
   "name": "wiggle-animate",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "private": true,
   "homepage": "/_subapps/animate",
   "dependencies": {
@@ -13,10 +13,13 @@
     "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-only-warn": "^1.1.0",
+    "jszip": "^3.10.1",
     "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "md5": "^2.3.0",
     "mobx": "^6.12.0",
     "mobx-react-lite": "^3.4.3",
+    "mp4-muxer": "^3.0.5",
     "overlayscrollbars": "^2.4.6",
     "overlayscrollbars-react": "^0.5.3",
     "react": "^18.2.0",

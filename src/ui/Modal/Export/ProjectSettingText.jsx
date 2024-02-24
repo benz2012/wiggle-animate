@@ -1,0 +1,13 @@
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+
+const ProjectSettingText = ({ label, value, sx, valueNotTypography = false }) => (
+  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...sx }}>
+    <Typography sx={{ fontFamily: 'monospace', fontSize: 12 }}>{label}</Typography>
+    {valueNotTypography ? value : (
+      <Typography sx={{ fontFamily: 'monospace', fontSize: 12 }}>{value}</Typography>
+    )}
+  </Box>
+)
+
+export default ProjectSettingText

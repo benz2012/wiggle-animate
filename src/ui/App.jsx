@@ -10,9 +10,10 @@ import PropertyEditor from './PropertyEditor'
 import KeyHandler from './KeyHandler'
 import PointerHandler from './PointerHandler'
 import SaveDialog from './Modal/SaveDialog'
-import SettingsDialog from './Modal/SettingsDialog'
-import ExportDialog from './Modal/ExportDialog'
+import SettingsDialog from './Modal/Settings'
+import ExportDialog from './Modal/Export'
 import FontDialog from './Modal/FontDialog'
+import HelpDialog from './Modal/HelpDialog'
 import HoldingSnackbar from './Modal/HoldingSnackbar'
 import useWindowSize from './hooks/useWindowSize'
 import { peekAtObservables } from '../utility/tree'
@@ -20,7 +21,6 @@ import { rotateArrowCursor } from '../utility/drawing'
 
 const App = observer(({ store }) => {
   const stageRef = useRef(null)
-  const exportCanvasRef = useRef(null)
   const [windowWidth, windowHeight] = useWindowSize()
 
   /* State Syncs */
@@ -79,14 +79,10 @@ const App = observer(({ store }) => {
   /* Main drawing trigger */
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
-    let canvasEl = stageRef.current
-    let drawFunc = 'draw'
-    if (store.output.isExporting) {
-      canvasEl = exportCanvasRef.current
-      drawFunc = 'drawForExport'
-    }
+    if (store.output.isExporting) return
+    const canvasEl = stageRef.current
     const ctx = canvasEl.getContext('2d')
-    store.rootContainer[drawFunc](ctx, canvasEl.width, canvasEl.height)
+    store.rootContainer.draw(ctx, canvasEl.width, canvasEl.height)
   }, [
     store.rootContainer.sortOrder,
     store.rootContainer.canvasSize.width,
@@ -95,6 +91,8 @@ const App = observer(({ store }) => {
     store.rootContainer.canvasPosition.y,
     store.rootContainer.canvasScale,
     `${store.rootContainer.canvasFill}`,
+    store.stage.transparent,
+    store.stage.transparentIndicator,
     store.output.isExporting,
     store.keyHeld.Space,
     store.keyHeld.MiddleMouse,
@@ -130,7 +128,6 @@ const App = observer(({ store }) => {
         />
         {store.output.isExporting && (
           <canvas
-            ref={exportCanvasRef}
             id="export-canvas"
             style={{ visibility: 'hidden' }}
             width={store.rootContainer.canvasSize.width}
@@ -159,6 +156,10 @@ const App = observer(({ store }) => {
         store={store}
         open={store.view.dialogs.addFonts}
         onClose={() => store.view.closeDialog('addFonts')}
+      />
+      <HelpDialog
+        open={store.view.dialogs.help}
+        onClose={() => store.view.closeDialog('help')}
       />
 
       {/* Snackbars */}

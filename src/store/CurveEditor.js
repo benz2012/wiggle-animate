@@ -6,8 +6,6 @@ import Vector2 from '../lib/structure/Vector2'
 import { clamp } from '../utility/numbers'
 import { keyframeLabelFromProperty } from '../utility/state'
 
-// TODO [2]: handle drag release when outside of HTML element
-
 class CurveEditor {
   constructor(store) {
     this.store = store

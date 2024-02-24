@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 
-import SelectionInput from '../inputs/SelectionInput'
-import Animation from '../../lib/animation/Animation'
+import SelectionInput from '../../inputs/SelectionInput'
+import Animation from '../../../lib/animation/Animation'
 
 const frameRateOptions = Animation.RATES.map((rate) => rate.toFixed(2))
 
@@ -15,7 +15,10 @@ const AnimationRateInput = observer(({ store, availableWidth }) => (
       label: 'frame rate',
       group: 'animation',
     }}
-    setPropertyValue={(newValue) => store.animation.setRate(parseFloat(newValue))}
+    setPropertyValue={(newValue) => {
+      store.animation.setRate(parseFloat(newValue))
+      store.actionStack.untrackedPush()
+    }}
     availableWidth={availableWidth / 2}
     noKeyframeGap
   />

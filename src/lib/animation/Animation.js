@@ -20,7 +20,9 @@ class Animation {
     }
   }
 
-  constructor() {
+  constructor(store) {
+    this.store = store
+
     // Animation timeline is always 1-to-#frames
     this.frames = Animation.INITIAL.frames
     // firstFrame & lastFrame are simply the viewing window
@@ -77,6 +79,11 @@ class Animation {
     if (this.now > frame) {
       this.goToFrame(frame)
     }
+  }
+
+  setRange(frameIn, frameOut) {
+    this.setIn(frameIn)
+    this.setOut(frameOut)
   }
 
   nextFrame() {
@@ -183,22 +190,27 @@ class Animation {
   }
 
   animateForExport(exportOneFrameAsync) {
+    let exportFrameNum = 1
     return new Promise((resolve) => {
       const loop = async () => {
-        await exportOneFrameAsync(this.now)
-        const nextSteps = action(() => {
-          if (this.now === this.frames) {
-            resolve()
-            return
-          }
+        this.store.rootContainer.updatePropertiesForFrame(exportFrameNum)
 
-          const nextFrame = this.nextFrame()
-          if (nextFrame === null) return
+        const canvasEl = document.getElementById('export-canvas')
+        const ctx = canvasEl.getContext('2d')
+        this.store.rootContainer.drawForExport(ctx, canvasEl.width, canvasEl.height)
 
-          this.now = nextFrame
-          requestAnimationFrame(loop)
-        })
-        nextSteps()
+        await exportOneFrameAsync(exportFrameNum)
+
+        const loopProgress = Math.floor((exportFrameNum / this.frames) * 100)
+        this.store.output.setExportProgress(loopProgress)
+
+        if (exportFrameNum === this.frames) {
+          resolve()
+          return
+        }
+
+        exportFrameNum += 1
+        requestAnimationFrame(loop)
       }
 
       loop()
