@@ -10,9 +10,7 @@ import {
 } from '../../utility/drawing'
 import shapeTypeMap from '../shapes/shapeTypeMap'
 
-// TODO [3]: if an item is inside of a container, draw a dim version of the container controller to
-//       indicate this to the user, when the child item is selected
-//       Then, add an option to disable that feature
+// TODO [4]: Add project to hide dim containers
 
 class Container extends Drawable {
   static get className() { return 'Container' }
@@ -141,6 +139,36 @@ class Container extends Drawable {
     return children
   }
 
+  openParentsOfTheseItems(itemIds) {
+    let openUp = false
+
+    const itemsNotOnThisLevel = []
+    itemIds.forEach((itemId) => {
+      if (itemId in this._children) {
+        openUp = true
+      } else {
+        itemsNotOnThisLevel.push(itemId)
+      }
+    })
+
+    this.sortOrder.forEach((childId) => {
+      const child = this._children[childId]
+      if (child instanceof Container) {
+        const childHasOpened = child.openParentsOfTheseItems(itemsNotOnThisLevel)
+        if (childHasOpened === true) {
+          // we bubble up true events, but not false ones
+          openUp = true
+        }
+      }
+    })
+
+    if (openUp) {
+      this.showChildren = true
+    }
+
+    return openUp
+  }
+
   updatePropertiesForFrame(frame) {
     super.updatePropertiesForFrame(frame)
     Object.values(this.children).forEach((child) => {
@@ -198,10 +226,9 @@ class Container extends Drawable {
       }
     })
 
-    if (
-      this.id !== Item.rootContainer.id
-      && selectedIds.includes(this.id)
-    ) {
+    if (this.id === Container.rootContainer.id) return
+
+    if (selectedIds.includes(this.id)) {
       this.ctx.setTransform(this.currentTransform)
       this.ctx.translate(...this.origin.values)
       let controlHovered = hoveredId === this.id && hoveredControl
@@ -211,6 +238,10 @@ class Container extends Drawable {
         controlHovered = 'outerBox'
       }
       drawContainerController(this.ctx, controlHovered)
+    } else if (selectedIds.some((itemId) => (itemId in this._children))) {
+      this.ctx.setTransform(this.currentTransform)
+      this.ctx.translate(...this.origin.values)
+      drawContainerController(this.ctx, null, true)
     }
   }
 
@@ -341,7 +372,9 @@ class Container extends Drawable {
       return resultObject
     }, {})
     this._sortOrder = theSortOrder
-    this.showChildren = showChildren
+    if (showChildren != null) {
+      this.showChildren = showChildren
+    }
     return this
   }
 }

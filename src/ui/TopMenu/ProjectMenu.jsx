@@ -19,9 +19,6 @@ import { getBrowserModifierKey } from '../../utility/string'
 const BMK = getBrowserModifierKey()
 const size20 = { width: '20px', height: '20px' }
 
-// TODO [3]: Settings Ideas
-//  - When selecting item on the stage, force open the containers in tree view, default: true
-
 const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
   const inputProjectFileRef = useRef()
 
@@ -34,12 +31,13 @@ const ProjectMenu = observer(({ anchorEl, open, handleClose, store }) => {
         onClose={handleClose}
         slotProps={{ paper: { sx: { width: 240 } } }}
         MenuListProps={{ dense: true }}
+        transitionDuration={150}
       >
         <MenuListItem
           IconClass={TuneIcon}
           hotkey=","
           hotkeyModifiers={[BMK]}
-          onClick={() => null}
+          onClick={() => store.view.openDialog('settings')}
         >
           Settings
         </MenuListItem>

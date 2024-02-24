@@ -1,6 +1,7 @@
 import Property from '../../lib/structure/Property'
 
-export const PANEL_WIDTH = 250
+export const PANEL_WIDTH = 258
+export const LEFT_SIDE_SPACE = 108
 
 export const EXPANSION_DURATION = 300
 

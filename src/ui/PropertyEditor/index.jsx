@@ -29,6 +29,7 @@ const PropertyEditor = observer(({ store }) => {
   //  - hide when playing animation
   //  - - hide forever, show again after animation stopped
   //  - First Item Auto-Open
+  //  - Show/hide Keyframe button: default show
 
   const { build, rootContainer } = store
   const { selectedIds } = build

@@ -5,37 +5,17 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { LABEL_WIDTH } from './config'
+import { Tick, Arrow, Dash } from './regionGraphics'
 import GenericInputWithInternalValue from '../inputs/GenericInputWithInternalValue'
 import { parseAndValidateInteger } from '../inputs/util'
 import usePrevious from '../hooks/usePrevious'
 
 const mono12 = { fontFamily: 'monospace', fontSize: 12 }
 
-const Tick = ({ sx }) => (
-  <Box
-    sx={(theme) => ({
-      width: '0px',
-      height: '8px',
-      borderRight: `1px solid ${theme.palette.primary.main}`,
-      ...sx,
-    })}
-  />
-)
-const Dash = () => (
-  <Box
-    sx={(theme) => ({
-      flexGrow: 1,
-      height: '0px',
-      borderBottom: `1px solid ${theme.palette.primary.main}`,
-    })}
-  />
-)
-
-// TODO [3]: when work region is smaller than Project total, draw left/right arrow instead of vertical tick mark
-
 const RegionSelection = observer(({
   frameIn,
   frameOut,
+  animationRange,
   setIn,
   setOut,
   frameHoveredAt,
@@ -137,7 +117,7 @@ const RegionSelection = observer(({
               label="editIn"
               propertyValue={frameIn}
               parseAndValidateNewValue={parseAndValidateFrameIn}
-              setPropertyValue={(newValue) => setIn(newValue)}
+              setPropertyValue={setIn}
               onBlur={() => setEditIn(false)}
               focusIdAfterCommitting="bottom-menu"
               noLabel
@@ -170,7 +150,7 @@ const RegionSelection = observer(({
                 label="editOut"
                 propertyValue={frameOut}
                 parseAndValidateNewValue={parseAndValidateFrameOut}
-                setPropertyValue={(newValue) => setOut(newValue)}
+                setPropertyValue={setOut}
                 onBlur={() => setEditOut(false)}
                 focusIdAfterCommitting="bottom-menu"
                 noLabel
@@ -199,9 +179,9 @@ const RegionSelection = observer(({
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-          <Tick />
+          {frameIn === animationRange[0] ? (<Tick />) : (<Arrow direction="left" />)}
           <Dash />
-          <Tick />
+          {frameOut === animationRange[1] ? (<Tick />) : (<Arrow direction="right" />)}
           {(absoluteFrameHovered && !editIn && !editOut) && (
             <Box
               sx={{

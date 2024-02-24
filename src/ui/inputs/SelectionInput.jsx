@@ -9,6 +9,8 @@ const SelectionInput = observer(({
   availableWidth,
   targetProperty,
   setPropertyValue,
+  noKeyframeGap,
+  disabled,
 }) => {
   const { value: selectionObj, label, group } = targetProperty
 
@@ -23,6 +25,9 @@ const SelectionInput = observer(({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      {/* gap that mimics keyframe button for proper left alignment of labels */}
+      {!noKeyframeGap && <Box sx={{ marginRight: '16px' }} />}
+
       <InputLabel label={label} labelGroup={group} idInsteadOfFor />
 
       <Box sx={{ flexGrow: 1 }} />
@@ -31,6 +36,7 @@ const SelectionInput = observer(({
         labelId={`input-${group ? `${group}-` : ''}${label}`}
         value={selectionObj.selected}
         onChange={handleChange}
+        disabled={disabled}
         sx={(theme) => ({
           width: availableWidth,
           '& .MuiInputBase-input': {

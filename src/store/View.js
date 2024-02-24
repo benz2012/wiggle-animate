@@ -5,6 +5,7 @@ class View {
     this.store = store
 
     this.dialogs = {
+      settings: false,
       help: false,
       save: false,
       export: false,
@@ -17,6 +18,7 @@ class View {
   openDialog(dialogName) {
     if (dialogName === 'export') {
       this.store.output.setFileName()
+      this.store.output.errorMessage = ''
     }
     this.dialogs[dialogName] = true
   }
@@ -24,6 +26,9 @@ class View {
   closeDialog(dialogName) {
     // Prevent closing the dialog until export is finished
     if (dialogName === 'export' && this.store.output.isExporting) return
+    if (dialogName === 'export') {
+      this.store.output.setExportProgress(null)
+    }
 
     this.dialogs[dialogName] = false
   }

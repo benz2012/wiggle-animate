@@ -1,5 +1,7 @@
 import './BottomMenu.css'
 
+// TODO [4]: use material components & icons on play control buttons
+
 const PlayControls = ({ isPlaying, playPauseClick, goToFirst, goToLast }) => (
   <div id="play-controls">
     <button

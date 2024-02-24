@@ -85,6 +85,9 @@ const AlignmentInput = observer(({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      {/* gap that mimics keyframe button for proper left alignment of labels */}
+      <Box sx={{ marginRight: '16px' }} />
+
       <InputLabel
         label={label}
         overwriteHtmlFor={`input-${CHECKBOX_LABELS[selectedAlignmentNum].replaceAll(' ', '-')}`}

@@ -10,14 +10,15 @@ import Vector2 from './Vector2'
 import Color from '../visuals/Color'
 import Selection from './Selection'
 import propertyValueTypeMap from './propertyValueTypeMap'
+import Stage from '../../store/Stage'
 import { identityMatrix } from '../../utility/matrix'
 import { zeroIfZero } from '../../utility/numbers'
-import { drawStageDots, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
+import { drawStageDots, checkerboardRects, drawSelector, drawPotentialPathPoint } from '../../utility/drawing'
 import { isPrimitive } from '../../utility/object'
 import { flattenTreeToRelationships } from '../../utility/tree'
+import { DEBOUNCE_DELAY_MS } from '../../utility/state'
 
 const scaleSteps = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5]
-const DEBOUNCE_DELAY_MS = 500
 
 class RootContainer extends Container {
   static get INITIAL() {
@@ -44,9 +45,13 @@ class RootContainer extends Container {
       dataBefore: null,
     }
 
+    // For Posterity: canvasPosition & canvasScale are actually in reference to the Stage Position & Scale.
+    // The Canvas is merely a "crop box" that determines the size of the export, and is always stationed
+    // at the same position and scale within the Stage. Canvas Fill is a glorified rectangle that can't
+    // be interacted with like other Shapes in the tree, but is necessary for communicating this "crop box"
+    // to the user. Someday I might rename these attributes or move them to the Stage class. ¯\_(ツ)_/¯
     this.canvasPosition = RootContainer.INITIAL.canvasPosition
     this._canvasScale = RootContainer.INITIAL.canvasScale
-    // TODO [4]: make these customizable
     this.canvasSize = RootContainer.INITIAL.canvasSize
     this.canvasFill = RootContainer.INITIAL.canvasFill
     this.setCanvasToBestFit()
@@ -62,10 +67,28 @@ class RootContainer extends Container {
       canvasPosition: observable,
       _canvasScale: observable,
       canvasFill: observable,
+      setCanvasSize: action,
+      setCanvasFill: action,
       checkPointerIntersections: action,
       findRectIntersections: action,
       changeScaleByStep: action,
     })
+  }
+
+  setCanvasSize(newValue) {
+    if (newValue instanceof Size) {
+      this.canvasSize = newValue
+    } else if (Array.isArray(newValue) && newValue.length === 2) {
+      this.canvasSize = new Size(...newValue)
+    }
+  }
+
+  setCanvasFill(newValue) {
+    if (newValue instanceof Color) {
+      this.canvasFill = newValue
+    } else {
+      this.canvasFill = new Color(newValue)
+    }
   }
 
   get canvasScale() { return this._canvasScale }
@@ -179,7 +202,12 @@ class RootContainer extends Container {
       .scaleSelf(this.canvasScale, this.canvasScale)
 
     this.drawStageDots(rootWidth, rootHeight)
-    this.drawCanvas()
+
+    if (this.store.stage.transparent) {
+      this.drawTransparentIndicator()
+    } else {
+      this.drawCanvas()
+    }
 
     super.draw(
       this.parentTransform,
@@ -208,7 +236,9 @@ class RootContainer extends Container {
     this.ctx.clearRect(0, 0, rootWidth, rootHeight)
     this.parentTransform = identityMatrix()
 
-    this.drawCanvas()
+    if (this.store.stage.transparent === false) {
+      this.drawCanvas()
+    }
     super.draw(this.parentTransform, null, null, null, [], [], null, [])
   }
 
@@ -227,6 +257,34 @@ class RootContainer extends Container {
     this.ctx.beginPath()
     this.ctx.rect(0, 0, ...this.canvasSize.values)
     this.ctx.fillStyle = this.canvasFill.toString()
+    this.ctx.fill()
+  }
+
+  drawTransparentIndicator() {
+    const { transparentIndicator } = this.store.stage
+    if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.BLACK) {
+      this.ctx.fillStyle = 'rgb(0, 0, 0)'
+    } else if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_DARK) {
+      this.ctx.fillStyle = 'rgb(10, 10, 10)'
+    } else if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_LIGHT) {
+      this.ctx.fillStyle = 'rgb(200, 200, 200)'
+    }
+
+    this.ctx.setTransform(this.currentTransform)
+    this.ctx.beginPath()
+    this.ctx.rect(0, 0, ...this.canvasSize.values)
+    this.ctx.fill()
+
+    if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.BLACK) return
+    if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_DARK) {
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.04)'
+    } else if (transparentIndicator === Stage.TRANSPARENT_INDICATORS.CHECKERBOARD_LIGHT) {
+      this.ctx.fillStyle = 'rgb(230, 230, 230)'
+    }
+
+    this.ctx.beginPath()
+    const checkerSize = 10
+    checkerboardRects(this.ctx, this.canvasSize, checkerSize)
     this.ctx.fill()
   }
 
@@ -603,8 +661,9 @@ class RootContainer extends Container {
   toPureObject() {
     const finalPureObject = {
       canvas: {
-        position: this.canvasPosition.toPureObject(),
-        scale: this.canvasScale,
+        // I think saving Canvas position and scale is a bit jarring when loading a project, but will think on it
+        // position: this.canvasPosition.toPureObject(),
+        // scale: this.canvasScale,
         size: this.canvasSize.toPureObject(),
         fill: this.canvasFill.toPureObject(),
       },
@@ -614,11 +673,11 @@ class RootContainer extends Container {
   }
 
   fromPureObject({ canvas, children }) {
-    this.canvasPosition = Vector2.fromPureObject(canvas.position)
-    this._canvasScale = canvas.scale
+    // this.canvasPosition = Vector2.fromPureObject(canvas.position)
+    // this._canvasScale = canvas.scale
     this.canvasSize = Size.fromPureObject(canvas.size)
     this.canvasFill = Color.fromPureObject(canvas.fill)
-    super.fromPureObject({ children })
+    super.fromPureObject({ children, id: this.id })
   }
 }
 

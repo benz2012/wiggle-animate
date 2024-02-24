@@ -3,10 +3,6 @@ import VisibleShape from '../drawing/VisibleShape'
 class Ellipse extends VisibleShape {
   static get className() { return 'Ellipse' }
 
-  constructor(...args) {
-    super('ellipse', ...args)
-  }
-
   /*
     TODO [4]: add a custom findRectIntersections() implementation that checks
     against an ellipse path, instead of the existing hover/controller rectSpec

@@ -30,7 +30,7 @@ const drawPlayhead = (ctx, dpr, playheadWidth, isHovered, strokeProtrusion) => {
   ctx.beginPath()
   ctx.lineWidth = dpr
   ctx.lineJoin = 'miter'
-  ctx.strokeStyle = isHovered ? `${theme.palette.primary[50]}` : `${theme.palette.primary_dark_dark[50]}`
+  ctx.strokeStyle = isHovered ? `${theme.palette.primary[100]}` : `${theme.palette.primary_dark_dark[50]}`
   ctx.moveTo(playheadLeft + upperWidth / 4, 0)
   ctx.lineTo(playheadLeft + upperWidth / 4, -14)
   ctx.moveTo(playheadLeft + (upperWidth / 4) * 2, 4)

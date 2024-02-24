@@ -13,6 +13,8 @@ import ClearIcon from '@mui/icons-material/Clear'
 import MenuListItem from './MenuListItem'
 import { getBrowserModifierKey } from '../../utility/string'
 
+// TODO [3]: highlight/flash the edit menu button when you use one of the functions within it
+
 const BMK = getBrowserModifierKey()
 
 const EditMenu = ({ anchorEl, open, handleClose, store }) => (
@@ -23,6 +25,7 @@ const EditMenu = ({ anchorEl, open, handleClose, store }) => (
     onClose={handleClose}
     slotProps={{ paper: { sx: { width: 220 } } }}
     MenuListProps={{ dense: true }}
+    transitionDuration={150}
   >
     <MenuListItem
       hotkey="Z"

@@ -33,7 +33,36 @@ const drawStageDots = (ctx, rootWidth, rootHeight, canvasPosition, canvasScale) 
   ctx.fill()
 }
 
+const checkerboardRects = (ctx, canvasSize, checkerSize) => {
+  const numColumns = Math.ceil(canvasSize.width / checkerSize)
+  const numRows = Math.ceil(canvasSize.height / checkerSize)
+  const remainderCol = Math.round(canvasSize.width % checkerSize)
+  const remainderRow = Math.round(canvasSize.height % checkerSize)
+
+  for (let column = 0; column < numColumns; column += 1) {
+    for (let row = 0; row < numRows; row += 1) {
+      let checkerWidth = checkerSize
+      if (column === numColumns - 1 && remainderCol) {
+        checkerWidth = remainderCol
+      }
+      let checkerHeight = checkerSize
+      if (row === numRows - 1 && remainderRow) {
+        checkerHeight = remainderRow
+      }
+
+      if ((row % 2 === 0 && column % 2 === 1) || (row % 2 === 1 && column % 2 === 0)) {
+        ctx.rect(
+          column * checkerSize,
+          row * checkerSize,
+          checkerWidth,
+          checkerHeight,
+        )
+      }
+    }
+  }
+}
+
 export {
-  // eslint-disable-next-line
   drawStageDots,
+  checkerboardRects,
 }

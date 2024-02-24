@@ -5,8 +5,6 @@ import { zeroIfZero } from '../utility/numbers'
 import { isObject } from '../utility/object'
 import { insert } from '../utility/array'
 
-// TODO [3]: force open the containers in tree view, when selecting item on the stage
-
 class LeftMenu {
   constructor(store) {
     this.store = store

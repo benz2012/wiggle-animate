@@ -220,6 +220,34 @@ class VisibleShape extends Shape {
     this.drawStroke()
     this.drawFill()
   }
+
+  get isVisiblyInteractive() {
+    const fillIsVisible = this.fillOpacity !== 0
+    const strokeIsVisible = this.strokeOpacity !== 0 && this.strokeWidth !== 0
+    const shadowIsVisible = this.shadowOpacity !== 0
+    return (
+      fillIsVisible
+      || strokeIsVisible
+      || shadowIsVisible
+    )
+  }
+
+  checkPointerIntersections(...args) {
+    const isSelected = VisibleShape.rootContainer.store.build.selectedIds.includes(this.id)
+    if (!isSelected && !this.isVisiblyInteractive) return false
+    return super.checkPointerIntersections(...args)
+  }
+
+  checkSelectedItemHandleIntersections(...args) {
+    const isSelected = VisibleShape.rootContainer.store.build.selectedIds.includes(this.id)
+    if (!isSelected && !this.isVisiblyInteractive) return [false, null, null]
+    return super.checkSelectedItemHandleIntersections(...args)
+  }
+
+  findRectIntersections(...args) {
+    if (!this.isVisiblyInteractive) return []
+    return super.findRectIntersections(...args)
+  }
 }
 
 export default VisibleShape

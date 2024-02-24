@@ -24,7 +24,7 @@ class Path extends VisibleShape {
   static get DIRECTIONS() { return { CLOCKWISE: 1, COUNTER_CLOCKWISE: -1 } }
 
   constructor(...args) {
-    super('path', ...args)
+    super(...args)
     // overwrite defaults
     this._fillOpacity.setValue(0)
     this._strokeColor.setValue(this.fillColor)

@@ -137,7 +137,7 @@ class Build {
       const child = startingContainer.children[childId]
       if (child instanceof Container) {
         someGrandchildSelected = this.highestSelectedItemId(child)
-        return true
+        if (someGrandchildSelected) return true
       }
       return false
     })
@@ -149,11 +149,15 @@ class Build {
     if (!isEqual(this.selectedIds, values)) {
       this.store.keyframeEditor.setSelected([])
     }
+
     this.selectedIds = values
+
+    this.store.rootContainer.openParentsOfTheseItems(values)
   }
 
   addToSelection(value) {
     this.selectedIds = [...this.selectedIds, value]
+    this.store.rootContainer.openParentsOfTheseItems([value])
     this.store.keyframeEditor.setSelected([])
   }
 
@@ -211,7 +215,7 @@ class Build {
     navigator.clipboard.writeText(selectedItemsAsJSON)
       .then(() => {
         // Success!
-        // Maybe add a snackbar component to show confirmation?
+        // TODO [3]: Maybe add a snackbar component to show confirmation?
       })
       .catch(() => {
         // Failed D:
@@ -248,7 +252,7 @@ class Build {
 
     // Keep in mind, these Ids/Items will only reference the top-level of what was copy-pasted.
     // If their are children also being duplicated in this process, they will simply be managed through their parent
-    // Also, when pasting, we never want to preserve Id as their will either be a collision, or we are in another
+    // Also, when pasting, we never want to preserve Id as there will either be a collision, or we are in another
     // project file in which case the original ids have no value anyways
     const [resultingIds, resultingItems] = Build.buildItemsFromPureObjects(itemsAsPureObjects, false)
 

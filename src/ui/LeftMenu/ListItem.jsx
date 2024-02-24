@@ -1,4 +1,4 @@
-const ListItem = ({ id, name, className, textHeight, paddingHeight, onClick }) => (
+const ListItem = ({ id, name, icon, className, textHeight, paddingHeight, onClick }) => (
   <li
     id={`left-menu-item--${id}`}
     className={className}
@@ -10,10 +10,12 @@ const ListItem = ({ id, name, className, textHeight, paddingHeight, onClick }) =
       paddingBottom: `${paddingHeight / 2}px`,
     }}
   >
+    {icon}
     <span
       id={`left-menu-item-span--${id}`}
       className="noselect"
       style={{
+        marginLeft: '8px',
         fontSize: `${textHeight}px`,
         lineHeight: `${textHeight}px`,
       }}

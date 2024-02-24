@@ -6,6 +6,7 @@ import debounce from 'lodash.debounce'
 
 import {
   PANEL_WIDTH,
+  LEFT_SIDE_SPACE,
   EXPANSION_DURATION,
   INITIALLY_COLLAPSED_GROUPS,
   PAIRED_VECTOR_TYPES,
@@ -15,6 +16,7 @@ import PropertyGroup from './PropertyGroup'
 import usePrevious from '../hooks/usePrevious'
 import { getWeightMap } from '../../utility/fonts'
 import { voidFunc } from '../../utility/object'
+import { DEBOUNCE_DELAY_MS } from '../../utility/state'
 
 import AlignmentInput from '../inputs/AlignmentInput'
 import AngleInput from '../inputs/AngleInput'
@@ -27,7 +29,7 @@ import SizeInput from '../inputs/SizeInput'
 import StringInput from '../inputs/StringInput'
 import Vector2Input from '../inputs/Vector2Input'
 
-const INPUT_WIDTH = PANEL_WIDTH - 100
+const INPUT_WIDTH = PANEL_WIDTH - LEFT_SIDE_SPACE
 const inputClasses = {
   Alignment: AlignmentInput,
   Angle: AngleInput,
@@ -87,7 +89,6 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
   const genericSetter = (property) => {
     if (!property) return voidFunc
     whichDebounceCall.current[property.name] = 'LEADING'
-    const DEBOUNCE_DELAY_MS = 500
 
     const actionSubmitter = () => {
       if (whichDebounceCall.current[property.name] === 'LEADING') {
@@ -197,6 +198,28 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     }
   }
 
+  const makeKeyframeToggler = (property, existingKeyframe) => () => {
+    if (existingKeyframe) {
+      property.deleteKey(existingKeyframe.id)
+      store.actionStack.push({
+        revert: [
+          'keyframeEditor.pushKeyOnProperty',
+          [selectedItem.id, property.name, existingKeyframe.toPureObject()],
+        ],
+        perform: ['keyframeEditor.deleteKeyOnProperty', [selectedItem.id, property.name, existingKeyframe.id]],
+      })
+    } else {
+      const addedKeyframe = property.addKey(store.animation.now, property.value)
+      store.actionStack.push({
+        revert: ['keyframeEditor.deleteKeyOnProperty', [selectedItem.id, property.name, addedKeyframe.id]],
+        perform: [
+          'keyframeEditor.pushKeyOnProperty',
+          [selectedItem.id, property.name, addedKeyframe.toPureObject()],
+        ],
+      })
+    }
+  }
+
   const makePropertyComponent = (property) => {
     const ComponentClass = inputClasses[property.typeName]
     if (ComponentClass == null) return null
@@ -219,6 +242,9 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
     const togglePairing = (shouldPair) => {
       store.propertyEditor.setPairedVector(propertyKey, shouldPair)
     }
+    const keyframeForThisPropertyOnThisFrame = property.keyframes
+      ?.find((keyframe) => keyframe.frame === store.animation.now)
+    const toggleKeyframe = makeKeyframeToggler(property, keyframeForThisPropertyOnThisFrame)
 
     const componentProps = {
       key: propertyKey,
@@ -233,6 +259,10 @@ const Contents = observer(({ store, numSelected, selectedItem }) => {
       togglePairing,
       addDragBox: !NO_DRAG_BOX_TYPES.includes(property.typeName),
       valueDragRatio: property.valueDragRatio,
+      isKeyframable: property.isKeyframable,
+      toggleKeyframe,
+      numKeyframes: property.keyframes?.length,
+      isKeyframe: !!keyframeForThisPropertyOnThisFrame,
     }
     return <ComponentClass {...componentProps} />
   }

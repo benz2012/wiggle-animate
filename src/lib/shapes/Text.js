@@ -4,11 +4,13 @@ import VisibleShape from '../drawing/VisibleShape'
 import Property from '../structure/Property'
 import Selection from '../structure/Selection'
 
+// TODO [3]: Copy & Pasting a Text needs to also bring the Font Family with it
+
 class Text extends VisibleShape {
   static get className() { return 'Text' }
 
   constructor(...args) {
-    super('text', ...args)
+    super(...args)
 
     this._text = new Property({
       type: Property.PRIMITIVES.STRING,

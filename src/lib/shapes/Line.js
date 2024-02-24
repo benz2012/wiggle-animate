@@ -5,7 +5,7 @@ class Line extends VisibleShape {
   static get className() { return 'Line' }
 
   constructor(x = 0, y = 0, length = 400, thickness = 10) {
-    super('line', x, y, length, thickness)
+    super(x, y, length, thickness)
 
     // Adjust Inherited Properties
     this._width.label = 'length'

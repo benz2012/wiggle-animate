@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import Box from '@mui/material/Box'
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
@@ -8,12 +8,11 @@ import LineOfKeyframes from './LineOfKeyframes'
 import RegionSelection from './RegionSelection'
 import CurveEditorCanvas from './CurveEditorCanvas'
 import theme from '../theme'
+import Animation from '../../lib/animation/Animation'
 import { LABEL_WIDTH, CSS_ROTATION_OFFSET } from './config'
 import { isEqual } from '../../utility/array'
-import { keyframeLabelFromProperty } from '../../utility/state'
+import { keyframeLabelFromProperty, generateDebouncedSetterAndSubmitter } from '../../utility/state'
 
-// TODO [3]: When 1or 2 keyframe selected, maybe show the inbetween range as yellow
-//           in the keyframe timeline to indicate which region the handle editor is referencing
 // TODO [4]: Moving keyframes causes lots of unecessary renders, sometimes even triggeres a
 //           "maximum update depth exceeded" warning in react. very hard to debug, and will
 //           have serious affects whenever we upgrade to the next Mobx, for an unknown reason
@@ -44,6 +43,24 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
   const [drawNewKeyAt, absoluteFrameHovered] = store.keyframeEditor.hoverInfo
   const frameNowLeft = (animation.now - frameIn) * pixelsPerFrame + LABEL_WIDTH + theme.spacing[1] - 0.5
 
+  // This is guaranteed to be the two relevant to the active curve (and sorted), or null
+  const [, targetKeyframes, targetKeyframeLabel] = store.curveEditor.targetKeyframeInfo
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setAndSubmitFrameIn = useCallback(generateDebouncedSetterAndSubmitter(
+    store.actionStack,
+    'animation.setIn',
+    () => store.animation.firstFrame,
+    (newValue) => store.animation.setIn(newValue),
+  ), [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setAndSubmitFrameOut = useCallback(generateDebouncedSetterAndSubmitter(
+    store.actionStack,
+    'animation.setOut',
+    () => store.animation.lastFrame,
+    (newValue) => store.animation.setOut(newValue),
+  ), [])
+
   return (
     <Box sx={{ height: 'calc(100% - 32px)', display: 'flex', mt: 1 }}>
       <Box
@@ -58,8 +75,9 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
         <RegionSelection
           frameIn={frameIn}
           frameOut={frameOut}
-          setIn={animation.setIn}
-          setOut={animation.setOut}
+          animationRange={[Animation.FIRST, store.animation.frames]}
+          setIn={setAndSubmitFrameIn}
+          setOut={setAndSubmitFrameOut}
           frameHoveredAt={drawNewKeyAt + CSS_ROTATION_OFFSET}
           absoluteFrameHovered={
             (hoveredProperty || playheadHoverFrame)
@@ -123,6 +141,7 @@ const KeyframeEditor = observer(({ store, windowWidth }) => {
                       ? drawNewKeyAt
                       : null
                   }
+                  drawCurveTargetLineWith={keyframeLabel === targetKeyframeLabel ? targetKeyframes : []}
                   addKeyframe={() => {
                     if (!absoluteFrameHovered) return
                     if (hoveringNearExistingKeyframe) return
