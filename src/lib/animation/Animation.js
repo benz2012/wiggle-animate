@@ -81,6 +81,11 @@ class Animation {
     }
   }
 
+  setRange(frameIn, frameOut) {
+    this.setIn(frameIn)
+    this.setOut(frameOut)
+  }
+
   nextFrame() {
     const later = this.now + 1
     if (later > this.lastFrame) {

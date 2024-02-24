@@ -210,8 +210,13 @@ const KeyHandler = ({ store }) => {
             store.build.copySelectionToClipboard()
           }
         } else if (BOTTOM_HAS_FOCUS && !SOME_MODIFIER_HELD) {
+          const valuesBefore = [store.animation.firstFrame, store.animation.lastFrame]
           store.animation.setIn(Animation.FIRST)
           store.animation.setOut(store.animation.frames)
+          store.actionStack.push({
+            revert: ['animation.setRange', valuesBefore],
+            perform: ['animation.setRange', [Animation.FIRST, store.animation.frames]],
+          })
         } else if (STAGE_HAS_FOCUS && !SOME_MODIFIER_HELD) {
           store.stage.addContainer()
         }
@@ -247,12 +252,18 @@ const KeyHandler = ({ store }) => {
         store.view.reset()
         break
 
-      case 'i':
+      case 'i': {
         if (event.repeat) break
         if (SOME_MODIFIER_HELD) break
         if (!BOTTOM_HAS_FOCUS) break
+        const prevValue = store.animation.firstFrame
         store.animation.setIn(store.animation.now)
+        store.actionStack.push({
+          revert: ['animation.setIn', [prevValue]],
+          perform: ['animation.setIn', [store.animation.now]],
+        })
         break
+      }
 
       case 'l':
         if (event.repeat) break
@@ -269,7 +280,12 @@ const KeyHandler = ({ store }) => {
           inputEl.click()
         } else if (BOTTOM_HAS_FOCUS && !SOME_MODIFIER_HELD) {
           if (event.repeat) break
+          const prevValue = store.animation.lastFrame
           store.animation.setOut(store.animation.now)
+          store.actionStack.push({
+            revert: ['animation.setOut', [prevValue]],
+            perform: ['animation.setOut', [store.animation.now]],
+          })
         }
         break
 
