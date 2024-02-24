@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect } from 'react'
 import { action } from 'mobx'
 import Vector2 from '../lib/structure/Vector2'
@@ -27,6 +28,8 @@ const doesBottomMenuHaveFocus = () => [
 ].includes(document.activeElement.id)
 
 const doesAnInputFieldHaveFocus = () => document.activeElement.id.startsWith('input-')
+
+// TODO [1]: not all hotkey actions are pushing onto actionstack
 
 // TODO [4]: periodically check the keys in case someone scrolled away and came back and is no longer holding down
 //       a meta key (or others). maybe this could be checked when window gets focused?
@@ -395,25 +398,34 @@ const KeyHandler = ({ store }) => {
   })
 
   /* Memoization */
-  const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [handleKeyDownEvent])
-  const handleKeyUpEventMemoized = useCallback(handleKeyUpEvent, [handleKeyUpEvent])
-  const handlePasteEventMemoized = useCallback(handlePasteEvent, [handlePasteEvent])
+  const handleKeyDownEventMemoized = useCallback(handleKeyDownEvent, [
+    store.actionStack.canRedo,
+    store.actionStack.canUndo,
+    store.animation.frames,
+    store.animation.now,
+    store.build.tool,
+    JSON.stringify(store.build.selectedIds),
+    JSON.stringify(store.keyframeEditor.selectedIds),
+    store.keyHeld.Alt,
+    store.keyHeld.Meta,
+    store.keyHeld.Shift,
+  ])
+  const handleKeyUpEventMemoized = useCallback(handleKeyUpEvent, [])
+  const handlePasteEventMemoized = useCallback(handlePasteEvent, [])
 
   /* Window Listener Registration */
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDownEventMemoized)
+    return () => window.removeEventListener('keydown', handleKeyDownEventMemoized)
+  }, [handleKeyDownEventMemoized])
+  useEffect(() => {
     window.addEventListener('keyup', handleKeyUpEventMemoized)
+    return () => window.removeEventListener('keyup', handleKeyUpEventMemoized)
+  }, [handleKeyUpEventMemoized])
+  useEffect(() => {
     window.addEventListener('paste', handlePasteEventMemoized)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDownEventMemoized)
-      window.removeEventListener('keyup', handleKeyUpEventMemoized)
-      window.removeEventListener('paste', handlePasteEventMemoized)
-    }
-  }, [
-    handleKeyDownEventMemoized,
-    handleKeyUpEventMemoized,
-    handlePasteEventMemoized,
-  ])
+    return () => window.removeEventListener('paste', handlePasteEventMemoized)
+  }, [handlePasteEventMemoized])
 
   return null
 }
