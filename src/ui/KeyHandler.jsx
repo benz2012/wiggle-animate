@@ -180,35 +180,33 @@ const KeyHandler = ({ store }) => {
         break
 
       case ',':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
           event.preventDefault()
+          if (event.repeat) break
           store.view.openDialog('settings')
         }
         break
 
       case 'a':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
+          event.preventDefault()
+          if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
             store.keyframeEditor.selectAllVisible()
           } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
             store.build.selectAll()
           }
         }
         break
 
       case 'c':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
+          event.preventDefault()
+          if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
             // TODO [3]: Put Keyframe Copying Here
             //           - should be item independent, user should be able to copy-paste between items
           } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
             store.build.copySelectionToClipboard()
           }
         } else if (BOTTOM_HAS_FOCUS && !SOME_MODIFIER_HELD) {
@@ -220,25 +218,25 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'd':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
+          event.preventDefault()
+          if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
             store.keyframeEditor.setSelected([])
           } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
             store.build.setSelected([])
           }
         }
         break
 
       case 'e':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
           event.preventDefault()
+          if (event.repeat) break
           store.view.openDialog('export')
         } else if (STAGE_HAS_FOCUS && !SOME_MODIFIER_HELD) {
           store.stage.addEllipse()
+          if (event.repeat) break
         }
         break
 
@@ -264,12 +262,13 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'o':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
           event.preventDefault()
+          if (event.repeat) break
           const inputEl = document.getElementById('input-project-file')
           inputEl.click()
         } else if (BOTTOM_HAS_FOCUS && !SOME_MODIFIER_HELD) {
+          if (event.repeat) break
           store.animation.setOut(store.animation.now)
         }
         break
@@ -289,9 +288,9 @@ const KeyHandler = ({ store }) => {
         break
 
       case 's':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
           event.preventDefault()
+          if (event.repeat) break
           store.view.openDialog('save')
         }
         break
@@ -312,32 +311,32 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'x':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
+          event.preventDefault()
+          if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
-            event.preventDefault()
             // TODO [4]: Put Keyframe Cutting Here
           } else if (STAGE_HAS_FOCUS) {
-            event.preventDefault()
             store.build.copySelectionToClipboard(true)
           }
         }
         break
 
       case 'y':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
           event.preventDefault()
+          if (event.repeat) break
           if (store.actionStack.canRedo) store.actionStack.redo()
         } else if (STAGE_HAS_FOCUS && !SOME_MODIFIER_HELD) {
+          if (event.repeat) break
           store.stage.addPolygon()
         }
         break
 
       case 'z':
-        if (event.repeat) break
         if (store.keyHeld.Meta) {
           event.preventDefault()
+          if (event.repeat) break
           if (store.actionStack.canUndo) store.actionStack.undo()
         }
         break
