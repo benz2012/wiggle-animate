@@ -1,0 +1,64 @@
+name: Main Workflow
+
+on:
+  pull_request:
+    type:
+      - closed
+    branches:
+      - main
+
+jobs:
+  confirm_merged:
+    if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: andymckay/cancel-action@0.4
+
+  tag_pr_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version type
+        id: version_type
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          VERSION_TYPE=$(echo "$PR_TITLE" | cut -d "[" -f2 | cut -d "]" -f1)
+          echo "VERSION_TYPE=$VERSION_TYPE" >> "$GITHUB_OUTPUT"
+      - run: npm version ${{ steps.version_type.outputs.VERSION_TYPE }}
+      - run: echo "NEW_TAG=v$(cat package.json | jq -r '.version')" >> "$GITHUB_OUTPUT"
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git push origin "$NEW_TAG"
+          git push
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build
+      - name: Make Archive
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: zip
+          path: ./build
+          filename: release.zip
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release.zip
+
+  # trigger_parent:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: >
+  #         curl -X POST
+  #         -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}"
+  #         -H "Accept: application/vnd.github.everest-preview+json"
+  #         -H "Content-Type: application/json"
+  #         --data '{"ref": "main"}'
+  #         https://api.github.com/repos/benz2012/wiggle-tools/actions/workflows/firebase-hosting-merge.yml/dispatches
