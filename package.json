@@ -31,9 +31,9 @@
     "webm-muxer": "^3.2.1"
   },
   "scripts": {
-    "predev": "node ./scripts/getAllGoogleFonts.js",
+    "update-fonts": "node ./scripts/getAllGoogleFonts.js",
     "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts start",
-    "build": "node ./scripts/getAllGoogleFonts.js && REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-*) REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build"
+    "build": "REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-google*) REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build"
   },
   "eslintConfig": {
     "env": {

@@ -1,0 +1,23 @@
+name: Update Font Data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 18 1 * *' # Once a month
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+      GOOGLE_FONTS_API_KEY: '${{ secrets.GOOGLE_FONTS_API_KEY }}'
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run update-fonts
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Updated Fonts for "$(date "+%B %Y")
+          git push

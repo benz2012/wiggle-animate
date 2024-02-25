@@ -12,12 +12,7 @@ It is free and open-source, meant to enable creators with easy access to a power
 Setup
 
 ```sh
-git clone thisrepo
 npm install
-
-# just run this once to get font data loaded
-export GOOGLE_FONTS_API_KEY="you-api-key-here"
-npm run predev
 ```
 
 Run
