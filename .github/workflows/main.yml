@@ -36,7 +36,6 @@ jobs:
           echo "NEW_TAG=v$(cat package.json | jq -r '.version')" >> "$GITHUB_OUTPUT"
       - run: |
           git push origin HEAD
-          git push origin ${{ steps.update_package_version.outputs.NEW_TAG }}
 
   build_and_release:
     if: ${{ github.event.pull_request.merged == true }}
