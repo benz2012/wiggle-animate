@@ -6,7 +6,7 @@ on:
     - cron: '0 18 1 * *' # Once a month
 
 jobs:
-  build_and_deploy:
+  run:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
