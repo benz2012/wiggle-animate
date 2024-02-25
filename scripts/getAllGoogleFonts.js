@@ -160,18 +160,27 @@ async function main() {
     weightLabels: WEIGHT_LABEL_MAP,
     fonts,
   })
-  const contentHash = md5(content)
 
-  let fileName = `font-data-google.${contentHash}.json`
-  let outputFolder = './public'
-  if (process.env.NODE_ENV !== 'production') {
-    fileName = 'font-data-google.json'
-    outputFolder = './src/hidden'
-    await fs.mkdir(outputFolder, { recursive: true })
-  }
+  const outputFolder = './src/assets'
+  const fileName = 'font-data-google.json'
   await fs.writeFile(`${outputFolder}/${fileName}`, content)
+  console.log(`output written to: ${outputFolder}/${fileName}`)
 
-  console.log(`${outputFolder}/${fileName}`)
+  if (process.env.NODE_ENV === 'production') {
+    const prodOutputFolder = './public'
+
+    // Start by deleting the previous production file
+    const regex = /^font-data-google*/
+    const existingfiles = await fs.readdir(prodOutputFolder)
+    const previousProdData = existingfiles.find((f) => regex.test(f))
+    await fs.unlink(`${prodOutputFolder}/${previousProdData}`)
+
+    // Then generate the new one (hash could be the same as before if nothing changed)
+    const contentHash = md5(content)
+    const prodFileName = `font-data-google.${contentHash}.json`
+    await fs.writeFile(`${prodOutputFolder}/${prodFileName}`, content)
+    console.log(`output written to: ${prodOutputFolder}/${prodFileName}`)
+  }
 }
 
 main()
