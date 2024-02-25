@@ -28,8 +28,9 @@ jobs:
           git push origin "$NEW_TAG"
           git push
 
-  build:
+  build_and_release:
     if: ${{ github.event.pull_request.merged == true }}
+    needs: tag_pr_commit
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
@@ -50,6 +51,7 @@ jobs:
 
   # trigger_parent:
   #   if: ${{ github.event.pull_request.merged == true }}
+  #    needs: build_and_release
   #   runs-on: ubuntu-latest
   #   steps:
   #     - run: >
