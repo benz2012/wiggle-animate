@@ -2,12 +2,14 @@ name: Main Workflow
 
 on:
   pull_request:
-    type:
+    types:
       - closed
+    branches:
+      - main
 
 jobs:
   tag_pr_commit:
-    if: ${{ github.event.pull_request.merged == true && github.base_ref == 'main' }}
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +29,7 @@ jobs:
           git push
 
   build:
-    if: ${{ github.event.pull_request.merged == true && github.base_ref == 'main' }}
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
@@ -47,7 +49,7 @@ jobs:
           files: release.zip
 
   # trigger_parent:
-  #   if: ${{ github.event.pull_request.merged == true && github.base_ref == 'main' }}
+  #   if: ${{ github.event.pull_request.merged == true }}
   #   runs-on: ubuntu-latest
   #   steps:
   #     - run: >
