@@ -19,5 +19,5 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "Updated Fonts for $(date +%B-%Y)"
+          git diff-index --quiet HEAD || git commit -m "Updated Fonts for $(date +%B-%Y)"
           git push
