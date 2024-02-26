@@ -71,7 +71,10 @@ const serializeFont = (font) => (
   `${font.name}-${font.style}-${font.weight}`
 )
 
-// Top-Level Initialization Code -- leave this at bottom of module
+/* Top-Level Initialization Code -- leave this at bottom of module */
+
+// This allows the font data to live separate from the app bundle, keeping the initial
+// app download smaller/quicker. Think of it as hacky code-splitting
 if (process.env.NODE_ENV === 'production') {
   fetch(`${STATIC_ASSETS_PATH}/${process.env.REACT_APP_FONT_DATA_FILE}`)
     .then((res) => res.json())
@@ -82,13 +85,14 @@ if (process.env.NODE_ENV === 'production') {
     })
 } else {
   // eslint-disable-next-line
-  import('../hidden/font-data-google.json')
+  import('../assets/font-data-google.json')
     .then((module) => {
       fontData = mapSlimDataToVerbose(module.default)
       fontDataHeaders = module.default
       delete fontDataHeaders.fonts
     })
 }
+
 const missingPreviewImage = new Image()
 missingPreviewImage.src = missingPreview
 
