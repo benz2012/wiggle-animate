@@ -16,7 +16,7 @@ jobs:
       - run: npm ci
       - run: npm run update-fonts
       - name: Set env
-        run: echo 'COMMIT_MESSAGE="Updated Fonts for '$(date +%B-%Y)'"' >> $GITHUB_ENV
+        run: echo "COMMIT_MESSAGE=Updated Fonts for $(date +%B-%Y)" >> $GITHUB_ENV
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
