@@ -36,6 +36,7 @@ jobs:
           echo "NEW_TAG=v$(cat package.json | jq -r '.version')" >> "$GITHUB_OUTPUT"
       - run: |
           git push origin HEAD
+          git push origin ${{ steps.update_package_version.outputs.NEW_TAG }}
 
   build_and_release:
     if: ${{ github.event.pull_request.merged == true }}
@@ -55,10 +56,8 @@ jobs:
           filename: release.zip
       - name: Upload Release
         uses: softprops/action-gh-release@v1
-        env:
-          NEW_TAG: ${{ needs.tag_pr_commit.outputs.NEW_TAG }}
         with:
-          tag_name: $NEW_TAG
+          tag_name: ${{ needs.tag_pr_commit.outputs.NEW_TAG }}
           files: release.zip
 
   # trigger_parent:
