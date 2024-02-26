@@ -39,13 +39,14 @@ jobs:
           git push origin ${{ steps.update_package_version.outputs.NEW_TAG }}
 
   build_and_release:
-    if: ${{ github.event.pull_request.merged == true }}
     needs: tag_pr_commit
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.tag_pr_commit.outputs.NEW_TAG }}
       - run: npm ci
       - run: npm run build
       - name: Make Archive
@@ -60,15 +61,14 @@ jobs:
           tag_name: ${{ needs.tag_pr_commit.outputs.NEW_TAG }}
           files: release.zip
 
-  # trigger_parent:
-  #   if: ${{ github.event.pull_request.merged == true }}
-  #    needs: build_and_release
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: >
-  #         curl -X POST
-  #         -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}"
-  #         -H "Accept: application/vnd.github.everest-preview+json"
-  #         -H "Content-Type: application/json"
-  #         --data '{"ref": "main"}'
-  #         https://api.github.com/repos/benz2012/wiggle-tools/actions/workflows/firebase-hosting-merge.yml/dispatches
+  trigger_parent:
+    needs: build_and_release
+    runs-on: ubuntu-latest
+    steps:
+      - run: >
+          curl -X POST
+          -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}"
+          -H "Accept: application/vnd.github.everest-preview+json"
+          -H "Content-Type: application/json"
+          --data '{"ref": "main"}'
+          https://api.github.com/repos/benz2012/wiggle-tools/actions/workflows/main.yml/dispatches

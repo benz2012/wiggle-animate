@@ -13,6 +13,8 @@ jobs:
       GOOGLE_FONTS_API_KEY: '${{ secrets.GOOGLE_FONTS_API_KEY }}'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY_ED25519 }}
       - run: npm ci
       - run: npm run update-fonts
       - run: |
