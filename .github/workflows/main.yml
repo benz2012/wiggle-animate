@@ -45,6 +45,8 @@ jobs:
       NODE_ENV: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.tag_pr_commit.outputs.NEW_TAG }}
       - run: npm ci
       - run: npm run build
       - name: Make Archive
