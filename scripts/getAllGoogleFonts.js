@@ -159,6 +159,7 @@ async function main() {
     fontCategories: Object.keys(fontCategories),
     weightLabels: WEIGHT_LABEL_MAP,
     fonts,
+    bop: 'beep'
   })
 
   const outputFolder = './src/assets'
