@@ -13,13 +13,13 @@ jobs:
       GOOGLE_FONTS_API_KEY: '${{ secrets.GOOGLE_FONTS_API_KEY }}'
     steps:
       - uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.DEPLOY_KEY_ED25519 }}
       - run: npm ci
       - run: npm run update-fonts
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git diff-index --quiet HEAD || git commit -m "Updated Fonts for $(date +%B-%Y)"
-          git push
+      - name: Set env
+        run: echo 'COMMIT_MESSAGE="Updated Fonts for '$(date +%B-%Y)'"' >> $GITHUB_ENV
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: update-fonts
+          title: ${{ env.COMMIT_MESSAGE }}
+          commit-message: ${{ env.COMMIT_MESSAGE }}
