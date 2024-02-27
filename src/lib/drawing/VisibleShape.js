@@ -6,6 +6,7 @@ import Color from '../visuals/Color'
 import Shadow from '../visuals/Shadow'
 
 const OPACITY_DRAG_RATIO = 3
+let testingIncremetor = 0
 
 // TODO [4]: Blend Modes
 
@@ -140,6 +141,16 @@ class VisibleShape extends Shape {
     })
 
     this.shadow = new Shadow(this)
+
+    if (process.env.REACT_APP_TEST_ENV === 'true') {
+      const nextHue = testingIncremetor % 360
+      this._fillColor.setValue(Color.fromHSL({
+        h: nextHue,
+        s: 70,
+        l: 70,
+      }))
+      testingIncremetor += 11
+    }
   }
 
   get fillColor() { return this._fillColor.value }

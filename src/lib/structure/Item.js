@@ -4,6 +4,8 @@ import Property from './Property'
 import names from '../../assets/names.json'
 import { randomChoice } from '../../utility/array'
 
+let testingIncremetor = 0
+
 class Item {
   static get className() { return 'Item' }
 
@@ -17,6 +19,12 @@ class Item {
       value: randomChoice(names),
       isEditable: true,
     })
+
+    if (process.env.REACT_APP_TEST_ENV === 'true') {
+      const staticName = names[testingIncremetor]
+      this._name.setValue(staticName)
+      testingIncremetor += 1
+    }
 
     // TODO [4]: Is this a problem because this.DPR can change during the life of the app??!?
     this.DPR = window.devicePixelRatio || 1
