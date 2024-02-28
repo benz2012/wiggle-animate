@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import Alert from '@mui/material/Alert'
@@ -13,9 +12,7 @@ import SettingSupportsAlpha from './SettingSupportsAlpha'
 
 import { ENCODING_OPTIONS } from '../../../utility/encoding'
 
-const ExportSettings = observer(({ store }) => {
-  const [exportStyle, setExportStyle] = useState('Image Sequence')
-
+const ExportSettings = observer(({ store, exportStyle, setExportStyle }) => {
   const encodingOptionsForThisBrowser = ENCODING_OPTIONS.filter((option) => {
     if (store.output.browserHasVideoEncoder === false) {
       return !option.requiresVideoEncoder

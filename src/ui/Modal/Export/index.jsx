@@ -28,6 +28,8 @@ const ExportDialog = observer(({ store, open, onClose }) => {
     storageGet(Storage.KEYS.DOWNLOAD_ALERT_CLOSED) === 'true'
   )
 
+  const [exportStyle, setExportStyle] = useState('Image Sequence')
+
   let expectedOutputFilename = `${store.output.fileName}.${store.output.encodingOption.container}`
   if (store.output.encodingOption.imageSequence) {
     expectedOutputFilename = `${store.output.fileName}.#####.${store.output.encodingOption.container} (as a ZIP file)`
@@ -110,7 +112,7 @@ const ExportDialog = observer(({ store, open, onClose }) => {
               minHeight: '196px',
             })}
           >
-            <ExportSettings store={store} />
+            <ExportSettings store={store} exportStyle={exportStyle} setExportStyle={setExportStyle} />
           </Box>
         </Box>
 
