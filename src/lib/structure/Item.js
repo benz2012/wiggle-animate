@@ -5,6 +5,7 @@ import names from '../../assets/names.json'
 import { randomChoice } from '../../utility/array'
 
 let testingIncremetor = 0
+const namesWithStatic0thName = ['test-root-container', 'test-name', ...names]
 
 class Item {
   static get className() { return 'Item' }
@@ -21,7 +22,8 @@ class Item {
     })
 
     if (process.env.REACT_APP_TEST_ENV === 'true') {
-      const staticName = names[testingIncremetor]
+      const staticName = namesWithStatic0thName[testingIncremetor]
+      console.log(testingIncremetor, staticName, namesWithStatic0thName.slice(0, 3))
       this._name.setValue(staticName)
       testingIncremetor += 1
     }
