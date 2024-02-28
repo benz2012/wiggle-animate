@@ -185,7 +185,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'a':
-        if (store.keyHeld.Meta) {
+        if (store.keyHeld.Meta && !INPUT_HAS_FOCUS) {
           event.preventDefault()
           if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
@@ -197,7 +197,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'c':
-        if (store.keyHeld.Meta) {
+        if (store.keyHeld.Meta && !INPUT_HAS_FOCUS) {
           event.preventDefault()
           if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
@@ -324,7 +324,7 @@ const KeyHandler = ({ store }) => {
         break
 
       case 'x':
-        if (store.keyHeld.Meta) {
+        if (store.keyHeld.Meta && !INPUT_HAS_FOCUS) {
           event.preventDefault()
           if (event.repeat) break
           if (BOTTOM_HAS_FOCUS) {
