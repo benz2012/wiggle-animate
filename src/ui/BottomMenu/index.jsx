@@ -17,6 +17,9 @@ const PANEL_OPEN_HEIGHT = 300
 const elevationFourBoxShadowNorth = '0px -3px 3px -2px rgba(0,0,0,0.2),'
   + '0px -3px 4px 0px rgba(0,0,0,0.14),0px -1px 8px 0px rgba(0,0,0,0.12)'
 
+// TODO [4]: get rid of the two playhead concept it's too hard to work with.
+// TODO [1]: Playhead is different widths on different browsers/OSes, probabaly related to pixel aspect
+
 const BottomMenu = observer(({ store, windowWidth }) => {
   const { animation } = store
 

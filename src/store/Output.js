@@ -107,7 +107,6 @@ class Output {
     }
 
     this.setIsExporting(false)
-    this.store.animation.goToFirst()
   }
 }
 

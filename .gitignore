@@ -9,6 +9,7 @@
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+*-darwin.png
 
 # production
 /build

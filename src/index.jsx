@@ -27,7 +27,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'))
 reaction(() => ([
   Object.values(store.rootContainer.children).map(peekAtKeyframes),
   store.animation.now,
+  store.output.isExporting,
 ]), () => {
+  if (store.output.isExporting) return
   store.rootContainer.updatePropertiesForFrame(store.animation.now)
 })
 

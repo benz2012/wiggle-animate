@@ -4,6 +4,11 @@ import Property from './Property'
 import names from '../../assets/names.json'
 import { randomChoice } from '../../utility/array'
 
+let namesToChooseFrom = names
+if (process.env.REACT_APP_TEST_ENV === 'true') {
+  namesToChooseFrom = ['test-root-container', ...Array.from(Array(100)).map((_, idx) => (`test-name-${idx}`))]
+}
+
 class Item {
   static get className() { return 'Item' }
 
@@ -14,7 +19,7 @@ class Item {
     this._id = uuidv4()
     this._name = new Property({
       type: Property.PRIMITIVES.STRING,
-      value: randomChoice(names),
+      value: randomChoice(namesToChooseFrom),
       isEditable: true,
     })
 

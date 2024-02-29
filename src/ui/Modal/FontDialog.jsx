@@ -26,6 +26,7 @@ const ROW_HEIGHT = 52
 // TODO [4]: Add button to "load font preview" for fonts that are "missing preview"
 //           This will add the font to the DOM and render it with HTML and CSS, instead of as a png image
 // TODO [4]: create my own repo that has pre-generated google font pngs, to eliminate the missing ones
+// TODO [4]: if user only adds 1 font, set that font on the text object
 
 const FontDialog = observer(({ store, open, onClose }) => {
   const fontData = getFontData()

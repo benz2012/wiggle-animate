@@ -33,7 +33,8 @@
   "scripts": {
     "update-fonts": "node ./scripts/getAllGoogleFonts.js",
     "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts start",
-    "build": "REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-google*) REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build"
+    "build": "REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-google*) REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build",
+    "test": "REACT_APP_TEST_ENV=true playwright test"
   },
   "eslintConfig": {
     "env": {

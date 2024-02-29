@@ -12,6 +12,8 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 
+// TODO [3]: hitting enter on the save dialog focuses and clicks the save button
+
 const SaveDialog = ({ store, open, onClose }) => {
   const [fileName, setFileName] = useState('')
   const [clickedSave, setClickedSave] = useState(false)
