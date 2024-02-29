@@ -4,18 +4,18 @@ import Typography from '@mui/material/Typography'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import Link from '@mui/material/Link'
 
-import ProjectSettingText from './ProjectSettingText'
+import LeftRightText from '../LeftRightText'
 
 const ProjectReview = observer(({ store }) => (
   <Box sx={{ paddingRight: 2, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
     <Typography variant="h6">Your Animation</Typography>
-    <ProjectSettingText label="Frame Length" value={`${store.animation.frames} frames`} />
-    <ProjectSettingText label="Frame Rate" value={`${store.animation.fps.toFixed(2)} FPS`} />
-    <ProjectSettingText
+    <LeftRightText label="Frame Length" value={`${store.animation.frames} frames`} />
+    <LeftRightText label="Frame Rate" value={`${store.animation.fps.toFixed(2)} FPS`} />
+    <LeftRightText
       label="Resolution"
       value={`${store.rootContainer.canvasSize.width} x ${store.rootContainer.canvasSize.height}`}
     />
-    <ProjectSettingText
+    <LeftRightText
       label="Background Color"
       valueNotTypography={store.stage.transparent}
       value={

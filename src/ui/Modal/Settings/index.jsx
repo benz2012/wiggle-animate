@@ -9,13 +9,14 @@ import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import Paper from '@mui/material/Paper'
 
-import TabListButton from './TabListButton'
 import AnimationLengthInput from './AnimationLengthInput'
 import AnimationRateInput from './AnimationRateInput'
-import CanvasSizeInput from './CanvasSizeInput'
 import CanvasFillInput from './CanvasFillInput'
-import TransparencyInput from './TransparencyInput'
+import CanvasSizeInput from './CanvasSizeInput'
+import HotkeyList from './HotkeyList'
+import TabListButton from './TabListButton'
 import TransparencyIndicatorInput from './TransparencyIndicatorInput'
+import TransparencyInput from './TransparencyInput'
 
 // TODO [3]: Settings Ideas
 //  - When selecting item on the stage, force open the containers in tree view, default: true
@@ -45,7 +46,7 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
       return <Box>Coming Soon</Box>
     }
     if (tab === 'hotkeys') {
-      return <Box>Coming Soon</Box>
+      return <HotkeyList />
     }
     return null
   }, [tab, store])
@@ -83,6 +84,8 @@ const SettingsDialog = observer(({ store, open, onClose }) => {
           sx={(theme) => ({
             width: `calc(70% - ${theme.spacing(2)})`,
             minHeight: `calc(300px - ${theme.spacing(2)})`,
+            height: '70vh',
+            overflowX: 'scroll',
             padding: 2,
             borderRadius: 0,
             borderTopLeftRadius: theme.spacing(1),

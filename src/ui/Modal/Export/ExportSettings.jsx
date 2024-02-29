@@ -5,7 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import ProjectSettingText from './ProjectSettingText'
+import LeftRightText from '../LeftRightText'
 import ExportStyleButton from './ExportStyleButton'
 import EncodingSelector from './EncodingSelector'
 import SettingSupportsAlpha from './SettingSupportsAlpha'
@@ -71,7 +71,7 @@ const ExportSettings = observer(({ store, exportStyle, setExportStyle }) => {
               Use Google Chrome if possible.
             </Alert>
           )}
-          <ProjectSettingText
+          <LeftRightText
             sx={{ marginTop: 2, marginBottom: 0 }}
             label="Encoding"
             valueNotTypography

@@ -14,6 +14,8 @@ import bezierPathsGIF from '../../assets/bezier-paths.gif'
 import buildingShapesGIF from '../../assets/building-shapes.gif'
 import usingCanvasGIF from '../../assets/using-canvas.gif'
 
+import KeyCallout from './KeyCallout'
+
 const PrimaryExternalLink = ({ href, children }) => (
   <Link
     color="primary"
@@ -24,22 +26,6 @@ const PrimaryExternalLink = ({ href, children }) => (
   >
     {children}
   </Link>
-)
-
-const KeyCallout = ({ children }) => (
-  <Box
-    component="span"
-    sx={{
-      fontFamily: 'monospace',
-      fontSize: 12,
-      color: 'text.disabled',
-      backgroundColor: 'background.paper',
-      padding: '4px',
-      borderRadius: 1,
-    }}
-  >
-    {children}
-  </Box>
 )
 
 const HelpDialog = ({ store, open, onClose }) => (

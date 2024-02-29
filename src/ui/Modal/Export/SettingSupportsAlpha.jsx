@@ -3,10 +3,10 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import Typography from '@mui/material/Typography'
 
-import ProjectSettingText from './ProjectSettingText'
+import LeftRightText from '../LeftRightText'
 
 const SettingSupportsAlpha = ({ value }) => (
-  <ProjectSettingText
+  <LeftRightText
     label="Supports Alpha"
     valueNotTypography
     value={(

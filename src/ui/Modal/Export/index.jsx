@@ -15,7 +15,7 @@ import LaunchIcon from '@mui/icons-material/Launch'
 import LinearProgress from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography'
 
-import ProjectSettingText from './ProjectSettingText'
+import LeftRightText from '../LeftRightText'
 import DownloadAlert from './DownloadAlert'
 import ProjectReview from './ProjectReview'
 
@@ -118,12 +118,12 @@ const ExportDialog = observer(({ store, open, onClose }) => {
 
         {/* Bottom: Output Section */}
         <Typography variant="h6">Output</Typography>
-        <ProjectSettingText
+        <LeftRightText
           label="File Name:"
           sx={{ marginTop: 1, justifyContent: 'flex-start', gap: 1 }}
           value={expectedOutputFilename}
         />
-        <ProjectSettingText
+        <LeftRightText
           label="Progress:"
           sx={{ marginTop: 1, justifyContent: 'none', gap: 1 }}
           valueNotTypography
