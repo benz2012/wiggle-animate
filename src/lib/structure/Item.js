@@ -4,8 +4,10 @@ import Property from './Property'
 import names from '../../assets/names.json'
 import { randomChoice } from '../../utility/array'
 
-let testingIncremetor = 0
-const namesWithStatic0thName = ['test-root-container', 'test-name', ...names]
+let namesToChooseFrom = names
+if (process.env.REACT_APP_TEST_ENV === 'true') {
+  namesToChooseFrom = ['test-root-container', ...Array.from(Array(100)).map((_, idx) => (`test-name-${idx}`))]
+}
 
 class Item {
   static get className() { return 'Item' }
@@ -17,15 +19,9 @@ class Item {
     this._id = uuidv4()
     this._name = new Property({
       type: Property.PRIMITIVES.STRING,
-      value: randomChoice(names),
+      value: randomChoice(namesToChooseFrom),
       isEditable: true,
     })
-
-    if (process.env.REACT_APP_TEST_ENV === 'true') {
-      const staticName = namesWithStatic0thName[testingIncremetor]
-      this._name.setValue(staticName)
-      testingIncremetor += 1
-    }
 
     // TODO [4]: Is this a problem because this.DPR can change during the life of the app??!?
     this.DPR = window.devicePixelRatio || 1
