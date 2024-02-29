@@ -33,6 +33,7 @@ const drawStageDots = (ctx, rootWidth, rootHeight, canvasPosition, canvasScale) 
   ctx.fill()
 }
 
+// TODO [3]: drawing the checkerboard seriously slows things down, maybe use an image instead
 const checkerboardRects = (ctx, canvasSize, checkerSize) => {
   const numColumns = Math.ceil(canvasSize.width / checkerSize)
   const numRows = Math.ceil(canvasSize.height / checkerSize)
