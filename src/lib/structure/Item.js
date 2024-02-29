@@ -23,7 +23,6 @@ class Item {
 
     if (process.env.REACT_APP_TEST_ENV === 'true') {
       const staticName = namesWithStatic0thName[testingIncremetor]
-      console.log(testingIncremetor, staticName, namesWithStatic0thName.slice(0, 3))
       this._name.setValue(staticName)
       testingIncremetor += 1
     }
