@@ -11,6 +11,7 @@ class View {
       export: false,
       addFonts: false,
     }
+    this.settingsTab = 'project'
 
     makeAutoObservable(this)
   }
@@ -31,6 +32,10 @@ class View {
     }
 
     this.dialogs[dialogName] = false
+  }
+
+  setSettingsTab(newTab) {
+    this.settingsTab = newTab
   }
 
   closeAllDialogs() {

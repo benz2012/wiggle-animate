@@ -158,6 +158,7 @@ const App = observer(({ store }) => {
         onClose={() => store.view.closeDialog('addFonts')}
       />
       <HelpDialog
+        store={store}
         open={store.view.dialogs.help}
         onClose={() => store.view.closeDialog('help')}
       />

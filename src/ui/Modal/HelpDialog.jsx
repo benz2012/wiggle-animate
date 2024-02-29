@@ -42,7 +42,7 @@ const KeyCallout = ({ children }) => (
   </Box>
 )
 
-const HelpDialog = ({ open, onClose }) => (
+const HelpDialog = ({ store, open, onClose }) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -107,6 +107,27 @@ const HelpDialog = ({ open, onClose }) => (
           GitHub Issues
         </PrimaryExternalLink>
         .
+      </DialogContentText>
+
+      <Typography variant="h5" mt={2}>
+        Keyboard Shortcuts
+      </Typography>
+      <DialogContentText sx={{ display: 'flex' }}>
+        View all of the Keyboard Shortcuts within&nbsp;
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <Link
+          component="button"
+          onClick={() => {
+            store.view.closeDialog('help')
+            // Giving it a tick creates a smoother visual transition
+            setTimeout(() => {
+              store.view.setSettingsTab('hotkeys')
+              store.view.openDialog('settings')
+            }, 1)
+          }}
+        >
+          Project &gt; Settings &gt; Hotkeys &#8594;
+        </Link>
       </DialogContentText>
 
       <Typography variant="h5" mt={2}>

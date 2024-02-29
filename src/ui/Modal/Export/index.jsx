@@ -100,9 +100,7 @@ const ExportDialog = observer(({ store, open, onClose }) => {
 
         {/* Top: Review Settings */}
         <Box sx={{ display: 'flex' }}>
-          <Box sx={{ paddingRight: 2, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <ProjectReview store={store} />
-          </Box>
+          <ProjectReview store={store} />
 
           <Box
             sx={(theme) => ({

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import Box from '@mui/material/Box'
@@ -23,7 +23,8 @@ import TransparencyIndicatorInput from './TransparencyIndicatorInput'
 const WIDTH_OF_SETTINGS = 200
 
 const SettingsDialog = observer(({ store, open, onClose }) => {
-  const [tab, setTab] = useState('project')
+  const tab = store.view.settingsTab
+  const setTab = (newTab) => store.view.setSettingsTab(newTab)
 
   const settingsForTab = useMemo(() => {
     if (tab === 'project') {
