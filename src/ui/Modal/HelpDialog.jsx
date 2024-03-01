@@ -14,6 +14,8 @@ import bezierPathsGIF from '../../assets/bezier-paths.gif'
 import buildingShapesGIF from '../../assets/building-shapes.gif'
 import usingCanvasGIF from '../../assets/using-canvas.gif'
 
+import KeyCallout from './KeyCallout'
+
 const PrimaryExternalLink = ({ href, children }) => (
   <Link
     color="primary"
@@ -26,23 +28,7 @@ const PrimaryExternalLink = ({ href, children }) => (
   </Link>
 )
 
-const KeyCallout = ({ children }) => (
-  <Box
-    component="span"
-    sx={{
-      fontFamily: 'monospace',
-      fontSize: 12,
-      color: 'text.disabled',
-      backgroundColor: 'background.paper',
-      padding: '4px',
-      borderRadius: 1,
-    }}
-  >
-    {children}
-  </Box>
-)
-
-const HelpDialog = ({ open, onClose }) => (
+const HelpDialog = ({ store, open, onClose }) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -107,6 +93,27 @@ const HelpDialog = ({ open, onClose }) => (
           GitHub Issues
         </PrimaryExternalLink>
         .
+      </DialogContentText>
+
+      <Typography variant="h5" mt={2}>
+        Keyboard Shortcuts
+      </Typography>
+      <DialogContentText sx={{ display: 'flex' }}>
+        View all of the Keyboard Shortcuts within&nbsp;
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <Link
+          component="button"
+          onClick={() => {
+            store.view.closeDialog('help')
+            // Giving it a tick creates a smoother visual transition
+            setTimeout(() => {
+              store.view.setSettingsTab('hotkeys')
+              store.view.openDialog('settings')
+            }, 1)
+          }}
+        >
+          Project &gt; Settings &gt; Hotkeys &#8594;
+        </Link>
       </DialogContentText>
 
       <Typography variant="h5" mt={2}>

@@ -15,7 +15,7 @@ import LaunchIcon from '@mui/icons-material/Launch'
 import LinearProgress from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography'
 
-import ProjectSettingText from './ProjectSettingText'
+import LeftRightText from '../LeftRightText'
 import DownloadAlert from './DownloadAlert'
 import ProjectReview from './ProjectReview'
 
@@ -100,9 +100,7 @@ const ExportDialog = observer(({ store, open, onClose }) => {
 
         {/* Top: Review Settings */}
         <Box sx={{ display: 'flex' }}>
-          <Box sx={{ paddingRight: 2, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <ProjectReview store={store} />
-          </Box>
+          <ProjectReview store={store} />
 
           <Box
             sx={(theme) => ({
@@ -120,12 +118,12 @@ const ExportDialog = observer(({ store, open, onClose }) => {
 
         {/* Bottom: Output Section */}
         <Typography variant="h6">Output</Typography>
-        <ProjectSettingText
+        <LeftRightText
           label="File Name:"
           sx={{ marginTop: 1, justifyContent: 'flex-start', gap: 1 }}
           value={expectedOutputFilename}
         />
-        <ProjectSettingText
+        <LeftRightText
           label="Progress:"
           sx={{ marginTop: 1, justifyContent: 'none', gap: 1 }}
           valueNotTypography
