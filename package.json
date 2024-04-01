@@ -34,7 +34,8 @@
     "update-fonts": "node ./scripts/getAllGoogleFonts.js",
     "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts start",
     "build": "REACT_APP_FONT_DATA_FILE=$(cd ./public && ls font-data-google*) REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build",
-    "test": "REACT_APP_TEST_ENV=true playwright test"
+    "test": "REACT_APP_TEST_ENV=true playwright test",
+    "tauri": "tauri"
   },
   "eslintConfig": {
     "env": {
@@ -122,6 +123,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.41.2",
+    "@tauri-apps/cli": "^2.0.0-beta.7",
     "@types/node": "^20.11.20"
   }
 }
