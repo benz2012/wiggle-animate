@@ -28,20 +28,6 @@ Sometimes the UI end-to-end tests will fail even though there are no real issues
 
 In this case, and generally, to regenerate the latest compare screenshots:
 
-1. Run an ubuntu docker container that will mimic the github runner that is testing the screenshots. Note that we are volume-mounting the source code to mimic the github checkout, but also to export the newly generated screenshots from the docker container to our local machine.
-
-```
-docker run -it --rm -v /your/local/path/to/wiggle-animate:/app ubuntu:latest /bin/bash
-
-$ cd /app
-```
-
-2. Perform steps to install NodeJS and `npm`. Match the Node version found in `.github/workflows/playwright.yml`. Follow the latest online guides.
-
-3. Run the node setup steps just as described in `.github/workflows/playwright.yml`, such as `npm ci`
-
-4. Generate new screenshots (Run the test script with a modification)
-
-```
-npm run test -- --update-snapshots
-```
+- run the [Update Screenshots](https://github.com/benz2012/wiggle-animate/actions/workflows/playwright-update.yml) GitHub Workflow
+- download the artifact it generates
+- commit those to the repo
