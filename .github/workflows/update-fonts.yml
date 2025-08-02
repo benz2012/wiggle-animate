@@ -2,8 +2,10 @@ name: Update Font Data
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 18 1 * *' # Once a month
+  # schedule:
+    # - cron: '0 18 1 * *' # Once a month
+    # This no longer provides value as the upstream Repo has not been updated in 2 years.
+    # TODO: I should make my own font-screenshotting service
 
 jobs:
   run:
