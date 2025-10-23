@@ -1,6 +1,6 @@
 {
   "name": "wiggle-animate",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "private": true,
   "homepage": "/_subapps/animate",
   "dependencies": {
